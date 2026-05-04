@@ -173,9 +173,13 @@
     h2 { font-size: 1.5rem; margin-bottom: 12px; }
     /* ── Scroll-triggered animations ── */
     .anim-card {
-      /* Cards always visible — IntersectionObserver adds .visible for scroll animation */
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
     }
     .anim-card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
     .anim-card:nth-child(1) { transition-delay: 0ms; }
     .anim-card:nth-child(2) { transition-delay: 80ms; }
@@ -581,11 +585,13 @@
       </a>
       <div class="nav-links">
         <a href="#services">Services</a>
+        <a href="score.html">Score</a>
+        <a href="compliance-check.html">Compliance</a>
         <a href="#pricing">Pricing</a>
-        <a href="/autopilot.html">Fix-it</a>
+        <a href="autopilot.html">Fix-it</a>
         <a href="blog/">Blog</a>
         <a href="docs/">Docs</a>
-        <a href="report">Report Generator</a>
+        <a href="report.html">Report Generator</a>
         <a href="https://github.com/EdgeIQ-Labs" target="_blank" rel="noopener">GitHub</a>
         <a class="nav-cta" href="#pricing">Get Started</a>
       </div>
@@ -766,7 +772,7 @@
             <div class="scan-cta" id="xss-quick-cta">
               <p>Want deep XSS testing with real payloads, reflected parameter detection, and exploit verification?</p>
               <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-xss-scanner" target="_blank" class="btn btn-secondary">Get XSS Scanner Pro →</a>
-              <a href="https://buy.stripe.com/fZu9AV0LxfNH6w4dUY7wA2c" target="_blank" class="btn btn-primary" style="background:var(--ok);color:#071018;font-weight:800;">🔧 Fix It — $9/mo →</a>
+              <a href="https://buy.stripe.com/aFa14pgKvatn8EcdUY7wA37" target="_blank" class="btn btn-primary" style="background:var(--ok);color:#071018;font-weight:800;">🔧 Fix It — $9/mo →</a>
             </div>
           </div>
           <div id="xss-quick-error" class="scan-error" style="display:none;">
@@ -938,7 +944,9 @@
     </section>
 
 
-    <section id="live-apps" style="padding:52px 0 40px;">
+      
+        </section>
+<section <section id="live-apps" style="padding:52px 0 40px;">
         <h2>Live EdgeIQ Apps</h2>
         <p class="section-sub">All three production MVP apps are now live. Use them directly or share with clients.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
@@ -961,7 +969,7 @@
             </ul>
             <div class="plan-actions">
               <a class="btn btn-primary" href="https://edgeiq-smb-dashboard.onrender.com/" target="_blank" rel="noopener" style="font-size:0.8rem;">Open Free</a>
-              <a class="btn btn-secondary" href="https://buy.stripe.com/eVqeVfbqb1WR5s04ko7wA1A" target="_blank" rel="noopener" style="font-size:0.8rem;">Pro $29/mo</a>
+              <a class="btn btn-secondary" href="https://edgeiqlabs.com/smb-dashboard/upgrade" target="_blank" rel="noopener" style="font-size:0.8rem;">Pro $29/mo</a>
             </div>
           </article>
           <article class="card anim-card" style="background:linear-gradient(135deg,#0b1a2e 0%,#0d2235 100%);border-color:#1a3a5c;">
@@ -979,6 +987,8 @@
           </article>
         </div>
       </section>
+
+</section>
 
 
 <section id="pricing">
@@ -1258,9 +1268,9 @@
             <li>📈 Unlimited fixes with annual plan</li>
           </ul>
           <div class="plan-actions" style="margin-top:auto;">
-            <a class="btn btn-primary" href="https://buy.stripe.com/fZu9AV0LxfNH6w4dUY7wA2c" target="_blank" rel="noopener">Get Fix-it — $9/mo →</a>
-            <a class="btn btn-secondary" href="/autopilot.html" style="font-size:0.8rem;">See How It Works →</a>
-            <a class="btn btn-secondary" href="https://buy.stripe.com/5kQcN7dyj44ZdYw3gk7wA2d" target="_blank" rel="noopener" style="font-size:0.8rem;">or $99/yr unlimited →</a>
+            <a class="btn btn-primary" href="https://buy.stripe.com/aFa14pgKvatn8EcdUY7wA37" target="_blank" rel="noopener">Get Fix-it — $9/mo →</a>
+            <a class="btn btn-secondary" href="autopilot.html" style="font-size:0.8rem;">See How It Works →</a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/cNifZj9i35932fO9EI7wA38" target="_blank" rel="noopener" style="font-size:0.8rem;">or $99/yr unlimited →</a>
           </div>
         </article>
 
@@ -1331,7 +1341,7 @@
             <li>Email support</li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" href="https://buy.stripe.com/eVqeVfbqb1WR5s04ko7wA1A" target="_blank" rel="noopener">Unlock Pro</a>
+            <a class="btn btn-primary" href="https://edgeiqlabs.com/smb-dashboard/upgrade" target="_blank" rel="noopener">Unlock Pro</a>
           </div>
         </article>
 
@@ -1398,144 +1408,116 @@
       </div>
 
       <h2 style="margin-top:40px;">OpenClaw Setup Services</h2>
-      <p class="section-sub" style="margin-bottom:16px;">Fully automated setup — buy now, receive your config instantly via email. Remote/VPS OpenClaw installs with optional ongoing managed service.</p>
+      <p class="section-sub" style="margin-bottom:16px;">Separate offering from SMB monitoring: remote/VPS OpenClaw installs with optional ongoing managed service.</p>
       <div class="pricing">
 
         <article class="card anim-card">
           <h3>🦞 OpenClaw Starter</h3>
           <div class="price">$99 <span>/one-time</span></div>
           <ul>
-            <li>Automated delivery after purchase</li>
+            <li>Remote or VPS OpenClaw installation</li>
             <li>Core configuration and hardening</li>
-            <li>1 channel integration (Telegram or Discord)</li>
-            <li>Pre-configured AI model and skills</li>
-            <li>Download + run in minutes</li>
+            <li>1 integration wired up</li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" href="https://edgeiqlabs.com/onboarding/?tier=starter" target="_blank" rel="noopener">Buy Starter</a>
+            <a class="btn btn-primary" href="https://buy.stripe.com/dRmeVfeCn9pj7A8bMQ7wA06" target="_blank" rel="noopener">Buy Starter</a>
+            <a href="#contact" class="btn btn-secondary" style="font-size:0.8rem;">Ask a Question</a>
           </div>
         </article>
         <article class="card anim-card">
           <h3>🦞 OpenClaw Pro Setup</h3>
           <div class="price">$249 <span>/one-time</span></div>
           <ul>
-            <li>Everything in Starter, plus</li>
-            <li>Up to 3 custom skills wired up</li>
+            <li>Full OpenClaw setup for remote/VPS</li>
             <li>Integrations + automations configured</li>
-            <li>Handoff walkthrough session included</li>
+            <li>3 custom skills wired up</li>
+            <li>Walkthrough and handoff included</li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" href="https://edgeiqlabs.com/onboarding/?tier=pro" target="_blank" rel="noopener">Buy Pro Setup</a>
+            <a class="btn btn-primary" href="https://buy.stripe.com/bJebJ3am71WR8Ec0487wA07" target="_blank" rel="noopener">Buy Pro Setup</a>
+            <a href="#contact" class="btn btn-secondary" style="font-size:0.8rem;">Custom Scope</a>
           </div>
         </article>
         <article class="card anim-card">
           <h3>🦞 OpenClaw Managed</h3>
           <div class="price">$49 <span>/month</span></div>
           <ul>
-            <li>Everything in Pro, plus</li>
-            <li>Monthly config updates and maintenance</li>
+            <li>Ongoing updates and config changes</li>
+            <li>New skill setup and maintenance</li>
             <li>Priority support</li>
-            <li>New skill installation on request</li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" href="https://edgeiqlabs.com/onboarding/?tier=managed" target="_blank" rel="noopener">Buy Managed</a>
+            <a class="btn btn-primary" href="https://buy.stripe.com/aFa6oJ65Rbxr7A8aIM7wA08" target="_blank" rel="noopener">Buy Managed</a>
+            <a href="#contact" class="btn btn-secondary" style="font-size:0.8rem;">Talk to Us</a>
           </div>
         </article>
 
       </div>
+    </section>
 
-      <div style="background:#0b0f14;border:1px solid #233142;border-radius:12px;padding:24px;margin:24px 0 32px;">
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:#3dd9ff;">⚡ How It Works — Fully Automated</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
-          <div>
-            <div style="font-size:1.4rem;margin-bottom:6px;">1️⃣</div>
-            <strong>Choose your plan</strong>
-            <p style="color:#9fb0c7;font-size:0.82rem;margin-top:4px;">Pick a tier and fill out a quick form with your channel details.</p>
-          </div>
-          <div>
-            <div style="font-size:1.4rem;margin-bottom:6px;">2️⃣</div>
-            <strong>Pay via Stripe</strong>
-            <p style="color:#9fb0c7;font-size:0.82rem;margin-top:4px;">Secure checkout — takes 30 seconds. Visa, Mastercard, Amex accepted.</p>
-          </div>
-          <div>
-            <div style="font-size:1.4rem;margin-bottom:6px;">3️⃣</div>
-            <strong>Config delivered instantly</strong>
-            <p style="color:#9fb0c7;font-size:0.82rem;margin-top:4px;">Your personalized openclaw.json arrives by email. Run one command and your agent is live.</p>
-          </div>
-        </div>
-      </div>
-
+        <section id="microsaas"<section id="microsaas" style="border-top: 1px solid var(--border); padding-top: 42px;">
       <h2>Micro-SaaS Products</h2>
-      <p class="section-sub">Standalone subscription tools — each solving one problem, built on top of our existing infrastructure. All tools include <strong>instant license key delivery via email</strong> — no manual activation required.</p>
-
-      <!-- All-Access Bundle -->
-      <div style="background:linear-gradient(135deg,rgba(61,217,255,0.12),rgba(124,58,237,0.12));border:2px solid rgba(61,217,255,0.35);border-radius:14px;padding:24px;margin:0 0 28px;text-align:center;">
-        <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;">All-Access Bundle</div>
-        <h3 style="font-size:1.3rem;margin-bottom:6px;">🚀 Everything in One Plan</h3>
-        <p style="color:var(--muted);font-size:0.88rem;margin-bottom:14px;max-width:480px;margin-left:auto;margin-right:auto;">All 10+ EdgeIQ tools — sub.alerts, leak.scan, domain expiry, data enrichment, screenshot API, headers.check, and more. One subscription. $59/mo instead of $100+.</p>
-        <div style="font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:14px;">$59<span style="font-size:0.85rem;font-weight:400;color:var(--muted);">/mo</span></div>
-        <a href="https://buy.stripe.com/3cI00l65R7hbg6E2cg7wA2T" target="_blank" class="btn btn-primary" style="font-size:1rem;padding:12px 28px;">⚡ Get All-Access Bundle</a>
-        <p style="color:#4a6080;font-size:0.75rem;margin-top:10px;">Cancel anytime · Instant license key delivery · 7-day refund</p>
-      </div>
-
+      <p class="section-sub">Standalone subscription tools — each solving one problem, built on top of our existing infrastructure.</p>
       <div class="grid grid-3">
         <article class="card anim-card">
           <h3>🔗 Data Enrichment API</h3>
           <p>Developer API for enriching company and contact data from email, domain, or phone. Returns tech stack, social links, employee count, funding info, and more — perfect for CRMs and lead pipelines. Free tier: 50 calls/mo. Pro: 5,000 calls/mo.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$19/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/data-enrichment-api" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a>
-          <a href="https://buy.stripe.com/6oUeVf8dZ9pj8EccQU7wA0q" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+          <a href="https://buy.stripe.com/3cI6oJ9i3atn4nW7wA7wA2U" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>🔔 sub.alerts</h3>
-          <p>Monitor your domains via Certificate Transparency logs. Get daily or weekly email digests when new subdomains appear or disappear. Built on Subdomain Hunter infrastructure. Free tier: 1 domain, weekly. Pro: 10 domains, daily alerts, webhooks. <strong>⚡ License key emailed instantly after purchase.</strong></p>
-          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://buy.stripe.com/cNi00lam7gRL7A88AE7wA0r" target="_blank" class="btn btn-primary" style="margin-top:8px;font-size:0.85rem;">Buy Pro → ⚡ Instant License Key</a></p>
+          <p>Monitor your domains via Certificate Transparency logs. Get daily or weekly email digests when new subdomains appear or disappear. Built on Subdomain Hunter infrastructure. Free tier: 1 domain, weekly. Pro: 10 domains, daily alerts, webhooks.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/sub-alerts" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/bJe6oJfGr0SNaMk3gk7wA2V" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>🌐 Domain Expiry Monitor</h3>
-          <p>WHOIS-based domain registration expiry tracking. Know when your domains expire before they do. Color-coded urgency, registrar info, and email alerts. Free tier: 3 domains. Pro: 10 domains, full WHOIS data, daily expiry alerts. <strong>⚡ License key emailed instantly after purchase.</strong></p>
-          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://buy.stripe.com/6oUbJ3eCn8lfbQocQU7wA0s" target="_blank" class="btn btn-primary" style="margin-top:8px;font-size:0.85rem;">Buy Pro → ⚡ Instant License Key</a></p>
+          <p>WHOIS-based domain registration expiry tracking. Know when your domains expire before they do. Color-coded urgency, registrar info, and email alerts. Free tier: 3 domains. Pro: 10 domains, full WHOIS data, daily expiry alerts.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/domain-expiry" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/eVq3cx1PB1WR8Ec18c7wA2W" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>🔍 leak.scan</h3>
-          <p>Personal data breach exposure scanner covering email, phone, address, SSN fragments, DOB, and national IDs. Deterministic results so scans are consistent. <strong style="color:var(--accent)">⚡ Automated — get your breach report instantly after payment.</strong> Free tier: 3 scans/mo. Pro: unlimited scans, full exposure report, breach source list.</p>
+          <p>Personal data breach exposure scanner covering email, phone, address, SSN fragments, DOB, and national IDs. Deterministic results so scans are consistent. Free tier: 3 scans/mo. Pro: unlimited scans, full exposure report, breach source list.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/leak-scan" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
-          <a href="https://buy.stripe.com/cNi00lgKv6d76w46sw7wA0t" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+          <a href="https://buy.stripe.com/aFadRbeCnbxrf2AdUY7wA2X" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>📸 Screenshot API</h3>
           <p>Capture PNG/JPEG screenshots of any URL via API. Built on Playwright. Free tier: 100 screenshots/mo with fixed dimensions. Pro: 2000/mo, full-page capture, custom viewport sizes, and wait_for JS selector support.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$19/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/screenshot-api" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
-          <a href="https://buy.stripe.com/00w28tam730V7A89EI7wA0u" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+          <a href="https://buy.stripe.com/aFa7sN3XJfNH2fOdUY7wA2Y" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>🛡️ headers.check</h3>
           <p>HTTP security headers scanner — analyzes HSTS, CSP, X-Frame-Options, and more. Get an A-F security grade with detailed breakdown. Free tier: 20 scans/day. Pro: unlimited scans + detailed remediation guide.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/headers-check" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
-          <a href="https://buy.stripe.com/bJedRb8dZeJD9Ig0487wA0w" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+          <a href="https://buy.stripe.com/5kQaEZcufcBv07GaIM7wA2Z" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>⏱️ uptime.check</h3>
           <p>URL uptime monitoring with email and webhook alerts. Checks if your sites stay up with HTTP HEAD requests. Free tier: 3 monitors, daily checks. Pro: 20 monitors, 5-minute checks, webhook alerts, and 90-day history.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/uptime-check" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
-          <a href="https://buy.stripe.com/fZu00l8dZbxrbQo0487wA0v" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+          <a href="https://buy.stripe.com/14AbJ31PB44Z9IgaIM7wA30" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
         </article>
         <article class="card anim-card">
           <h3>🗺️ SurfaceMap — Live Now</h3>
           <p>Automated API attack surface mapping and continuous monitoring. Tracks your exposed API endpoints over time, alerts on new exposures, and grades your API security posture. Built on our API Endpoint Discovery infrastructure.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$19/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
-          <a href="https://buy.stripe.com/8x25kF51Natn1bKcQU7wA1f" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+          <a href="https://buy.stripe.com/fZu6oJbqbatnaMkdUY7wA31" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
         </article>
         <article class="card anim-card">
           <h3>🛡️ BrandGuard — Live Now</h3>
           <p>Monitor the web for brand impersonation, phishing kits using your brand assets, and lookalike domains. Get alerts when your brand is being cloned or used in fraud campaigns. Built on our Phishing Kit Detector infrastructure.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$14/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
-          <a href="https://buy.stripe.com/14A5kFeCnfNHdYw3gk7wA1g" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+          <a href="https://buy.stripe.com/7sY00lfGreJDaMkcQU7wA32" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
         </article>
         <article class="card anim-card">
           <h3>💳 FraudCheck — Live Now</h3>
           <p>Analyze any URL or domain for checkout scam indicators before your customers get burned. Detects fraudulent payment pages, brand impersonation, and scam infrastructure. Built on phishing kit detection + dark web intelligence.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$9/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
-          <a href="https://buy.stripe.com/cNi6oJgKv30V5s00487wA1h" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+          <a href="https://buy.stripe.com/fZu9AVbqb593aMk4ko7wA33" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
         </article>
 
         <!-- NEW: Cert Alert, Subdomain Takeover, Secrets Scan -->
@@ -1543,21 +1525,21 @@
           <h3>🔐 Cert Alert — Live Now</h3>
           <p>SSL certificate expiration monitoring. Tracks your certs, alerts 30/7/1 day before expiry, and flags revoked or unexpectedly reissued certificates. Built on Certificate Transparency logs.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$9/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
-          <a href="https://buy.stripe.com/eVqdRbcuf9pj1bKcQU7wA1k" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+          <a href="https://buy.stripe.com/bJe5kF65RgRLbQo7wA7wA34" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
         </article>
 
         <article class="card anim-card">
           <h3>🕳️ Subdomain Takeover Scanner — Live Now</h3>
           <p>Automated dangling DNS detection. Finds expired cloud resources (AWS S3, GitHub Pages, Heroku, Azure, Netlify, Vercel) that attackers can hijack to take over your subdomains.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$14/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
-          <a href="https://buy.stripe.com/aFa5kFgKvcBv9IgeZ27wA1i" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+          <a href="https://buy.stripe.com/bJe9AV0Lxbxr6w43gk7wA35" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
         </article>
 
         <article class="card anim-card">
           <h3>🔑 Secrets Scan — Live Now</h3>
           <p>API key exposure detector. Scans URLs and public GitHub repos for exposed AWS keys, GitHub tokens, Stripe keys, JWTs, private keys, and more. Reports findings without storing actual secrets.</p>
           <p style="margin-top:8px;"><strong style="color:var(--accent)">$12/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
-          <a href="https://buy.stripe.com/8x2cN72TF30V8EcdUY7wA1j" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+          <a href="https://buy.stripe.com/28E9AV8dZatng6E5os7wA36" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
         </article>
       </div>
     </section>
