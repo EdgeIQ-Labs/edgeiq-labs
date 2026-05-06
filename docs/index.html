@@ -770,6 +770,53 @@ python3 edgeiq-alerting-system.py --configure --channel discord</code></pre>
       </div>
     </div>
 
+    <div class="tool-card" id="fix-it">
+      <h3>🔧 Fix-it Engine — Auto-remediate common security findings</h3>
+      <p>Fix-it takes scan findings and runs approved remediation actions automatically (like SSL renewals, header hardening, and GitHub issue creation) so your team can move from alert to action faster.</p>
+      <pre><code>curl -sL https://edgeiqlabs.com/dl/edgeiq-fixit-engine.py -o edgeiq-fixit-engine.py
+python3 edgeiq-fixit-engine.py --setup</code></pre>
+      <h4>What You Need</h4>
+      <ul>
+        <li><strong>Python 3</strong> — <a href="https://python.org">Download from python.org</a> if you don't have it</li>
+        <li><strong>At least one EdgeIQ scanner configured</strong> — SSL, headers, subdomain, API, etc.</li>
+        <li><strong>Optional integrations</strong> — Cloudflare API token, GitHub token, or webhook destination</li>
+        <li><strong>Internet connection</strong></li>
+      </ul>
+      <h4>Step-by-Step Setup</h4>
+      <ol>
+        <li>Download Fix-it with the curl command above</li>
+        <li>Run <code>python3 edgeiq-fixit-engine.py --setup</code> and choose your remediation modules</li>
+        <li>Set approval mode (<code>manual</code> or <code>auto</code>) and severity thresholds</li>
+        <li>Add credentials for modules you want to enable (Cloudflare, GitHub, Slack/Discord alerts)</li>
+        <li>Run a dry-run against recent findings before enabling live remediation</li>
+      </ol>
+      <h4>How to Run</h4>
+      <p>Run a simulation (no live changes):</p>
+      <pre><code>python3 edgeiq-fixit-engine.py --dry-run --input findings.json</code></pre>
+      <p>Execute approved remediations:</p>
+      <pre><code>python3 edgeiq-fixit-engine.py --apply --input findings.json</code></pre>
+      <p>Schedule automatic runs every hour:</p>
+      <pre><code>python3 edgeiq-fixit-engine.py --watch --interval 60</code></pre>
+      <div class="tier-box tier-free">
+        <div class="tier-label">✓ Free — What's Included</div>
+        <ul class="checklist">
+          <li>Dry-run mode with remediation previews</li>
+          <li>Manual approval workflow</li>
+          <li>1 remediation profile</li>
+        </ul>
+      </div>
+      <div class="tier-box tier-pro">
+        <div class="tier-label">★ Pro — Everything in Free, Plus</div>
+        <ul class="checklist pro">
+          <li>Automatic remediation mode</li>
+          <li>SSL auto-renew and header auto-fix modules</li>
+          <li>GitHub issue creation with severity tags</li>
+          <li>Multi-environment profiles (dev/staging/prod)</li>
+          <li>Audit log export (JSON/PDF)</li>
+        </ul>
+      </div>
+    </div>
+
     <div class="tool-card" id="market-watch">
       <h3>📈 Market Watch Bot Pro — Monitor competitor pricing and product changes automatically</h3>
       <p>Tracks competitor websites and alerts you when prices change, products are added or removed, or landing pages are updated.</p>
