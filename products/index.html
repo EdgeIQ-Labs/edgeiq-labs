@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/products/" />
+  <title>All Products — EdgeIQ Labs</title>
+  <meta name="description" content="Browse the complete EdgeIQ Labs catalog: lifetime security scanners, dashboards, white-label report tools, setup services, and micro-SaaS APIs." />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://edgeiqlabs.com/products/" />
+  <meta property="og:title" content="All Products — EdgeIQ Labs" />
+  <meta property="og:description" content="Browse the complete EdgeIQ Labs catalog: lifetime security scanners, dashboards, white-label report tools, setup services, and micro-SaaS APIs." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="All Products — EdgeIQ Labs" />
+  <meta name="twitter:description" content="Browse the complete EdgeIQ Labs catalog." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <!-- Structured data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edgeiqlabs.com/"},
+      {"@type": "ListItem", "position": 2, "name": "All Products", "item": "https://edgeiqlabs.com/products/"}
+    ]
+  }
+  </script>
+
+<style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    nav {
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(11,15,20,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 20px; flex-wrap: wrap; }
+    .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-logo-img { height: 52px; width: auto; border-radius: 10px; }
+    .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+    .nav-brand-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-brand-name span { color: var(--accent); }
+    .nav-brand-tag { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.95rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+
+    .audience-nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 65px;
+      z-index: 9;
+      padding: 10px 0;
+    }
+    .audience-pills {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .audience-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+    .audience-pill:hover, .audience-pill.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(61,217,255,0.08);
+    }
+    .audience-pill svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+
+    .hero { padding: 72px 0 50px; text-align: center; }
+    .hero-terminal {
+      max-width: 600px;
+      margin: 28px auto 0;
+      background: #0a1018;
+      border: 1px solid #1e3050;
+      border-radius: 12px;
+      padding: 22px 28px;
+      text-align: left;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.88rem;
+      color: #5aaa7a;
+      line-height: 1.8;
+      box-shadow: 0 0 32px rgba(61,217,255,0.06), 0 2px 12px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-terminal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #3dd9ff22, transparent);
+    }
+    .terminal-line { display: flex; gap: 10px; }
+    .terminal-prompt { color: #3dd9ff; flex-shrink: 0; }
+    .terminal-output { color: #7ab8a0; }
+    .terminal-cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: #3dd9ff;
+      animation: blink 1.1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .scan-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    .scan-counter-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--ok);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+    #live-counter {
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .hero-terminal .ok { color: #70f0a8; }
+    .hero-terminal .warn { color: #ffc400; }
+    .hero-terminal .fail { color: #ff5252; }
+    .hero-terminal .dim { color: #3d6080; }
+    .hero-badge-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .hero-badge-row .badge { margin-bottom: 0; }
+    .scan-counter { display: block; margin-top: 14px; }
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+    .service-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+    .service-card h3 { font-size: 1.05rem; margin-bottom: 10px; }
+    .service-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+    .feature-tag { display: inline-block; background: rgba(61,217,255,0.08); border: 1px solid rgba(61,217,255,0.2); color: var(--accent); font-size: 0.72rem; border-radius: 6px; padding: 3px 8px; margin: 3px 2px; font-family: monospace; }
+
+    h1 { font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1.15; margin-bottom: 14px; }
+    .hero p { color: var(--muted); max-width: 700px; margin: 0 auto 24px; }
+    .hero-audience-ctas { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 8px; }
+    .hero-audience-note { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .hero-proof-strip { margin: 18px auto 0; max-width: 920px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+    .hero-proof-item { background: rgba(18,25,35,0.85); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; text-align: left; font-size: 0.86rem; color: var(--muted); }
+    .hero-proof-item strong { color: var(--text); display:block; margin-bottom: 2px; font-size: 0.9rem; }
+    .trust-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 18px; max-width: 920px; margin: 14px auto 0; padding: 12px 14px; background: rgba(18,25,35,0.55); border: 1px solid var(--border); border-radius: 12px; }
+    .trust-item { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .trust-item .trust-icon { font-size: 0.95rem; line-height: 1; }
+    .trust-item strong { color: var(--text); font-weight: 600; }
+    @media (max-width: 560px) { .trust-bar { gap: 8px 14px; padding: 10px 12px; } .trust-item { font-size: 0.78rem; } }
+    .testimonials { padding: 56px 0 24px; border-top: 1px solid var(--border); margin-top: 40px; }
+    .testimonials h2 { text-align: center; font-size: 1.6rem; margin-bottom: 8px; }
+    .testimonials .section-sub { text-align: center; color: var(--muted); margin-bottom: 32px; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; max-width: 1100px; margin: 0 auto; }
+    .testimonial-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 14px; }
+    .testimonial-stars { color: #f0c83d; font-size: 0.95rem; letter-spacing: 1px; }
+    .testimonial-quote { color: var(--text); font-size: 0.95rem; line-height: 1.55; flex: 1; }
+    .testimonial-quote::before { content: "\201C"; color: var(--accent); font-size: 1.4rem; margin-right: 2px; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .testimonial-avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(61,217,255,0.12); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .testimonial-name { font-size: 0.88rem; color: var(--text); font-weight: 600; }
+    .testimonial-role { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .btn {
+      display: inline-block;
+      border-radius: 10px;
+      padding: 11px 18px;
+      text-decoration: none;
+      font-weight: 700;
+      margin: 6px;
+      border: 1px solid var(--border);
+    }
+    .btn-primary { background: var(--accent); color: #071018; border-color: transparent; }
+    .btn-secondary { color: var(--text); }
+
+    section { padding: 42px 0; }
+    h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    /* ── Scroll-triggered animations ── */
+    .anim-card {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .anim-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .anim-card:nth-child(1) { transition-delay: 0ms; }
+    .anim-card:nth-child(2) { transition-delay: 80ms; }
+    .anim-card:nth-child(3) { transition-delay: 160ms; }
+    .anim-card:nth-child(4) { transition-delay: 240ms; }
+    .anim-card:nth-child(5) { transition-delay: 320ms; }
+    .anim-card:nth-child(6) { transition-delay: 400ms; }
+    .anim-card:nth-child(n+7) { transition-delay: 480ms; }
+
+    .section-sub { color: var(--muted); margin-bottom: 22px; }
+
+    .grid { display: grid; gap: 16px; }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .card h3 { margin-bottom: 8px; font-size: 1.05rem; }
+    .card p { color: var(--muted); font-size: 0.95rem; }
+
+    .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .price { font-size: 2rem; font-weight: 800; margin: 4px 0 10px; }
+    .price span { font-size: 1rem; color: var(--muted); font-weight: 500; }
+    ul { margin-left: 18px; color: var(--muted); }
+    .highlight { border-color: #2d5e78; box-shadow: 0 0 0 1px #2d5e78 inset; }
+    .plan-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .plan-actions .btn { margin: 0; padding: 8px 12px; font-size: 0.86rem; }
+
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+    }
+    .note a { color: var(--accent); text-decoration: none; }
+
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+    .anim-card.catalog-card { cursor: pointer; }
+    .anim-card.catalog-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .skill-tag {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      padding: 3px 10px;
+      font-size: 0.76rem;
+      margin-bottom: 8px;
+    }
+    .roadmap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .roadmap-grid ul { margin-top: 8px; }
+    .roadmap-grid li { margin: 6px 0; }
+    .spoiler { color: var(--accent); font-weight: 700; }
+
+    .request-form {
+      display: grid;
+      gap: 10px;
+      max-width: 720px;
+    }
+    .request-form label { font-size: 0.9rem; color: var(--muted); }
+    .request-form input,
+    .request-form textarea {
+      width: 100%;
+      background: #0f1620;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+    .request-form textarea { min-height: 110px; resize: vertical; }
+
+    .contact a { color: var(--accent); text-decoration: none; }
+    footer {
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      text-align: center;
+      padding: 28px 0 40px;
+      margin-top: 26px;
+      font-size: 0.9rem;
+    }
+    footer a { display: inline-block; margin-bottom: 12px; }
+    footer p { margin: 0; }
+
+    /* Scanner tabs */
+    .scanner-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin: 18px 0 0;
+    }
+    .scan-tab {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .scan-tab:hover { border-color: var(--accent); color: var(--text); }
+    .scan-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #001a0d;
+      font-weight: 600;
+    }
+    .scan-form, .scan-results, .scan-error {
+      display: none;
+    }
+    .scan-form.active, .scan-results.active, .scan-error.active {
+      display: block;
+    }
+    /* Scanner */
+    #scanner {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+      margin: 28px auto;
+      max-width: 780px;
+    }
+    .scanner-container { text-align: center; }
+    #scanner h2 { margin-bottom: 8px; }
+    .scan-form { margin-top: 22px; }
+    .scan-input-row {
+      display: flex;
+      gap: 10px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .scan-input-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 12px 16px;
+      font-size: 0.95rem;
+    }
+    .scan-input-row input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .scan-btn {
+      white-space: nowrap;
+      padding: 12px 22px;
+      font-size: 0.95rem;
+    }
+    .scan-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+    .scan-results {
+      margin-top: 28px;
+      text-align: left;
+    }
+    .scan-grade-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+    .scan-grade {
+      width: 80px;
+      height: 80px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .scan-grade.grade-A { background: #00c853; color: #001a0d; }
+    .scan-grade.grade-B { background: #76ff03; color: #0d1a00; }
+    .scan-grade.grade-C { background: #ffc400; color: #1a1000; }
+    .scan-grade.grade-D { background: #ff6d00; color: #1a0800; }
+    .scan-grade.grade-F { background: #ff1744; color: #fff; }
+    .scan-grade.grade-? { background: var(--border); color: var(--muted); }
+    .scan-grade-info h3 { font-size: 1.3rem; margin-bottom: 4px; }
+    .scan-grade-info p { color: var(--muted); font-size: 0.9rem; }
+    .scan-findings { margin-bottom: 20px; }
+    .scan-gate-card { background: linear-gradient(180deg, rgba(61,217,255,0.06), rgba(61,217,255,0.02)); border: 1px solid rgba(61,217,255,0.35); border-radius: 12px; padding: 22px 22px 18px; margin: 14px 0; text-align: center; position: relative; }
+    .scan-gate-card::before { content: ""; position: absolute; left: 0; right: 0; top: -36px; height: 36px; background: linear-gradient(180deg, transparent, var(--card)); pointer-events: none; }
+    .scan-gate-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .scan-gate-card h3 { font-size: 1.05rem; margin: 0 0 6px; color: var(--text); }
+    .scan-gate-card p.scan-gate-sub { color: var(--muted); font-size: 0.88rem; margin: 0 0 14px; }
+    .scan-gate-form { display: flex; gap: 8px; max-width: 420px; margin: 0 auto 8px; }
+    .scan-gate-form input[type="email"] { flex: 1; background: #0d1420; border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 12px; font-size: 0.92rem; outline: none; }
+    .scan-gate-form input[type="email"]:focus { border-color: var(--accent); }
+    .scan-gate-form button { white-space: nowrap; background: var(--accent); color: #071018; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
+    .scan-gate-form button:hover { opacity: 0.9; }
+    .scan-gate-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .scan-gate-note { color: var(--muted); font-size: 0.78rem; margin: 0; }
+    .scan-gate-success { color: var(--ok); font-weight: 600; font-size: 0.92rem; margin: 8px 0 0; }
+    .scan-gate-error { color: #ff6b81; font-size: 0.85rem; margin: 6px 0 0; }
+    @media (max-width: 480px) { .scan-gate-form { flex-direction: column; } }
+    .finding {
+      display: flex;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      margin-bottom: 7px;
+      font-size: 0.9rem;
+    }
+    .finding-icon { flex-shrink: 0; font-size: 1.1rem; }
+    .finding.critical { background: rgba(255,23,68,0.15); color: #ff6b81; }
+    .finding.high { background: rgba(255,109,0,0.15); color: #ff8a50; }
+    .finding.medium { background: rgba(255,196,0,0.12); color: #ffcc02; }
+    .finding.low { background: rgba(117,255,3,0.10); color: #a0ff57; }
+    .finding.info { background: rgba(255,255,255,0.05); color: var(--muted); }
+    .scan-cta {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .scan-cta p { margin: 0; font-size: 0.92rem; }
+    .scan-error {
+      margin-top: 20px;
+      padding: 14px;
+      background: rgba(255,23,68,0.12);
+      border: 1px solid rgba(255,23,68,0.3);
+      border-radius: 8px;
+      color: #ff6b81;
+      font-size: 0.9rem;
+    }
+    .severity-critical { color: #ff1744; font-weight: 700; }
+    .severity-high { color: #ff6d00; font-weight: 700; }
+    .severity-medium { color: #ffc400; font-weight: 700; }
+    .severity-low { color: #76ff03; }
+    .severity-info { color: var(--muted); }
+  
+    /* ── FAQ Section ── */
+    .faq-section { padding: 52px 0 40px; }
+    .faq-grid { display: flex; flex-direction: column; gap: 8px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      font-family: inherit;
+      gap: 16px;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question svg { flex-shrink: 0; width: 18px; height: 18px; transition: transform 0.2s ease; }
+    .faq-item.open .faq-question svg { transform: rotate(180deg); }
+    .faq-item.open .faq-question { color: var(--accent); }
+    .faq-answer {
+      display: none;
+      padding: 0 20px 18px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .faq-item.open .faq-answer { display: block; }
+
+    /* ── Newsletter Section ── */
+    #newsletter {
+      padding: 52px 0 40px;
+    }
+    .newsletter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .newsletter-card h2 {
+      font-size: 1.55rem;
+      margin-bottom: 10px;
+    }
+    .newsletter-sub {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-bottom: 24px;
+      line-height: 1.55;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 10px;
+      max-width: 480px;
+      margin: 0 auto 12px;
+    }
+    .newsletter-form input[type="email"] {
+      flex: 1;
+      background: #0d1420;
+      border: 1px solid #233142;
+      border-radius: 10px;
+      color: var(--text);
+      padding: 11px 14px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .newsletter-form input[type="email"]::placeholder { color: var(--muted); }
+    .newsletter-form input[type="email"]:focus { border-color: var(--accent); }
+    .newsletter-form button {
+      white-space: nowrap;
+      background: var(--accent);
+      color: #071018;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .newsletter-form button:hover { opacity: 0.88; }
+    .newsletter-note {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    @media (max-width: 480px) {
+      .newsletter-form { flex-direction: column; }
+      .newsletter-card { padding: 28px 20px; }
+    }
+
+    /* ── Billing Toggle ─────────────────────────────── */
+    .billing-toggle-section {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .billing-toggle-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .billing-toggle-label {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
+    .billing-toggle-label.active {
+      color: var(--text);
+    }
+    .billing-toggle {
+      width: 52px;
+      height: 28px;
+      border-radius: 14px;
+      background: #1e4060;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .billing-toggle[aria-checked="true"] {
+      background: var(--ok, #70f0a8);
+    }
+    .billing-toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: white;
+      transition: transform 0.2s;
+      pointer-events: none;
+    }
+    .billing-toggle[aria-checked="true"] .billing-toggle-thumb {
+      transform: translateX(24px);
+    }
+    .save-badge {
+      background: rgba(112,240,168,0.15);
+      color: var(--ok, #70f0a8);
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    .billing-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+</style>
+
+  <style>
+    .products-hero { padding: 56px 0 24px; text-align: center; }
+    .products-hero h1 { font-size: clamp(2rem, 5vw, 2.8rem); margin-bottom: 12px; }
+    .products-hero p { color: var(--muted); max-width: 660px; margin: 0 auto 18px; }
+    .products-hero .tag-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+    .products-hero .tag-row a { display: inline-block; background: rgba(18,25,35,0.85); border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; color: var(--muted); font-size: 0.84rem; text-decoration: none; }
+    .products-hero .tag-row a:hover { color: var(--text); border-color: var(--accent); }
+    .products-hero .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-size: 0.86rem; margin-bottom: 14px; }
+    .products-hero .back-link:hover { color: var(--accent); }
+    .smb-promo { background: linear-gradient(180deg, rgba(112,240,168,0.06), rgba(112,240,168,0.02)); border: 1px solid rgba(112,240,168,0.3); border-radius: 14px; padding: 18px 22px; margin: 24px auto 32px; max-width: 720px; text-align: center; }
+    .smb-promo strong { color: #a4e070; }
+    .smb-promo a { color: var(--accent); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="nav-brand" href="/">
+        <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+        <div class="nav-wordmark">
+          <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+          <div class="nav-brand-tag">Security Intelligence</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/#scanner">Free Scanner</a>
+        <a href="/#smb-essentials">SMB Plans</a>
+        <a href="/products/" class="nav-active">All Products</a>
+        <a href="/blog/">Blog</a>
+        <a href="/docs/">Docs</a>
+        <a href="/#contact">Contact</a>
+        <a class="nav-cta" href="/#smb-essentials">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="products-hero">
+      <a href="/" class="back-link">← Back to home</a>
+      <h1>All EdgeIQ Labs Tools</h1>
+      <p>The complete catalog. Lifetime tools for security pros, dashboards for agencies, white-label reports for consultants, setup services, and developer APIs.</p>
+      <div class="tag-row">
+        <a href="#lifetime-plans">🔍 Lifetime Tools</a>
+        <a href="#one-time">🔔 One-Time Tools</a>
+        <a href="#fixit">🔧 Fix-it</a>
+        <a href="#dashboard">📊 Dashboards</a>
+        <a href="#white-label">📄 White-Label</a>
+        <a href="#setup-services">🦞 Setup Services</a>
+        <a href="#micro-saas">⚡ Micro-SaaS APIs</a>
+      </div>
+    </section>
+
+    <div class="smb-promo">
+      <p style="margin:0;font-size:0.95rem;">Looking for managed monthly protection? <strong>SMB Essentials ($29/mo)</strong> and <strong>SMB Plus ($49/mo)</strong> are on the homepage with a <strong>14-day free trial</strong>. <a href="/#smb-essentials">See SMB plans →</a></p>
+    </div>
+
+    <section id="pricing">
+      <div class="billing-toggle-section">
+        <div class="billing-toggle-wrap">
+          <span class="billing-toggle-label active" data-billing="monthly">Monthly</span>
+          <button class="billing-toggle" id="billingToggle" aria-label="Toggle annual billing" aria-checked="false">
+            <span class="billing-toggle-thumb"></span>
+          </button>
+          <span class="billing-toggle-label" data-billing="annual">Annual <span class="save-badge">Save 20%</span></span>
+        </div>
+        <p class="billing-note" id="billingNote">Switch to annual and save on any tool — billed once, owned 12 months</p>
+      </div>
+
+      <h2 id="lifetime-plans">Lifetime Plans — Buy Once, Own It</h2>
+      <p class="section-sub">All tools available as a one-time lifetime purchase. No recurring fees, no cancellations, no surprises. Optional lower monthly plan if you prefer to rent.</p>
+      <div class="pricing">
+
+        <article class="card anim-card">
+          <h3>🔍 XSS Scanner Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/bJebJ3am70SNdYw9EI7wA1J" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/14A5kF79VeJD1bKeZ27wA1W" data-annual-link="https://buy.stripe.com/6oU6oJfGr9pjcUsbMQ7wA2i" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">40+ payloads, WAF bypass, blind XSS detection, screenshot evidence.</p>
+          <ul style="margin-top:8px;"><li>40+ payloads & WAF bypass</li><li>Blind XSS detection</li><li>Security header analysis</li><li>JSON + HTML output</li><li>All Free features included</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-xss-scanner" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🌐 Network Scanner Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/5kQbJ39i39pjcUseZ27wA1K" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $49</a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/7sYaEZ51N0SN3jSaIM7wA13" data-annual-link="https://buy.stripe.com/aFa28tcufbxrbQo3gk7wA2l" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Deep port scan, CVE matching, OS fingerprinting, traceroute.</p>
+          <ul style="margin-top:8px;"><li>Port scan 1–65535</li><li>Service version detection</li><li>CVE matching</li><li>SSL/TLS grading</li><li>JSON + HTML reports</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-network-scanner" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🎯 Subdomain Hunter Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/dRm8wRcuf7hb3jS0487wA1V" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/14A00lgKv8lf3jScQU7wA26" data-annual-link="https://buy.stripe.com/3cIeVf51N8lfaMk5os7wA2t" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Passive CT scan, takeover detection, DNS zone transfer checks.</p>
+          <ul style="margin-top:8px;"><li>Certificate Transparency scans</li><li>Subdomain takeover detection</li><li>DNS zone transfer checks</li><li>Bruteforce wordlist</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-subdomain-hunter" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🔒 SSL Watcher Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/00wbJ3gKv30V8Ecg367wA1L" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $19 <span style='font-size:0.7em;color:var(--accent)'>( Promo )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/aFa9AV51N8lf2fOcQU7wA19" data-annual-link="https://buy.stripe.com/eVq00ldyj7hb1bK8AE7wA2m" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Certificate expiry tracking, security header analysis, WHOIS.</p>
+          <ul style="margin-top:8px;"><li>Certificate expiry timeline</li><li>CSP, HSTS analysis</li><li>WHOIS domain tracking</li><li>JSON + HTML reports</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-ssl-watcher" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>💉 SQL Injection Scanner Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/28EfZj1PB0SN1bKg367wA1M" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/bJe8wR0LxcBv8Ec7wA7wA28" data-annual-link="https://buy.stripe.com/9B67sN51N9pj07G3gk7wA2j" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Boolean blind + time-based detection, database extraction.</p>
+          <ul style="margin-top:8px;"><li>Boolean blind + time-based</li><li>UNION SELECT extraction</li><li>Multiple parameter scanning</li><li>JSON export</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-sql-injection-scanner" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🔐 OAuth Security Checker Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/9B64gB9i330VaMkbMQ7wA1N" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/14A8wRgKv8lfcUs6sw7wA1Y" data-annual-link="https://buy.stripe.com/8x2dRbbqbfNH2fObMQ7wA2k" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Redirect URI + state checks, PKCE detection, scope analysis.</p>
+          <ul style="margin-top:8px;"><li>Redirect URI + state checks</li><li>PKCE detection</li><li>Scope permission analysis</li><li>JSON export</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-oauth-security-checker" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🕳️ Dark Web Credential Checker Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/5kQ9AVcufbxr6w4bMQ7wA1O" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/bJe14p65RfNH9Ig0487wA1Z" data-annual-link="https://buy.stripe.com/fZubJ31PBeJD3jSeZ27wA2n" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Breach search, password hash detection, exposed data classification.</p>
+          <ul style="margin-top:8px;"><li>50 email lookups/mo</li><li>Username breach search</li><li>Exposed data classification</li><li>Password hash detection</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-dark-web-credential-checker" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🦠 Malware Signature Scanner Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/3cIfZj65R6d75s00487wA1P" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/3cIbJ3bqb5938Ec18c7wA20" data-annual-link="https://buy.stripe.com/aFa3cx2TFgRL3jS7wA7wA2o" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">YARA rules, PE header analysis, URL/domain reputation.</p>
+          <ul style="margin-top:8px;"><li>50 file scans/mo</li><li>Full YARA ruleset (200+)</li><li>PE header + entropy analysis</li><li>String extraction</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-malware-signature-scanner" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>📧 Email Header Analyzer Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/9B65kF3XJ1WR8EcaIM7wA1Q" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/4gM00ldyjbxr2fO4ko7wA21" data-annual-link="https://buy.stripe.com/5kQ5kF51NcBvcUsbMQ7wA2p" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">SPF/DKIM/DMARC analysis, from/reply-to mismatch detection.</p>
+          <ul style="margin-top:8px;"><li>50 header analyses/mo</li><li>SPF/DKIM/DMARC full analysis</li><li>From/Reply-To mismatch</li><li>IP reputation lookup</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-email-header-analyzer" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🎣 Phishing Kit Detector Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/00waEZ8dZ7hb07GeZ27wA1R" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/14AcN765R0SNf2Ag367wA22" data-annual-link="https://buy.stripe.com/5kQ7sN51N1WRcUs8AE7wA2u" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Brand impersonation detection, JS analysis, infrastructure fingerprinting.</p>
+          <ul style="margin-top:8px;"><li>50 URL/scans/mo</li><li>17 brand impersonation checks</li><li>JavaScript analysis</li><li>Stolen branding detection</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-phishing-kit-detector" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🔎 API Endpoint Discovery Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/9B67sNeCncBv8Ec3gk7wA1S" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/dRm28tbqbgRLaMkbMQ7wA23" data-annual-link="https://buy.stripe.com/bJe5kFfGrdFzbQo5os7wA2q" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Path brute-forcing, JS endpoint extraction, Swagger discovery.</p>
+          <ul style="margin-top:8px;"><li>50 target scans/mo</li><li>200+ path brute-forcing</li><li>JavaScript endpoint extraction</li><li>Swagger/OpenAPI discovery</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-api-endpoint-discovery" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>📡 Lead Researcher Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/8x2fZjgKv30V8Ec8AE7wA1T" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/eVq8wRam70SN7A88AE7wA24" data-annual-link="https://buy.stripe.com/cNi4gB51N8lf3jS0487wA2r" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Tech stack, industry, size, social links, recent news.</p>
+          <ul style="margin-top:8px;"><li>50 lookups/mo</li><li>Full tech stack enrichment</li><li>Social links + contact data</li><li>CSV export</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-lead-researcher" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🏪 Business Listing Aggregator Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/5kQcN7fGrbxr3jSbMQ7wA1U" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary billing-monthly-btn" href="https://buy.stripe.com/fZu00lbqbgRLbQo6sw7wA25" data-annual-link="https://buy.stripe.com/7sY3cx9i3cBv8Ec7wA7wA2s" data-monthly-text="or $19/mo" data-annual-text="or $182/yr" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Cross-platform consistency checks, weekly reports.</p>
+          <ul style="margin-top:8px;"><li>10 businesses monitored</li><li>Google Maps, Yelp, BBB, Facebook</li><li>Weekly consistency checks</li><li>JSON + HTML reports</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-business-listing-aggregator" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>📄 Security Report Generator Pro</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/3cI8wR51N6d7g6EdUY7wA0W" target="_blank" rel="noopener" style="background:var(--ok);color:#071018;font-weight:800;">Lifetime — $39 <span style='font-size:0.65em;color:var(--accent)'>( Promo: $19 )</span></a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/28EfZj9i35938EcbMQ7wA14" target="_blank" rel="noopener" style="font-size:0.8rem;">or $19/mo</a>
+          </div>
+          <p style="color:var(--muted);font-size:0.88rem;">Monthly PDF/HTML security digest across all tools.</p>
+          <ul style="margin-top:8px;"><li>Monthly PDF/HTML digest</li><li>XSS + Network + SSL aggregation</li><li>Delivered by email/Telegram</li><li>Banded reports</li></ul>
+          
+          <div class="plan-actions" style="margin-top:10px;">
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-security-report-generator" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+      </div>
+
+      <h2 style="margin-top:40px;">One-Time Tools</h2>
+      <p class="section-sub" style="margin-bottom:16px;">Pay once, own it forever. No recurring fees.</p>
+      <div class="pricing">
+
+        <article class="card anim-card">
+          <h3>🔔 Alerting System Pro</h3>
+          <div class="price">$19 <span style="font-size:0.7em">one-time</span></div>
+          <ul>
+            <li>Unlimited channels and alerts</li>
+            <li>Severity tagging</li>
+            <li>Alert aggregation</li>
+            <li>Deduplication and rate limiting</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/bJeaEZ0Lxbxr5s04ko7wA29" target="_blank" rel="noopener">Buy Alerting Pro — One-Time</a>
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-alerting-system" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+        <article class="card anim-card">
+          <h3>📈 Market Watch Bot Pro</h3>
+          <div class="price">$19 <span style="font-size:0.7em">one-time</span></div>
+          <ul>
+            <li>5-minute crypto market checks</li>
+            <li>Funding rates, momentum, Bollinger bands</li>
+            <li>Unusual volume spike detection</li>
+            <li>Telegram or WhatsApp alerts</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/cNi14p2TF1WRaMkeZ27wA2a" target="_blank" rel="noopener">Buy Market Watch Pro — One-Time</a>
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-market-watch-bot" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+        <article class="card anim-card">
+          <h3>🏷️ Competitor Price Intelligence Pro</h3>
+          <div class="price">$19 <span style="font-size:0.7em">one-time</span></div>
+          <ul>
+            <li>Multiple watch targets</li>
+            <li>Price and availability change detection</li>
+            <li>JSON + HTML reports</li>
+            <li>Telegram or WhatsApp alerts</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/8x2aEZbqb8lff2A7wA7wA2b" target="_blank" rel="noopener">Buy Price Intel Pro — One-Time</a>
+            <a href="https://clawhub.ai/EdgeIQ-Labs/edgeiq-competitor-price-intelligence" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem;">View on ClawHub →</a>
+          </div>
+        </article>
+
+      </div>
+
+      <h2 id="fixit" style="margin-top:40px;">🔧 EdgeIQ Fix-it — Auto-Fix Engine</h2>
+      <p class="section-sub" style="margin-bottom:16px;">Turn your EdgeIQ monitoring alerts into automatic remediations. One subscription, any tool.</p>
+      <div class="pricing">
+
+        <article class="card anim-card" style="border-color:#2b7a4b;display:flex;flex-direction:column;">
+          <h3>🔧 Fix-it Pro <span style="color:var(--ok);font-size:0.88rem;">$9/mo add-on</span></h3>
+          <p style="color:var(--muted);font-size:0.88rem;">Works alongside any EdgeIQ tool. Auto-fix up to 10 issues/month.</p>
+          <ul>
+            <li>✅ <strong>Auto SSL Renew</strong> — auto-renews expiring certs via Cloudflare Origin CA</li>
+            <li>✅ <strong>Header Auto-Fix</strong> — deploys CSP, HSTS, X-Frame-Options automatically</li>
+            <li>✅ <strong>GitHub Issue Creator</strong> — files issues with severity + remediation steps</li>
+            <li>✅ Stack on top of any EdgeIQ tool</li>
+            <li>📈 Unlimited fixes with annual plan</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/aFa14pgKvatn8EcdUY7wA37" target="_blank" rel="noopener">Get Fix-it — $9/mo →</a>
+            <a class="btn btn-secondary" href="/docs/fix-it-engine.html" style="font-size:0.8rem;">See How It Works →</a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/cNifZj9i35932fO9EI7wA38" target="_blank" rel="noopener" style="font-size:0.8rem;">or $99/yr unlimited →</a>
+          </div>
+        </article>
+
+      </div>
+
+      <div id="fixit-how-it-works" class="card anim-card" style="margin-top:16px;border-color:#2b7a4b;">
+        <h3>How Fix-it Works</h3>
+        <p style="color:var(--muted);margin-bottom:10px;">A simple 4-step flow that turns findings into action:</p>
+        <ol style="margin-left:18px;color:var(--muted);display:grid;gap:6px;">
+          <li><strong>Detect:</strong> EdgeIQ scanners identify issues (SSL, headers, endpoint risk, etc.).</li>
+          <li><strong>Classify:</strong> Findings are scored by severity so urgent items are prioritized first.</li>
+          <li><strong>Remediate:</strong> Fix-it runs approved auto-actions (SSL renew, header hardening, issue creation).</li>
+          <li><strong>Verify:</strong> Re-check confirms the fix and logs before/after evidence.</li>
+        </ol>
+      </div>
+
+
+
+      
+      <h2 style="margin-top:40px;">SMB Security Dashboard Pro</h2>
+      <p class="section-sub" style="margin-bottom:16px;">Free score preview stays open. Full dashboard analytics and client workflows are paid.</p>
+      <div class="pricing">
+
+        <article class="card anim-card">
+          <h3>🔓 Dashboard Pro</h3>
+          <div class="price">$29 <span>/month</span></div>
+          <ul>
+            <li>Full summary + alerts + recommendations</li>
+            <li>Single-tenant dashboard token</li>
+            <li>Email support</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener">Unlock Pro</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="border-color:#3a5c2a; box-shadow:0 0 0 1px rgba(112,240,168,0.2) inset; position:relative;">
+          <span style="position:absolute;top:-11px;right:14px;background:#70f0a8;color:#052012;border-radius:999px;padding:4px 10px;font-size:0.72rem;font-weight:800;">BEST FOR MSPs</span>
+          <h3>🏢 Dashboard Agency</h3>
+          <div class="price">$79 <span>/month</span></div>
+          <ul>
+            <li>Everything in Pro</li>
+            <li>Higher request allowance</li>
+            <li>Priority support</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/28E00l1PB44ZbQocQU7wA1B" target="_blank" rel="noopener">Start Agency</a>
+          </div>
+        </article>
+
+      </div>
+
+<h2 style="margin-top:40px;">White-Label Security Report Builder</h2>
+      <p class="section-sub" style="margin-bottom:16px;">Built for consultants and MSPs who want branded deliverables and recurring client reporting revenue.</p>
+      <div class="pricing">
+
+        <article class="card anim-card">
+          <h3>🧰 Solo Consultant</h3>
+          <div class="price">$49 <span>/month</span></div>
+          <ul>
+            <li>Up to 10 branded reports / month</li>
+            <li>Custom logo + business name</li>
+            <li>PDF export + sharable link</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/5kQcN7bqb593g6E0487wA1x" target="_blank" rel="noopener">Start Solo</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="border-color:#3a5c2a; box-shadow:0 0 0 1px rgba(112,240,168,0.2) inset; position:relative;">
+          <span style="position:absolute;top:-11px;right:14px;background:#70f0a8;color:#052012;border-radius:999px;padding:4px 10px;font-size:0.72rem;font-weight:800;">BEST VALUE</span>
+          <h3>🏢 Agency / MSP</h3>
+          <div class="price">$149 <span>/month</span></div>
+          <ul>
+            <li>Up to 50 branded reports / month</li>
+            <li>Multi-client workspace</li>
+            <li>Priority support + faster generation queue</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/7sY7sN1PBfNH1bKcQU7wA1y" target="_blank" rel="noopener">Start Agency</a>
+          </div>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🚀 Pro Agency</h3>
+          <div class="price">$299 <span>/month</span></div>
+          <ul>
+            <li>Up to 150 branded reports / month</li>
+            <li>Advanced template controls</li>
+            <li>Dedicated support lane</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/00w5kFam70SN8Ec6sw7wA1z" target="_blank" rel="noopener">Start Pro Agency</a>
+          </div>
+        </article>
+
+      </div>
+
+      <h2 style="margin-top:40px;">OpenClaw Setup Services</h2>
+      <p class="section-sub" style="margin-bottom:16px;">Separate offering from SMB monitoring: remote/VPS OpenClaw installs with optional ongoing managed service.</p>
+      <div class="pricing">
+
+        <article class="card anim-card">
+          <h3>🦞 OpenClaw Starter</h3>
+          <div class="price">$99 <span>/one-time</span></div>
+          <ul>
+            <li>Remote or VPS OpenClaw installation</li>
+            <li>Core configuration and hardening</li>
+            <li>1 integration wired up</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/dRmeVfeCn9pj7A8bMQ7wA06" target="_blank" rel="noopener">Buy Starter</a>
+            <a href="#contact" class="btn btn-secondary" style="font-size:0.8rem;">Ask a Question</a>
+          </div>
+        </article>
+        <article class="card anim-card">
+          <h3>🦞 OpenClaw Pro Setup</h3>
+          <div class="price">$249 <span>/one-time</span></div>
+          <ul>
+            <li>Full OpenClaw setup for remote/VPS</li>
+            <li>Integrations + automations configured</li>
+            <li>3 custom skills wired up</li>
+            <li>Walkthrough and handoff included</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/bJebJ3am71WR8Ec0487wA07" target="_blank" rel="noopener">Buy Pro Setup</a>
+            <a href="#contact" class="btn btn-secondary" style="font-size:0.8rem;">Custom Scope</a>
+          </div>
+        </article>
+        <article class="card anim-card">
+          <h3>🦞 OpenClaw Managed</h3>
+          <div class="price">$49 <span>/month</span></div>
+          <ul>
+            <li>Ongoing updates and config changes</li>
+            <li>New skill setup and maintenance</li>
+            <li>Priority support</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://buy.stripe.com/aFa6oJ65Rbxr7A8aIM7wA08" target="_blank" rel="noopener">Buy Managed</a>
+            <a href="#contact" class="btn btn-secondary" style="font-size:0.8rem;">Talk to Us</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+        <section id="microsaas"<section id="microsaas" style="border-top: 1px solid var(--border); padding-top: 42px;">
+      <h2 id="micro-saas">Micro-SaaS Products</h2>
+      <p class="section-sub">Standalone subscription tools — each solving one problem, built on top of our existing infrastructure.</p>
+      <div class="grid grid-3">
+        <article class="card anim-card">
+          <h3>🔗 Data Enrichment API</h3>
+          <p>Developer API for enriching company and contact data from email, domain, or phone. Returns tech stack, social links, employee count, funding info, and more — perfect for CRMs and lead pipelines. Free tier: 50 calls/mo. Pro: 5,000 calls/mo.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$19/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/data-enrichment-api" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a>
+          <a href="https://buy.stripe.com/3cI6oJ9i3atn4nW7wA7wA2U" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>🔔 sub.alerts</h3>
+          <p>Monitor your domains via Certificate Transparency logs. Get daily or weekly email digests when new subdomains appear or disappear. Built on Subdomain Hunter infrastructure. Free tier: 1 domain, weekly. Pro: 10 domains, daily alerts, webhooks.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/sub-alerts" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/bJe6oJfGr0SNaMk3gk7wA2V" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>🌐 Domain Expiry Monitor</h3>
+          <p>WHOIS-based domain registration expiry tracking. Know when your domains expire before they do. Color-coded urgency, registrar info, and email alerts. Free tier: 3 domains. Pro: 10 domains, full WHOIS data, daily expiry alerts.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/domain-expiry" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/eVq3cx1PB1WR8Ec18c7wA2W" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>🔍 leak.scan</h3>
+          <p>Personal data breach exposure scanner covering email, phone, address, SSN fragments, DOB, and national IDs. Deterministic results so scans are consistent. Free tier: 3 scans/mo. Pro: unlimited scans, full exposure report, breach source list.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/leak-scan" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/aFadRbeCnbxrf2AdUY7wA2X" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>📸 Screenshot API</h3>
+          <p>Capture PNG/JPEG screenshots of any URL via API. Built on Playwright. Free tier: 100 screenshots/mo with fixed dimensions. Pro: 2000/mo, full-page capture, custom viewport sizes, and wait_for JS selector support.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$19/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/screenshot-api" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/aFa7sN3XJfNH2fOdUY7wA2Y" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>🛡️ headers.check</h3>
+          <p>HTTP security headers scanner — analyzes HSTS, CSP, X-Frame-Options, and more. Get an A-F security grade with detailed breakdown. Free tier: 20 scans/day. Pro: unlimited scans + detailed remediation guide.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/headers-check" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/5kQaEZcufcBv07GaIM7wA2Z" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>⏱️ uptime.check</h3>
+          <p>URL uptime monitoring with email and webhook alerts. Checks if your sites stay up with HTTP HEAD requests. Free tier: 3 monitors, daily checks. Pro: 20 monitors, 5-minute checks, webhook alerts, and 90-day history.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$5/mo Pro</strong> · <a href="https://clawhub.ai/EdgeIQ-Labs/uptime-check" target="_blank" style="color:var(--accent);font-size:0.9rem;">View on ClawHub →</a></p>
+          <a href="https://buy.stripe.com/14AbJ31PB44Z9IgaIM7wA30" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Pro →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>🗺️ SurfaceMap — Live Now</h3>
+          <p>Automated API attack surface mapping and continuous monitoring. Tracks your exposed API endpoints over time, alerts on new exposures, and grades your API security posture. Built on our API Endpoint Discovery infrastructure.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$19/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
+          <a href="https://buy.stripe.com/fZu6oJbqbatnaMkdUY7wA31" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>🛡️ BrandGuard — Live Now</h3>
+          <p>Monitor the web for brand impersonation, phishing kits using your brand assets, and lookalike domains. Get alerts when your brand is being cloned or used in fraud campaigns. Built on our Phishing Kit Detector infrastructure.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$14/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
+          <a href="https://buy.stripe.com/7sY00lfGreJDaMkcQU7wA32" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+        </article>
+        <article class="card anim-card">
+          <h3>💳 FraudCheck — Live Now</h3>
+          <p>Analyze any URL or domain for checkout scam indicators before your customers get burned. Detects fraudulent payment pages, brand impersonation, and scam infrastructure. Built on phishing kit detection + dark web intelligence.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$9/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
+          <a href="https://buy.stripe.com/dRm28t8dZfNH6w43gk7wA3c" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+        </article>
+
+        <!-- NEW: Cert Alert, Subdomain Takeover, Secrets Scan -->
+        <article class="card anim-card">
+          <h3>🔐 Cert Alert — Live Now</h3>
+          <p>SSL certificate expiration monitoring. Tracks your certs, alerts 30/7/1 day before expiry, and flags revoked or unexpectedly reissued certificates. Built on Certificate Transparency logs.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$9/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
+          <a href="https://buy.stripe.com/bJe5kF65RgRLbQo7wA7wA34" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🕳️ Subdomain Takeover Scanner — Live Now</h3>
+          <p>Automated dangling DNS detection. Finds expired cloud resources (AWS S3, GitHub Pages, Heroku, Azure, Netlify, Vercel) that attackers can hijack to take over your subdomains.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$14/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
+          <a href="https://buy.stripe.com/7sYeVfdyj6d75s0dUY7wA3d" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+        </article>
+
+        <article class="card anim-card">
+          <h3>🔑 Secrets Scan — Live Now</h3>
+          <p>API key exposure detector. Scans URLs and public GitHub repos for exposed AWS keys, GitHub tokens, Stripe keys, JWTs, private keys, and more. Reports findings without storing actual secrets.</p>
+          <p style="margin-top:8px;"><strong style="color:var(--accent)">$12/mo Pro</strong> · <span style="color:#00c853;font-size:0.82rem;">● Live</span></p>
+          <a href="https://buy.stripe.com/aFa14pcuf8lf3jSg367wA3e" target="_blank" class="btn btn-secondary" style="margin-top:8px;font-size:0.85rem;">Buy Now →</a>
+        </article>
+      </div>
+
+
+    </section>
+
+    <!-- Footer back to home -->
+    <section style="padding:48px 0;text-align:center;border-top:1px solid var(--border);margin-top:40px;">
+      <p style="color:var(--muted);">Need help choosing? <a href="/#contact" style="color:var(--accent);">Talk to support →</a></p>
+      <p style="margin-top:8px;"><a href="/" style="color:var(--muted);font-size:0.9rem;">← Back to homepage</a></p>
+    </section>
+  </main>
+
+<script>
+// ── Billing Toggle ──────────────────────────────────────────────────────────
+;(function() {
+  var toggle = document.getElementById('billingToggle');
+  var labels = document.querySelectorAll('.billing-toggle-label');
+  var note   = document.getElementById('billingNote');
+  var btns   = document.querySelectorAll('.billing-monthly-btn');
+  var priceFlips = document.querySelectorAll('.billing-price-flip');
+  if (!toggle) return;
+  var isAnnual = false;
+  function applyBilling() {
+    toggle.setAttribute('aria-checked', isAnnual ? 'true' : 'false');
+    labels.forEach(function(lbl) {
+      var which = lbl.getAttribute('data-billing');
+      lbl.classList.toggle('active', (isAnnual ? which === 'annual' : which === 'monthly'));
+    });
+    if (note) {
+      note.textContent = isAnnual
+        ? 'Annual billing — billed once for 12 months. Save vs monthly.'
+        : 'Switch to annual and save on any tool — billed once, owned 12 months';
+    }
+    btns.forEach(function(btn) {
+      if (isAnnual) {
+        var annLink = btn.getAttribute('data-annual-link');
+        if (annLink) btn.href = annLink;
+        var annText = btn.getAttribute('data-annual-text');
+        if (annText) btn.textContent = annText;
+      } else {
+        var monLink = btn.getAttribute('data-monthly-link');
+        if (monLink) btn.href = monLink;
+        var monText = btn.getAttribute('data-monthly-text');
+        if (monText) btn.textContent = monText;
+      }
+    });
+    priceFlips.forEach(function(span) {
+      var key = isAnnual ? 'data-annual-text' : 'data-monthly-text';
+      var t = span.getAttribute(key);
+      if (t) span.textContent = t;
+    });
+  }
+  btns.forEach(function(btn) { btn.setAttribute('data-monthly-link', btn.href); });
+  toggle.addEventListener('click', function() { isAnnual = !isAnnual; applyBilling(); });
+  labels.forEach(function(lbl) {
+    lbl.addEventListener('click', function() {
+      isAnnual = (lbl.getAttribute('data-billing') === 'annual');
+      applyBilling();
+    });
+  });
+})();
+</script>
+</body>
+</html>
