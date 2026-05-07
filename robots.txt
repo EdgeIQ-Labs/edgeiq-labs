@@ -1,0 +1,9 @@
+# https://edgeiqlabs.com/robots.txt
+User-agent: *
+Allow: /
+
+# Block any internal endpoints (none currently, but reserved)
+Disallow: /api/
+Disallow: /*.json$
+
+Sitemap: https://edgeiqlabs.com/sitemap.xml
