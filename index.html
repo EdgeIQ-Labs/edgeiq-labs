@@ -29,6 +29,115 @@
 
   <!-- Theme color for mobile browsers -->
   <meta name="theme-color" content="#0b0f14" />
+
+  <!-- Structured data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "EdgeIQ Labs",
+    "alternateName": "EdgeIQ",
+    "url": "https://edgeiqlabs.com",
+    "logo": "https://edgeiqlabs.com/favicon.png",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "description": "Cybersecurity monitoring, scanning, and reporting tools for small businesses, security professionals, and developers.",
+    "sameAs": [
+      "https://edgeiqlabs.substack.com",
+      "https://discord.gg/PaP7nsFUJT"
+    ]
+  }
+  </script>
+
+  <!-- Structured data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "EdgeIQ Labs",
+    "url": "https://edgeiqlabs.com",
+    "description": "Cybersecurity monitoring for small business — practical, action-focused security tools.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": "https://edgeiqlabs.com/favicon.png"
+    }
+  }
+  </script>
+
+  <!-- Structured data: FAQPage (mirrors visible FAQ section) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is my data safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We run read-only scans against your own infrastructure — no credentials are stored, no data leaves your network. Scan results are yours. We don't sell, share, or publicize any findings from your scans. Full privacy policy available on request."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need technical knowledge to use this?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Our tools are built to surface clear, prioritized findings — not raw log files. The SMB dashboard in particular is designed for business owners who are technically literate but don't have a security team. If you can read a spreadsheet, you can act on these reports."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens after I buy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lifetime purchases receive access credentials and a welcome walkthrough within 24–48 hours. For subscription plans, you get instant Stripe checkout and dashboard access. Managed service clients receive onboarding scheduling. All purchases include documentation and setup support — no extra charge."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I cancel anytime?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Monthly subscriptions can be cancelled before the next billing cycle with no penalties. Lifetime purchases are one-time — no renewal, no hidden fees."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you store my scan results?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Results are available in your dashboard for the duration of your active subscription. If you cancel a monthly plan, your data is retained for 30 days after cancellation then deleted. Lifetime plan data is retained for 12 months from purchase then archived. You can request deletion at any time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is this different from hiring a security firm?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A security firm typically charges $5K-$30K/month for ongoing monitoring. EdgeIQ gives you the same toolset — scanners, dashboards, SSL monitoring, phishing simulations — at a fraction of that cost. The tradeoff is you manage it yourself."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are these tools safe to run against my own infrastructure?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes — but only scan infrastructure you own or have explicit written permission to test. Unauthorized scanning is illegal and we don't support it. Our tools are designed for internal security assessment, third-party vendor monitoring, and your own public-facing assets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a free trial?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer free scanner tools on the main site — SSL checker, headers analyzer, WHOIS lookup, DNS lookup, CVE lookup — no account required. These give you a real preview of what a paid scan looks like."
+        }
+      }
+    ]
+  }
+  </script>
+
   <style>
     :root {
       --bg: #0b0f14;
@@ -656,9 +765,9 @@
     <div class=container>
       <div class=audience-pills>
         <a href="#scanner" class="audience-pill">Free Tools</a>
-        <a href="#services" class="audience-pill">For Business Owners</a>
-        <a href="#pricing" class="audience-pill">For Security Pros</a>
-        <a href="#pricing" class="audience-pill">For Builders &amp; Devs</a>
+        <a href="#smb-essentials" class="audience-pill">For Business Owners</a>
+        <a href="#lifetime-plans" class="audience-pill">For Security Pros</a>
+        <a href="#micro-saas" class="audience-pill">For Builders &amp; Devs</a>
       </div>
     </div>
   </div>
@@ -1120,7 +1229,7 @@
         <p class="billing-note" id="billingNote">Switch to annual and save on any tool — billed once, owned 12 months</p>
       </div>
 
-      <h2>Lifetime Plans — Buy Once, Own It</h2>
+      <h2 id="lifetime-plans">Lifetime Plans — Buy Once, Own It</h2>
       <p class="section-sub">All tools available as a one-time lifetime purchase. No recurring fees, no cancellations, no surprises. Optional lower monthly plan if you prefer to rent.</p>
       <div class="pricing">
 
@@ -1404,7 +1513,7 @@
         </ol>
       </div>
 
-      <h2 style="margin-top:40px;">SMB Security Essentials Bundle</h2>
+      <h2 id="smb-essentials" style="margin-top:40px;">SMB Security Essentials Bundle</h2>
       <p class="section-sub" style="margin-bottom:14px;">Managed monitoring bundle for business owners. DIY buyers should use the individual tool plans listed above.</p>
 
       <p style="color:var(--muted);font-size:0.86rem;margin:0 0 10px;"><strong style="color:var(--text);">Lane clarity:</strong> <span style="color:#9fd4ff;">Individual tools</span> = self-serve scans • <span style="color:#8ce1b5;">SMB bundle</span> = managed monitoring + reporting.</p>
@@ -1584,7 +1693,7 @@
     </section>
 
         <section id="microsaas"<section id="microsaas" style="border-top: 1px solid var(--border); padding-top: 42px;">
-      <h2>Micro-SaaS Products</h2>
+      <h2 id="micro-saas">Micro-SaaS Products</h2>
       <p class="section-sub">Standalone subscription tools — each solving one problem, built on top of our existing infrastructure.</p>
       <div class="grid grid-3">
         <article class="card anim-card">
