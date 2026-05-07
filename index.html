@@ -407,6 +407,21 @@
     .scan-grade-info h3 { font-size: 1.3rem; margin-bottom: 4px; }
     .scan-grade-info p { color: var(--muted); font-size: 0.9rem; }
     .scan-findings { margin-bottom: 20px; }
+    .scan-gate-card { background: linear-gradient(180deg, rgba(61,217,255,0.06), rgba(61,217,255,0.02)); border: 1px solid rgba(61,217,255,0.35); border-radius: 12px; padding: 22px 22px 18px; margin: 14px 0; text-align: center; position: relative; }
+    .scan-gate-card::before { content: ""; position: absolute; left: 0; right: 0; top: -36px; height: 36px; background: linear-gradient(180deg, transparent, var(--card)); pointer-events: none; }
+    .scan-gate-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .scan-gate-card h3 { font-size: 1.05rem; margin: 0 0 6px; color: var(--text); }
+    .scan-gate-card p.scan-gate-sub { color: var(--muted); font-size: 0.88rem; margin: 0 0 14px; }
+    .scan-gate-form { display: flex; gap: 8px; max-width: 420px; margin: 0 auto 8px; }
+    .scan-gate-form input[type="email"] { flex: 1; background: #0d1420; border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 12px; font-size: 0.92rem; outline: none; }
+    .scan-gate-form input[type="email"]:focus { border-color: var(--accent); }
+    .scan-gate-form button { white-space: nowrap; background: var(--accent); color: #071018; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
+    .scan-gate-form button:hover { opacity: 0.9; }
+    .scan-gate-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .scan-gate-note { color: var(--muted); font-size: 0.78rem; margin: 0; }
+    .scan-gate-success { color: var(--ok); font-weight: 600; font-size: 0.92rem; margin: 8px 0 0; }
+    .scan-gate-error { color: #ff6b81; font-size: 0.85rem; margin: 6px 0 0; }
+    @media (max-width: 480px) { .scan-gate-form { flex-direction: column; } }
     .finding {
       display: flex;
       gap: 10px;
@@ -2449,6 +2464,138 @@
       applyBilling();
     });
   });
+})();
+</script>
+
+<script>
+/* Email gate for free scanner — adds a Substack-backed email capture
+   after the first finding when results render. Uses MutationObserver so
+   it works regardless of which scanner produced the findings. */
+(function() {
+  var STORAGE_KEY = 'edgeiq_scanner_email_captured';
+  var SUBSTACK_URL = 'https://edgeiqlabs.substack.com/api/v1/free';
+  // Findings containers across the 4 scanners that produce structured findings.
+  var GATED_IDS = ['scan-findings', 'headers-findings', 'xss-quick-findings', 'sub-findings'];
+
+  function isCaptured() {
+    try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch(e) { return false; }
+  }
+  function markCaptured() {
+    try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e) {}
+  }
+
+  function buildGateCard(hiddenCount) {
+    var card = document.createElement('div');
+    card.className = 'scan-gate-card';
+    card.innerHTML =
+      '<div class="scan-gate-icon">🔒</div>' +
+      '<h3>' + hiddenCount + ' more finding' + (hiddenCount === 1 ? '' : 's') + ' — see them all</h3>' +
+      '<p class="scan-gate-sub">Get the full report + weekly security tips. We never sell your email.</p>' +
+      '<form class="scan-gate-form" novalidate>' +
+        '<input type="email" required placeholder="you@example.com" autocomplete="email" />' +
+        '<button type="submit">Show full results</button>' +
+      '</form>' +
+      '<p class="scan-gate-note">Free. Unsubscribe anytime.</p>' +
+      '<p class="scan-gate-error" style="display:none;"></p>';
+
+    var form = card.querySelector('form');
+    var input = form.querySelector('input');
+    var btn = form.querySelector('button');
+    var errEl = card.querySelector('.scan-gate-error');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = (input.value || '').trim();
+      if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 0) {
+        errEl.textContent = 'Please enter a valid email.';
+        errEl.style.display = 'block';
+        return;
+      }
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      var payload = JSON.stringify({
+        email: email,
+        first_url: location.href,
+        first_referrer: document.referrer || '',
+        current_url: location.href,
+        current_referrer: document.referrer || '',
+        referral_code: '',
+        source: 'free-scanner-gate'
+      });
+
+      // Use no-cors — Substack's subscribe endpoint accepts the POST but
+      // doesn't expose CORS headers. We can't read the response, so we
+      // optimistically treat the submission as successful.
+      var done = function() {
+        markCaptured();
+        revealAll();
+      };
+      try {
+        fetch(SUBSTACK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {'Content-Type': 'application/json'},
+          body: payload
+        }).then(done).catch(done);
+      } catch (err) {
+        done();
+      }
+    });
+    return card;
+  }
+
+  function applyGate(findingsEl) {
+    if (!findingsEl || isCaptured()) return;
+    if (findingsEl.dataset.scanGateApplied === '1') return;
+    var findings = findingsEl.querySelectorAll('.finding');
+    if (findings.length <= 1) return; // Don't gate single findings.
+    var keep = 1;
+    for (var i = keep; i < findings.length; i++) {
+      findings[i].style.display = 'none';
+      findings[i].classList.add('scan-finding-hidden');
+    }
+    var card = buildGateCard(findings.length - keep);
+    findings[keep - 1].insertAdjacentElement('afterend', card);
+    findingsEl.dataset.scanGateApplied = '1';
+  }
+
+  function revealAll() {
+    GATED_IDS.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.querySelectorAll('.scan-finding-hidden').forEach(function(f) {
+        f.style.display = '';
+        f.classList.remove('scan-finding-hidden');
+      });
+      el.querySelectorAll('.scan-gate-card').forEach(function(c) {
+        var success = document.createElement('p');
+        success.className = 'scan-gate-success';
+        success.textContent = '✅ Thanks! Full results unlocked.';
+        c.replaceWith(success);
+        setTimeout(function() { success.remove(); }, 4000);
+      });
+      el.removeAttribute('data-scan-gate-applied');
+    });
+  }
+
+  function watch(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var pending;
+    var obs = new MutationObserver(function() {
+      clearTimeout(pending);
+      pending = setTimeout(function() { applyGate(el); }, 80);
+    });
+    obs.observe(el, { childList: true, subtree: false });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { GATED_IDS.forEach(watch); });
+  } else {
+    GATED_IDS.forEach(watch);
+  }
 })();
 </script>
 </body>
