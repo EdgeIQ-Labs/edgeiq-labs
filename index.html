@@ -1508,7 +1508,7 @@
       <div class="pricing" style="align-items:stretch;">
 
         <article class="card anim-card" style="border-color:#2b445f;display:flex;flex-direction:column;">
-          <h3>🛡️ SMB Essentials <span style="color:var(--accent);font-size:0.88rem;">$29/mo</span></h3>
+          <h3>🛡️ SMB Essentials <span class="billing-price-flip" data-monthly-text="$29/mo" data-annual-text="$278/yr" style="color:var(--accent);font-size:0.88rem;">$29/mo</span></h3>
           <p style="color:var(--muted);font-size:0.88rem;">Core protection for small teams that want visibility without overhead.</p>
           <ul>
             <li>SSL certificate + domain expiry monitoring</li>
@@ -1517,14 +1517,14 @@
             <li>Monthly security summary report</li>
           </ul>
           <div class="plan-actions" style="margin-top:auto;">
-            <a class="btn btn-primary" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener">Start Essentials</a>
+            <a class="btn btn-primary billing-monthly-btn" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" data-annual-link="https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f" data-monthly-text="Start Essentials" data-annual-text="Start Essentials — $278/yr" target="_blank" rel="noopener">Start Essentials</a>
             <a class="btn btn-secondary" href="#contact" style="font-size:0.8rem;">Questions? Talk to us</a>
           </div>
         </article>
 
         <article class="card anim-card" style="border-color:#3a5c2a;box-shadow:0 0 0 1px rgba(112,240,168,0.2) inset;display:flex;flex-direction:column;position:relative;">
           <span style="position:absolute;top:-11px;right:14px;background:#70f0a8;color:#052012;border-radius:999px;padding:4px 10px;font-size:0.72rem;font-weight:800;">MOST POPULAR</span>
-          <h3>🚀 SMB Plus <span style="color:#70f0a8;font-size:0.88rem;">$49/mo</span></h3>
+          <h3>🚀 SMB Plus <span class="billing-price-flip" data-monthly-text="$49/mo" data-annual-text="$470/yr" style="color:#70f0a8;font-size:0.88rem;">$49/mo</span></h3>
           <p style="color:var(--muted);font-size:0.88rem;">Everything in Essentials, plus faster support and deeper guidance.</p>
           <ul>
             <li><strong>Everything in SMB Essentials</strong></li>
@@ -1533,7 +1533,7 @@
             <li>Higher-touch help for urgent findings</li>
           </ul>
           <div class="plan-actions" style="margin-top:auto;">
-            <a class="btn btn-primary" href="https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w" target="_blank" rel="noopener">Start Plus</a>
+            <a class="btn btn-primary billing-monthly-btn" href="https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w" data-annual-link="https://buy.stripe.com/3cI00l1PB7hb7A84ko7wA3g" data-monthly-text="Start Plus" data-annual-text="Start Plus — $470/yr" target="_blank" rel="noopener">Start Plus</a>
             <a class="btn btn-secondary" href="#contact" style="font-size:0.8rem;">Book a quick intro</a>
           </div>
         </article>
@@ -2501,6 +2501,7 @@
   var labels = document.querySelectorAll('.billing-toggle-label');
   var note   = document.getElementById('billingNote');
   var btns   = document.querySelectorAll('.billing-monthly-btn');
+  var priceFlips = document.querySelectorAll('.billing-price-flip');
   if (!toggle) return;
 
   var isAnnual = false;
@@ -2533,6 +2534,13 @@
         var monText = btn.getAttribute('data-monthly-text');
         if (monText) btn.textContent = monText;
       }
+    });
+
+    // Flip standalone price-display spans (e.g. SMB plan headers)
+    priceFlips.forEach(function(span) {
+      var key = isAnnual ? 'data-annual-text' : 'data-monthly-text';
+      var t = span.getAttribute(key);
+      if (t) span.textContent = t;
     });
   }
 
