@@ -306,6 +306,30 @@
     .lead-magnet-success { padding-top: 4px; }
     .lead-magnet-success-title { color: var(--ok); font-weight: 700; font-size: 1.02rem; margin: 0 0 12px; }
     @media (max-width: 480px) { .lead-magnet-form { flex-direction: column; } .lead-magnet-card { padding: 26px 20px 22px; } }
+
+    /* Comparison table — EdgeIQ vs Tenable / Detectify / Intruder */
+    .compare-section { padding: 56px 0 24px; border-top: 1px solid var(--border); margin-top: 32px; }
+    .compare-section h2 { text-align: center; font-size: clamp(1.5rem, 4vw, 1.85rem); margin-bottom: 8px; }
+    .compare-section .compare-sub { text-align: center; color: var(--muted); margin-bottom: 28px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .compare-wrap { overflow-x: auto; margin: 0 -8px; padding: 0 8px 8px; -webkit-overflow-scrolling: touch; }
+    .compare-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 720px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; font-size: 0.93rem; }
+    .compare-table th, .compare-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .compare-table thead th { background: rgba(11,15,20,0.6); font-weight: 700; font-size: 0.86rem; letter-spacing: 0.02em; }
+    .compare-table thead th.compare-edgeiq { background: linear-gradient(135deg, rgba(61,217,255,0.18), rgba(124,58,237,0.12)); color: var(--text); }
+    .compare-table tbody td:first-child { color: var(--muted); font-weight: 600; width: 26%; background: rgba(11,15,20,0.35); }
+    .compare-table tbody td.compare-edgeiq { background: rgba(61,217,255,0.04); border-left: 1px solid rgba(61,217,255,0.18); border-right: 1px solid rgba(61,217,255,0.18); color: var(--text); font-weight: 600; }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-check { color: var(--ok); font-weight: 700; }
+    .compare-cross { color: #ff6b81; font-weight: 700; }
+    .compare-note { display: block; color: var(--muted); font-size: 0.78rem; font-weight: 400; margin-top: 3px; }
+    .compare-footnote { color: var(--muted); font-size: 0.78rem; max-width: 760px; margin: 16px auto 0; text-align: center; line-height: 1.55; }
+    .compare-footnote a { color: var(--accent); }
+    @media (max-width: 600px) {
+      .compare-section h2 { font-size: 1.35rem; }
+      .compare-table { font-size: 0.85rem; }
+      .compare-table th, .compare-table td { padding: 11px 12px; }
+    }
+
     .trust-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 18px; max-width: 920px; margin: 14px auto 0; padding: 12px 14px; background: rgba(18,25,35,0.55); border: 1px solid var(--border); border-radius: 12px; }
     .trust-item { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
     .trust-item .trust-icon { font-size: 0.95rem; line-height: 1; }
@@ -1305,8 +1329,83 @@
         <p style="margin:0;color:var(--muted);font-size:0.9rem;"><strong style="color:var(--text);">How onboarding works:</strong> checkout → we contact you → we configure your monitoring profile → first report cycle starts.</p>
       </div>
 
+    </section>
 
-
+    <!-- Comparison: EdgeIQ vs Tenable / Detectify / Intruder -->
+    <section id="compare" class="compare-section" aria-label="EdgeIQ Labs vs other security platforms">
+      <div class="container">
+        <h2>How EdgeIQ compares</h2>
+        <p class="compare-sub">EdgeIQ Labs vs Tenable, Detectify, Intruder — for small businesses and lean teams.</p>
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="compare-edgeiq">🛡️ EdgeIQ Labs</th>
+                <th>Tenable</th>
+                <th>Detectify</th>
+                <th>Intruder</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Starting price</td>
+                <td class="compare-edgeiq">$29/mo<span class="compare-note">SMB Essentials</span></td>
+                <td>~$190/mo<span class="compare-note">Tenable.io vuln mgmt, ~$2,275/yr <a href="#compare-fn-1" style="color:var(--muted);">¹</a></span></td>
+                <td>$85/mo<span class="compare-note">Deep Scan plan</span></td>
+                <td>Custom<span class="compare-note">5-license minimum, talk to sales <a href="#compare-fn-2" style="color:var(--muted);">²</a></span></td>
+              </tr>
+              <tr>
+                <td>Free trial</td>
+                <td class="compare-edgeiq">14 days</td>
+                <td>30-day Nessus Essentials<span class="compare-note">Free tier limited to 5 IPs</span></td>
+                <td>14 days</td>
+                <td>14 days<span class="compare-note">Cloud plan only</span></td>
+              </tr>
+              <tr>
+                <td>Free tools (no signup)</td>
+                <td class="compare-edgeiq"><span class="compare-check">✓</span> 7 scanners on homepage<span class="compare-note">SSL, Headers, XSS, Subdomains, DNS, WHOIS, CVE</span></td>
+                <td><span class="compare-cross">✗</span></td>
+                <td><span class="compare-cross">✗</span></td>
+                <td><span class="compare-cross">✗</span></td>
+              </tr>
+              <tr>
+                <td>Designed for</td>
+                <td class="compare-edgeiq">Small businesses without security teams</td>
+                <td>Enterprise security teams</td>
+                <td>SaaS / AppSec teams</td>
+                <td>Cloud-native engineering teams</td>
+              </tr>
+              <tr>
+                <td>Managed monthly reports</td>
+                <td class="compare-edgeiq"><span class="compare-check">✓</span> Included<span class="compare-note">Action-focused, prioritized fixes</span></td>
+                <td>Self-serve dashboards</td>
+                <td>Self-serve dashboards</td>
+                <td>Self-serve dashboards</td>
+              </tr>
+              <tr>
+                <td>Annual contract</td>
+                <td class="compare-edgeiq">Optional<span class="compare-note">Monthly or annual</span></td>
+                <td>Required</td>
+                <td>Available</td>
+                <td>Available</td>
+              </tr>
+              <tr>
+                <td>Setup</td>
+                <td class="compare-edgeiq">Minutes<span class="compare-note">Stripe checkout + onboarding</span></td>
+                <td>Hours-Days<span class="compare-note">Deploy + tune scanners</span></td>
+                <td>Minutes-Hours</td>
+                <td>Minutes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="compare-footnote">
+          <span id="compare-fn-1">¹ Tenable.io starts around $2,275/yr for limited assets per public sources; Tenable Nessus Professional is $4,790/yr.</span><br>
+          <span id="compare-fn-2">² Intruder doesn't publish list pricing; historical reports indicate Cloud plans starting around $99/mo with a 5-license minimum.</span><br>
+          Pricing from public sources as of May 2026 and subject to change. Tenable, Detectify, and Intruder are trademarks of their respective owners; this comparison is editorial and not endorsed by them.
+        </p>
+      </div>
     </section>
 
     <!-- Newsletter Signup -->
