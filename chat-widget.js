@@ -243,7 +243,7 @@
         typing.remove();
 
         if (!data) {
-          addMsg('assistant', "Couldn't reach the assistant just now. Try again in a moment, or email gpalmieri21@gmail.com.", { error: true });
+          addMsg('assistant', "Couldn't reach the assistant just now. Try again in a moment, or email support@edgeiqlabs.com.", { error: true });
         } else if (data.ok && data.reply) {
           addMsg('assistant', data.reply);
           history.push({ role: 'assistant', content: data.reply });
@@ -253,7 +253,7 @@
         }
       } catch (err) {
         typing.remove();
-        addMsg('assistant', "Network hiccup. Please try again — or email gpalmieri21@gmail.com.", { error: true });
+        addMsg('assistant', "Network hiccup. Please try again — or email support@edgeiqlabs.com.", { error: true });
       } finally {
         busy = false;
         send.disabled = false;
