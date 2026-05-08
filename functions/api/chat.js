@@ -28,7 +28,7 @@ EdgeIQ Labs facts (use these accurately, never invent details not listed):
 - Lifetime tools (XSS Scanner Pro, Network Scanner Pro, etc.) and one-time tools for security pros and developers: https://edgeiqlabs.com/products/
 - Newsletter: https://edgeiqlabs.substack.com — weekly practical security tips.
 - Community / support: https://discord.gg/PaP7nsFUJT
-- Account / billing questions: email gpalmieri21@gmail.com.
+- Account / billing questions: email support@edgeiqlabs.com.
 
 Style:
 - Concise. 2–4 sentences per reply by default; expand only if the user asks for detail.
@@ -45,7 +45,7 @@ Privacy:
 If you don't know something specific, say so plainly and point to Discord or email for follow-up — don't guess.`;
 
 const FALLBACK_REPLY =
-  "Chat is temporarily unavailable. You can still email gpalmieri21@gmail.com or join our Discord at https://discord.gg/PaP7nsFUJT — or run the free scanner at /#scanner.";
+  "Chat is temporarily unavailable. You can still email support@edgeiqlabs.com or join our Discord at https://discord.gg/PaP7nsFUJT — or run the free scanner at /#scanner.";
 
 function corsHeaders() {
   return {
