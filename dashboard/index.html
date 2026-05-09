@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Security Dashboard · EdgeIQ Labs</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #ffb347;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Nav */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links { display: flex; gap: 24px; font-size: 0.88rem; }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* Hero */
+    .hero {
+      padding: 64px 32px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(61,217,255,0.04) 0%, transparent 100%);
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* Score ring */
+    .score-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--ok) 0deg 252deg, var(--border) 252deg 360deg);
+      position: relative;
+      margin-bottom: 32px;
+    }
+    .score-ring::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      background: var(--bg);
+      border-radius: 50%;
+    }
+    .score-val {
+      position: relative;
+      font-size: 1.8rem;
+      font-weight: 700;
+      z-index: 1;
+    }
+    .score-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+    /* Cards grid */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 32px 64px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .card-icon { font-size: 1.8rem; margin-bottom: 12px; }
+    .card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+    .card p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .card .tag {
+      display: inline-block;
+      background: rgba(112,240,168,0.1);
+      border: 1px solid rgba(112,240,168,0.25);
+      color: var(--ok);
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    /* Steps section */
+    .steps-section { margin-bottom: 40px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+    .steps {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step-n {
+      background: rgba(61,217,255,0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body { font-size: 0.88rem; }
+    .step-body strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .step-body span { color: var(--muted); }
+
+    /* CTA */
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { text-decoration: none; opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #071018; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 32px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #4a6080;
+    }
+    footer a { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      nav { padding: 12px 20px; }
+      .hero { padding: 40px 20px; }
+      h1 { font-size: 1.6rem; }
+      .container { padding: 0 20px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <img src="https://edgeiqlabs.com/logo-edgeiq-selected.png" alt="EdgeIQ Labs" style="height:28px;" />
+    <div>Edge<span>IQ</span> Labs</div>
+  </div>
+  <div class="nav-links">
+    <a href="https://edgeiqlabs.com">Home</a>
+    <a href="https://edgeiqlabs.com/compliance">Compliance</a>
+    <a href="https://edgeiqlabs.com/phishsim">PhishSim</a>
+    <a href="https://edgeiqlabs.com/smb">SMB Tools</a>
+    <a href="mailto:support@edgeiqlabs.com">Support</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Security Intelligence Platform</div>
+  <h1>Your EdgeIQ Dashboard</h1>
+  <p class="hero-sub">Monitor your attack surface, track vulnerabilities, and get compliance-ready reports — all in one place.</p>
+
+  <div style="display:inline-block; text-align:center;">
+    <div class="score-ring">
+      <div>
+        <div class="score-val">70</div>
+        <div class="score-label">EdgeIQ Score</div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:0.8rem; color:var(--muted); margin-top: -16px;">Scan your first asset to generate your real score</p>
+
+  <div class="cta-row">
+    <a href="https://edgeiqlabs.com/compliance" class="btn btn-primary">Run First Scan →</a>
+    <a href="https://edgeiqlabs.com/support" class="btn btn-secondary">Contact Support</a>
+  </div>
+</section>
+
+<div class="container">
+  <div class="grid">
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h3>Compliance Monitoring</h3>
+      <p>Track your security posture across HIPAA, PCI, and SOC2 readiness frameworks. Generate audit-ready reports on demand.</p>
+      <span class="tag">Active</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔍</div>
+      <h3>CVE & Exploit Detection</h3>
+      <p>Real-time scanning against the latest vulnerability数据库. Get prioritized findings with CVSS scores and remediation guidance.</p>
+      <span class="tag">Ready to scan</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌐</div>
+      <h3>Dark Web Exposure</h3>
+      <p>Monitor for leaked credentials, exposed databases, and compromised assets tied to your domain and IP range.</p>
+      <span class="tag">Monitoring</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔒</div>
+      <h3>SSL Certificate Health</h3>
+      <p>Track certificate expiration, chain validity, and configuration issues across all your domains before they become incidents.</p>
+      <span class="tag">Connected</span>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <h2>Get Started in 4 Steps</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <strong>Add your first asset</strong>
+          <span>Enter a domain, IP address, or subdomain to begin monitoring</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <strong>Run your first scan</strong>
+          <span>EdgeIQ checks for exposed ports, CVE vulnerabilities, and misconfigurations</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div class="step-body">
+          <strong>Review your EdgeIQ Score</strong>
+          <span>See your overall security rating (0–100) with detailed findings ranked by severity</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div class="step-body">
+          <strong>Generate a report</strong>
+          <span>Download a PDF report for stakeholders, auditors, or your internal security team</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center;">
+    <h3 style="margin-bottom: 8px; font-size: 1rem;">Need help getting started?</h3>
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 20px;">Our team can walk you through your first scan and help you understand your score.</p>
+    <a href="mailto:support@edgeiqlabs.com" class="btn btn-primary">Contact Support →</a>
+  </div>
+</div>
+
+<footer>
+  <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> · Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+</footer>
+
+</body>
+</html>
