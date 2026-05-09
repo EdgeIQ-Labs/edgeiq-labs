@@ -264,6 +264,14 @@
       animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    .scan-note { font-size: 0.8rem; color: var(--muted); margin-top: 8px; text-align: center; }
+    #sub-scan-status { font-size: 0.82rem; color: var(--accent); margin-top: 8px; text-align: center; }
+    @keyframes dotPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+    .dots span { animation: dotPulse 1.4s ease-in-out infinite; }
+    .dots span:nth-child(2) { animation-delay: 0.2s; }
+    .dots span:nth-child(3) { animation-delay: 0.4s; }
     #live-counter {
       font-variant-numeric: tabular-nums;
       color: var(--accent);
@@ -1026,10 +1034,11 @@
               />
               <button type="submit" class="btn btn-primary scan-btn" id="sub-scan-submit">
                 <span id="sub-label">Find Subdomains</span>
-                <span id="sub-loading" style="display:none;">Scanning...</span>
+                <span id="sub-loading" style="display:none;"><span class="spin">⟳</span> Scanning<span class="dots"><span>.</span><span>.</span><span>.</span></span></span>
               </button>
             </div>
             <p class="scan-note">Free scan — no account required · Uses Certificate Transparency logs</p>
+            <p id="sub-scan-status" style="display:none;text-align:center;color:var(--accent);font-size:0.82rem;margin-top:8px;"><span class="spin">⟳</span> <span id="sub-status-text">Querying Certificate Transparency logs…</span></p>
           </form>
           <div id="sub-results" class="scan-results" style="display:none;">
             <div class="scan-grade-wrap">
@@ -1818,8 +1827,12 @@
 
       lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
       results.style.display = 'none'; errDiv.style.display = 'none';
+      var statusEl = document.getElementById('sub-scan-status');
+      var statusText = document.getElementById('sub-status-text');
+      if (statusEl) { statusEl.style.display = 'block'; statusText.textContent = 'Querying Certificate Transparency logs…'; }
 
-
+      // Phase 1: subdomain enumeration
+      if (statusText) statusText.textContent = 'Enumerating subdomains via crt.sh…';
       try {
         var resp = await fetch('https://edgeiq-subdomain-hunter.gpalmieri21.workers.dev', {
           method: 'POST',
@@ -1872,6 +1885,8 @@
         errDiv.style.display = 'block';
       } finally {
         lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
+        var statusEl = document.getElementById('sub-scan-status');
+        if (statusEl) statusEl.style.display = 'none';
       }
     });
   }
