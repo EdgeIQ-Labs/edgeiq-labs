@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMB Security Essentials Activated · EdgeIQ Labs</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #ffb347;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(61, 217, 255, 0.15), 0 0 60px rgba(61, 217, 255, 0.05); }
+      50%       { box-shadow: 0 0 30px rgba(61, 217, 255, 0.25), 0 0 80px rgba(61, 217, 255, 0.10); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 52px 44px;
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
+      animation: glow 3s ease-in-out infinite;
+    }
+    .emoji-wrap { position: relative; display: inline-block; margin-bottom: 24px; }
+    .emoji { font-size: 4rem; display: inline-block; animation: float 3s ease-in-out infinite; }
+    h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 12px; }
+    p.sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px; }
+    .steps {
+      text-align: left;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      background: rgba(61, 217, 255, 0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .step-text strong { color: var(--text); }
+    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; text-align: left; }
+    .feat {
+      background: rgba(61, 217, 255, 0.07);
+      border: 1px solid rgba(61, 217, 255, 0.2);
+      border-radius: 8px; padding: 12px 14px;
+      font-size: 0.82rem; color: var(--accent); text-align: left;
+    }
+    .feat span { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #071018;
+      font-weight: 700; font-size: 0.9rem;
+      padding: 11px 24px; border-radius: 8px;
+      text-decoration: none; margin-bottom: 16px;
+    }
+    .cta:hover { opacity: 0.85; }
+    .footer { font-size: 0.75rem; color: #4a6080; margin-top: 24px; }
+    .footer a { color: var(--accent); text-decoration: none; }
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="emoji-wrap"><div class="emoji">🛡️</div></div>
+    <h1>Your business is now being monitored 24/7</h1>
+    <p class="sub">SMB Security Essentials is active. Here's what happens next and what's being watched.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Check your inbox</strong> — dashboard access link is on its way</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Add your first asset</strong> — domain, IP, or subdomain to start monitoring</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Review your first report</strong> — see your exposure score and prioritized findings</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Set up alerts</strong> — get notified by email or Slack when new issues are found</div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feat">🌐 Domain Monitoring<span>Exposed credentials, dark web hits</span></div>
+      <div class="feat">🔍 Vuln Scanning<span>CVE detection & priority scoring</span></div>
+      <div class="feat">🔒 SSL Analysis<span>Certificate health & expiration</span></div>
+      <div class="feat">📋 Compliance<span>HIPAA-ready security reports</span></div>
+    </div>
+
+    <a href="https://dashboard.edgeiqlabs.com" class="cta">Open Security Dashboard</a>
+
+    <div class="footer">
+      Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> · <a href="https://edgeiqlabs.com/smb">edgeiqlabs.com/smb</a>
+    </div>
+  </div>
+</body>
+</html>
