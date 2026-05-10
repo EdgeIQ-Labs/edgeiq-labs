@@ -893,6 +893,7 @@
           <button class="scan-tab" onclick="showScannerTab('xss')" id="tab-btn-xss">💉 XSS Quick Scan</button>
           <button class="scan-tab" onclick="showScannerTab('sub')" id="tab-btn-sub">🔗 Subdomains</button>
           <button class="scan-tab" onclick="showScannerTab('dast')" id="tab-btn-dast">🕷️ DAST Scan</button>
+          <button class="scan-tab" onclick="showScannerTab('api')" id="tab-btn-api">🔌 API Security</button>
           <button class="scan-tab" onclick="showScannerTab('dns')" id="tab-btn-dns">🌐 DNS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('whois')" id="tab-btn-whois">📋 WHOIS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
@@ -1173,6 +1174,47 @@
       </div>
       <div id="dast-error" class="scan-error" style="display:none;">
         <p id="dast-error-msg">Something went wrong. Please try again.</p>
+      </div>
+    </div>
+
+    <!-- API Scanner — Free Tool #9 -->
+    <div id="api-panel" class="scan-panel" style="display:none;">
+      <form id="api-scan-form" class="scan-form">
+        <div class="scan-input-row" style="grid-template-columns: 100px 1fr 140px;">
+          <select id="api-method" name="method" required style="padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.9rem; margin-bottom: 0;">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+          <input
+            type="url"
+            id="api-url"
+            name="url"
+            placeholder="https://api.example.com/v1/users"
+            required
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit" class="btn btn-primary scan-btn" id="api-scan-submit">
+            <span id="api-label">Scan API</span>
+            <span id="api-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free API scanner — checks headers, rate limits, CORS, and endpoint methods.</p>
+      </form>
+      <div id="api-results" class="scan-results" style="display:none;">
+        <div class="scan-grade-wrap">
+          <div class="scan-grade" id="api-grade-badge">?</div>
+          <div class="scan-grade-info">
+            <h3 id="api-hostname">api.example.com</h3>
+            <p id="api-summary">Analyzing...</p>
+          </div>
+        </div>
+        <div class="dast-findings" id="api-findings"></div>
+      </div>
+      <div id="api-error" class="scan-error" style="display:none;">
+        <p id="api-error-msg">Something went wrong. Please try again.</p>
       </div>
     </div>
 
@@ -1608,15 +1650,15 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel' };
-    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form' };
-    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast'];
+    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel' };
+    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form' };
+    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : 'cve-results'))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : 'cve-error'))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : 'cve-results')))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : 'cve-error')))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
@@ -2248,6 +2290,98 @@
         results.style.display = 'block';
       } catch(err) {
         document.getElementById('dast-error-msg').textContent = 'Scan failed: ' + err.message;
+        errDiv.style.display = 'block';
+      } finally {
+        lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
+      }
+    });
+  }
+
+  // ── API Security Scanner ──────────────────────────────────────────────────
+  var apiForm = document.getElementById('api-scan-form');
+  if (apiForm) {
+    apiForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var url = document.getElementById('api-url').value.trim();
+      var method = document.getElementById('api-method').value;
+      if (!url) return;
+      var btn = document.getElementById('api-scan-submit');
+      var lbl = document.getElementById('api-label');
+      var ldg = document.getElementById('api-loading');
+      var results = document.getElementById('api-results');
+      var errDiv = document.getElementById('api-error');
+
+      lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
+      results.style.display = 'none'; errDiv.style.display = 'none';
+
+      try {
+        var resp = await fetch('https://edgeiq-api-scanner.gpalmieri21.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url, method: method })
+        });
+        if (!resp.ok) throw new Error('Scan failed (status ' + resp.status + ')');
+        var data = await resp.json();
+
+        var grade = data.grade || '?';
+        var gradeEl = document.getElementById('api-grade-badge');
+        gradeEl.textContent = grade;
+        gradeEl.className = 'scan-grade grade-' + grade;
+
+        document.getElementById('api-hostname').textContent = data.hostname || url;
+        document.getElementById('api-summary').textContent =
+          'Score: ' + (data.score !== undefined ? data.score + '/100 — ' : '') + (data.summary || '');
+
+        var findingsEl = document.getElementById('api-findings');
+        findingsEl.innerHTML = '';
+        if (data.findings && data.findings.length > 0) {
+          data.findings.forEach(function(f) {
+            var div = document.createElement('div');
+            var isLocked = f.severity === 'locked';
+            
+            div.className = 'finding ' + (isLocked ? 'locked' : f.severity);
+            if (isLocked) {
+              div.style.background = 'rgba(255,255,255,0.03)';
+              div.style.border = '1px solid rgba(255,255,255,0.1)';
+              div.style.cursor = 'pointer';
+              div.onclick = function() { window.location.href = '/products/#lifetime-plans'; };
+            }
+            
+            var icon = isLocked ? '🔒' : (
+                       f.severity === 'critical' ? '🔴' :
+                       f.severity === 'high' ? '🟠' :
+                       f.severity === 'medium' ? '🟡' :
+                       f.severity === 'low' ? '🟢' : 'ℹ️');
+                       
+            var txtStyle = isLocked ? 'filter: blur(4px); opacity: 0.7; user-select: none;' : '';
+            var typeLabel = isLocked ? '[PRO] ' + f.type.replace(/_/g, ' ') : f.type.toUpperCase();
+            
+            div.innerHTML = '<span class="finding-icon">' + icon + '</span><span style="' + txtStyle + '"><span class="severity-' + (isLocked ? 'high' : f.severity) + '">' + typeLabel + '</span> — ' + f.message + '</span>';
+            
+            if (isLocked) {
+              // Add a crisp overlay over the blurred text
+              var overlay = document.createElement('div');
+              overlay.style.position = 'absolute';
+              overlay.style.left = '40px';
+              overlay.style.right = '0';
+              overlay.style.top = '50%';
+              overlay.style.transform = 'translateY(-50%)';
+              overlay.style.textAlign = 'left';
+              overlay.style.fontWeight = 'bold';
+              overlay.style.color = '#fff';
+              overlay.style.textShadow = '0px 1px 4px rgba(0,0,0,0.8)';
+              overlay.style.pointerEvents = 'none';
+              overlay.textContent = 'Upgrade to Pro to unlock details →';
+              div.style.position = 'relative';
+              div.appendChild(overlay);
+            }
+            
+            findingsEl.appendChild(div);
+          });
+        }
+        results.style.display = 'block';
+      } catch(err) {
+        document.getElementById('api-error-msg').textContent = 'Scan failed: ' + err.message;
         errDiv.style.display = 'block';
       } finally {
         lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
