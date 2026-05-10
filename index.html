@@ -1797,7 +1797,7 @@
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
       var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : 'cve-results'))))))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : 'cve-error')))))))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : 'cve-error'))))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
