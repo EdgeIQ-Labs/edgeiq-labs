@@ -898,6 +898,7 @@
           <button class="scan-tab" onclick="showScannerTab('cspm')" id="tab-btn-cspm">☁️ CSPM Scan</button>
           <button class="scan-tab" onclick="showScannerTab('threats')" id="tab-btn-threats">🚨 Threat Alerts</button>
           <button class="scan-tab" onclick="showScannerTab('netscanner')" id="tab-btn-netscanner">🖥️ LAN Scanner</button>
+          <button class="scan-tab" onclick="showScannerTab('docker')" id="tab-btn-docker">🐳 Container Scan</button>
           <button class="scan-tab" onclick="showScannerTab('dns')" id="tab-btn-dns">🌐 DNS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('whois')" id="tab-btn-whois">📋 WHOIS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
@@ -1357,6 +1358,43 @@
       </div>
     </div>
 
+    <!-- Docker / Container Image Scanner — Free Tool #13 -->
+    <div id="docker-panel" class="scan-panel" style="display:none;">
+      <form id="docker-scan-form" class="scan-form">
+        <div class="scan-input-row" style="grid-template-columns: 1fr 160px;">
+          <input
+            type="text"
+            id="docker-image"
+            name="image"
+            placeholder="nginx:latest or myorg/myapp:1.2.3"
+            required
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit" class="btn btn-primary scan-btn" id="docker-scan-submit">
+            <span id="docker-label">Scan Image</span>
+            <span id="docker-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — checks Docker Hub metadata, official status, base image risk, and staleness.</p>
+      </form>
+      <div id="docker-results" class="scan-results" style="display:none;">
+        <div class="scan-grade-wrap">
+          <div class="scan-grade" id="docker-grade-badge">?</div>
+          <div class="scan-grade-info">
+            <h3 id="docker-image-name">image:tag</h3>
+            <p id="docker-summary">Analyzing...</p>
+          </div>
+        </div>
+        <!-- Image metadata strip -->
+        <div id="docker-meta" style="display:flex; gap:20px; flex-wrap:wrap; margin:14px 0; font-size:0.82rem; color:var(--muted);"></div>
+        <div class="dast-findings" id="docker-findings"></div>
+      </div>
+      <div id="docker-error" class="scan-error" style="display:none;">
+        <p id="docker-error-msg">Something went wrong. Please try again.</p>
+      </div>
+    </div>
+
     <section id="services">
       <h2>What we offer</h2>
       <p class="section-sub">Security and OSINT tools, managed services, and automation infrastructure — built to work from day one.</p>
@@ -1789,15 +1827,15 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel' };
-    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form' };
-    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner'];
+    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel', docker: 'docker-panel' };
+    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form', docker: 'docker-scan-form' };
+    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner', 'docker'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : 'cve-results'))))))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : 'cve-error'))))))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : 'cve-results')))))))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : (t === 'docker' ? 'docker-error' : 'cve-error')))))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
@@ -2862,6 +2900,101 @@
       } finally {
         lbl.style.display = 'inline'; ldg.style.display = 'none';
         btn.disabled = false; netScanActive = false;
+      }
+    });
+  }
+
+  // ── Docker / Container Image Scanner ─────────────────────────────────────
+  var dockerForm = document.getElementById('docker-scan-form');
+  if (dockerForm) {
+    dockerForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var image = document.getElementById('docker-image').value.trim();
+      if (!image) return;
+      var btn = document.getElementById('docker-scan-submit');
+      var lbl = document.getElementById('docker-label');
+      var ldg = document.getElementById('docker-loading');
+      var results = document.getElementById('docker-results');
+      var errDiv = document.getElementById('docker-error');
+
+      lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
+      results.style.display = 'none'; errDiv.style.display = 'none';
+
+      var STRIPE_DOCKER = 'https://buy.stripe.com/aFa6oJfGrdFzaMk7wA7wA3l';
+
+      try {
+        var resp = await fetch('https://edgeiq-docker-scanner.gpalmieri21.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: image })
+        });
+        if (!resp.ok) {
+          var errJson = await resp.json().catch(function() { return {}; });
+          throw new Error(errJson.error || 'Scan failed (status ' + resp.status + ')');
+        }
+        var data = await resp.json();
+
+        var grade = data.grade || '?';
+        var gradeEl = document.getElementById('docker-grade-badge');
+        gradeEl.textContent = grade;
+        gradeEl.className = 'scan-grade grade-' + grade;
+
+        document.getElementById('docker-image-name').textContent = data.image || image;
+        document.getElementById('docker-summary').textContent =
+          'Score: ' + (data.score !== undefined ? data.score + '/100 \u2014 ' : '') + (data.summary || '');
+
+        // Render metadata strip
+        var metaEl = document.getElementById('docker-meta');
+        metaEl.innerHTML = '';
+        function metaBadge(label, val) {
+          var s = document.createElement('span');
+          s.style.cssText = 'background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:6px;';
+          s.innerHTML = '<span style="color:var(--muted);">' + label + ':</span> <strong>' + val + '</strong>';
+          metaEl.appendChild(s);
+        }
+        metaBadge('\ud83d\udce5 Pulls', data.pullCount > 1e9 ? (data.pullCount/1e9).toFixed(1)+'B' : data.pullCount > 1e6 ? (data.pullCount/1e6).toFixed(1)+'M' : (data.pullCount||0).toLocaleString());
+        metaBadge('\u2b50 Stars', (data.starCount || 0).toLocaleString());
+        metaBadge('Official', data.isOfficial ? '\u2705 Yes' : '\u274c No');
+        metaBadge('Last Push', data.lastUpdated || '?');
+
+        // Render findings
+        var findingsEl = document.getElementById('docker-findings');
+        findingsEl.innerHTML = '';
+        if (data.findings && data.findings.length > 0) {
+          data.findings.forEach(function(f) {
+            var div = document.createElement('div');
+            var isLocked = f.severity === 'locked';
+            div.className = 'finding ' + (isLocked ? 'locked' : f.severity);
+            if (isLocked) {
+              div.style.background = 'rgba(255,255,255,0.03)';
+              div.style.border = '1px solid rgba(255,255,255,0.1)';
+              div.style.cursor = 'pointer';
+              div.style.position = 'relative';
+              div.onclick = function() { window.location.href = STRIPE_DOCKER; };
+            }
+            var icon = isLocked ? '\ud83d\udd12' : (
+              f.severity === 'critical' ? '\ud83d\udd34' :
+              f.severity === 'high' ? '\ud83d\udfe0' :
+              f.severity === 'medium' ? '\ud83d\udfe1' :
+              f.severity === 'low' ? '\ud83d\udfe2' : '\u2139\ufe0f');
+            var txtStyle = isLocked ? 'filter:blur(4px);opacity:0.7;user-select:none;' : '';
+            var typeLabel = isLocked ? '[PRO] ' + f.type.replace(/_/g, ' ') : f.type.toUpperCase();
+            div.innerHTML = '<span class="finding-icon">' + icon + '</span><span style="' + txtStyle + '"><span class="severity-' + (isLocked ? 'high' : f.severity) + '">' + typeLabel + '</span> \u2014 ' + f.message + '</span>';
+            if (isLocked) {
+              var ov = document.createElement('div');
+              ov.style.cssText = 'position:absolute;left:40px;right:0;top:50%;transform:translateY(-50%);font-weight:bold;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8);pointer-events:none;';
+              ov.textContent = 'Upgrade to Pro to unlock details \u2192';
+              div.appendChild(ov);
+            }
+            findingsEl.appendChild(div);
+          });
+        }
+        results.style.display = 'block';
+      } catch(err) {
+        document.getElementById('docker-error-msg').textContent = err.message;
+        errDiv.style.display = 'block';
+      } finally {
+        lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
       }
     });
   }
