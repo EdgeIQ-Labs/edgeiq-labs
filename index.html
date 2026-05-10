@@ -896,6 +896,7 @@
           <button class="scan-tab" onclick="showScannerTab('dast')" id="tab-btn-dast">🕷️ DAST Scan</button>
           <button class="scan-tab" onclick="showScannerTab('api')" id="tab-btn-api">🔌 API Security</button>
           <button class="scan-tab" onclick="showScannerTab('cspm')" id="tab-btn-cspm">☁️ CSPM Scan</button>
+          <button class="scan-tab" onclick="showScannerTab('threats')" id="tab-btn-threats">🚨 Threat Alerts</button>
           <button class="scan-tab" onclick="showScannerTab('dns')" id="tab-btn-dns">🌐 DNS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('whois')" id="tab-btn-whois">📋 WHOIS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
@@ -1252,6 +1253,41 @@
       </div>
       <div id="cspm-error" class="scan-error" style="display:none;">
         <p id="cspm-error-msg">Something went wrong. Please try again.</p>
+      </div>
+    </div>
+
+    <!-- Threats Scanner — Free Tool #11 -->
+    <div id="threats-panel" class="scan-panel" style="display:none;">
+      <form id="threats-scan-form" class="scan-form">
+        <div class="scan-input-row" style="grid-template-columns: 1fr 140px;">
+          <input
+            type="text"
+            id="threats-target"
+            name="target"
+            placeholder="example.com"
+            required
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit" class="btn btn-primary scan-btn" id="threats-scan-submit">
+            <span id="threats-label">Scan Threats</span>
+            <span id="threats-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free Threat Scanner — tests target for exposed assets against recent 0-days.</p>
+      </form>
+      <div id="threats-results" class="scan-results" style="display:none;">
+        <div class="scan-grade-wrap">
+          <div class="scan-grade" id="threats-grade-badge">?</div>
+          <div class="scan-grade-info">
+            <h3 id="threats-hostname">example.com</h3>
+            <p id="threats-summary">Analyzing...</p>
+          </div>
+        </div>
+        <div class="dast-findings" id="threats-findings"></div>
+      </div>
+      <div id="threats-error" class="scan-error" style="display:none;">
+        <p id="threats-error-msg">Something went wrong. Please try again.</p>
       </div>
     </div>
 
@@ -1687,15 +1723,15 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel' };
-    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form' };
-    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm'];
+    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel' };
+    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form' };
+    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : 'cve-results'))))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : 'cve-error'))))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : 'cve-results')))))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : 'cve-error')))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
@@ -2509,6 +2545,96 @@
         results.style.display = 'block';
       } catch(err) {
         document.getElementById('cspm-error-msg').textContent = 'Scan failed: ' + err.message;
+        errDiv.style.display = 'block';
+      } finally {
+        lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
+      }
+    });
+  }
+
+  // ── Threat Alerts Scanner ──────────────────────────────────────────────────────────
+  var threatsForm = document.getElementById('threats-scan-form');
+  if (threatsForm) {
+    threatsForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var target = document.getElementById('threats-target').value.trim();
+      if (!target) return;
+      var btn = document.getElementById('threats-scan-submit');
+      var lbl = document.getElementById('threats-label');
+      var ldg = document.getElementById('threats-loading');
+      var results = document.getElementById('threats-results');
+      var errDiv = document.getElementById('threats-error');
+
+      lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
+      results.style.display = 'none'; errDiv.style.display = 'none';
+
+      try {
+        var resp = await fetch('https://edgeiq-threats-scanner.gpalmieri21.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: target })
+        });
+        if (!resp.ok) throw new Error('Scan failed (status ' + resp.status + ')');
+        var data = await resp.json();
+
+        var grade = data.grade || '?';
+        var gradeEl = document.getElementById('threats-grade-badge');
+        gradeEl.textContent = grade;
+        gradeEl.className = 'scan-grade grade-' + grade;
+
+        document.getElementById('threats-hostname').textContent = data.hostname || target;
+        document.getElementById('threats-summary').textContent =
+          'Score: ' + (data.score !== undefined ? data.score + '/100 — ' : '') + (data.summary || '');
+
+        var findingsEl = document.getElementById('threats-findings');
+        findingsEl.innerHTML = '';
+        if (data.findings && data.findings.length > 0) {
+          data.findings.forEach(function(f) {
+            var div = document.createElement('div');
+            var isLocked = f.severity === 'locked';
+            
+            div.className = 'finding ' + (isLocked ? 'locked' : f.severity);
+            if (isLocked) {
+              div.style.background = 'rgba(255,255,255,0.03)';
+              div.style.border = '1px solid rgba(255,255,255,0.1)';
+              div.style.cursor = 'pointer';
+              div.onclick = function() { window.location.href = 'https://buy.stripe.com/fZu28t3XJ44Z1bKbMQ7wA3j'; }; // Threat Alerts Pro Stripe
+            }
+            
+            var icon = isLocked ? '🔒' : (
+                       f.severity === 'critical' ? '🔴' :
+                       f.severity === 'high' ? '🟠' :
+                       f.severity === 'medium' ? '🟡' :
+                       f.severity === 'low' ? '🟢' : 'ℹ️');
+                       
+            var txtStyle = isLocked ? 'filter: blur(4px); opacity: 0.7; user-select: none;' : '';
+            var typeLabel = isLocked ? '[PRO] ' + f.type.replace(/_/g, ' ') : f.type.toUpperCase();
+            
+            div.innerHTML = '<span class="finding-icon">' + icon + '</span><span style="' + txtStyle + '"><span class="severity-' + (isLocked ? 'high' : f.severity) + '">' + typeLabel + '</span> — ' + f.message + '</span>';
+            
+            if (isLocked) {
+              var overlay = document.createElement('div');
+              overlay.style.position = 'absolute';
+              overlay.style.left = '40px';
+              overlay.style.right = '0';
+              overlay.style.top = '50%';
+              overlay.style.transform = 'translateY(-50%)';
+              overlay.style.textAlign = 'left';
+              overlay.style.fontWeight = 'bold';
+              overlay.style.color = '#fff';
+              overlay.style.textShadow = '0px 1px 4px rgba(0,0,0,0.8)';
+              overlay.style.pointerEvents = 'none';
+              overlay.textContent = 'Upgrade to Pro to unlock details →';
+              div.style.position = 'relative';
+              div.appendChild(overlay);
+            }
+            
+            findingsEl.appendChild(div);
+          });
+        }
+        results.style.display = 'block';
+      } catch(err) {
+        document.getElementById('threats-error-msg').textContent = 'Scan failed: ' + err.message;
         errDiv.style.display = 'block';
       } finally {
         lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
