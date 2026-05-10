@@ -884,6 +884,7 @@
           <button class="scan-tab" onclick="showScannerTab('headers')" id="tab-btn-headers">📡 Headers Analyzer</button>
           <button class="scan-tab" onclick="showScannerTab('xss')" id="tab-btn-xss">💉 XSS Quick Scan</button>
           <button class="scan-tab" onclick="showScannerTab('sub')" id="tab-btn-sub">🔗 Subdomains</button>
+          <button class="scan-tab" onclick="showScannerTab('dast')" id="tab-btn-dast">🕷️ DAST Scan</button>
           <button class="scan-tab" onclick="showScannerTab('dns')" id="tab-btn-dns">🌐 DNS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('whois')" id="tab-btn-whois">📋 WHOIS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
@@ -1124,6 +1125,45 @@
       <div id="cve-results" style="display:none;margin-top:28px;text-align:left;"></div>
       <div id="cve-error" class="scan-error" style="display:none;">
         <p id="cve-error-msg">Something went wrong. Please try again.</p>
+      </div>
+    </div>
+
+    <!-- DAST Scanner — Free Tool #8 -->
+    <div id="dast-panel" class="scan-panel" style="display:none;">
+      <form id="dast-scan-form" class="scan-form">
+        <div class="scan-input-row">
+          <input
+            type="url"
+            id="dast-url"
+            name="url"
+            placeholder="https://example.com"
+            required
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit" class="btn btn-primary scan-btn" id="dast-scan-submit">
+            <span id="dast-label">Run DAST</span>
+            <span id="dast-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free scanner — checks security headers, cookie flags, CORS, open redirects, etc.</p>
+      </form>
+      <div id="dast-results" class="scan-results" style="display:none;">
+        <div class="scan-grade-wrap">
+          <div class="scan-grade" id="dast-grade-badge">?</div>
+          <div class="scan-grade-info">
+            <h3 id="dast-hostname">example.com</h3>
+            <p id="dast-summary">Analyzing...</p>
+          </div>
+        </div>
+        <div class="dast-findings" id="dast-findings"></div>
+        <div class="scan-cta" id="dast-cta">
+          <p>Want full-scale authenticated DAST scanning for web apps?</p>
+          <a href="/products/#lifetime-plans" class="btn btn-primary">Get AppSec Pro →</a>
+        </div>
+      </div>
+      <div id="dast-error" class="scan-error" style="display:none;">
+        <p id="dast-error-msg">Something went wrong. Please try again.</p>
       </div>
     </div>
 
@@ -1559,15 +1599,15 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel' };
-    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form' };
-    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve'];
+    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel' };
+    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form' };
+    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : 'cve-results')))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : 'cve-error')))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : 'cve-results'))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : 'cve-error'))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
@@ -2141,6 +2181,65 @@
       }
     });
   }
+
+  // ── DAST Scanner ─────────────────────────────────────────────────────────
+  var dastForm = document.getElementById('dast-scan-form');
+  if (dastForm) {
+    dastForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var url = document.getElementById('dast-url').value.trim();
+      if (!url) return;
+      var btn = document.getElementById('dast-scan-submit');
+      var lbl = document.getElementById('dast-label');
+      var ldg = document.getElementById('dast-loading');
+      var results = document.getElementById('dast-results');
+      var errDiv = document.getElementById('dast-error');
+
+      lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
+      results.style.display = 'none'; errDiv.style.display = 'none';
+
+      try {
+        var resp = await fetch('https://edgeiq-dast-scanner.gpalmieri21.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url })
+        });
+        if (!resp.ok) throw new Error('Scan failed (status ' + resp.status + ')');
+        var data = await resp.json();
+
+        var grade = data.grade || '?';
+        var gradeEl = document.getElementById('dast-grade-badge');
+        gradeEl.textContent = grade;
+        gradeEl.className = 'scan-grade grade-' + grade;
+
+        document.getElementById('dast-hostname').textContent = data.hostname || url;
+        document.getElementById('dast-summary').textContent =
+          'Score: ' + (data.score !== undefined ? data.score + '/100 — ' : '') + (data.summary || '');
+
+        var findingsEl = document.getElementById('dast-findings');
+        findingsEl.innerHTML = '';
+        if (data.findings && data.findings.length > 0) {
+          data.findings.forEach(function(f) {
+            var div = document.createElement('div');
+            div.className = 'finding ' + f.severity;
+            var icon = f.severity === 'critical' ? '🔴' :
+                       f.severity === 'high' ? '🟠' :
+                       f.severity === 'medium' ? '🟡' :
+                       f.severity === 'low' ? '🟢' : 'ℹ️';
+            div.innerHTML = '<span class="finding-icon">' + icon + '</span><span><span class="severity-' + f.severity + '">' + f.type.toUpperCase() + '</span> — ' + f.message + '</span>';
+            findingsEl.appendChild(div);
+          });
+        }
+        results.style.display = 'block';
+      } catch(err) {
+        document.getElementById('dast-error-msg').textContent = 'Scan failed: ' + err.message;
+        errDiv.style.display = 'block';
+      } finally {
+        lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
+      }
+    });
+  }
+
 })();
 
 // ── Billing Toggle ──────────────────────────────────────────────────────────
@@ -2289,8 +2388,8 @@
 (function() {
   var STORAGE_KEY = 'edgeiq_scanner_email_captured';
   var SUBSTACK_URL = 'https://edgeiqlabs.substack.com/api/v1/free';
-  // Findings containers across the 4 scanners that produce structured findings.
-  var GATED_IDS = ['scan-findings', 'headers-findings', 'xss-quick-findings', 'sub-findings'];
+  // Findings containers across the 5 scanners that produce structured findings.
+  var GATED_IDS = ['scan-findings', 'headers-findings', 'xss-quick-findings', 'sub-findings', 'dast-findings'];
 
   function isCaptured() {
     try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch(e) { return false; }
