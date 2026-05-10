@@ -897,6 +897,7 @@
           <button class="scan-tab" onclick="showScannerTab('api')" id="tab-btn-api">🔌 API Security</button>
           <button class="scan-tab" onclick="showScannerTab('cspm')" id="tab-btn-cspm">☁️ CSPM Scan</button>
           <button class="scan-tab" onclick="showScannerTab('threats')" id="tab-btn-threats">🚨 Threat Alerts</button>
+          <button class="scan-tab" onclick="showScannerTab('netscanner')" id="tab-btn-netscanner">🖥️ LAN Scanner</button>
           <button class="scan-tab" onclick="showScannerTab('dns')" id="tab-btn-dns">🌐 DNS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('whois')" id="tab-btn-whois">📋 WHOIS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
@@ -1288,6 +1289,71 @@
       </div>
       <div id="threats-error" class="scan-error" style="display:none;">
         <p id="threats-error-msg">Something went wrong. Please try again.</p>
+      </div>
+    </div>
+
+    <!-- LAN / Internal Network Scanner — Free Tool #12 (browser-based) -->
+    <div id="netscanner-panel" class="scan-panel" style="display:none;">
+      <form id="netscanner-scan-form" class="scan-form">
+        <div class="scan-input-row" style="grid-template-columns: 1fr 160px;">
+          <input
+            type="text"
+            id="netscanner-subnet"
+            name="subnet"
+            value="192.168.1"
+            placeholder="Subnet prefix (e.g. 192.168.1)"
+            required
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit" class="btn btn-primary scan-btn" id="netscanner-scan-submit">
+            <span id="netscanner-label">Scan LAN</span>
+            <span id="netscanner-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Runs entirely in your browser. Scans your local subnet for live hosts using connection timing.</p>
+      </form>
+
+      <!-- Progress bar -->
+      <div id="netscanner-progress-wrap" style="display:none; margin-top:18px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--muted); margin-bottom:6px;">
+          <span>Sweeping subnet...</span>
+          <span id="netscanner-progress-label">0 / 254</span>
+        </div>
+        <div style="background:var(--border); border-radius:6px; height:6px; overflow:hidden;">
+          <div id="netscanner-progress-bar" style="height:100%; width:0%; background:var(--accent); transition:width 0.3s;"></div>
+        </div>
+      </div>
+
+      <div id="netscanner-results" style="display:none; margin-top:24px;">
+        <div class="scan-grade-wrap">
+          <div class="scan-grade" id="netscanner-grade-badge">?</div>
+          <div class="scan-grade-info">
+            <h3 id="netscanner-summary-title">Local Network</h3>
+            <p id="netscanner-summary">Scan complete</p>
+          </div>
+        </div>
+        <!-- Live hosts table -->
+        <div style="margin-top:18px;">
+          <table id="netscanner-hosts-table" style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+            <thead>
+              <tr style="color:var(--muted); border-bottom:1px solid var(--border);">
+                <th style="text-align:left; padding:8px 10px;">IP Address</th>
+                <th style="text-align:left; padding:8px 10px;">Status</th>
+                <th style="text-align:left; padding:8px 10px;">Latency</th>
+                <th style="text-align:left; padding:8px 10px;">Service Hint</th>
+              </tr>
+            </thead>
+            <tbody id="netscanner-hosts-body"></tbody>
+          </table>
+        </div>
+        <!-- Locked premium findings -->
+        <div style="margin-top:20px;">
+          <div class="dast-findings" id="netscanner-locked-findings"></div>
+        </div>
+      </div>
+      <div id="netscanner-error" class="scan-error" style="display:none;">
+        <p id="netscanner-error-msg">Scan failed. Please try again.</p>
       </div>
     </div>
 
@@ -1723,15 +1789,15 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel' };
-    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form' };
-    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats'];
+    var panelMap = { ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel' };
+    var formMap  = { ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form' };
+    var tabs = ['ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : 'cve-results')))))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : 'cve-error')))))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : 'cve-results'))))))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : 'cve-error')))))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
@@ -2638,6 +2704,164 @@
         errDiv.style.display = 'block';
       } finally {
         lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
+      }
+    });
+  }
+
+  // ── LAN / Internal Network Scanner (browser-based timing probe) ────────────
+  var netScanForm = document.getElementById('netscanner-scan-form');
+  if (netScanForm) {
+    var netScanActive = false;
+
+    // Probe a single IP using AbortController timing.
+    // Alive hosts refuse/error fast; dead hosts timeout slowly.
+    function probeHost(ip, timeoutMs) {
+      return new Promise(function(resolve) {
+        var controller = new AbortController();
+        var t0 = Date.now();
+        var timer = setTimeout(function() {
+          controller.abort();
+          resolve({ ip: ip, alive: false, latency: null });
+        }, timeoutMs);
+
+        // Try fetching with no-cors. We expect it to fail (CORS/network error),
+        // but alive hosts fail *fast*, dead hosts fail *slow* (timeout).
+        fetch('http://' + ip + '/', {
+          method: 'GET',
+          mode: 'no-cors',
+          signal: controller.signal
+        }).then(function() {
+          clearTimeout(timer);
+          resolve({ ip: ip, alive: true, latency: Date.now() - t0 });
+        }).catch(function(err) {
+          clearTimeout(timer);
+          var elapsed = Date.now() - t0;
+          // If it errored quickly (not a timeout abort), the host is likely alive
+          var isAbort = (err && err.name === 'AbortError');
+          resolve({ ip: ip, alive: !isAbort, latency: isAbort ? null : elapsed });
+        });
+      });
+    }
+
+    function guessService(latency) {
+      if (latency === null) return '—';
+      if (latency < 50) return 'Gateway / Router';
+      if (latency < 200) return 'LAN Device';
+      return 'Unknown';
+    }
+
+    function addHostRow(tbody, result) {
+      var tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+      var statusBadge = result.alive
+        ? '<span style="color:#00ff88;font-weight:600;">● Live</span>'
+        : '<span style="color:#555;">○ Timeout</span>';
+      tr.innerHTML =
+        '<td style="padding:8px 10px; font-family:monospace;">' + result.ip + '</td>' +
+        '<td style="padding:8px 10px;">' + statusBadge + '</td>' +
+        '<td style="padding:8px 10px; color:var(--muted);">' + (result.latency !== null ? result.latency + ' ms' : '—') + '</td>' +
+        '<td style="padding:8px 10px; color:var(--muted); font-size:0.82rem;">' + guessService(result.latency) + '</td>';
+      tbody.appendChild(tr);
+    }
+
+    function addLockedFinding(container, type, message, stripeUrl) {
+      var div = document.createElement('div');
+      div.className = 'finding locked';
+      div.style.background = 'rgba(255,255,255,0.03)';
+      div.style.border = '1px solid rgba(255,255,255,0.1)';
+      div.style.cursor = 'pointer';
+      div.style.position = 'relative';
+      div.onclick = function() { window.location.href = stripeUrl; };
+
+      var blurred = document.createElement('span');
+      blurred.style.filter = 'blur(4px)';
+      blurred.style.opacity = '0.7';
+      blurred.style.userSelect = 'none';
+      blurred.innerHTML = '<span class="finding-icon">\ud83d\udd12</span><span class="severity-high">[PRO] ' + type.replace(/_/g, ' ') + '</span> \u2014 ' + message;
+
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:absolute;left:40px;right:0;top:50%;transform:translateY(-50%);font-weight:bold;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8);pointer-events:none;';
+      overlay.textContent = 'Upgrade to Pro to unlock details \u2192';
+
+      div.appendChild(blurred);
+      div.appendChild(overlay);
+      container.appendChild(div);
+    }
+
+    netScanForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (netScanActive) return;
+      netScanActive = true;
+
+      var subnet = (document.getElementById('netscanner-subnet').value || '').trim().replace(/\.$/, '');
+      if (!subnet) { netScanActive = false; return; }
+
+      var btn = document.getElementById('netscanner-scan-submit');
+      var lbl = document.getElementById('netscanner-label');
+      var ldg = document.getElementById('netscanner-loading');
+      var progressWrap = document.getElementById('netscanner-progress-wrap');
+      var progressBar = document.getElementById('netscanner-progress-bar');
+      var progressLabel = document.getElementById('netscanner-progress-label');
+      var resultsDiv = document.getElementById('netscanner-results');
+      var errDiv = document.getElementById('netscanner-error');
+      var tbody = document.getElementById('netscanner-hosts-body');
+      var lockedDiv = document.getElementById('netscanner-locked-findings');
+
+      lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
+      progressWrap.style.display = 'block';
+      resultsDiv.style.display = 'none'; errDiv.style.display = 'none';
+      tbody.innerHTML = ''; lockedDiv.innerHTML = '';
+
+      var total = 254;
+      var done = 0;
+      var liveHosts = [];
+      var TIMEOUT_MS = 1400;
+      var BATCH_SIZE = 20; // concurrent per batch for speed
+
+      try {
+        for (var start = 1; start <= total; start += BATCH_SIZE) {
+          var batch = [];
+          for (var i = start; i < Math.min(start + BATCH_SIZE, total + 1); i++) {
+            batch.push(probeHost(subnet + '.' + i, TIMEOUT_MS));
+          }
+          var results = await Promise.all(batch);
+          results.forEach(function(r) {
+            done++;
+            var pct = Math.round((done / total) * 100);
+            progressBar.style.width = pct + '%';
+            progressLabel.textContent = done + ' / ' + total;
+            if (r.alive) {
+              liveHosts.push(r);
+              addHostRow(tbody, r);
+            }
+          });
+        }
+
+        // Summary grade
+        var grade = liveHosts.length === 0 ? 'A' : liveHosts.length <= 3 ? 'B' : liveHosts.length <= 8 ? 'C' : 'D';
+        var gradeEl = document.getElementById('netscanner-grade-badge');
+        gradeEl.textContent = grade;
+        gradeEl.className = 'scan-grade grade-' + grade;
+        document.getElementById('netscanner-summary-title').textContent = subnet + '.0/24';
+        document.getElementById('netscanner-summary').textContent =
+          liveHosts.length + ' live host' + (liveHosts.length === 1 ? '' : 's') + ' discovered on your local network.';
+
+        // Add locked premium rows
+        var STRIPE_NET = 'https://buy.stripe.com/cNi3cx51NdFzdYwbMQ7wA3k';
+        addLockedFinding(lockedDiv, 'PORT_SCAN', 'Upgrade to scan live hosts for open ports: HTTP (80/443), SSH (22), RDP (3389), FTP (21).', STRIPE_NET);
+        addLockedFinding(lockedDiv, 'DEVICE_FINGERPRINT', 'Upgrade to identify device manufacturers (via MAC OUI lookup) for each discovered host.', STRIPE_NET);
+        addLockedFinding(lockedDiv, 'NETWORK_MAP_REPORT', 'Upgrade to export a full network map as an HTML report with topology diagram.', STRIPE_NET);
+
+        progressWrap.style.display = 'none';
+        resultsDiv.style.display = 'block';
+
+      } catch(err) {
+        document.getElementById('netscanner-error-msg').textContent = 'Scan failed: ' + err.message;
+        errDiv.style.display = 'block';
+        progressWrap.style.display = 'none';
+      } finally {
+        lbl.style.display = 'inline'; ldg.style.display = 'none';
+        btn.disabled = false; netScanActive = false;
       }
     });
   }
