@@ -905,6 +905,7 @@
           <button class="scan-tab" onclick="showScannerTab('docker')" id="tab-btn-docker">🐳 Container Scan</button>
           <button class="scan-tab" onclick="showScannerTab('compliance')" id="tab-btn-compliance">📋 Compliance Scan</button>
           <button class="scan-tab" onclick="showScannerTab('policy')" id="tab-btn-policy">📄 Policy Builder</button>
+          <button class="scan-tab" onclick="showScannerTab('asm')" id="tab-btn-asm">🗺️ ASM Dashboard</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
         </div>
         <div id="ssl-panel" class="scan-panel">
@@ -1438,6 +1439,43 @@
         <h3 style="margin-top:0;">Generated Policies</h3>
         <p style="color:var(--muted); font-size:0.9rem;">Your custom Information Security documents are ready.</p>
         <div class="dast-findings" id="policy-findings" style="margin-top:16px;"></div>
+      </div>
+    </div>
+
+    <!-- ASM Dashboard Tool -->
+    <div id="asm-panel" class="scan-panel" style="display:none;">
+      <form id="asm-scan-form" class="scan-form">
+        <div class="scan-input-row" style="grid-template-columns: 1fr 180px;">
+          <input type="text" id="asm-domain" name="url" placeholder="example.com" required autocomplete="off" spellcheck="false" />
+          <button type="submit" class="btn btn-primary scan-btn" id="asm-scan-submit">
+            <span id="asm-label">Map Assets</span>
+            <span id="asm-loading" style="display:none;">Mapping...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — dynamically maps top-level assets linked directly to your root domain.</p>
+      </form>
+      <div id="asm-results" class="scan-results" style="display:none;">
+        <div class="scan-grade-wrap">
+          <div class="scan-grade" id="asm-grade-badge">?</div>
+          <div class="scan-grade-info">
+            <h3 id="asm-results-domain">example.com</h3>
+            <p id="asm-summary">Evaluating external footprint...</p>
+          </div>
+        </div>
+        <div class="dast-findings" id="asm-free-findings" style="margin-top:16px;"></div>
+        
+        <!-- Premium Paywall for Continuous Tracking -->
+        <div class="scan-gate-card">
+          <div class="scan-gate-icon">🔒</div>
+          <h3>Upgrade to ASM Dashboard Pro</h3>
+          <p class="scan-gate-sub" style="color:var(--muted); font-size:0.88rem; margin:0 0 14px;">Get real-time Slack/Email alerts the moment a new subdomain goes live, track unmanaged Shadow IT out to the cloud edge, and monitor exposed services continuously.</p>
+          <a href="https://buy.stripe.com/5kQ8wR51NgRL3jS8AE7wA3n" class="btn btn-primary" style="display:inline-block; margin-top:8px;" target="_blank">Activate Continuous Pro for $99/mo →</a>
+        </div>
+        
+        <div class="dast-findings" id="asm-premium-findings" style="margin-top:16px;"></div>
+      </div>
+      <div id="asm-error" class="scan-error" style="display:none;">
+        <p id="asm-error-msg">Something went wrong. Please try again.</p>
       </div>
     </div>
 
@@ -3166,6 +3204,83 @@
         results.style.display = 'block';
         lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
       }, 900);
+    });
+  }
+
+  // ── ASM Dashboard Scan ──────────────────────────────────────────────────────
+  var STRIPE_ASM = 'https://buy.stripe.com/5kQ8wR51NgRL3jS8AE7wA3n';
+  var asmForm = document.getElementById('asm-scan-form');
+  if (asmForm) {
+    asmForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var domain = document.getElementById('asm-domain').value.trim();
+      if (!domain) return;
+      var btn = document.getElementById('asm-scan-submit');
+      var lbl = document.getElementById('asm-label');
+      var ldg = document.getElementById('asm-loading');
+      var results = document.getElementById('asm-results');
+      var errDiv = document.getElementById('asm-error');
+      
+      lbl.style.display = 'none'; ldg.style.display = 'inline'; btn.disabled = true;
+      results.style.display = 'none'; errDiv.style.display = 'none';
+      document.getElementById('asm-results-domain').textContent = domain;
+      
+      fetch('https://edgeiq-asm-scanner.gpalmieri21.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target: domain })
+      })
+      .then(function(r) {
+        if (!r.ok) throw new Error('API error (' + r.status + ')');
+        return r.json();
+      })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        
+        document.getElementById('asm-grade-badge').textContent = data.grade || '?';
+        document.getElementById('asm-grade-badge').className = 'scan-grade grade-' + (data.grade || '?');
+        document.getElementById('asm-summary').textContent = data.summary;
+        
+        var freeFindingsEl = document.getElementById('asm-free-findings');
+        var premFindingsEl = document.getElementById('asm-premium-findings');
+        freeFindingsEl.innerHTML = '';
+        premFindingsEl.innerHTML = '';
+        
+        if (data.findings && data.findings.length > 0) {
+          data.findings.forEach(function(f) {
+            var div = document.createElement('div');
+            var isLocked = f.severity === 'locked';
+            div.className = 'finding ' + (isLocked ? 'locked' : f.severity);
+            
+            if (isLocked) {
+              div.style.background = 'rgba(255,255,255,0.03)';
+              div.style.border = '1px solid rgba(255,255,255,0.1)';
+              div.style.cursor = 'pointer';
+              div.style.position = 'relative';
+              div.onclick = function() { window.location.href = STRIPE_ASM; };
+              var strLable = f.type.replace(/_/g, ' ');
+              div.innerHTML = '<span class="finding-icon">🔒</span><span style="filter:blur(4px);opacity:0.7;user-select:none;"><span class="severity-high">[PRO] ' + strLable + '</span> — ' + f.message + '</span>';
+              var ov = document.createElement('div');
+              ov.style.cssText = 'position:absolute;left:40px;right:0;top:50%;transform:translateY(-50%);font-weight:bold;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8);pointer-events:none;';
+              ov.textContent = 'Upgrade to unlock continuous tracking →';
+              div.appendChild(ov);
+              premFindingsEl.appendChild(div);
+            } else {
+              var icon = f.severity === 'critical' ? '🔴' : (f.severity === 'high' ? '🟠' : (f.severity === 'medium' ? '🟡' : (f.severity === 'low' ? '🟢' : 'ℹ️')));
+              div.innerHTML = '<span class="finding-icon">' + icon + '</span><span><span class="severity-' + f.severity + '">' + f.type.replace(/_/g, ' ') + '</span> — ' + f.message + '</span>';
+              freeFindingsEl.appendChild(div);
+            }
+          });
+        }
+        results.style.display = 'block';
+      })
+      .catch(function(err) {
+        document.getElementById('asm-error-msg').textContent = err.message;
+        errDiv.style.display = 'block';
+      })
+      .finally(function() {
+        lbl.style.display = 'inline'; ldg.style.display = 'none'; btn.disabled = false;
+      });
     });
   }
 
