@@ -75,6 +75,10 @@ export default {
         return new Response(JSON.stringify({ error: `Image "${imageRepo}" not found on Docker Hub.` }), {
           status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
+      } else {
+        return new Response(JSON.stringify({ error: `Docker Hub returned status ${hubResp.status}. Try again shortly.` }), {
+          status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
       }
     } catch {
       return new Response(JSON.stringify({ error: 'Failed to reach Docker Hub API.' }), {
