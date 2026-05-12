@@ -228,6 +228,29 @@
     }
     .upsell-card a:hover { opacity: .85; }
 
+    /* Scan upsell banner */
+    .scan-upsell-banner {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120px);
+      z-index: 999; width: calc(100% - 48px); max-width: 560px;
+      background: linear-gradient(135deg, #0d1f17, #0b1220);
+      border: 1px solid rgba(61,225,158,.4); border-radius: 14px;
+      padding: 18px 20px; box-shadow: 0 8px 32px rgba(0,0,0,.5);
+      display: flex; align-items: flex-start; gap: 14px;
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    .scan-upsell-banner.visible { transform: translateX(-50%) translateY(0); }
+    .sub-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .sub-body { flex: 1; }
+    .sub-body strong { font-size: 14px; font-weight: 700; color: var(--text); display: block; margin-bottom: 4px; }
+    .sub-body p { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+    .sub-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .sub-btn-primary { background: var(--green); color: #071018; font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 7px; text-decoration: none; white-space: nowrap; transition: opacity .2s; }
+    .sub-btn-primary:hover { opacity: .85; }
+    .sub-btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 12px; padding: 7px 14px; border-radius: 7px; text-decoration: none; white-space: nowrap; transition: border-color .2s, color .2s; }
+    .sub-btn-ghost:hover { border-color: var(--green); color: var(--green); }
+    .sub-dismiss { background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; padding: 0; line-height: 1; flex-shrink: 0; margin-top: -2px; transition: color .2s; }
+    .sub-dismiss:hover { color: var(--text); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .page { grid-template-columns: 1fr; }
@@ -1021,6 +1044,8 @@
       var data = processScanResults(domain, results);
       renderDashboard(domain, data);
       renderSavedDomains();
+      incrementScanCount();
+      maybeShowUpsell(domain);
     } catch(err) {
       console.error(err);
       emptyState.style.display = 'flex';
@@ -1069,7 +1094,61 @@
     }, 200);
   });
 
+  /* ── UPSELL BANNER ── */
+  var UPSELL_KEY = 'edgeiq_upsell_dismissed';
+  var SCAN_COUNT_KEY = 'edgeiq_total_scans';
+
+  function getScanCount() {
+    return parseInt(localStorage.getItem(SCAN_COUNT_KEY) || '0', 10);
+  }
+  function incrementScanCount() {
+    var n = getScanCount() + 1;
+    localStorage.setItem(SCAN_COUNT_KEY, String(n));
+    return n;
+  }
+  function isUpsellDismissed() {
+    return localStorage.getItem(UPSELL_KEY) === '1';
+  }
+  function dismissUpsell() {
+    localStorage.setItem(UPSELL_KEY, '1');
+    var banner = document.getElementById('scan-upsell-banner');
+    if (banner) {
+      banner.classList.remove('visible');
+      setTimeout(function(){ banner.style.display = 'none'; }, 400);
+    }
+  }
+  window.dismissUpsell = dismissUpsell;
+
+  function maybeShowUpsell(domain) {
+    if (isUpsellDismissed()) return;
+    var count = getScanCount();
+    if (count < 2) return;
+    var banner = document.getElementById('scan-upsell-banner');
+    if (!banner) return;
+    var link = banner.querySelector('.sub-pulse-link');
+    if (link) link.href = '/pulse/?domain=' + encodeURIComponent(domain);
+    banner.style.display = 'flex';
+    // Let display:flex render before transitioning
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() { banner.classList.add('visible'); });
+    });
+  }
+
 })();
 </script>
+
+<!-- Upsell banner (shown after 2nd scan) -->
+<div id="scan-upsell-banner" class="scan-upsell-banner" style="display:none;" role="alert">
+  <div class="sub-icon">🟢</div>
+  <div class="sub-body">
+    <strong>You've run a few scans — want these to run automatically?</strong>
+    <p>EdgeIQ Pulse monitors your domain every week and emails you when anything changes — SSL, headers, subdomains, and more. Free to start.</p>
+    <div class="sub-actions">
+      <a href="/pulse/" class="sub-btn-primary sub-pulse-link">Start Free Monitoring →</a>
+      <a href="/inbox-shield/" class="sub-btn-ghost">+ Email Security</a>
+    </div>
+  </div>
+  <button class="sub-dismiss" onclick="dismissUpsell()" title="Dismiss">✕</button>
+</div>
 </body>
 </html>
