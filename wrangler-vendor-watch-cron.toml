@@ -1,0 +1,14 @@
+name = "edgeiq-vendor-watch-cron"
+main = "vendor-watch-cron-worker.js"
+compatibility_date = "2026-04-23"
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[[kv_namespaces]]
+binding = "PULSE_KV"
+id = "fa1a58361a9b498399835adcc727cd4b"
+
+[vars]
+FROM_EMAIL = "alerts@edgeiqlabs.com"
+SITE_URL = "https://edgeiqlabs.com"
