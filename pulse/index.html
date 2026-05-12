@@ -701,8 +701,8 @@
       // For paid plans, redirect to Stripe first (signup happens post-payment)
       if (plan === 'pro' || plan === 'business') {
         var stripeLinks = {
-          pro: 'https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v',      // TODO: replace with Pulse Pro link
-          business: 'https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w'  // TODO: replace with Pulse Business link
+          pro: 'https://buy.stripe.com/aFa14pgKvdFz8EcaIM7wA3o',
+          business: 'https://buy.stripe.com/8x2fZj8dZ44Z1bK3gk7wA3p'
         };
         // Store email+domain in sessionStorage so success page can retrieve it
         try { sessionStorage.setItem('pulse_pending', JSON.stringify({email, domain, plan})); } catch(x){}

@@ -1,0 +1,14 @@
+name = "edgeiq-pulse-cron"
+main = "pulse-cron-worker.js"
+compatibility_date = "2026-04-23"
+
+[triggers]
+crons = ["0 8 * * 1"]
+
+[[kv_namespaces]]
+binding = "PULSE_KV"
+id = "fa1a58361a9b498399835adcc727cd4b"
+
+[vars]
+FROM_EMAIL = "onboarding@resend.dev"
+SITE_URL = "https://edgeiqlabs.com"
