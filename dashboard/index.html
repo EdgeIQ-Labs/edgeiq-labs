@@ -3,315 +3,1073 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Security Dashboard · EdgeIQ Labs</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>Security Dashboard · EdgeIQ Labs</title>
+  <meta name="robots" content="noindex" />
   <style>
     :root {
       --bg: #0b0f14;
       --card: #121923;
+      --card2: #0d1520;
       --text: #e8eef7;
       --muted: #9fb0c7;
+      --dim: #4a6080;
       --accent: #3dd9ff;
-      --border: #233142;
+      --green: #3de19e;
       --ok: #70f0a8;
       --warn: #ffb347;
+      --danger: #ff6b6b;
+      --crit: #ff2d55;
+      --border: #1e2e3e;
+      --border2: #233142;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Inter, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
     a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    button { font-family: inherit; cursor: pointer; }
 
-    /* Nav */
+    /* ── NAV ── */
     nav {
-      background: var(--card);
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(11,15,20,0.95); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      height: 52px; padding: 0 20px;
+      display: flex; align-items: center; gap: 14px;
     }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--text);
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: var(--text); text-decoration: none; flex-shrink: 0; }
+    .nav-logo img { height: 26px; border-radius: 5px; }
+    .domain-bar {
+      display: flex; align-items: center; gap: 8px; flex: 1; max-width: 480px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0 4px 0 12px; height: 36px;
     }
-    .nav-brand span { color: var(--accent); }
-    .nav-links { display: flex; gap: 24px; font-size: 0.88rem; }
-    .nav-links a { color: var(--muted); }
-    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .domain-bar input {
+      background: none; border: none; outline: none; flex: 1;
+      color: var(--text); font-size: 0.88rem; font-family: inherit;
+    }
+    .domain-bar input::placeholder { color: var(--dim); }
+    #scan-btn {
+      background: var(--green); color: #071018; font-weight: 700; font-size: 0.8rem;
+      border: none; padding: 6px 14px; border-radius: 6px; transition: opacity .2s;
+      white-space: nowrap;
+    }
+    #scan-btn:hover { opacity: .85; }
+    #scan-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 0.82rem; }
+    .nav-right a { color: var(--muted); }
+    .nav-right a:hover { color: var(--text); }
 
-    /* Hero */
-    .hero {
-      padding: 64px 32px;
-      text-align: center;
-      background: linear-gradient(180deg, rgba(61,217,255,0.04) 0%, transparent 100%);
-    }
-    .hero-eyebrow {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
-    h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-    .hero-sub {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 520px;
-      margin: 0 auto 32px;
-      line-height: 1.6;
-    }
+    /* ── LAYOUT ── */
+    .page { display: grid; grid-template-columns: 1fr 300px; gap: 0; min-height: calc(100vh - 52px); }
+    .main { padding: 20px; border-right: 1px solid var(--border); }
+    .sidebar { padding: 20px; }
 
-    /* Score ring */
-    .score-ring {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: conic-gradient(var(--ok) 0deg 252deg, var(--border) 252deg 360deg);
-      position: relative;
-      margin-bottom: 32px;
+    /* ── EMPTY STATE ── */
+    #empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 420px; text-align: center; gap: 12px;
     }
-    .score-ring::before {
-      content: '';
-      position: absolute;
-      inset: 12px;
-      background: var(--bg);
-      border-radius: 50%;
-    }
-    .score-val {
-      position: relative;
-      font-size: 1.8rem;
-      font-weight: 700;
-      z-index: 1;
-    }
-    .score-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    #empty-state h2 { font-size: 1.5rem; font-weight: 700; }
+    #empty-state p { color: var(--muted); font-size: 0.9rem; max-width: 380px; line-height: 1.6; }
+    .empty-icon { font-size: 3rem; }
 
-    /* Cards grid */
-    .container { max-width: 960px; margin: 0 auto; padding: 0 32px 64px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-bottom: 40px;
+    /* ── SCAN PROGRESS ── */
+    #scan-progress { display: none; padding: 32px 0; }
+    .progress-title { font-size: 0.85rem; color: var(--muted); margin-bottom: 18px; }
+    .prog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .prog-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-size: 0.83rem;
     }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-    }
-    .card-icon { font-size: 1.8rem; margin-bottom: 12px; }
-    .card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
-    .card p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-    .card .tag {
-      display: inline-block;
-      background: rgba(112,240,168,0.1);
-      border: 1px solid rgba(112,240,168,0.25);
-      color: var(--ok);
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-top: 10px;
-    }
+    .prog-item .pi-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .prog-item .pi-name { flex: 1; }
+    .prog-status { font-size: 0.75rem; padding: 2px 7px; border-radius: 8px; }
+    .ps-pending { background: rgba(255,255,255,.05); color: var(--dim); }
+    .ps-running { background: rgba(61,217,255,.12); color: var(--accent); }
+    .ps-ok      { background: rgba(112,240,168,.1); color: var(--ok); }
+    .ps-warn    { background: rgba(255,179,71,.1); color: var(--warn); }
+    .ps-error   { background: rgba(255,107,107,.1); color: var(--danger); }
 
-    /* Steps section */
-    .steps-section { margin-bottom: 40px; }
-    h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
-    .steps {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
-    }
-    .step {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
-    .step:last-child { margin-bottom: 0; }
-    .step-n {
-      background: rgba(61,217,255,0.15);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 700;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .step-body { font-size: 0.88rem; }
-    .step-body strong { color: var(--text); display: block; margin-bottom: 2px; }
-    .step-body span { color: var(--muted); }
+    /* ── DASHBOARD ── */
+    #dashboard { display: none; }
 
-    /* CTA */
-    .cta-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 40px;
+    /* Summary bar */
+    .summary-bar {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; align-items: stretch;
     }
-    .btn {
-      display: inline-block;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: opacity 0.2s;
+    .sum-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 18px; flex: 1; min-width: 110px;
     }
-    .btn:hover { text-decoration: none; opacity: 0.85; }
-    .btn-primary { background: var(--accent); color: #071018; }
-    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .sum-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; }
+    .sum-val { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .sum-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+    .grade-A { color: var(--ok); }
+    .grade-B { color: #a3e070; }
+    .grade-C { color: var(--warn); }
+    .grade-D { color: #ff8c42; }
+    .grade-F { color: var(--danger); }
 
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 32px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: #4a6080;
+    /* Trend chart */
+    .chart-wrap {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; margin-bottom: 18px;
     }
-    footer a { color: var(--accent); }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .chart-title { font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    #trend-canvas { width: 100%; display: block; }
 
-    @media (max-width: 600px) {
-      nav { padding: 12px 20px; }
-      .hero { padding: 40px 20px; }
-      h1 { font-size: 1.6rem; }
-      .container { padding: 0 20px 40px; }
+    /* Scanner pills */
+    .scanner-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .sc-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 4px 12px; font-size: 0.78rem; cursor: pointer; transition: border-color .2s;
+    }
+    .sc-pill:hover { border-color: var(--accent); }
+    .sc-pill.active { border-color: var(--accent); background: rgba(61,217,255,.08); }
+    .sc-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .dot-ok   { background: var(--ok); }
+    .dot-warn { background: var(--warn); }
+    .dot-bad  { background: var(--danger); }
+    .dot-info { background: var(--dim); }
+    .dot-err  { background: var(--crit); }
+
+    /* Finding tracker */
+    .section-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--muted); font-weight: 700; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .finding-filters { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+    .f-filter {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 4px 12px; font-size: 0.75rem; color: var(--muted); cursor: pointer; transition: all .2s;
+    }
+    .f-filter.active { border-color: var(--accent); color: var(--accent); background: rgba(61,217,255,.08); }
+
+    .findings-table { width: 100%; border-collapse: collapse; }
+    .findings-table th {
+      text-align: left; padding: 8px 10px; font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: .05em; color: var(--dim);
+      border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    .findings-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,.03); font-size: 0.83rem; vertical-align: top; }
+    .findings-table tr:last-child td { border-bottom: none; }
+    .findings-table tr:hover td { background: rgba(255,255,255,.02); }
+
+    .sev-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+    }
+    .sev-critical { background: rgba(255,45,85,.15); color: var(--crit); border: 1px solid rgba(255,45,85,.3); }
+    .sev-high     { background: rgba(255,107,107,.12); color: var(--danger); border: 1px solid rgba(255,107,107,.25); }
+    .sev-medium   { background: rgba(255,179,71,.1); color: var(--warn); border: 1px solid rgba(255,179,71,.25); }
+    .sev-low      { background: rgba(112,240,168,.08); color: var(--ok); border: 1px solid rgba(112,240,168,.2); }
+    .sev-info     { background: rgba(255,255,255,.04); color: var(--dim); border: 1px solid var(--border); }
+
+    .status-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 8px; font-size: 0.72rem; font-weight: 600;
+      border: 1px solid transparent; cursor: pointer; transition: all .15s;
+    }
+    .st-open { background: rgba(255,107,107,.1); color: var(--danger); border-color: rgba(255,107,107,.2); }
+    .st-open:hover { background: rgba(255,107,107,.18); }
+    .st-fixed { background: rgba(112,240,168,.1); color: var(--ok); border-color: rgba(112,240,168,.2); }
+    .st-fixed:hover { background: rgba(112,240,168,.18); }
+    .st-ack { background: rgba(255,255,255,.05); color: var(--dim); border-color: var(--border); }
+    .st-ack:hover { background: rgba(255,255,255,.09); }
+
+    .finding-msg { color: var(--text); line-height: 1.4; }
+    .finding-meta { font-size: 0.72rem; color: var(--dim); margin-top: 3px; }
+    .scanner-tag { color: var(--accent); font-size: 0.72rem; }
+
+    /* Premium locked row */
+    .locked-row td { color: var(--dim) !important; filter: blur(4px); pointer-events: none; }
+    .locked-overlay {
+      text-align: center; padding: 14px; background: rgba(11,15,20,.8);
+      border: 1px solid var(--border); border-radius: 10px; margin-top: 8px; font-size: 0.82rem;
+    }
+    .locked-overlay a { color: var(--green); font-weight: 600; }
+
+    /* ── SIDEBAR ── */
+    .sidebar-section { margin-bottom: 24px; }
+    .sidebar h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+
+    .history-list { display: flex; flex-direction: column; gap: 6px; }
+    .hist-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 9px;
+      padding: 10px 12px; cursor: pointer; transition: border-color .2s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hist-item:hover { border-color: var(--accent); }
+    .hist-item.active { border-color: var(--green); background: rgba(61,225,158,.05); }
+    .hist-grade {
+      font-size: 1.1rem; font-weight: 800; width: 26px; text-align: center; flex-shrink: 0;
+    }
+    .hist-body { flex: 1; }
+    .hist-date { font-size: 0.78rem; font-weight: 600; }
+    .hist-meta { font-size: 0.7rem; color: var(--dim); margin-top: 1px; }
+    .hist-score { font-size: 0.82rem; font-weight: 700; }
+
+    .no-history { font-size: 0.82rem; color: var(--dim); line-height: 1.5; padding: 10px 0; }
+
+    /* Pulse upsell */
+    .upsell-card {
+      background: linear-gradient(135deg, #0d1f17, #0b1c14);
+      border: 1px solid rgba(61,225,158,.3); border-radius: 10px; padding: 16px;
+    }
+    .upsell-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+    .upsell-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+    .upsell-card a {
+      display: block; text-align: center; background: var(--green); color: #071018;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 7px;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .upsell-card a:hover { opacity: .85; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { border-top: 1px solid var(--border); }
+      .nav-right { display: none; }
+    }
+    @media (max-width: 500px) {
+      .domain-bar { max-width: none; }
+      .summary-bar .sum-card { min-width: calc(50% - 6px); }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-brand">
-    <img src="https://edgeiqlabs.com/logo-edgeiq-selected.png" alt="EdgeIQ Labs" style="height:28px;" />
-    <div>Edge<span>IQ</span> Labs</div>
+  <a class="nav-logo" href="/">
+    <img src="/favicon.png" alt="EdgeIQ" />
+    EdgeIQ
+  </a>
+  <div class="domain-bar">
+    <input type="text" id="domain-input" placeholder="yourdomain.com" autocomplete="off" spellcheck="false" />
+    <button id="scan-btn">Scan Now</button>
   </div>
-  <div class="nav-links">
-    <a href="https://edgeiqlabs.com">Home</a>
-    <a href="https://edgeiqlabs.com/compliance">Compliance</a>
-    <a href="https://edgeiqlabs.com/phishsim">PhishSim</a>
-    <a href="https://edgeiqlabs.com/smb">SMB Tools</a>
-    <a href="mailto:support@edgeiqlabs.com">Support</a>
+  <div class="nav-right">
+    <a href="/pulse/">🟢 Pulse</a>
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-eyebrow">Security Intelligence Platform</div>
-  <h1>Your EdgeIQ Dashboard</h1>
-  <p class="hero-sub">Monitor your attack surface, track vulnerabilities, and get compliance-ready reports — all in one place.</p>
+<div class="page">
+  <div class="main">
 
-  <div style="display:inline-block; text-align:center;">
-    <div class="score-ring">
-      <div>
-        <div class="score-val">70</div>
-        <div class="score-label">EdgeIQ Score</div>
-      </div>
+    <!-- EMPTY STATE -->
+    <div id="empty-state">
+      <div class="empty-icon">🛡️</div>
+      <h2>Security Dashboard</h2>
+      <p>Enter a domain above and click <strong>Scan Now</strong> to run a live security assessment. Results are saved locally so your history persists across visits.</p>
+      <p style="font-size:0.8rem;color:var(--dim);margin-top:8px;">No data leaves your browser until you sign up for Pulse monitoring.</p>
     </div>
-  </div>
 
-  <p style="font-size:0.8rem; color:var(--muted); margin-top: -16px;">Scan your first asset to generate your real score</p>
+    <!-- SCAN PROGRESS -->
+    <div id="scan-progress">
+      <p class="progress-title" id="progress-title">Scanning <strong id="scanning-domain"></strong>…</p>
+      <div class="prog-grid" id="prog-grid"></div>
+    </div>
 
-  <div class="cta-row">
-    <a href="https://edgeiqlabs.com/compliance#scanner" class="btn btn-primary">Run First Scan →</a>
-    <a href="https://edgeiqlabs.com/support" class="btn btn-secondary">Contact Support</a>
-  </div>
-</section>
+    <!-- DASHBOARD -->
+    <div id="dashboard">
 
-<div class="container">
-  <div class="grid">
-    <div class="card">
-      <div class="card-icon">🛡️</div>
-      <h3>Compliance Monitoring</h3>
-      <p>Track your security posture across HIPAA, PCI, and SOC2 readiness frameworks. Generate audit-ready reports on demand.</p>
-      <span class="tag">Active</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">🔍</div>
-      <h3>CVE & Exploit Detection</h3>
-      <p>Real-time scanning against the latest vulnerability数据库. Get prioritized findings with CVSS scores and remediation guidance.</p>
-      <span class="tag">Ready to scan</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">🌐</div>
-      <h3>Dark Web Exposure</h3>
-      <p>Monitor for leaked credentials, exposed databases, and compromised assets tied to your domain and IP range.</p>
-      <span class="tag">Monitoring</span>
-    </div>
-    <div class="card">
-      <div class="card-icon">🔒</div>
-      <h3>SSL Certificate Health</h3>
-      <p>Track certificate expiration, chain validity, and configuration issues across all your domains before they become incidents.</p>
-      <span class="tag">Connected</span>
-    </div>
-  </div>
-
-  <div class="steps-section">
-    <h2>Get Started in 4 Steps</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-n">1</div>
-        <div class="step-body">
-          <strong>Add your first asset</strong>
-          <span>Enter a domain, IP address, or subdomain to begin monitoring</span>
+      <!-- Summary bar -->
+      <div class="summary-bar">
+        <div class="sum-card">
+          <div class="sum-label">Grade</div>
+          <div class="sum-val" id="sum-grade">—</div>
+          <div class="sum-sub" id="sum-score-sub"></div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">Score</div>
+          <div class="sum-val" id="sum-score">—</div>
+          <div class="sum-sub">out of 100</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">Open findings</div>
+          <div class="sum-val" style="color:var(--danger)" id="sum-open">—</div>
+          <div class="sum-sub" id="sum-open-sub"></div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">Resolved</div>
+          <div class="sum-val" style="color:var(--ok)" id="sum-fixed">—</div>
+          <div class="sum-sub">findings fixed</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">Scans run</div>
+          <div class="sum-val" id="sum-scans">—</div>
+          <div class="sum-sub" id="sum-last-scan"></div>
         </div>
       </div>
-      <div class="step">
-        <div class="step-n">2</div>
-        <div class="step-body">
-          <strong>Run your first scan</strong>
-          <span>EdgeIQ checks for exposed ports, CVE vulnerabilities, and misconfigurations</span>
+
+      <!-- Trend chart -->
+      <div class="chart-wrap" id="chart-wrap" style="display:none;">
+        <div class="chart-header">
+          <span class="chart-title">Score trend</span>
+          <span style="font-size:0.75rem;color:var(--dim);" id="chart-range"></span>
         </div>
+        <canvas id="trend-canvas" height="140"></canvas>
       </div>
-      <div class="step">
-        <div class="step-n">3</div>
-        <div class="step-body">
-          <strong>Review your EdgeIQ Score</strong>
-          <span>See your overall security rating (0–100) with detailed findings ranked by severity</span>
-        </div>
+
+      <!-- Scanner status pills -->
+      <div class="scanner-bar" id="scanner-bar"></div>
+
+      <!-- Finding tracker -->
+      <div class="finding-filters" id="finding-filters">
+        <span class="f-filter active" data-filter="all">All</span>
+        <span class="f-filter" data-filter="open">Open</span>
+        <span class="f-filter" data-filter="fixed">Fixed</span>
+        <span class="f-filter" data-filter="ack">Acknowledged</span>
+        <span class="f-filter" data-filter="critical" style="color:var(--crit);">Critical</span>
+        <span class="f-filter" data-filter="high" style="color:var(--danger);">High</span>
       </div>
-      <div class="step">
-        <div class="step-n">4</div>
-        <div class="step-body">
-          <strong>Generate a report</strong>
-          <span>Download a PDF report for stakeholders, auditors, or your internal security team</span>
-        </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:auto;">
+        <table class="findings-table" id="findings-table">
+          <thead>
+            <tr>
+              <th style="width:90px;">Severity</th>
+              <th>Finding</th>
+              <th style="width:90px;">First seen</th>
+              <th style="width:80px;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="findings-body"></tbody>
+        </table>
+        <div id="findings-empty" style="display:none;padding:28px;text-align:center;color:var(--dim);font-size:0.85rem;">No findings match this filter.</div>
+      </div>
+
+      <div id="premium-upsell" style="display:none;" class="locked-overlay" >
+        🔒 <strong style="color:var(--text);">Pro scanners locked</strong> — DAST, API Security, CSPM, Threat Alerts, and ASM require <a href="/pulse/#pricing">Pulse Pro ($19/mo) →</a>
+      </div>
+
+    </div><!-- /dashboard -->
+  </div><!-- /main -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <h3>Scan history</h3>
+      <div id="history-list" class="history-list">
+        <p class="no-history">No scans yet. Enter a domain and click Scan Now.</p>
       </div>
     </div>
+
+    <div class="sidebar-section">
+      <h3>Saved domains</h3>
+      <div id="saved-domains" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <p id="no-saved" class="no-history">Domains you scan will appear here.</p>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="upsell-card">
+        <h4>🟢 Always-on monitoring</h4>
+        <p>Register this domain with EdgeIQ Pulse and get a weekly email digest whenever something changes.</p>
+        <a href="/pulse/" id="pulse-upsell-link">Start Free Monitoring →</a>
+      </div>
+    </div>
+
   </div>
+</div><!-- /page -->
 
-  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center;">
-    <h3 style="margin-bottom: 8px; font-size: 1rem;">Need help getting started?</h3>
-    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 20px;">Our team can walk you through your first scan and help you understand your score.</p>
-    <a href="mailto:support@edgeiqlabs.com" class="btn btn-primary">Contact Support →</a>
-  </div>
-</div>
+<script>
+(function() {
+  'use strict';
 
-<footer>
-  <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> · Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
-</footer>
+  /* ── CONFIG ── */
+  var WORKERS = {
+    ssl:        'https://edgeiq-ssl-checker.gpalmieri21.workers.dev',
+    headers:    'https://edgeiq-headers-checker.gpalmieri21.workers.dev',
+    xss:        'https://edgeiq-xss-scanner.gpalmieri21.workers.dev',
+    subdomains: 'https://edgeiq-subdomain-hunter.gpalmieri21.workers.dev',
+    dns:        'https://edgeiq-dns-lookup.gpalmieri21.workers.dev',
+    cve:        'https://edgeiq-cve-match.gpalmieri21.workers.dev',
+  };
+  var SCANNER_META = {
+    ssl:        { icon: '🔒', label: 'SSL' },
+    headers:    { icon: '📡', label: 'Headers' },
+    xss:        { icon: '💉', label: 'XSS' },
+    subdomains: { icon: '🔗', label: 'Subdomains' },
+    dns:        { icon: '🌐', label: 'DNS' },
+    cve:        { icon: '🔎', label: 'CVE' },
+  };
+  var STORAGE_PREFIX = 'edgeiq_dash_';
 
+  /* ── STATE ── */
+  var currentDomain = null;
+  var currentFilter = 'all';
+  var allFindings   = {};   // finding_id → finding obj
+  var currentScanIdx = -1;  // which scan in history is displayed
+
+  /* ── DOM REFS ── */
+  var $ = function(id) { return document.getElementById(id); };
+  var domainInput  = $('domain-input');
+  var scanBtn      = $('scan-btn');
+  var emptyState   = $('empty-state');
+  var scanProgress = $('scan-progress');
+  var dashboard    = $('dashboard');
+  var progGrid     = $('prog-grid');
+  var findingsBody = $('findings-body');
+  var findingsEmpty= $('findings-empty');
+  var historyList  = $('history-list');
+  var savedDomains = $('saved-domains');
+  var noSaved      = $('no-saved');
+
+  /* ── STORAGE ── */
+  function loadData(domain) {
+    try {
+      var raw = localStorage.getItem(STORAGE_PREFIX + domain);
+      return raw ? JSON.parse(raw) : { domain: domain, scans: [], findings: {} };
+    } catch(e) { return { domain: domain, scans: [], findings: {} }; }
+  }
+  function saveData(domain, data) {
+    try { localStorage.setItem(STORAGE_PREFIX + domain, JSON.stringify(data)); } catch(e) {}
+  }
+  function getAllDomains() {
+    var domains = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf(STORAGE_PREFIX) === 0) domains.push(k.slice(STORAGE_PREFIX.length));
+    }
+    return domains;
+  }
+
+  /* ── DOMAIN VALIDATION ── */
+  function cleanDomain(d) {
+    return d.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+  }
+  function isValidDomain(d) {
+    return /^[a-zA-Z0-9][a-zA-Z0-9\-\.]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/.test(d);
+  }
+
+  /* ── SCAN RUNNER ── */
+  async function runScan(domain) {
+    var body = { domain: domain, url: 'https://' + domain, host: domain, target: domain, software: domain };
+
+    // Build progress UI
+    progGrid.innerHTML = '';
+    var progItems = {};
+    Object.keys(WORKERS).forEach(function(name) {
+      var meta = SCANNER_META[name];
+      var div = document.createElement('div');
+      div.className = 'prog-item';
+      div.innerHTML = '<span class="pi-icon">' + meta.icon + '</span>' +
+        '<span class="pi-name">' + meta.label + '</span>' +
+        '<span class="prog-status ps-pending" id="ps-' + name + '">Pending</span>';
+      progGrid.appendChild(div);
+      progItems[name] = $('ps-' + name);
+    });
+
+    $('scanning-domain').textContent = domain;
+    emptyState.style.display = 'none';
+    dashboard.style.display = 'none';
+    scanProgress.style.display = 'block';
+
+    // Run scans concurrently (but mark each as running immediately)
+    var promises = Object.keys(WORKERS).map(function(name) {
+      progItems[name].className = 'prog-status ps-running';
+      progItems[name].textContent = 'Scanning…';
+      return fetch(WORKERS[name], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout ? AbortSignal.timeout(25000) : undefined,
+      })
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function(data) { return { name: name, data: data, error: null }; })
+      .catch(function(err) { return { name: name, data: null, error: err.message }; });
+    });
+
+    var results = await Promise.all(promises);
+
+    // Update progress indicators
+    results.forEach(function(r) {
+      var el = progItems[r.name];
+      if (!el) return;
+      if (r.error) {
+        el.className = 'prog-status ps-error'; el.textContent = 'Error';
+      } else {
+        var findings = extractFindings(r.name, r.data);
+        var worst = worstSeverity(findings);
+        if (worst === 'critical' || worst === 'high') { el.className = 'prog-status ps-warn'; el.textContent = '⚠ Issues'; }
+        else { el.className = 'prog-status ps-ok'; el.textContent = '✓ Done'; }
+      }
+    });
+
+    return results;
+  }
+
+  /* ── FINDING EXTRACTION ── */
+  function extractFindings(scanner, data) {
+    if (!data) return [{ severity:'info', type:'SCAN_UNAVAILABLE', message:'Scanner temporarily unavailable' }];
+    if (data.error && !data.findings) return [{ severity:'info', type:'SCAN_ERROR', message: data.error }];
+
+    var f = [];
+    switch (scanner) {
+      case 'ssl':
+        if (!data.valid) {
+          f.push({ severity:'critical', type:'SSL_INVALID', message: data.error || 'SSL certificate invalid or expired' });
+        } else if (data.daysLeft !== undefined) {
+          if (data.daysLeft < 7)  f.push({ severity:'critical', type:'SSL_EXPIRY_IMMINENT', message:'Certificate expires in ' + data.daysLeft + ' days — renew immediately' });
+          else if (data.daysLeft < 14) f.push({ severity:'high',    type:'SSL_EXPIRY_CRITICAL', message:'Certificate expires in ' + data.daysLeft + ' days' });
+          else if (data.daysLeft < 30) f.push({ severity:'medium',  type:'SSL_EXPIRY_WARN',    message:'Certificate expires in ' + data.daysLeft + ' days' });
+          else f.push({ severity:'info', type:'SSL_VALID', message:'Valid · ' + data.daysLeft + ' days remaining · ' + (data.issuer || '') });
+        } else {
+          f.push({ severity:'info', type:'SSL_VALID', message:'Certificate valid' });
+        }
+        if (data.grade && data.grade !== 'A') f.push({ severity:'low', type:'SSL_GRADE_' + data.grade, message:'SSL configuration grade: ' + data.grade });
+        break;
+
+      case 'headers':
+        var missingHeaders = data.missing || [];
+        var importantHeaders = ['Content-Security-Policy','Strict-Transport-Security','X-Frame-Options','X-Content-Type-Options'];
+        missingHeaders.forEach(function(h) {
+          var sev = importantHeaders.indexOf(h) >= 0 ? 'medium' : 'low';
+          f.push({ severity: sev, type: 'HEADER_' + h.replace(/-/g,'_').toUpperCase(), message: 'Missing: ' + h });
+        });
+        if (missingHeaders.length === 0) {
+          f.push({ severity:'info', type:'HEADERS_ALL_PRESENT', message:'All critical security headers present (Grade ' + (data.grade||'A') + ')' });
+        }
+        break;
+
+      case 'xss':
+        (data.findings || []).forEach(function(item) {
+          if (item.severity !== 'locked') f.push({ severity: item.severity, type: item.type, message: item.message });
+        });
+        if (!f.some(function(x) { return ['high','critical','medium'].indexOf(x.severity) >= 0; })) {
+          f.push({ severity:'info', type:'XSS_CLEAN', message:'No XSS vectors detected on surface scan' });
+        }
+        break;
+
+      case 'subdomains':
+        var count = data.total || 0;
+        f.push({ severity:'info', type:'SUBDOMAIN_COUNT', message:count + ' subdomains enumerated' });
+        if (count > 20) f.push({ severity:'low', type:'SUBDOMAIN_LARGE', message:'Large subdomain footprint (' + count + ') — review for stale/forgotten assets' });
+        break;
+
+      case 'dns':
+        if (data.hasSPF === false) f.push({ severity:'medium', type:'DNS_NO_SPF', message:'No SPF record found — domain vulnerable to email spoofing' });
+        if (data.hasDMARC === false) f.push({ severity:'medium', type:'DNS_NO_DMARC', message:'No DMARC record found' });
+        if (!data.hasSPF && !data.hasDMARC && !data.error) {
+          f.push({ severity:'info', type:'DNS_CHECKED', message: data.summary || 'DNS records verified' });
+        }
+        break;
+
+      case 'cve':
+        var total = data.totalResults || 0;
+        if (total === 0) {
+          f.push({ severity:'info', type:'CVE_NONE', message:'No known CVEs matched for this target' });
+        } else {
+          (data.results || []).slice(0, 10).forEach(function(r) {
+            var sev = (r.severity || 'MEDIUM').toLowerCase();
+            if (!['critical','high','medium','low'].includes(sev)) sev = 'medium';
+            f.push({ severity: sev, type: 'CVE_' + (r.id || 'UNKNOWN'), message: (r.id || '') + ': ' + (r.description || r.summary || '').slice(0, 120) });
+          });
+        }
+        break;
+    }
+    return f.length ? f : [{ severity:'info', type:'SCAN_OK', message:'No issues detected' }];
+  }
+
+  function worstSeverity(findings) {
+    var order = ['critical','high','medium','low','info'];
+    for (var i = 0; i < order.length; i++) {
+      if (findings.some(function(f) { return f.severity === order[i]; })) return order[i];
+    }
+    return 'info';
+  }
+
+  function scoreFromFindings(findings) {
+    var deductions = 0;
+    findings.forEach(function(f) {
+      if (f.severity === 'critical') deductions += 40;
+      else if (f.severity === 'high') deductions += 20;
+      else if (f.severity === 'medium') deductions += 10;
+      else if (f.severity === 'low') deductions += 5;
+    });
+    return Math.max(0, 100 - deductions);
+  }
+
+  function gradeFromScore(s) {
+    return s >= 90 ? 'A' : s >= 75 ? 'B' : s >= 55 ? 'C' : s >= 35 ? 'D' : 'F';
+  }
+
+  /* ── FINDING ID ── */
+  function findingId(scanner, finding) {
+    return scanner + '__' + finding.type;
+  }
+
+  /* ── PROCESS SCAN RESULTS ── */
+  function processScanResults(domain, results) {
+    var data = loadData(domain);
+    var now = new Date().toISOString();
+
+    // Build finding snapshot for this scan
+    var scanFindings = [];
+    results.forEach(function(r) {
+      var findings = extractFindings(r.name, r.data);
+      findings.forEach(function(f) {
+        scanFindings.push({ id: findingId(r.name, f), scanner: r.name, severity: f.severity, type: f.type, message: f.message });
+      });
+    });
+
+    var allFindingIds = scanFindings.map(function(f) { return f.id; });
+    var score = scoreFromFindings(scanFindings.filter(function(f) { return f.severity !== 'info'; }));
+    var grade = gradeFromScore(score);
+
+    // Update persistent finding tracker
+    // Mark old open findings as fixed if they don't appear this scan
+    Object.keys(data.findings).forEach(function(fid) {
+      var existing = data.findings[fid];
+      if (existing.status === 'open' && allFindingIds.indexOf(fid) < 0) {
+        data.findings[fid].status = 'fixed';
+        data.findings[fid].fixed_at = now;
+      }
+    });
+
+    // Upsert each finding from this scan
+    scanFindings.forEach(function(f) {
+      if (data.findings[f.id]) {
+        // Existing finding
+        var existing = data.findings[f.id];
+        existing.last_seen = now;
+        existing.occurrences = (existing.occurrences || 1) + 1;
+        if (existing.status === 'fixed') {
+          existing.status = 'open'; // re-opened
+          existing.fixed_at = null;
+        }
+        existing.message = f.message; // update message in case detail changed
+      } else {
+        // New finding
+        data.findings[f.id] = {
+          id: f.id, scanner: f.scanner, severity: f.severity,
+          type: f.type, message: f.message, status: 'open',
+          first_seen: now, last_seen: now, occurrences: 1,
+        };
+      }
+    });
+
+    // Append scan to history
+    data.scans.push({
+      id: 'scan_' + Date.now(),
+      date: now,
+      score: score,
+      grade: grade,
+      finding_ids: allFindingIds,
+      scanner_results: results.reduce(function(acc, r) {
+        acc[r.name] = { error: r.error, worst: r.data ? worstSeverity(extractFindings(r.name, r.data)) : 'error' };
+        return acc;
+      }, {}),
+    });
+
+    // Keep last 50 scans
+    if (data.scans.length > 50) data.scans = data.scans.slice(-50);
+
+    saveData(domain, data);
+    return data;
+  }
+
+  /* ── RENDER DASHBOARD ── */
+  function renderDashboard(domain, data, scanIdx) {
+    scanProgress.style.display = 'none';
+    emptyState.style.display = 'none';
+    dashboard.style.display = 'block';
+
+    if (!data.scans.length) return;
+
+    scanIdx = (scanIdx === undefined || scanIdx < 0) ? data.scans.length - 1 : scanIdx;
+    currentScanIdx = scanIdx;
+    var scan = data.scans[scanIdx];
+    allFindings = data.findings;
+
+    // Summary bar
+    var openCount = Object.values(data.findings).filter(function(f) { return f.status === 'open'; }).length;
+    var fixedCount = Object.values(data.findings).filter(function(f) { return f.status === 'fixed'; }).length;
+    var critHigh = Object.values(data.findings).filter(function(f) { return f.status === 'open' && (f.severity === 'critical' || f.severity === 'high'); }).length;
+
+    $('sum-grade').textContent = scan.grade;
+    $('sum-grade').className = 'sum-val grade-' + scan.grade;
+    $('sum-score').textContent = scan.score;
+    $('sum-score-sub').textContent = 'Grade ' + scan.grade;
+    $('sum-open').textContent = openCount;
+    $('sum-open-sub').textContent = critHigh + ' critical/high';
+    $('sum-fixed').textContent = fixedCount;
+    $('sum-scans').textContent = data.scans.length;
+    $('sum-last-scan').textContent = 'Last: ' + formatDate(scan.date);
+
+    // Chart
+    if (data.scans.length > 1) {
+      $('chart-wrap').style.display = 'block';
+      $('chart-range').textContent = data.scans.length + ' scans';
+      drawTrendChart(data.scans);
+    }
+
+    // Scanner pills
+    var bar = $('scanner-bar');
+    bar.innerHTML = '';
+    var scannerResults = scan.scanner_results || {};
+    Object.keys(SCANNER_META).forEach(function(name) {
+      var meta = SCANNER_META[name];
+      var worst = (scannerResults[name] && scannerResults[name].worst) || 'info';
+      var dotClass = worst === 'critical' || worst === 'high' ? 'dot-bad' : worst === 'medium' ? 'dot-warn' : worst === 'error' ? 'dot-err' : 'dot-ok';
+      var pill = document.createElement('div');
+      pill.className = 'sc-pill';
+      pill.dataset.scanner = name;
+      pill.innerHTML = '<span class="sc-dot ' + dotClass + '"></span>' + meta.icon + ' ' + meta.label;
+      pill.addEventListener('click', function() {
+        document.querySelectorAll('.sc-pill').forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        filterByScanner(name);
+      });
+      bar.appendChild(pill);
+    });
+    // "All scanners" pill
+    var allPill = document.createElement('div');
+    allPill.className = 'sc-pill active';
+    allPill.innerHTML = '🔍 All';
+    allPill.addEventListener('click', function() {
+      document.querySelectorAll('.sc-pill').forEach(function(p) { p.classList.remove('active'); });
+      allPill.classList.add('active');
+      currentFilter = 'all';
+      renderFindings(data.findings);
+    });
+    bar.insertBefore(allPill, bar.firstChild);
+
+    // Findings
+    renderFindings(data.findings);
+    $('premium-upsell').style.display = 'block';
+
+    // History sidebar
+    renderHistory(domain, data);
+
+    // Update pulse upsell link
+    $('pulse-upsell-link').href = '/pulse/?domain=' + encodeURIComponent(domain);
+    $('pulse-upsell-link').textContent = 'Monitor ' + domain + ' free →';
+  }
+
+  var activeScannerFilter = null;
+
+  function filterByScanner(name) {
+    activeScannerFilter = name;
+    var all = {};
+    Object.keys(allFindings).forEach(function(fid) {
+      if (allFindings[fid].scanner === name) all[fid] = allFindings[fid];
+    });
+    renderFindings(all);
+  }
+
+  function renderFindings(findings) {
+    var tbody = findingsBody;
+    tbody.innerHTML = '';
+
+    var filtered = Object.values(findings).filter(function(f) {
+      if (currentFilter === 'all') return true;
+      if (currentFilter === 'critical' || currentFilter === 'high') return f.severity === currentFilter;
+      return f.status === currentFilter;
+    });
+
+    // Sort: critical > high > medium > low > info
+    var order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
+    filtered.sort(function(a, b) {
+      var so = (order[a.severity] || 4) - (order[b.severity] || 4);
+      if (so !== 0) return so;
+      // open before fixed/ack
+      var statusOrder = { open: 0, ack: 1, fixed: 2 };
+      return (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0);
+    });
+
+    if (!filtered.length) {
+      findingsEmpty.style.display = 'block';
+      tbody.parentElement.style.display = 'none';
+      return;
+    }
+    findingsEmpty.style.display = 'none';
+    tbody.parentElement.style.display = 'table';
+
+    filtered.forEach(function(f) {
+      var tr = document.createElement('tr');
+      var statusClass = 'st-' + (f.status || 'open');
+      var statusLabel = f.status === 'fixed' ? '✓ Fixed' : f.status === 'ack' ? '· Acked' : '● Open';
+      tr.innerHTML =
+        '<td><span class="sev-badge sev-' + f.severity + '">' + f.severity + '</span></td>' +
+        '<td>' +
+          '<div class="finding-msg">' + escHtml(f.message) + '</div>' +
+          '<div class="finding-meta">' +
+            '<span class="scanner-tag">' + (SCANNER_META[f.scanner] || {}).icon + ' ' + f.scanner + '</span>' +
+            ' · first seen ' + formatDate(f.first_seen) +
+            (f.occurrences > 1 ? ' · ' + f.occurrences + 'x' : '') +
+            (f.status === 'fixed' ? ' · fixed ' + formatDate(f.fixed_at) : '') +
+          '</div>' +
+        '</td>' +
+        '<td style="color:var(--dim);font-size:0.75rem;">' + formatDate(f.first_seen) + '</td>' +
+        '<td><button class="status-btn ' + statusClass + '" data-fid="' + escHtml(f.id) + '">' + statusLabel + '</button></td>';
+      tbody.appendChild(tr);
+    });
+
+    // Status toggle buttons
+    tbody.querySelectorAll('.status-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var fid = btn.dataset.fid;
+        if (!allFindings[fid]) return;
+        var current = allFindings[fid].status;
+        var next = current === 'open' ? 'ack' : current === 'ack' ? 'open' : 'open';
+        allFindings[fid].status = next;
+        var data = loadData(currentDomain);
+        if (data.findings[fid]) data.findings[fid].status = next;
+        saveData(currentDomain, data);
+        renderFindings(activeScannerFilter ? (function(){
+          var s={};Object.keys(allFindings).forEach(function(k){if(allFindings[k].scanner===activeScannerFilter)s[k]=allFindings[k];});return s;
+        })() : allFindings);
+      });
+    });
+  }
+
+  function renderHistory(domain, data) {
+    historyList.innerHTML = '';
+    if (!data.scans.length) {
+      historyList.innerHTML = '<p class="no-history">No scan history yet.</p>';
+      return;
+    }
+    var scans = data.scans.slice().reverse();
+    scans.forEach(function(scan, i) {
+      var realIdx = data.scans.length - 1 - i;
+      var div = document.createElement('div');
+      div.className = 'hist-item' + (realIdx === currentScanIdx ? ' active' : '');
+      var openCount = scan.finding_ids ? scan.finding_ids.filter(function(fid) {
+        return data.findings[fid] && ['critical','high','medium'].indexOf((data.findings[fid] || {}).severity || '') >= 0;
+      }).length : 0;
+      div.innerHTML =
+        '<div class="hist-grade grade-' + scan.grade + '">' + scan.grade + '</div>' +
+        '<div class="hist-body">' +
+          '<div class="hist-date">' + formatDate(scan.date) + '</div>' +
+          '<div class="hist-meta">' + scan.score + '/100 · ' + (scan.finding_ids || []).length + ' findings</div>' +
+        '</div>' +
+        '<div class="hist-score grade-' + scan.grade + '">' + scan.score + '</div>';
+      div.addEventListener('click', function() {
+        currentScanIdx = realIdx;
+        renderDashboard(domain, data, realIdx);
+      });
+      historyList.appendChild(div);
+    });
+  }
+
+  /* ── TREND CHART ── */
+  function drawTrendChart(scans) {
+    var canvas = $('trend-canvas');
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.parentElement.clientWidth - 36;
+    var h = 140;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    var data = scans.slice(-10);
+    var pad = { top: 12, right: 16, bottom: 32, left: 36 };
+    var chartW = w - pad.left - pad.right;
+    var chartH = h - pad.top - pad.bottom;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    [0, 25, 50, 75, 100].forEach(function(v) {
+      var y = pad.top + chartH - (v / 100) * chartH;
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + chartW, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(159,176,199,0.5)';
+      ctx.font = '10px Inter,system-ui,sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(v, pad.left - 5, y + 3.5);
+    });
+
+    if (data.length < 2) return;
+
+    var xs = data.map(function(_, i) { return pad.left + (i / (data.length - 1)) * chartW; });
+    var ys = data.map(function(s) { return pad.top + chartH - (s.score / 100) * chartH; });
+
+    // Gradient fill
+    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+    grad.addColorStop(0, 'rgba(61,225,158,0.25)');
+    grad.addColorStop(1, 'rgba(61,225,158,0.01)');
+    ctx.beginPath();
+    ctx.moveTo(xs[0], ys[0]);
+    for (var i = 1; i < xs.length; i++) {
+      var mx = (xs[i-1] + xs[i]) / 2;
+      ctx.bezierCurveTo(mx, ys[i-1], mx, ys[i], xs[i], ys[i]);
+    }
+    ctx.lineTo(xs[xs.length-1], pad.top + chartH);
+    ctx.lineTo(xs[0], pad.top + chartH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle = '#3de19e';
+    ctx.lineWidth = 2;
+    ctx.moveTo(xs[0], ys[0]);
+    for (var j = 1; j < xs.length; j++) {
+      var mx2 = (xs[j-1] + xs[j]) / 2;
+      ctx.bezierCurveTo(mx2, ys[j-1], mx2, ys[j], xs[j], ys[j]);
+    }
+    ctx.stroke();
+
+    // Points
+    xs.forEach(function(x, i) {
+      ctx.beginPath();
+      ctx.arc(x, ys[i], 4, 0, 2 * Math.PI);
+      ctx.fillStyle = i === data.length - 1 ? '#3de19e' : '#1e2e3e';
+      ctx.strokeStyle = '#3de19e';
+      ctx.lineWidth = 2;
+      ctx.fill(); ctx.stroke();
+    });
+
+    // X labels
+    ctx.fillStyle = 'rgba(159,176,199,0.6)';
+    ctx.font = '10px Inter,system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    var step = Math.ceil(data.length / 5);
+    data.forEach(function(s, i) {
+      if (i % step !== 0 && i !== data.length - 1) return;
+      var d = new Date(s.date);
+      var label = (d.getMonth() + 1) + '/' + d.getDate();
+      ctx.fillText(label, xs[i], h - 6);
+    });
+  }
+
+  /* ── FILTER BUTTONS ── */
+  document.querySelectorAll('.f-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.f-filter').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      activeScannerFilter = null;
+      document.querySelectorAll('.sc-pill').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelector('.sc-pill').classList.add('active');
+      renderFindings(allFindings);
+    });
+  });
+
+  /* ── SAVED DOMAINS SIDEBAR ── */
+  function renderSavedDomains() {
+    var domains = getAllDomains();
+    savedDomains.innerHTML = '';
+    if (!domains.length) { noSaved.style.display = 'block'; return; }
+    noSaved.style.display = 'none';
+    domains.forEach(function(d) {
+      var a = document.createElement('a');
+      a.href = '#';
+      a.style.cssText = 'display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.82rem;color:var(--text);transition:border-color .2s;';
+      a.textContent = d;
+      a.addEventListener('mouseover', function() { a.style.borderColor='var(--accent)'; });
+      a.addEventListener('mouseout', function() { a.style.borderColor='var(--border)'; });
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        domainInput.value = d;
+        loadAndDisplayDomain(d);
+      });
+      savedDomains.appendChild(a);
+    });
+  }
+
+  /* ── LOAD EXISTING DOMAIN (no new scan) ── */
+  function loadAndDisplayDomain(domain) {
+    currentDomain = domain;
+    var data = loadData(domain);
+    if (data.scans.length) {
+      activeScannerFilter = null;
+      currentFilter = 'all';
+      renderDashboard(domain, data);
+    } else {
+      emptyState.style.display = 'flex';
+      scanProgress.style.display = 'none';
+      dashboard.style.display = 'none';
+    }
+  }
+
+  /* ── SCAN BUTTON ── */
+  scanBtn.addEventListener('click', doScan);
+  domainInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doScan(); });
+
+  async function doScan() {
+    var raw = domainInput.value;
+    var domain = cleanDomain(raw);
+    if (!domain || !isValidDomain(domain)) {
+      domainInput.style.outline = '1px solid var(--danger)';
+      setTimeout(function() { domainInput.style.outline = ''; }, 1500);
+      return;
+    }
+
+    currentDomain = domain;
+    domainInput.value = domain;
+    scanBtn.disabled = true;
+    scanBtn.textContent = 'Scanning…';
+    activeScannerFilter = null;
+    currentFilter = 'all';
+
+    try {
+      var results = await runScan(domain);
+      var data = processScanResults(domain, results);
+      renderDashboard(domain, data);
+      renderSavedDomains();
+    } catch(err) {
+      console.error(err);
+      emptyState.style.display = 'flex';
+      scanProgress.style.display = 'none';
+    } finally {
+      scanBtn.disabled = false;
+      scanBtn.textContent = 'Scan Now';
+    }
+  }
+
+  /* ── UTILS ── */
+  function formatDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return (d.getMonth()+1) + '/' + d.getDate() + '/' + String(d.getFullYear()).slice(2);
+  }
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── INIT ── */
+  renderSavedDomains();
+  // Pre-fill from URL param e.g. /dashboard/?domain=example.com
+  var urlParams = new URLSearchParams(window.location.search);
+  var urlDomain = urlParams.get('domain');
+  if (urlDomain) {
+    var cleaned = cleanDomain(urlDomain);
+    if (cleaned && isValidDomain(cleaned)) {
+      domainInput.value = cleaned;
+      var existing = loadData(cleaned);
+      if (existing.scans.length) {
+        loadAndDisplayDomain(cleaned);
+      }
+    }
+  }
+
+  // Redraw chart on resize
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      if (currentDomain) {
+        var data = loadData(currentDomain);
+        if (data.scans.length > 1) drawTrendChart(data.scans);
+      }
+    }, 200);
+  });
+
+})();
+</script>
 </body>
 </html>
