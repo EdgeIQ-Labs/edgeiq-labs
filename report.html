@@ -538,7 +538,7 @@ async function startCheckout() {
 
   try {
     showStatus('Creating your order...', 'processing');
-    const resp = await fetch('https://api.edgeiqlabs.com/report/prepare', {
+    const resp = await fetch('/api/report/prepare', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

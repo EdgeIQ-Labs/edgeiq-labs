@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Report — EdgeIQ Labs</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0f14; --card: #111820; --border: #1e2e3e;
+      --text: #e8eef7; --muted: #9fb0c7;
+      --green: #3de19e; --red: #ff6b6b; --yellow: #ffb347;
+      --orange: #ff8c42; --blue: #3dd9ff; --purple: #b47aff;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Screen-only chrome */
+    .screen-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,15,20,0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .screen-brand { font-weight: 800; font-size: 15px; }
+    .screen-brand span { color: var(--green); }
+    .screen-actions { display: flex; gap: 10px; }
+    .print-btn {
+      background: var(--green); color: #071018; font-weight: 700; font-size: 13px;
+      padding: 8px 20px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit;
+    }
+    .print-btn:hover { opacity: .88; }
+    .back-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      font-size: 13px; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit;
+    }
+    .back-btn:hover { border-color: var(--green); color: var(--green); }
+
+    /* Loading / error states */
+    .state-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 14px; text-align: center; padding: 24px; }
+    .state-icon { font-size: 48px; }
+    .state-title { font-size: 20px; font-weight: 700; }
+    .state-sub { font-size: 14px; color: var(--muted); max-width: 400px; line-height: 1.6; }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Report document */
+    #reportDoc { display: none; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* Cover */
+    .cover { background: linear-gradient(135deg, #0d1f17, #071018); border: 1px solid rgba(61,225,158,.25); border-radius: 16px; padding: 48px 44px; margin-bottom: 32px; position: relative; overflow: hidden; }
+    .cover::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(61,225,158,.08), transparent 70%); pointer-events: none; }
+    .cover-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+    .cover-logo { font-size: 18px; font-weight: 900; }
+    .cover-logo span { color: var(--green); }
+    .cover-classify { background: rgba(255,107,107,.15); border: 1px solid rgba(255,107,107,.4); color: #ff6b6b; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: .08em; text-transform: uppercase; }
+    .cover-title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 900; letter-spacing: -.02em; margin-bottom: 10px; }
+    .cover-target { font-size: 16px; color: var(--green); font-weight: 600; margin-bottom: 28px; }
+    .cover-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 14px; }
+    .meta-item { background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+    .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+    .meta-value { font-size: 13px; font-weight: 600; word-break: break-all; }
+
+    /* Section */
+    .section { margin-bottom: 32px; }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--green); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* Executive summary */
+    .exec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); gap: 10px; margin-bottom: 16px; }
+    .sev-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+    .sev-count { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .sev-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .risk-bar-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .risk-bar-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .risk-bar-outer { background: #0b0f14; border-radius: 6px; height: 8px; overflow: hidden; }
+    .risk-bar-inner { height: 100%; border-radius: 6px; transition: width .8s ease; }
+    .risk-score-row { display: flex; align-items: center; gap: 14px; margin-top: 10px; }
+    .risk-score-val { font-size: 32px; font-weight: 900; }
+    .risk-score-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* Findings */
+    .finding-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 12px; page-break-inside: avoid; }
+    .finding-card.critical { border-left: 4px solid var(--red); }
+    .finding-card.high { border-left: 4px solid var(--yellow); }
+    .finding-card.medium { border-left: 4px solid var(--orange); }
+    .finding-card.low { border-left: 4px solid #5a9aff; }
+    .finding-card.info { border-left: 4px solid var(--muted); }
+    .finding-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .finding-name { font-size: 15px; font-weight: 700; }
+    .finding-badges { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+    .sev-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; letter-spacing: .06em; }
+    .sev-badge.critical { background: rgba(255,107,107,.15); color: var(--red); border: 1px solid rgba(255,107,107,.3); }
+    .sev-badge.high { background: rgba(255,179,71,.15); color: var(--yellow); border: 1px solid rgba(255,179,71,.3); }
+    .sev-badge.medium { background: rgba(255,140,66,.15); color: var(--orange); border: 1px solid rgba(255,140,66,.3); }
+    .sev-badge.low { background: rgba(90,154,255,.15); color: #5a9aff; border: 1px solid rgba(90,154,255,.3); }
+    .sev-badge.info { background: rgba(159,176,199,.1); color: var(--muted); border: 1px solid rgba(159,176,199,.2); }
+    .cvss-badge { font-size: 10px; font-weight: 700; background: rgba(255,255,255,.06); border: 1px solid var(--border); padding: 3px 9px; border-radius: 20px; color: var(--muted); }
+    .finding-desc { font-size: 13px; color: #c8d8e8; line-height: 1.65; margin-bottom: 12px; }
+    .finding-fix-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--green); margin-bottom: 6px; }
+    .finding-fix { font-size: 13px; color: var(--muted); line-height: 1.65; background: rgba(61,225,158,.04); border: 1px solid rgba(61,225,158,.15); border-radius: 6px; padding: 10px 12px; }
+
+    /* Footer */
+    .report-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .report-footer-brand { font-size: 12px; color: var(--muted); }
+    .report-footer-brand strong { color: var(--text); }
+    .report-footer-note { font-size: 11px; color: #4a6080; text-align: right; max-width: 320px; line-height: 1.5; }
+
+    /* Print styles */
+    @media print {
+      .screen-bar { display: none !important; }
+      body { background: #fff; color: #111; }
+      #reportDoc { display: block !important; padding: 0; max-width: 100%; }
+      .cover { background: #f8fafb; border: 1px solid #ccc; border-radius: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cover-logo span, .section-title, .cover-target { color: #1a7a50 !important; }
+      .finding-card { background: #fafafa; border-color: #ddd; break-inside: avoid; }
+      .finding-card.critical { border-left-color: #dc2626 !important; }
+      .finding-card.high { border-left-color: #ea580c !important; }
+      .finding-card.medium { border-left-color: #d97706 !important; }
+      .finding-card.low { border-left-color: #2563eb !important; }
+      .finding-desc, .finding-fix { color: #444; }
+      .meta-item { background: #f1f5f9; border-color: #ddd; }
+      .sev-card { background: #f1f5f9; border-color: #ddd; }
+      .section-title::after { background: #ccc; }
+      .risk-bar-wrap { background: #f1f5f9; border-color: #ddd; }
+      .report-footer { border-top-color: #ccc; }
+      .report-footer-brand, .report-footer-note { color: #666; }
+      .cover-classify { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      a { color: inherit; }
+      @page { margin: 18mm 14mm; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Screen chrome (hidden on print) -->
+<div class="screen-bar">
+  <div class="screen-brand">Edge<span>IQ</span> Labs — Security Report</div>
+  <div class="screen-actions">
+    <button class="back-btn" onclick="window.location='/report.html'">← New report</button>
+    <button class="print-btn" onclick="window.print()">🖨 Save as PDF</button>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="state-screen" id="loadingState">
+  <div class="spinner"></div>
+  <div class="state-title">Loading your report…</div>
+  <div class="state-sub">Verifying payment and retrieving scan data.</div>
+</div>
+
+<!-- Error state -->
+<div class="state-screen" id="errorState" style="display:none;">
+  <div class="state-icon">⚠️</div>
+  <div class="state-title" id="errorTitle">Could not load report</div>
+  <div class="state-sub" id="errorMsg">Please check your link or contact support@edgeiqlabs.com</div>
+  <a href="/report.html" style="margin-top:8px;background:var(--green);color:#071018;font-weight:700;font-size:13px;padding:10px 22px;border-radius:8px;">Try again →</a>
+</div>
+
+<!-- The report -->
+<div id="reportDoc">
+
+  <div class="cover">
+    <div class="cover-header">
+      <div class="cover-logo">Edge<span>IQ</span> Labs</div>
+      <div class="cover-classify">Confidential</div>
+    </div>
+    <div class="cover-title" id="coverTitle">Security Assessment Report</div>
+    <div class="cover-target" id="coverTarget"></div>
+    <div class="cover-meta">
+      <div class="meta-item"><div class="meta-label">Report Date</div><div class="meta-value" id="metaDate"></div></div>
+      <div class="meta-item"><div class="meta-label">Prepared For</div><div class="meta-value" id="metaClient"></div></div>
+      <div class="meta-item"><div class="meta-label">Prepared By</div><div class="meta-value" id="metaConsultant"></div></div>
+      <div class="meta-item"><div class="meta-label">Scan Type</div><div class="meta-value" id="metaScanType"></div></div>
+    </div>
+  </div>
+
+  <!-- Executive Summary -->
+  <div class="section">
+    <div class="section-title">Executive Summary</div>
+    <div class="exec-grid" id="execGrid"></div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-label"><span>Risk Score</span><span id="riskLabel"></span></div>
+      <div class="risk-bar-outer"><div class="risk-bar-inner" id="riskBar"></div></div>
+      <div class="risk-score-row">
+        <div class="risk-score-val" id="riskScore"></div>
+        <div class="risk-score-sub" id="riskDesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <div class="section">
+    <div class="section-title">Findings (<span id="findingCount">0</span>)</div>
+    <div id="findingsList"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="report-footer">
+    <div class="report-footer-brand">
+      Generated by <strong>EdgeIQ Labs</strong> · <a href="https://edgeiqlabs.com">edgeiqlabs.com</a>
+    </div>
+    <div class="report-footer-note">
+      This report is confidential and intended solely for the named recipient.
+      Findings reflect the state of the target at time of scan only.
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SEV_ORDER = { Critical: 0, High: 1, Medium: 2, Low: 3, Info: 4 };
+const SEV_COLOR = { Critical: '#ff6b6b', High: '#ffb347', Medium: '#ff8c42', Low: '#5a9aff', Info: '#9fb0c7' };
+
+function normalizeFindings(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(f => {
+    const sev = f.severity
+      ? (f.severity.charAt(0).toUpperCase() + f.severity.slice(1).toLowerCase())
+      : 'Info';
+    return {
+      name:         f.name || f.title || f.type?.replace(/_/g,' ') || 'Finding',
+      severity:     ['Critical','High','Medium','Low','Info'].includes(sev) ? sev : 'Info',
+      cvss:         f.cvss || f.score || null,
+      description:  f.description || f.message || f.summary || f.detail || '',
+      remediation:  f.remediation || f.fix || f.recommendation || null,
+    };
+  }).sort((a,b) => (SEV_ORDER[a.severity]??5) - (SEV_ORDER[b.severity]??5));
+}
+
+function computeRisk(findings) {
+  let score = 0;
+  findings.forEach(f => {
+    score += { Critical: 25, High: 15, Medium: 7, Low: 3, Info: 0 }[f.severity] || 0;
+  });
+  score = Math.min(score, 100);
+  let label, color, desc;
+  if (score >= 75)      { label = 'Critical Risk'; color = '#ff6b6b'; desc = 'Immediate remediation required. Active exploitation risk.'; }
+  else if (score >= 50) { label = 'High Risk';     color = '#ffb347'; desc = 'Significant vulnerabilities present. Prioritize remediation within 7 days.'; }
+  else if (score >= 25) { label = 'Medium Risk';   color = '#ff8c42'; desc = 'Moderate exposure. Schedule remediation within 30 days.'; }
+  else if (score > 0)   { label = 'Low Risk';      color = '#5a9aff'; desc = 'Minor issues found. Remediate during next maintenance cycle.'; }
+  else                  { label = 'Minimal Risk';  color = '#3de19e'; desc = 'No significant issues detected in this scan.'; }
+  return { score, label, color, desc };
+}
+
+function renderReport(order) {
+  const findings = normalizeFindings(order.scanResults);
+  const counts = { Critical:0, High:0, Medium:0, Low:0, Info:0 };
+  findings.forEach(f => counts[f.severity] = (counts[f.severity]||0) + 1);
+
+  // Cover
+  document.getElementById('coverTitle').textContent = (order.scanType || 'Security Assessment') + ' Report';
+  document.getElementById('coverTarget').textContent = order.targetUrl || 'Target Domain';
+  document.getElementById('metaDate').textContent = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('metaClient').textContent = order.clientName || 'N/A';
+  document.getElementById('metaConsultant').textContent = order.consultantName || 'EdgeIQ Labs';
+  document.getElementById('metaScanType').textContent = order.scanType || 'Security Scan';
+
+  // Exec summary
+  const grid = document.getElementById('execGrid');
+  ['Critical','High','Medium','Low','Info'].forEach(sev => {
+    if (counts[sev] === 0 && sev === 'Info') return;
+    grid.innerHTML += `
+      <div class="sev-card">
+        <div class="sev-count" style="color:${SEV_COLOR[sev]}">${counts[sev]}</div>
+        <div class="sev-label" style="color:${SEV_COLOR[sev]}">${sev}</div>
+      </div>`;
+  });
+
+  const risk = computeRisk(findings);
+  document.getElementById('riskLabel').textContent = risk.label;
+  document.getElementById('riskLabel').style.color = risk.color;
+  document.getElementById('riskBar').style.width = risk.score + '%';
+  document.getElementById('riskBar').style.background = risk.color;
+  document.getElementById('riskScore').textContent = risk.score + '/100';
+  document.getElementById('riskScore').style.color = risk.color;
+  document.getElementById('riskDesc').textContent = risk.desc;
+
+  // Findings
+  document.getElementById('findingCount').textContent = findings.length;
+  const fl = document.getElementById('findingsList');
+  fl.innerHTML = '';
+
+  if (findings.length === 0) {
+    fl.innerHTML = '<p style="font-size:14px;color:var(--green);padding:16px 0;">No findings recorded in this scan.</p>';
+  } else {
+    findings.forEach((f, i) => {
+      fl.innerHTML += `
+        <div class="finding-card ${f.severity.toLowerCase()}">
+          <div class="finding-top">
+            <div class="finding-name">${i+1}. ${f.name}</div>
+            <div class="finding-badges">
+              <span class="sev-badge ${f.severity.toLowerCase()}">${f.severity}</span>
+              ${f.cvss ? `<span class="cvss-badge">CVSS ${f.cvss}</span>` : ''}
+            </div>
+          </div>
+          ${f.description ? `<div class="finding-desc">${f.description}</div>` : ''}
+          ${f.remediation ? `
+            <div class="finding-fix-label">Remediation</div>
+            <div class="finding-fix">${f.remediation}</div>
+          ` : ''}
+        </div>`;
+    });
+  }
+
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('reportDoc').style.display = 'block';
+}
+
+function showError(title, msg) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorTitle').textContent = title;
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorState').style.display = 'flex';
+}
+
+async function loadReport() {
+  const params = new URLSearchParams(location.search);
+  const orderId = params.get('order');
+  const sessionId = params.get('session_id');
+
+  if (!orderId) {
+    showError('No report ID', 'This link is missing the report order ID. Please return to the report generator.');
+    return;
+  }
+
+  try {
+    const qs = `?order=${encodeURIComponent(orderId)}${sessionId ? '&session_id=' + encodeURIComponent(sessionId) : ''}`;
+    const resp = await fetch('/api/report/fetch' + qs);
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      if (resp.status === 403) {
+        showError('Payment not confirmed', data.error || 'We could not verify your payment. If you completed checkout, please wait a moment and refresh.');
+      } else if (resp.status === 404) {
+        showError('Report not found', 'This report link may have expired (reports are stored for 30 days). Please generate a new report.');
+      } else {
+        showError('Could not load report', data.error || 'An unexpected error occurred.');
+      }
+      return;
+    }
+
+    renderReport(data.order);
+
+    // Clean up session_id from URL after successful load
+    if (sessionId) {
+      history.replaceState({}, '', `/report/view/?order=${orderId}`);
+    }
+  } catch (err) {
+    showError('Network error', 'Could not reach the EdgeIQ API. Please check your connection and try again.');
+  }
+}
+
+loadReport();
+</script>
+</body>
+</html>
