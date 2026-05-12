@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EdgeIQ Vendor Watch — SaaS Status Monitor</title>
+  <meta name="description" content="Live status dashboard for 14 major SaaS vendors. Instantly see if Stripe, GitHub, Cloudflare, Vercel, Slack and more are having outages. Get email alerts when your stack goes down.">
+  <link rel="canonical" href="https://edgeiqlabs.com/vendor-watch/">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0f14;
+      --card: #111820;
+      --border: #1e2e3e;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --green: #3de19e;
+      --blue: #3dd9ff;
+      --yellow: #ffb347;
+      --red: #ff6b6b;
+      --purple: #b47aff;
+      --orange: #ff9f43;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 20px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--orange); color: #1a0a00; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; }
+    .nav-cta:hover { opacity: .9; }
+
+    /* Hero */
+    .hero { text-align: center; padding: 72px 24px 48px; max-width: 760px; margin: 0 auto; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,159,67,.1); border: 1px solid rgba(255,159,67,.3); color: var(--orange); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 20px; }
+    .live-dot { width: 7px; height: 7px; background: var(--orange); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+    h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; line-height: 1.1; margin-bottom: 18px; letter-spacing: -.02em; }
+    h1 em { font-style: normal; color: var(--orange); }
+    .hero-sub { font-size: 17px; color: var(--muted); line-height: 1.6; max-width: 560px; margin: 0 auto 32px; }
+    .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--orange); color: #1a0a00; font-weight: 700; font-size: 15px; padding: 13px 28px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; transition: opacity .2s; display: inline-block; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; font-size: 15px; padding: 13px 28px; border-radius: 10px; cursor: pointer; font-family: inherit; transition: border-color .2s, color .2s; display: inline-block; }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* Live dashboard wrapper */
+    .dashboard-wrap { max-width: 960px; margin: 0 auto 56px; padding: 0 24px; }
+
+    /* Summary bar */
+    .summary-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .summary-stat { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .stat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .stat-dot.green { background: var(--green); }
+    .stat-dot.red { background: var(--red); }
+    .stat-dot.yellow { background: var(--yellow); }
+    .stat-num { font-weight: 700; font-size: 18px; color: var(--text); }
+    .summary-right { display: flex; align-items: center; gap: 10px; }
+    .checked-at { font-size: 12px; color: var(--muted); }
+    .refresh-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 12px; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; transition: border-color .2s, color .2s; }
+    .refresh-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .refresh-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Category filter */
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 12px; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-family: inherit; transition: all .2s; white-space: nowrap; }
+    .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .filter-btn.active { background: rgba(255,159,67,.15); border-color: var(--orange); color: var(--orange); font-weight: 600; }
+
+    /* Vendor grid */
+    .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
+    .vendor-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: border-color .2s, transform .15s; cursor: default; }
+    .vendor-card:hover { border-color: rgba(255,159,67,.3); transform: translateY(-1px); }
+    .vendor-card.operational { border-left: 3px solid var(--green); }
+    .vendor-card.degraded { border-left: 3px solid var(--yellow); }
+    .vendor-card.outage { border-left: 3px solid var(--red); }
+    .vendor-card.unknown { border-left: 3px solid var(--border); }
+    .vc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+    .vc-name-wrap { display: flex; align-items: center; gap: 8px; }
+    .vc-emoji { font-size: 18px; line-height: 1; }
+    .vc-name { font-size: 14px; font-weight: 700; }
+    .vc-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+    .vc-status-dot.operational { background: var(--green); }
+    .vc-status-dot.degraded { background: var(--yellow); animation: blink 1.5s ease-in-out infinite; }
+    .vc-status-dot.outage { background: var(--red); animation: blink 1s ease-in-out infinite; }
+    .vc-status-dot.unknown { background: #4a6a8a; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .vc-category { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .vc-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .vc-status-label { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+    .vc-status-label.operational { color: var(--green); }
+    .vc-status-label.degraded { color: var(--yellow); }
+    .vc-status-label.outage { color: var(--red); }
+    .vc-status-label.unknown { color: var(--muted); }
+
+    /* Loading skeleton */
+    .skeleton { background: linear-gradient(90deg, var(--card) 25%, #1a2535 50%, var(--card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .skeleton-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; height: 110px; }
+    .sk-line { height: 12px; border-radius: 4px; margin-bottom: 8px; }
+    .sk-line.w60 { width: 60%; }
+    .sk-line.w40 { width: 40%; }
+    .sk-line.w80 { width: 80%; }
+
+    /* Error state */
+    .load-error { text-align: center; padding: 48px; color: var(--muted); }
+    .load-error .err-icon { font-size: 32px; margin-bottom: 12px; }
+    .load-error p { font-size: 14px; }
+
+    /* Issues banner */
+    .issues-banner { background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: none; }
+    .issues-banner.visible { display: flex; align-items: center; gap: 10px; }
+    .issues-banner-icon { font-size: 18px; }
+    .issues-banner p { font-size: 13px; color: #ff9090; line-height: 1.5; }
+
+    /* Email signup section */
+    .signup-section { max-width: 700px; margin: 0 auto 72px; padding: 0 24px; }
+    .signup-card { background: linear-gradient(135deg, #0f1a22, #071018); border: 1px solid rgba(255,159,67,.3); border-radius: 16px; padding: 36px 32px; text-align: center; }
+    .signup-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -.02em; }
+    .signup-card h2 em { font-style: normal; color: var(--orange); }
+    .signup-card p { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .vendor-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
+    .vendor-chip { background: rgba(255,159,67,.08); border: 1px solid rgba(255,159,67,.2); color: var(--orange); font-size: 12px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all .2s; user-select: none; }
+    .vendor-chip.selected { background: rgba(255,159,67,.2); border-color: var(--orange); font-weight: 600; }
+    .signup-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto 12px; }
+    .signup-input { flex: 1; background: #0b0f14; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; }
+    .signup-input:focus { border-color: var(--orange); }
+    .signup-input::placeholder { color: #5a7a9a; }
+    .signup-btn { background: var(--orange); color: #1a0a00; font-weight: 700; font-size: 14px; padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s; }
+    .signup-btn:hover { opacity: .88; }
+    .signup-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .signup-note { font-size: 12px; color: var(--muted); }
+    .signup-success { display: none; color: var(--green); font-size: 14px; font-weight: 600; margin-top: 12px; }
+
+    /* Pricing */
+    .pricing-section { max-width: 860px; margin: 0 auto 72px; padding: 0 24px; }
+    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--orange); margin-bottom: 10px; }
+    .section-title { font-size: clamp(1.5rem,3.5vw,2.2rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px; }
+    .section-sub { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 520px; margin-bottom: 36px; }
+    .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 20px; }
+    .plan-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; position: relative; }
+    .plan-card.featured { border-color: var(--orange); background: linear-gradient(135deg, #1a1200, #111820); }
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--orange); color: #1a0a00; font-size: 11px; font-weight: 700; padding: 3px 14px; border-radius: 20px; letter-spacing: .05em; white-space: nowrap; }
+    .plan-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .plan-price { font-size: 2.2rem; font-weight: 900; line-height: 1; letter-spacing: -.03em; margin-bottom: 4px; }
+    .plan-price sub { font-size: 14px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+    .plan-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+    .plan-features { list-style: none; margin-bottom: 24px; display: flex; flex-direction: column; gap: 9px; }
+    .plan-features li { font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+    .plan-features li::before { content: '✓'; color: var(--orange); font-weight: 700; flex-shrink: 0; }
+    .plan-features li.dim::before { content: '–'; color: #4a6a8a; }
+    .plan-features li.dim { color: #4a6a8a; }
+    .plan-cta { display: block; text-align: center; font-weight: 700; font-size: 14px; padding: 12px; border-radius: 10px; transition: opacity .2s; }
+    .plan-cta.orange { background: var(--orange); color: #1a0a00; }
+    .plan-cta.ghost { border: 1px solid var(--border); color: var(--muted); }
+    .plan-cta:hover { opacity: .88; }
+
+    /* How it works */
+    .steps-section { max-width: 900px; margin: 0 auto 72px; padding: 0 24px; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+    .step-num { font-size: 11px; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .step-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .step-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* FAQ */
+    .faq-section { max-width: 720px; margin: 0 auto 72px; padding: 0 24px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q { width: 100%; background: none; border: none; text-align: left; color: var(--text); font-size: 15px; font-weight: 600; padding: 18px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: inherit; gap: 12px; }
+    .faq-arrow { font-size: 12px; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(90deg); }
+    .faq-a { font-size: 14px; color: var(--muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .25s; }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 18px; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 28px 24px; text-align: center; color: var(--muted); font-size: 12px; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    @media(max-width:540px) {
+      .signup-form { flex-direction: column; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>EdgeIQ</span> Labs</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/pulse/" style="color:#3de19e;font-weight:600;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;font-weight:600;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;font-weight:600;">📡 Vendor Watch</a>
+    <a class="nav-cta" href="#get-alerts">Get Alerts Free</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <div class="live-dot"></div>
+    Live Status · Updated Every 3 Minutes
+  </div>
+  <h1>Is Your <em>SaaS Stack</em> Up?</h1>
+  <p class="hero-sub">Real-time status for Stripe, GitHub, Cloudflare, Vercel, Shopify and 9 more. Know before your customers do.</p>
+  <div class="hero-ctas">
+    <a class="btn-primary" href="#get-alerts">Get Free Email Alerts</a>
+    <a class="btn-secondary" href="#pricing">See Pro Plan</a>
+  </div>
+</section>
+
+<!-- Live Dashboard -->
+<div class="dashboard-wrap">
+
+  <!-- Issues banner (shown when any outage) -->
+  <div id="issues-banner" class="issues-banner">
+    <span class="issues-banner-icon">⚠️</span>
+    <p id="issues-banner-text">One or more vendors are reporting issues.</p>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="summary-bar">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <div class="summary-stat">
+        <div class="stat-dot green"></div>
+        <span><span class="stat-num" id="count-operational">—</span> Operational</span>
+      </div>
+      <div class="summary-stat">
+        <div class="stat-dot yellow"></div>
+        <span><span class="stat-num" id="count-issues">—</span> Issues</span>
+      </div>
+      <div class="summary-stat">
+        <div class="stat-dot" style="background:#4a6a8a;"></div>
+        <span><span class="stat-num" id="count-unknown">—</span> Unknown</span>
+      </div>
+    </div>
+    <div class="summary-right">
+      <span class="checked-at" id="checked-at"></span>
+      <button class="refresh-btn" id="refresh-btn" onclick="loadVendors(true)">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- Category filter -->
+  <div class="filter-row" id="filter-row">
+    <button class="filter-btn active" data-cat="All" onclick="setFilter('All',this)">All</button>
+    <button class="filter-btn" data-cat="Payments" onclick="setFilter('Payments',this)">💳 Payments</button>
+    <button class="filter-btn" data-cat="Hosting" onclick="setFilter('Hosting',this)">🖥️ Hosting</button>
+    <button class="filter-btn" data-cat="Infrastructure" onclick="setFilter('Infrastructure',this)">🌐 Infrastructure</button>
+    <button class="filter-btn" data-cat="Comms" onclick="setFilter('Comms',this)">💬 Comms</button>
+    <button class="filter-btn" data-cat="Dev Tools" onclick="setFilter('Dev Tools',this)">🛠️ Dev Tools</button>
+    <button class="filter-btn" data-cat="Monitoring" onclick="setFilter('Monitoring',this)">📊 Monitoring</button>
+    <button class="filter-btn" data-cat="Database" onclick="setFilter('Database',this)">🍃 Database</button>
+    <button class="filter-btn" data-cat="Commerce" onclick="setFilter('Commerce',this)">🛒 Commerce</button>
+    <button class="filter-btn" data-cat="CRM" onclick="setFilter('CRM',this)">🧲 CRM</button>
+    <button class="filter-btn" data-cat="Email" onclick="setFilter('Email',this)">📧 Email</button>
+  </div>
+
+  <!-- Vendor grid -->
+  <div class="vendor-grid" id="vendor-grid">
+    <!-- Skeleton placeholders -->
+    <div class="skeleton-card">
+      <div class="skeleton sk-line w60" style="margin-bottom:10px;height:16px;"></div>
+      <div class="skeleton sk-line w40" style="margin-bottom:8px;"></div>
+      <div class="skeleton sk-line w80"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton sk-line w60" style="margin-bottom:10px;height:16px;"></div>
+      <div class="skeleton sk-line w40" style="margin-bottom:8px;"></div>
+      <div class="skeleton sk-line w80"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton sk-line w60" style="margin-bottom:10px;height:16px;"></div>
+      <div class="skeleton sk-line w40" style="margin-bottom:8px;"></div>
+      <div class="skeleton sk-line w80"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton sk-line w60" style="margin-bottom:10px;height:16px;"></div>
+      <div class="skeleton sk-line w40" style="margin-bottom:8px;"></div>
+      <div class="skeleton sk-line w80"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton sk-line w60" style="margin-bottom:10px;height:16px;"></div>
+      <div class="skeleton sk-line w40" style="margin-bottom:8px;"></div>
+      <div class="skeleton sk-line w80"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton sk-line w60" style="margin-bottom:10px;height:16px;"></div>
+      <div class="skeleton sk-line w40" style="margin-bottom:8px;"></div>
+      <div class="skeleton sk-line w80"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Email Signup -->
+<section id="get-alerts" class="signup-section">
+  <div class="signup-card">
+    <h2>Get Alerted When Your <em>Stack Goes Down</em></h2>
+    <p>Pick the vendors you rely on. We'll email you the moment one goes into degraded or outage status — free, no account needed.</p>
+
+    <div class="vendor-chips" id="vendor-chips">
+      <div class="vendor-chip selected" data-vendor="stripe">💳 Stripe</div>
+      <div class="vendor-chip" data-vendor="github">🐙 GitHub</div>
+      <div class="vendor-chip selected" data-vendor="cloudflare">🌐 Cloudflare</div>
+      <div class="vendor-chip" data-vendor="vercel">▲ Vercel</div>
+      <div class="vendor-chip" data-vendor="netlify">🔷 Netlify</div>
+      <div class="vendor-chip" data-vendor="shopify">🛒 Shopify</div>
+      <div class="vendor-chip" data-vendor="twilio">📞 Twilio</div>
+      <div class="vendor-chip" data-vendor="sendgrid">📧 SendGrid</div>
+      <div class="vendor-chip" data-vendor="hubspot">🧲 HubSpot</div>
+      <div class="vendor-chip" data-vendor="intercom">💬 Intercom</div>
+      <div class="vendor-chip" data-vendor="datadog">📊 Datadog</div>
+      <div class="vendor-chip" data-vendor="newrelic">📈 New Relic</div>
+      <div class="vendor-chip" data-vendor="mongodb">🍃 MongoDB</div>
+      <div class="vendor-chip" data-vendor="slack">💼 Slack</div>
+    </div>
+
+    <form class="signup-form" id="signup-form" onsubmit="handleSignup(event)">
+      <input class="signup-input" type="email" id="signup-email" placeholder="you@company.com" required autocomplete="email">
+      <button class="signup-btn" type="submit" id="signup-btn">Get Alerts Free</button>
+    </form>
+    <p class="signup-note">Free alerts for up to 5 vendors. Upgrade to Pro for all 14 + Slack/webhook.</p>
+    <div class="signup-success" id="signup-success">✓ Done! You'll get an email the next time something breaks.</div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="steps-section">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Always-On, Zero Setup</div>
+  <p class="section-sub">We check every vendor's official status page every 3 minutes and cache results at the edge — so you always see fresh data without latency.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">Step 01</div>
+      <div class="step-title">Pick Your Vendors</div>
+      <p class="step-body">Select the SaaS tools your business runs on — payments, hosting, comms, data. You choose; we watch.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 02</div>
+      <div class="step-title">We Check Every 3 Min</div>
+      <p class="step-body">Every status page is polled on a tight cycle. Results are cached at Cloudflare's edge for instant load times worldwide.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 03</div>
+      <div class="step-title">Email Alert on Issue</div>
+      <p class="step-body">The moment a vendor flips to degraded or outage, you get an email with the vendor name and incident description.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 04</div>
+      <div class="step-title">All-Clear When Fixed</div>
+      <p class="step-body">Pro users get a second email when the vendor returns to operational — so you know it's safe to retry.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" class="pricing-section">
+  <div class="section-label">Pricing</div>
+  <div class="section-title">Simple, Flat Pricing</div>
+  <p class="section-sub">Free for small stacks. Pro unlocks all vendors, all-clear alerts, and webhook support.</p>
+
+  <div class="plans-grid">
+    <div class="plan-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0<sub>/mo</sub></div>
+      <p class="plan-desc">Watch up to 5 vendors. Good for solo builders and small teams.</p>
+      <ul class="plan-features">
+        <li>Up to 5 vendors</li>
+        <li>Email alerts on outage</li>
+        <li>Live dashboard access</li>
+        <li>3-minute check interval</li>
+        <li class="dim">All-clear email when fixed</li>
+        <li class="dim">Webhook / Slack alerts</li>
+        <li class="dim">All 14 vendors</li>
+      </ul>
+      <a href="#get-alerts" class="plan-cta ghost">Start Free</a>
+    </div>
+
+    <div class="plan-card featured">
+      <div class="plan-badge">MOST POPULAR</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price" style="color:var(--orange);">$9<sub>/mo</sub></div>
+      <p class="plan-desc">Every vendor, every alert. For teams that can't afford to miss a minute of downtime.</p>
+      <ul class="plan-features">
+        <li>All 14 vendors, unlimited</li>
+        <li>Email alerts on outage</li>
+        <li>All-clear email when fixed</li>
+        <li>Webhook / Slack notification</li>
+        <li>Live dashboard access</li>
+        <li>1-minute check interval</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="https://buy.stripe.com/VENDOR_WATCH_PRO" class="plan-cta orange" id="pro-cta">Get Pro — $9/mo</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-label">FAQ</div>
+  <div class="section-title">Common Questions</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Where does the status data come from? <span class="faq-arrow">▶</span></button>
+    <div class="faq-a">We fetch each vendor's official status page API — the same sources their own status pages use. Stripe, GitHub, Cloudflare and all others run on Statuspage.io or their own equivalent, and we poll those APIs directly every 3 minutes.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">How fast will I get an alert? <span class="faq-arrow">▶</span></button>
+    <div class="faq-a">Free plan checks every 3 minutes; Pro checks every 1 minute. After we detect a status change, the email is sent within 60 seconds. Total worst-case latency is about 4 minutes for free, 2 minutes for Pro.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Can I add vendors that aren't on the list? <span class="faq-arrow">▶</span></button>
+    <div class="faq-a">Not yet — we currently support the 14 pre-built vendors. Custom vendor support is on our roadmap for a future Pro tier. If there's a specific vendor you need, email us at alerts@edgeiqlabs.com and we'll prioritize it.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">What's a webhook alert? <span class="faq-arrow">▶</span></button>
+    <div class="faq-a">Pro plan lets you point us at any HTTPS URL — a Slack incoming webhook, a Make/Zapier trigger, a custom endpoint — and we'll POST a JSON payload when a vendor status changes. Great for automating incident response workflows.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">How do I cancel? <span class="faq-arrow">▶</span></button>
+    <div class="faq-a">Pro subscriptions are managed through Stripe. You can cancel any time from the billing portal link we email you, or by emailing alerts@edgeiqlabs.com — no questions asked, no fees.</div>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:8px;">
+    <a href="/">EdgeIQ Labs</a> &nbsp;·&nbsp;
+    <a href="/products/">Products</a> &nbsp;·&nbsp;
+    <a href="/pulse/">Pulse</a> &nbsp;·&nbsp;
+    <a href="/inbox-shield/">Inbox Shield</a> &nbsp;·&nbsp;
+    <a href="/compliance/">Compliance</a> &nbsp;·&nbsp;
+    <a href="mailto:alerts@edgeiqlabs.com">Contact</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </p>
+  <p>© 2025 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+
+<script>
+var allVendors = [];
+var activeFilter = 'All';
+
+function fmtTime(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return 'Updated ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function statusLabel(s) {
+  if (s === 'operational') return 'Operational';
+  if (s === 'degraded')    return 'Degraded';
+  if (s === 'outage')      return 'Outage';
+  return 'Unknown';
+}
+
+function renderGrid(vendors) {
+  var grid = document.getElementById('vendor-grid');
+  var filtered = activeFilter === 'All' ? vendors : vendors.filter(function(v){ return v.category === activeFilter; });
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="load-error"><div class="err-icon">🔍</div><p>No vendors in this category.</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(function(v) {
+    var s = v.status || 'unknown';
+    return '<div class="vendor-card ' + s + '">' +
+      '<div class="vc-top">' +
+        '<div class="vc-name-wrap">' +
+          '<span class="vc-emoji">' + (v.emoji || '📦') + '</span>' +
+          '<span class="vc-name">' + v.name + '</span>' +
+        '</div>' +
+        '<div class="vc-status-dot ' + s + '"></div>' +
+      '</div>' +
+      '<div class="vc-category">' + (v.category || '') + '</div>' +
+      '<div class="vc-status-label ' + s + '">' + statusLabel(s) + '</div>' +
+      '<div class="vc-desc">' + (v.description || '') + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function updateCounts(data) {
+  document.getElementById('count-operational').textContent = data.operational || 0;
+  var issues = data.issues || 0;
+  document.getElementById('count-issues').textContent = issues;
+  var unknown = (data.total || 0) - (data.operational || 0) - (data.issues || 0);
+  document.getElementById('count-unknown').textContent = Math.max(0, unknown);
+  document.getElementById('checked-at').textContent = fmtTime(data.checked_at);
+
+  var banner = document.getElementById('issues-banner');
+  if (issues > 0) {
+    banner.classList.add('visible');
+    var names = (data.vendors || []).filter(function(v){ return v.status === 'outage' || v.status === 'degraded'; }).map(function(v){ return v.name; });
+    document.getElementById('issues-banner-text').textContent = issues + ' vendor' + (issues !== 1 ? 's' : '') + ' reporting issues: ' + names.join(', ') + '.';
+  } else {
+    banner.classList.remove('visible');
+  }
+}
+
+function loadVendors(forceRefresh) {
+  var btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.textContent = '↻ Checking…';
+
+  var url = '/api/vendor-watch' + (forceRefresh ? '?bust=' + Date.now() : '');
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      allVendors = data.vendors || [];
+      updateCounts(data);
+      renderGrid(allVendors);
+    })
+    .catch(function() {
+      document.getElementById('vendor-grid').innerHTML =
+        '<div class="load-error" style="grid-column:1/-1;"><div class="err-icon">⚠️</div><p>Could not load vendor status. Please try again.</p></div>';
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = '↻ Refresh';
+    });
+}
+
+function setFilter(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  renderGrid(allVendors);
+}
+
+// Vendor chip selection
+document.querySelectorAll('.vendor-chip').forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    chip.classList.toggle('selected');
+  });
+});
+
+function getSelectedVendors() {
+  return Array.from(document.querySelectorAll('.vendor-chip.selected')).map(function(c){ return c.dataset.vendor; });
+}
+
+function handleSignup(e) {
+  e.preventDefault();
+  var email = document.getElementById('signup-email').value.trim();
+  var vendors = getSelectedVendors();
+  var btn = document.getElementById('signup-btn');
+  if (!email) return;
+  if (vendors.length === 0) {
+    alert('Please select at least one vendor to watch.');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  fetch('/api/vendor-watch-signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, vendors: vendors, plan: 'free' }),
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.ok) {
+        document.getElementById('signup-form').style.display = 'none';
+        document.getElementById('signup-success').style.display = 'block';
+        document.getElementById('signup-success').textContent = '✓ ' + d.message;
+      } else {
+        alert(d.error || 'Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Get Alerts Free';
+      }
+    })
+    .catch(function() {
+      alert('Network error. Please check your connection and try again.');
+      btn.disabled = false;
+      btn.textContent = 'Get Alerts Free';
+    });
+}
+
+function toggleFaq(btn) {
+  var item = btn.closest('.faq-item');
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+
+// Auto-refresh every 3 minutes
+setInterval(function(){ loadVendors(false); }, 3 * 60 * 1000);
+loadVendors(false);
+</script>
+</body>
+</html>
