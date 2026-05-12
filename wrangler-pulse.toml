@@ -10,5 +10,5 @@ binding = "PULSE_KV"
 id = "fa1a58361a9b498399835adcc727cd4b"
 
 [vars]
-FROM_EMAIL = "onboarding@resend.dev"
+FROM_EMAIL = "alerts@edgeiqlabs.com"
 SITE_URL = "https://edgeiqlabs.com"
