@@ -133,6 +133,8 @@
       <input id="domainInput" class="scan-input" type="text" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
       <select id="frameworkSelect" class="framework-select">
         <option value="soc2">SOC 2</option>
+        <option value="hipaa">HIPAA</option>
+        <option value="pci">PCI-DSS</option>
       </select>
       <button id="scanBtn" class="scan-btn" onclick="runScan()">Run Scan</button>
     </div>
@@ -198,14 +200,16 @@
 
     <div class="upsell-card">
       <div class="upsell-title">Automate compliance tracking</div>
-      <div class="upsell-desc">Upgrade to Compliance Business — we run monthly scans automatically and email you a posture report before your next audit.</div>
-      <a href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" class="upsell-btn">Get Compliance Business →</a>
-      <div class="upsell-price">$49/mo · cancel anytime</div>
+      <div class="upsell-desc">We run monthly scans automatically and email you a posture report before your next audit — SOC 2, HIPAA, and PCI-DSS included.</div>
+      <a href="https://buy.stripe.com/eVq3cxam730V9Ig5os7wA2N" class="upsell-btn">Compliance Essential — $49/mo →</a>
+      <div class="upsell-price" style="margin-bottom:8px;">SOC 2 + HIPAA · cancel anytime</div>
+      <a href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" class="upsell-btn" style="background:transparent;border:1px solid rgba(61,225,158,.4);color:var(--green);margin-top:4px;">Compliance Business — $99/mo →</a>
+      <div class="upsell-price">All frameworks + executive reports</div>
     </div>
 
     <div class="sidebar-card">
       <div class="sidebar-title">What we check</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+      <div id="checksInfo" style="font-size:12px;color:var(--muted);line-height:1.8;">
         CC6.1 — Access Controls<br>
         CC6.2 — Logical Access<br>
         CC6.6 — Remote Security<br>
@@ -223,7 +227,7 @@
 <div class="snack" id="snack"></div>
 
 <script>
-const API = 'https://compliance.edgeiqlabs.com/api/compliance';
+const API = '/api/compliance';
 const STORAGE_KEY = 'edgeiq_compliance_history'; // array of snapshots
 const GRADE_COLOR = { A:'#3de19e', B:'#70f0a8', C:'#ffb347', D:'#ff8c42', F:'#ff6b6b' };
 
@@ -488,6 +492,17 @@ function snack(msg) {
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
+
+const FRAMEWORK_CHECKS = {
+  soc2: 'CC6.1 — Access Controls<br>CC6.2 — Logical Access<br>CC6.6 — Remote Security<br>CC7.2 — Vulnerability Mgmt<br>CC8.1 — Change Management<br>A1 — Injection Controls<br>A3 — Data Integrity<br>A5 — Logging & Monitoring',
+  hipaa: '164.312(a)(1) — Access Control<br>164.312(c)(1) — Integrity<br>164.308(a)(5) — Security Awareness',
+  pci: 'Req 1 — Network Security<br>Req 6 — Secure Systems<br>Req 11 — Testing & Monitoring',
+};
+
+document.getElementById('frameworkSelect').addEventListener('change', function() {
+  const info = document.getElementById('checksInfo');
+  info.innerHTML = FRAMEWORK_CHECKS[this.value] || FRAMEWORK_CHECKS.soc2;
+});
 
 document.getElementById('domainInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') runScan();
