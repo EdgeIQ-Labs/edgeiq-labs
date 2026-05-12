@@ -99,12 +99,22 @@
     .no-history { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
     /* Upsell */
-    .upsell-card { background: linear-gradient(135deg, #0d1f17, #071018); border: 1px solid rgba(61,225,158,.3); border-radius: 12px; padding: 18px; }
-    .upsell-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
-    .upsell-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
-    .upsell-btn { display: block; text-align: center; background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 9px; border-radius: 8px; }
-    .upsell-btn:hover { opacity: .88; }
-    .upsell-price { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
+    .plans-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .plan-tier { padding: 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+    .plan-tier:last-child { margin-bottom: 0; }
+    .plan-tier.featured { background: linear-gradient(135deg,#0d1f17,#071018); border-color: rgba(61,225,158,.3); }
+    .plan-tier-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .plan-tier-price { font-size: 20px; font-weight: 900; color: var(--green); margin-bottom: 8px; }
+    .plan-tier-price span { font-size: 12px; font-weight: 400; color: var(--muted); }
+    .plan-tier-features { font-size: 11px; color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
+    .plan-tier-features li { list-style: none; }
+    .plan-tier-features li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+    .plan-tier-features li.no::before { content: '✗ '; color: var(--dim); }
+    .plan-tier-features li.no { color: var(--dim); }
+    .plan-tier-btn { display: block; text-align: center; font-weight: 700; font-size: 12px; padding: 8px; border-radius: 7px; transition: opacity .2s; }
+    .plan-tier-btn:hover { opacity: .88; }
+    .plan-tier-btn.primary { background: var(--green); color: #071018; }
+    .plan-tier-btn.secondary { background: transparent; border: 1px solid rgba(61,225,158,.4); color: var(--green); }
 
     /* Snackbar */
     .snack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: 13px; color: var(--text); display: none; z-index: 200; white-space: nowrap; }
@@ -119,7 +129,7 @@
     <a href="/dashboard/">Dashboard</a>
     <a href="/pulse/">Pulse</a>
     <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="#" class="nav-cta">Upgrade</a>
+    <a href="#plans" class="nav-cta" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'});return false;">Upgrade</a>
   </div>
 </nav>
 
@@ -198,13 +208,38 @@
       <div id="historyList"><p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p></div>
     </div>
 
-    <div class="upsell-card">
-      <div class="upsell-title">Automate compliance tracking</div>
-      <div class="upsell-desc">We run monthly scans automatically and email you a posture report before your next audit — SOC 2, HIPAA, and PCI-DSS included.</div>
-      <a href="https://buy.stripe.com/eVq3cxam730V9Ig5os7wA2N" class="upsell-btn">Compliance Essential — $49/mo →</a>
-      <div class="upsell-price" style="margin-bottom:8px;">SOC 2 + HIPAA · cancel anytime</div>
-      <a href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" class="upsell-btn" style="background:transparent;border:1px solid rgba(61,225,158,.4);color:var(--green);margin-top:4px;">Compliance Business — $99/mo →</a>
-      <div class="upsell-price">All frameworks + executive reports</div>
+    <div class="plans-card" id="plans">
+      <div class="sidebar-title">Upgrade plan</div>
+
+      <div class="plan-tier featured">
+        <div class="plan-tier-name">Essential</div>
+        <div class="plan-tier-price">$49<span>/mo</span></div>
+        <ul class="plan-tier-features">
+          <li>SOC 2 + HIPAA frameworks</li>
+          <li>Automated monthly scans</li>
+          <li>Email posture report</li>
+          <li>Up to 3 domains</li>
+          <li class="no">PCI-DSS framework</li>
+          <li class="no">PDF audit-ready export</li>
+          <li class="no">Executive summary report</li>
+        </ul>
+        <a href="https://buy.stripe.com/eVq3cxam730V9Ig5os7wA2N" class="plan-tier-btn primary">Get Essential →</a>
+      </div>
+
+      <div class="plan-tier">
+        <div class="plan-tier-name">Business</div>
+        <div class="plan-tier-price">$99<span>/mo</span></div>
+        <ul class="plan-tier-features">
+          <li>SOC 2, HIPAA + PCI-DSS</li>
+          <li>Automated monthly scans</li>
+          <li>Email posture report</li>
+          <li>Up to 10 domains</li>
+          <li>PDF audit-ready export</li>
+          <li>Executive summary report</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" class="plan-tier-btn secondary">Get Business →</a>
+      </div>
     </div>
 
     <div class="sidebar-card">
