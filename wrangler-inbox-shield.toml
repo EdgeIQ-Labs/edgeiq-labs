@@ -1,0 +1,6 @@
+name = "edgeiq-inbox-shield"
+main = "inbox-shield-worker.js"
+compatibility_date = "2026-04-23"
+
+[vars]
+SITE_URL = "https://edgeiqlabs.com"
