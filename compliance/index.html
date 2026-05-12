@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compliance Posture Tracker — EdgeIQ Labs</title>
+  <meta name="description" content="Track your SOC 2 compliance posture over time. Scan your domain, see control-by-control pass/fail, and watch your score trend month by month.">
+  <link rel="canonical" href="https://edgeiqlabs.com/compliance/">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0f14; --card: #111820; --border: #1e2e3e;
+      --text: #e8eef7; --muted: #9fb0c7; --dim: #4a6080;
+      --green: #3de19e; --blue: #3dd9ff; --yellow: #ffb347;
+      --red: #ff6b6b; --orange: #ff8c42;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-logo { font-weight: 800; font-size: 15px; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; }
+
+    /* Layout */
+    .page { display: grid; grid-template-columns: 1fr 280px; gap: 20px; max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+    @media(max-width: 860px) { .page { grid-template-columns: 1fr; } .sidebar { order: -1; } }
+
+    /* Scan bar */
+    .scan-bar { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .scan-bar-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); flex: 0 0 100%; }
+    .scan-input { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; transition: border-color .2s; }
+    .scan-input:focus { border-color: var(--green); }
+    .scan-input::placeholder { color: var(--dim); }
+    .framework-select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--muted); outline: none; font-family: inherit; cursor: pointer; }
+    .scan-btn { background: var(--green); color: #071018; font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s; }
+    .scan-btn:hover { opacity: .88; }
+    .scan-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Status bar */
+    .status-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 20px; overflow: hidden; display: none; }
+    .status-bar-inner { height: 100%; background: var(--green); border-radius: 2px; width: 0; transition: width .4s ease; }
+
+    /* Score hero */
+    .score-hero { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 20px; display: none; }
+    .score-hero-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .grade-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--green); flex-shrink: 0; }
+    .score-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-val { font-size: 22px; font-weight: 800; }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+    .score-meta { margin-left: auto; text-align: right; font-size: 12px; color: var(--muted); }
+    .score-meta strong { color: var(--text); display: block; font-size: 14px; margin-bottom: 2px; }
+
+    /* Trend chart */
+    .trend-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: none; }
+    .trend-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+    .trend-title { font-size: 13px; font-weight: 700; }
+    .trend-subtitle { font-size: 11px; color: var(--muted); }
+    canvas#trendCanvas { width: 100%; display: block; }
+
+    /* Controls grid */
+    .controls-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: none; }
+    .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .controls-title { font-size: 13px; font-weight: 700; }
+    .controls-list { display: flex; flex-direction: column; gap: 8px; }
+    .control-row { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; }
+    .control-status { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .control-status.pass { background: rgba(61,225,158,.15); color: var(--green); }
+    .control-status.warning { background: rgba(255,179,71,.15); color: var(--yellow); }
+    .control-status.fail { background: rgba(255,107,107,.15); color: var(--red); }
+    .control-body { flex: 1; min-width: 0; }
+    .control-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .control-id { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .control-action { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+    .control-score { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+
+    /* Empty / placeholder */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
+    .history-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: pointer; transition: background .15s; }
+    .history-item:hover { background: rgba(255,255,255,.04); }
+    .history-item.active { background: rgba(61,225,158,.08); border: 1px solid rgba(61,225,158,.2); }
+    .history-grade { font-size: 15px; font-weight: 900; width: 28px; text-align: center; flex-shrink: 0; }
+    .history-domain { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-date { font-size: 11px; color: var(--muted); }
+    .history-score { font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
+    .no-history { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* Upsell */
+    .upsell-card { background: linear-gradient(135deg, #0d1f17, #071018); border: 1px solid rgba(61,225,158,.3); border-radius: 12px; padding: 18px; }
+    .upsell-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+    .upsell-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .upsell-btn { display: block; text-align: center; background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 9px; border-radius: 8px; }
+    .upsell-btn:hover { opacity: .88; }
+    .upsell-price { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
+
+    /* Snackbar */
+    .snack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: 13px; color: var(--text); display: none; z-index: 200; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="#" class="nav-cta">Upgrade</a>
+  </div>
+</nav>
+
+<div class="page">
+  <!-- Main column -->
+  <div>
+
+    <!-- Scan bar -->
+    <div class="scan-bar">
+      <div class="scan-bar-label">Compliance Posture Tracker</div>
+      <input id="domainInput" class="scan-input" type="text" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
+      <select id="frameworkSelect" class="framework-select">
+        <option value="soc2">SOC 2</option>
+      </select>
+      <button id="scanBtn" class="scan-btn" onclick="runScan()">Run Scan</button>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="status-bar" id="statusBar">
+      <div class="status-bar-inner" id="statusBarInner"></div>
+    </div>
+
+    <!-- Score hero (shown after scan) -->
+    <div class="score-hero" id="scoreHero">
+      <div class="score-hero-inner">
+        <div class="grade-circle" id="gradeCircle">—</div>
+        <div class="score-stats">
+          <div class="stat"><div class="stat-val" id="statScore">—</div><div class="stat-label">Score</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--green)" id="statPassed">—</div><div class="stat-label">Passed</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--yellow)" id="statWarning">—</div><div class="stat-label">Warning</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--red)" id="statFailed">—</div><div class="stat-label">Failed</div></div>
+        </div>
+        <div class="score-meta">
+          <strong id="metaDomain">—</strong>
+          <span id="metaDate">—</span><br>
+          <span id="metaFramework">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trend chart (shown when 2+ snapshots exist) -->
+    <div class="trend-card" id="trendCard">
+      <div class="trend-header">
+        <div>
+          <div class="trend-title">Score over time</div>
+          <div class="trend-subtitle" id="trendSubtitle">Compliance posture history</div>
+        </div>
+      </div>
+      <canvas id="trendCanvas" height="120"></canvas>
+    </div>
+
+    <!-- Controls breakdown -->
+    <div class="controls-card" id="controlsCard">
+      <div class="controls-header">
+        <div class="controls-title">Control Breakdown</div>
+      </div>
+      <div class="controls-list" id="controlsList"></div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">Track your compliance posture over time</div>
+      <div class="empty-sub">Enter your domain and run a SOC 2 scan. Each scan is saved locally — run it monthly and watch your score trend improve as you fix issues.</div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Scan History</div>
+      <div id="historyList"><p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p></div>
+    </div>
+
+    <div class="upsell-card">
+      <div class="upsell-title">Automate compliance tracking</div>
+      <div class="upsell-desc">Upgrade to Compliance Business — we run monthly scans automatically and email you a posture report before your next audit.</div>
+      <a href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" class="upsell-btn">Get Compliance Business →</a>
+      <div class="upsell-price">$49/mo · cancel anytime</div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">What we check</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+        CC6.1 — Access Controls<br>
+        CC6.2 — Logical Access<br>
+        CC6.6 — Remote Security<br>
+        CC7.2 — Vulnerability Mgmt<br>
+        CC8.1 — Change Management<br>
+        A1 — Injection Controls<br>
+        A3 — Data Integrity<br>
+        A5 — Logging & Monitoring
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script>
+const API = 'https://compliance.edgeiqlabs.com/api/compliance';
+const STORAGE_KEY = 'edgeiq_compliance_history'; // array of snapshots
+const GRADE_COLOR = { A:'#3de19e', B:'#70f0a8', C:'#ffb347', D:'#ff8c42', F:'#ff6b6b' };
+
+// ── Storage helpers ──────────────────────────────────────────────────────────
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHistory(history) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch {}
+}
+
+function addSnapshot(result) {
+  const history = loadHistory();
+  history.unshift({
+    domain: result.domain,
+    framework: result.framework,
+    score: result.score,
+    grade: result.grade,
+    passed: result.passed,
+    warning: result.warning,
+    failed: result.failed,
+    controls: result.controls,
+    scanned_at: new Date().toISOString(),
+  });
+  // Keep last 60 snapshots total
+  saveHistory(history.slice(0, 60));
+  return history;
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function gradeColor(grade) { return GRADE_COLOR[grade] || '#9fb0c7'; }
+
+function renderHero(snap) {
+  const el = document.getElementById('scoreHero');
+  const gc = document.getElementById('gradeCircle');
+  gc.textContent = snap.grade;
+  gc.style.color = gradeColor(snap.grade);
+  gc.style.borderColor = gradeColor(snap.grade);
+  document.getElementById('statScore').textContent = Math.round(snap.score) + '%';
+  document.getElementById('statScore').style.color = gradeColor(snap.grade);
+  document.getElementById('statPassed').textContent = snap.passed ?? '—';
+  document.getElementById('statWarning').textContent = snap.warning ?? '—';
+  document.getElementById('statFailed').textContent = snap.failed ?? '—';
+  document.getElementById('metaDomain').textContent = snap.domain;
+  document.getElementById('metaDate').textContent = new Date(snap.scanned_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('metaFramework').textContent = snap.framework || 'SOC 2';
+  el.style.display = 'block';
+}
+
+function renderControls(controls) {
+  const list = document.getElementById('controlsList');
+  list.innerHTML = '';
+  controls.forEach(c => {
+    const icon = c.status === 'pass' ? '✓' : c.status === 'warning' ? '!' : '✗';
+    list.innerHTML += `
+      <div class="control-row">
+        <div class="control-status ${c.status}">${icon}</div>
+        <div class="control-body">
+          <div class="control-name">${c.name}</div>
+          <div class="control-id">${c.id} · ${c.category}</div>
+          ${c.action ? `<div class="control-action">${c.action}</div>` : ''}
+        </div>
+        <div class="control-score" style="color:${c.score >= 80 ? 'var(--green)' : c.score >= 50 ? 'var(--yellow)' : 'var(--red)'}">${Math.round(c.score)}%</div>
+      </div>`;
+  });
+  document.getElementById('controlsCard').style.display = 'block';
+}
+
+function renderTrend(domain) {
+  const history = loadHistory().filter(s => s.domain === domain);
+  if (history.length < 2) {
+    document.getElementById('trendCard').style.display = 'none';
+    return;
+  }
+
+  // Chronological order for chart
+  const snapshots = history.slice().reverse();
+  document.getElementById('trendSubtitle').textContent =
+    domain + ' · ' + snapshots.length + ' scan' + (snapshots.length > 1 ? 's' : '');
+  document.getElementById('trendCard').style.display = 'block';
+
+  const canvas = document.getElementById('trendCanvas');
+  const W = canvas.parentElement.offsetWidth - 40;
+  const H = 120;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { t: 10, r: 20, b: 28, l: 36 };
+  const cw = W - PAD.l - PAD.r;
+  const ch = H - PAD.t - PAD.b;
+
+  // Grid lines at 25, 50, 75, 100
+  ctx.strokeStyle = 'rgba(30,46,62,0.8)';
+  ctx.lineWidth = 1;
+  [25, 50, 75, 100].forEach(v => {
+    const y = PAD.t + ch - (v / 100) * ch;
+    ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + cw, y); ctx.stroke();
+    ctx.fillStyle = '#4a6080';
+    ctx.font = '10px Inter,system-ui,sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v, PAD.l - 6, y + 3.5);
+  });
+
+  const n = snapshots.length;
+  const pts = snapshots.map((s, i) => ({
+    x: PAD.l + (n === 1 ? cw / 2 : (i / (n - 1)) * cw),
+    y: PAD.t + ch - (s.score / 100) * ch,
+    score: s.score,
+    grade: s.grade,
+    date: new Date(s.scanned_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+  }));
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, PAD.t, 0, PAD.t + ch);
+  grad.addColorStop(0, 'rgba(61,225,158,0.25)');
+  grad.addColorStop(1, 'rgba(61,225,158,0.01)');
+  ctx.beginPath();
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length - 1].x, PAD.t + ch);
+  ctx.lineTo(pts[0].x, PAD.t + ch);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#3de19e';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.stroke();
+
+  // Dots + date labels
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = gradeColor(p.grade);
+    ctx.fill();
+
+    // Date label every other point if crowded
+    if (n <= 8 || i % Math.ceil(n / 8) === 0 || i === n - 1) {
+      ctx.fillStyle = '#4a6080';
+      ctx.font = '9px Inter,system-ui,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.date, p.x, PAD.t + ch + 16);
+    }
+  });
+}
+
+function renderHistory(activeDomain) {
+  const history = loadHistory();
+  const list = document.getElementById('historyList');
+  if (!history.length) {
+    list.innerHTML = '<p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p>';
+    return;
+  }
+
+  // Group by domain, show latest per domain + count
+  const byDomain = {};
+  history.forEach(s => {
+    if (!byDomain[s.domain]) byDomain[s.domain] = [];
+    byDomain[s.domain].push(s);
+  });
+
+  list.innerHTML = '';
+  Object.entries(byDomain).forEach(([domain, snaps]) => {
+    const latest = snaps[0];
+    const isActive = domain === activeDomain;
+    const div = document.createElement('div');
+    div.className = 'history-item' + (isActive ? ' active' : '');
+    div.innerHTML = `
+      <div class="history-grade" style="color:${gradeColor(latest.grade)}">${latest.grade}</div>
+      <div>
+        <div class="history-domain" title="${domain}">${domain}</div>
+        <div class="history-date">${new Date(latest.scanned_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} · ${snaps.length} scan${snaps.length>1?'s':''}</div>
+      </div>
+      <div class="history-score">${Math.round(latest.score)}%</div>`;
+    div.addEventListener('click', () => loadDomainHistory(domain));
+    list.appendChild(div);
+  });
+}
+
+function loadDomainHistory(domain) {
+  const history = loadHistory().filter(s => s.domain === domain);
+  if (!history.length) return;
+  const latest = history[0];
+  document.getElementById('domainInput').value = domain;
+  document.getElementById('emptyState').style.display = 'none';
+  renderHero(latest);
+  if (latest.controls) renderControls(latest.controls);
+  renderTrend(domain);
+  renderHistory(domain);
+}
+
+// ── Scan ─────────────────────────────────────────────────────────────────────
+
+async function runScan() {
+  let domain = document.getElementById('domainInput').value.trim().toLowerCase()
+    .replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+
+  if (!domain || !/^[a-z0-9][a-z0-9\-\.]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
+    document.getElementById('domainInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('domainInput').style.borderColor = '', 1400);
+    return;
+  }
+
+  const framework = document.getElementById('frameworkSelect').value;
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  btn.textContent = 'Scanning…';
+
+  const bar = document.getElementById('statusBar');
+  const barInner = document.getElementById('statusBarInner');
+  bar.style.display = 'block';
+  barInner.style.width = '15%';
+
+  document.getElementById('emptyState').style.display = 'none';
+
+  let pct = 15;
+  const ticker = setInterval(() => {
+    pct = Math.min(pct + 8, 88);
+    barInner.style.width = pct + '%';
+  }, 600);
+
+  try {
+    const resp = await fetch(`${API}?domain=${encodeURIComponent(domain)}&framework=${encodeURIComponent(framework)}`);
+    clearInterval(ticker);
+    barInner.style.width = '100%';
+
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const result = await resp.json();
+
+    const history = addSnapshot(result);
+    renderHero(history[0]);
+    renderControls(result.controls || []);
+    renderTrend(domain);
+    renderHistory(domain);
+
+    setTimeout(() => { bar.style.display = 'none'; barInner.style.width = '0'; }, 600);
+    snack('Scan complete — snapshot saved');
+  } catch (err) {
+    clearInterval(ticker);
+    bar.style.display = 'none';
+    snack('Scan failed — please try again');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Run Scan';
+}
+
+function snack(msg) {
+  const el = document.getElementById('snack');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+document.getElementById('domainInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runScan();
+});
+
+// Pre-fill from URL param
+const urlDomain = new URLSearchParams(location.search).get('domain');
+if (urlDomain) {
+  document.getElementById('domainInput').value = urlDomain;
+  runScan();
+} else {
+  // Load most recently scanned domain from history
+  const history = loadHistory();
+  if (history.length) {
+    loadDomainHistory(history[0].domain);
+  }
+}
+</script>
+</body>
+</html>
