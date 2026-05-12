@@ -181,6 +181,8 @@
     footer a { color: var(--muted); }
     footer a:hover { color: var(--text); }
 
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
     @media(max-width:540px) {
       .signup-form { flex-direction: column; }
       .hero-ctas { flex-direction: column; align-items: center; }
@@ -320,11 +322,15 @@
       <div class="vendor-chip" data-vendor="slack">💼 Slack</div>
     </div>
 
+    <div id="chip-upsell" style="display:none;background:rgba(255,159,67,.08);border:1px solid rgba(255,159,67,.35);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--orange);">
+      🔒 Free plan is limited to 5 vendors. <a href="https://buy.stripe.com/3cIbJ3dyjgRL3jS3gk7wA3r" style="color:var(--orange);font-weight:700;text-decoration:underline;">Upgrade to Pro ($9/mo)</a> to watch all 14.
+    </div>
+
     <form class="signup-form" id="signup-form" onsubmit="handleSignup(event)">
       <input class="signup-input" type="email" id="signup-email" placeholder="you@company.com" required autocomplete="email">
       <button class="signup-btn" type="submit" id="signup-btn">Get Alerts Free</button>
     </form>
-    <p class="signup-note">Free alerts for up to 5 vendors. Upgrade to Pro for all 14 + Slack/webhook.</p>
+    <p class="signup-note" id="signup-note">Free alerts for up to 5 vendors. Upgrade to Pro for all 14 + Slack/webhook.</p>
     <div class="signup-success" id="signup-success">✓ Done! You'll get an email the next time something breaks.</div>
   </div>
 </section>
@@ -529,10 +535,37 @@ function setFilter(cat, el) {
   renderGrid(allVendors);
 }
 
-// Vendor chip selection
+var FREE_LIMIT = 5;
+
+function updateChipCounter() {
+  var selected = document.querySelectorAll('.vendor-chip.selected').length;
+  var note = document.getElementById('signup-note');
+  var upsell = document.getElementById('chip-upsell');
+  if (selected >= FREE_LIMIT) {
+    note.innerHTML = selected + '/5 vendors selected — <strong style="color:var(--orange)">free limit reached.</strong>';
+    upsell.style.display = 'block';
+  } else {
+    note.textContent = 'Free alerts for up to 5 vendors. Upgrade to Pro for all 14 + Slack/webhook.';
+    upsell.style.display = 'none';
+  }
+}
+
+// Vendor chip selection with 5-vendor free limit
 document.querySelectorAll('.vendor-chip').forEach(function(chip) {
   chip.addEventListener('click', function() {
+    var isSelected = chip.classList.contains('selected');
+    if (!isSelected) {
+      var currentCount = document.querySelectorAll('.vendor-chip.selected').length;
+      if (currentCount >= FREE_LIMIT) {
+        document.getElementById('chip-upsell').style.display = 'block';
+        document.getElementById('chip-upsell').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        chip.style.animation = 'shake 0.3s ease';
+        setTimeout(function(){ chip.style.animation = ''; }, 300);
+        return;
+      }
+    }
     chip.classList.toggle('selected');
+    updateChipCounter();
   });
 });
 
