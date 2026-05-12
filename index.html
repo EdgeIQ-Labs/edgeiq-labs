@@ -802,6 +802,7 @@
         <a href="#scanner">Free Scanner</a>
         <a href="#smb-essentials">SMB Plans</a>
         <a href="/products/">All Products</a>
+        <a href="/pulse/" style="color:#3de19e;font-weight:600;">🟢 Pulse</a>
         <a href="https://compliance.edgeiqlabs.com">Compliance</a>
         <a href="/blog/">Blog</a>
         <a href="/docs/">Docs</a>
@@ -902,7 +903,6 @@
           <button class="scan-tab" onclick="showScannerTab('docker')" id="tab-btn-docker">🐳 Container Scan</button>
           <button class="scan-tab" onclick="showScannerTab('dns')" id="tab-btn-dns">🌐 DNS Lookup</button>
           <button class="scan-tab" onclick="showScannerTab('whois')" id="tab-btn-whois">📋 WHOIS Lookup</button>
-          <button class="scan-tab" onclick="showScannerTab('docker')" id="tab-btn-docker">🐳 Container Scan</button>
           <button class="scan-tab" onclick="showScannerTab('compliance')" id="tab-btn-compliance">📋 Compliance Scan</button>
           <button class="scan-tab" onclick="showScannerTab('policy')" id="tab-btn-policy">📄 Policy Builder</button>
           <button class="scan-tab" onclick="showScannerTab('asm')" id="tab-btn-asm">🗺️ ASM Dashboard</button>
@@ -1479,57 +1479,7 @@
       </div>
     </div>
 
-    <section id="services">
-      <h2>What we offer</h2>
-      <p class="section-sub">Security and OSINT tools, managed services, and automation infrastructure — built to work from day one.</p>
-      <div class="grid grid-3">
-        <article class="card anim-card">
-          <h3>📋 SOC 2 & ISO 27001 Compliance</h3>
-          <p>Automate your compliance evidence collection. Map surface-level scans to framework controls, schedule continuous ASV monitoring, and generate dynamic security policies.</p>
-          <a href="/products/#lifetime-plans" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>🔍 Security Scanner Suite</h3>
-          <p>XSS, SQL injection, OAuth, phishing kit, and malware scanning. Real payloads, real findings — run standalone from any terminal.</p>
-          <a href="/products/#lifetime-plans" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>🌐 Network &amp; Reconnaissance</h3>
-          <p>Deep port scanning, CVE matching, subdomain enumeration, SSL/TLS analysis, and API endpoint discovery. For internal networks, external attack surfaces, and asset inventories.</p>
-          <a href="/products/#lifetime-plans" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>🔒 Dark Web &amp; Credential Monitoring</h3>
-          <p>Breach monitoring, dark web exposure checks, email header forensics, and spoofing detection. Know what's been exposed before someone else does.</p>
-          <a href="/products/#lifetime-plans" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>📡 Lead &amp; Business Intelligence</h3>
-          <p>Company enrichment, business listing audits, competitor price monitoring, and market research. Data delivered in CSV, JSON, or Excel.</p>
-          <a href="/products/#lifetime-plans" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>📈 Automation &amp; Alerting Infrastructure</h3>
-          <p>Alert routing to Slack, Telegram, Discord, and email. Scheduled reporting, security digest generation, and client dashboards. The connective tissue for every monitoring stack.</p>
-          <a href="/products/#one-time" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>⚙️ Security Automation &amp; Integration</h3>
-          <p>Remote VPS installs, integrations, automations, and hands-on configuration for individuals and teams. Python, bash, cron, Cloudflare Workers — ready to work on day one.</p>
-          <a href="#pricing" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">See Plans →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>🤖 Custom Bot &amp; Workflow Development</h3>
-          <p>Community bots, alert systems, moderation helpers, and business process automation. Fast delivery, ongoing maintenance.</p>
-          <a href="#request" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">Request a Quote →</a>
-        </article>
-        <article class="card anim-card">
-          <h3>📊 Data Extraction &amp; Reporting</h3>
-          <p>Structured extraction from public sources, automated reports delivered on schedule, and spreadsheet wrangling. Clean data, no fluff.</p>
-          <a href="#request" class="btn btn-secondary" style="margin-top:10px;font-size:0.85rem;">Request a Quote →</a>
-        </article>
-      </div>
-    </section>
+
 <section id="live-apps" style="padding:52px 0 40px;">
         <h2>Live EdgeIQ Apps</h2>
         <p class="section-sub">Production apps ready to use. Share with clients or use directly.</p>
@@ -1542,7 +1492,7 @@
               <li>Paid: alerts + recommendations + client workspace tokens</li>
             </ul>
             <div class="plan-actions">
-              <a class="btn btn-primary" href="/#scanner" style="font-size:0.8rem;">Open Free</a>
+              <a class="btn btn-primary" href="/#scanner" onclick="setTimeout(function(){var s=document.getElementById('scanner');if(s)s.scrollIntoView({behavior:'smooth',block:'start'});showScannerTab('ssl');},100);" style="font-size:0.8rem;">Open Free</a>
               <a class="btn btn-secondary" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener" style="font-size:0.8rem;">Pro $29/mo</a>
             </div>
           </article>
@@ -1557,6 +1507,20 @@
             <div class="plan-actions">
               <a class="btn btn-secondary" href="https://phishsim.edgeiqlabs.com" target="_blank" rel="noopener" style="font-size:0.8rem;">Open App →</a>
               <a class="btn btn-primary" href="https://buy.stripe.com/3cI28tdyjgRLbQoaIM7wA1C" target="_blank" rel="noopener" style="font-size:0.8rem;background:var(--ok);color:#071018;font-weight:800;">Get Started</a>
+            </div>
+          </article>
+          <article class="card anim-card" style="background:linear-gradient(135deg,#0d1f17 0%,#0b1c14 100%);border-color:rgba(61,225,158,0.35);position:relative;overflow:hidden;">
+            <div style="position:absolute;top:12px;right:14px;background:rgba(61,225,158,0.15);border:1px solid rgba(61,225,158,0.35);color:#3de19e;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">NEW</div>
+            <h3>🟢 EdgeIQ Pulse</h3>
+            <p>Always-on security monitoring — we scan your domain weekly and email you when something changes.</p>
+            <ul style="margin:6px 0 8px 18px;color:var(--muted);font-size:0.85rem;">
+              <li>Free: 1 domain, 6 checks, weekly digest</li>
+              <li>Pro $19/mo: 5 domains, daily, all 13 scanners</li>
+              <li>Business $39/mo: 20 domains + Slack alerts</li>
+            </ul>
+            <div class="plan-actions">
+              <a class="btn btn-primary" href="/pulse/" style="font-size:0.8rem;background:#3de19e;color:#071018;font-weight:800;">Start Free →</a>
+              <a class="btn btn-secondary" href="/pulse/#pricing" style="font-size:0.8rem;">See plans</a>
             </div>
           </article>
         </div>
@@ -3433,7 +3397,7 @@
   var STORAGE_KEY = 'edgeiq_scanner_email_captured';
   var SUBSTACK_URL = 'https://edgeiqlabs.substack.com/api/v1/free';
   // Findings containers across the 5 scanners that produce structured findings.
-  var GATED_IDS = ['scan-findings', 'headers-findings', 'xss-quick-findings', 'sub-findings', 'dast-findings'];
+  var GATED_IDS = ['scan-findings', 'headers-findings', 'xss-quick-findings', 'sub-findings', 'dast-findings', 'api-findings', 'cspm-findings', 'threats-findings', 'docker-findings', 'compliance-findings', 'policy-findings'];
 
   function isCaptured() {
     try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch(e) { return false; }
