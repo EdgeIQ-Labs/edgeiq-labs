@@ -25,11 +25,15 @@ export async function onRequestPost({ request, env }) {
   }
 
   const email = (body.email || '').trim().toLowerCase();
-  const vendors = Array.isArray(body.vendors) ? body.vendors.slice(0, 20) : [];
   const plan = (body.plan || 'free').trim().toLowerCase();
+  const limit = plan === 'pro' ? 20 : 5;
+  const vendors = Array.isArray(body.vendors) ? body.vendors.slice(0, limit) : [];
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: 'Invalid email' }, 400);
   if (!['free', 'pro'].includes(plan)) return json({ error: 'Invalid plan' }, 400);
+  if (plan === 'free' && Array.isArray(body.vendors) && body.vendors.length > 5) {
+    return json({ error: 'Free plan supports up to 5 vendors. Upgrade to Pro for all 14.' }, 403);
+  }
 
   const subscriber = {
     email, vendors, plan,
