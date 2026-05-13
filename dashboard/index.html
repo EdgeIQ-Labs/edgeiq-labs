@@ -410,20 +410,22 @@
 
   /* ── CONFIG ── */
   var WORKERS = {
-    ssl:        'https://edgeiq-ssl-checker.gpalmieri21.workers.dev',
-    headers:    'https://edgeiq-headers-checker.gpalmieri21.workers.dev',
-    xss:        'https://edgeiq-xss-scanner.gpalmieri21.workers.dev',
-    subdomains: 'https://edgeiq-subdomain-hunter.gpalmieri21.workers.dev',
-    dns:        'https://edgeiq-dns-lookup.gpalmieri21.workers.dev',
-    cve:        'https://edgeiq-cve-match.gpalmieri21.workers.dev',
+    ssl:         'https://edgeiq-ssl-checker.gpalmieri21.workers.dev',
+    headers:     'https://edgeiq-headers-checker.gpalmieri21.workers.dev',
+    xss:         'https://edgeiq-xss-scanner.gpalmieri21.workers.dev',
+    subdomains:  'https://edgeiq-subdomain-hunter.gpalmieri21.workers.dev',
+    dns:         'https://edgeiq-dns-lookup.gpalmieri21.workers.dev',
+    cve:         'https://edgeiq-cve-match.gpalmieri21.workers.dev',
+    portscanner: 'https://edgeiq-port-scanner.gpalmieri21.workers.dev',
   };
   var SCANNER_META = {
-    ssl:        { icon: '🔒', label: 'SSL' },
-    headers:    { icon: '📡', label: 'Headers' },
-    xss:        { icon: '💉', label: 'XSS' },
-    subdomains: { icon: '🔗', label: 'Subdomains' },
-    dns:        { icon: '🌐', label: 'DNS' },
-    cve:        { icon: '🔎', label: 'CVE' },
+    ssl:         { icon: '🔒', label: 'SSL' },
+    headers:     { icon: '📡', label: 'Headers' },
+    xss:         { icon: '💉', label: 'XSS' },
+    subdomains:  { icon: '🔗', label: 'Subdomains' },
+    dns:         { icon: '🌐', label: 'DNS' },
+    cve:         { icon: '🔎', label: 'CVE' },
+    portscanner: { icon: '🔌', label: 'Ports' },
   };
   var STORAGE_PREFIX = 'edgeiq_dash_';
 
@@ -613,6 +615,15 @@
             if (['critical','high','medium','low'].indexOf(sev) < 0) sev = 'medium';
             f.push({ severity: sev, type: 'CVE_' + (r.id || 'UNKNOWN'), message: (r.id || '') + ': ' + (r.description || r.summary || '').slice(0, 120) });
           });
+        }
+        break;
+
+      case 'portscanner':
+        (data.findings || []).forEach(function(item) {
+          if (item.severity !== 'locked') f.push({ severity: item.severity, type: item.type, message: item.message });
+        });
+        if (!f.some(function(x) { return ['critical','high','medium'].indexOf(x.severity) >= 0; })) {
+          f.push({ severity:'info', type:'PORTS_CLEAN', message:'No high-risk ports exposed on the 20 most dangerous service ports' });
         }
         break;
     }
