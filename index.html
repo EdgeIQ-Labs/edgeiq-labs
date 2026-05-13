@@ -164,52 +164,26 @@
       backdrop-filter: blur(6px);
       z-index: 10;
     }
-    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; gap: 8px; flex-wrap: nowrap; }
-    .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
-    .nav-logo-img { height: 32px; width: auto; border-radius: 7px; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 12px; flex-wrap: nowrap; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+    .nav-logo-img { height: 44px; width: auto; border-radius: 10px; }
     .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
-    .nav-brand-name { font-weight: 800; font-size: 0.97rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-brand-name { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; color: var(--text); }
     .nav-brand-name span { color: var(--accent); }
-    .nav-brand-tag { display: none; }
-    .nav-links { display: flex; align-items: center; gap: 1px; flex-wrap: nowrap; }
-    .nav-links > a { color: var(--muted); text-decoration: none; padding: 4px 7px; font-size: 0.8rem; border-radius: 6px; white-space: nowrap; }
-    .nav-links > a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 5px 11px !important; border-radius: 6px !important; white-space: nowrap; flex-shrink: 0; font-size: 0.8rem !important; }
+    .nav-brand-tag { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 5px 8px; font-size: 0.82rem; border-radius: 7px; white-space: nowrap; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 6px 12px !important; border-radius: 7px !important; white-space: nowrap; flex-shrink: 0; }
     .nav-cta:hover { opacity: 0.88; }
-
-    /* Products dropdown */
-    .nav-dropdown { position: relative; }
-    .nav-dropdown-btn {
-      color: var(--muted); background: none; border: none; cursor: pointer;
-      padding: 4px 7px; font-size: 0.8rem; border-radius: 6px; white-space: nowrap;
-      font-family: inherit; display: flex; align-items: center; gap: 3px;
-    }
-    .nav-dropdown-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-dropdown-btn svg { width: 10px; height: 10px; transition: transform 0.15s; }
-    .nav-dropdown.open .nav-dropdown-btn svg { transform: rotate(180deg); }
-    .nav-dropdown-menu {
-      display: none; position: absolute; top: calc(100% + 8px); right: 0;
-      background: #121923; border: 1px solid var(--border);
-      border-radius: 10px; padding: 6px; min-width: 190px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 200;
-    }
-    .nav-dropdown.open .nav-dropdown-menu { display: block; }
-    .nav-dropdown-menu a {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 10px; font-size: 0.82rem; color: var(--muted);
-      text-decoration: none; border-radius: 7px; white-space: nowrap;
-    }
-    .nav-dropdown-menu a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-dropdown-menu .menu-divider { height: 1px; background: var(--border); margin: 4px 0; }
-    .nav-dropdown-menu a.menu-all { color: var(--accent); font-weight: 600; font-size: 0.78rem; }
 
     .audience-nav {
       background: var(--card);
       border-bottom: 1px solid var(--border);
       position: sticky;
-      top: 53px;
+      top: 65px;
       z-index: 9;
-      padding: 8px 0;
+      padding: 10px 0;
     }
     .audience-pills {
       display: flex;
@@ -827,25 +801,17 @@
       <div class="nav-links">
         <a href="#scanner">Free Scanner</a>
         <a href="#smb-essentials">SMB Plans</a>
+        <a href="/products/">All Products</a>
         <a href="/dashboard/" style="color:#3dd9ff;font-weight:600;">📊 Dashboard</a>
-        <div class="nav-dropdown" id="nav-products-dd">
-          <button class="nav-dropdown-btn" onclick="toggleProductsMenu()">
-            Products
-            <svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="nav-dropdown-menu">
-            <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
-            <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
-            <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
-            <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
-            <a href="/workspace-posture/" style="color:#7ec8ff;">🔷 Workspace Posture</a>
-            <a href="/compliance/">📋 Compliance</a>
-            <div class="menu-divider"></div>
-            <a href="/products/" class="menu-all">All Products →</a>
-          </div>
-        </div>
+        <a href="/pulse/" style="color:#3de19e;font-weight:600;">🟢 Pulse</a>
+        <a href="/inbox-shield/" style="color:#b47aff;font-weight:600;">✉ Inbox Shield</a>
+        <a href="/vendor-watch/" style="color:#ff9f43;font-weight:600;">📡 Vendor Watch</a>
+        <a href="/integrations/" style="color:#a78bfa;font-weight:600;">🔗 Integrations</a>
+        <a href="/workspace-posture/" style="color:#7ec8ff;font-weight:600;">🔷 Workspace</a>
+        <a href="/compliance/">Compliance</a>
         <a href="/blog/">Blog</a>
         <a href="/docs/">Docs</a>
+        <a href="https://github.com/EdgeIQ-Labs" target="_blank" rel="noopener">GitHub</a>
         <a class="nav-cta" href="#smb-essentials">Get Started</a>
       </div>
     </div>
@@ -3576,15 +3542,6 @@
     GATED_IDS.forEach(watch);
   }
 })();
-</script>
-<script>
-function toggleProductsMenu() {
-  document.getElementById('nav-products-dd').classList.toggle('open');
-}
-document.addEventListener('click', function(e) {
-  var dd = document.getElementById('nav-products-dd');
-  if (dd && !dd.contains(e.target)) dd.classList.remove('open');
-});
 </script>
 </body>
 </html>
