@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EdgeIQ Integrations · Slack, Discord & Webhook Alerts</title>
+  <meta name="description" content="Send EdgeIQ security alerts straight to Slack, Discord, or any webhook. Know the moment your domain, SSL, or vendor has a problem." />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 56px;
+      background: rgba(11,15,20,0.95); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+    nav a.back:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(124,106,255,0.12); border: 1px solid rgba(124,106,255,0.3);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 0.78rem; color: var(--accent2); font-weight: 600;
+      margin-bottom: 24px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; }
+    h1 em { font-style: normal; color: var(--accent2); }
+    .hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 36px; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff; font-weight: 700; font-size: 0.95rem;
+      padding: 13px 28px; border-radius: 9px; text-decoration: none; transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-ghost {
+      background: transparent; color: var(--muted); font-weight: 600; font-size: 0.95rem;
+      padding: 13px 28px; border-radius: 9px; text-decoration: none;
+      border: 1px solid var(--border); transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+
+    /* CHANNEL LOGOS */
+    .channels {
+      display: flex; justify-content: center; align-items: center; gap: 32px;
+      margin: 48px 0 16px; flex-wrap: wrap;
+    }
+    .channel {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .channel-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      border: 1px solid var(--border);
+    }
+    .channel-icon.slack { background: rgba(74,144,226,0.12); }
+    .channel-icon.discord { background: rgba(88,101,242,0.12); }
+    .channel-icon.webhook { background: rgba(112,240,168,0.08); }
+    .channel-icon.teams { background: rgba(100,180,255,0.08); }
+    .channel-label { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+
+    /* SECTION */
+    section { max-width: 880px; margin: 0 auto; padding: 0 24px 64px; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent2); margin-bottom: 14px;
+    }
+    h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 36px; }
+
+    /* HOW IT WORKS */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; margin-bottom: 0;
+    }
+    .step-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 22px;
+    }
+    .step-n {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(124,106,255,0.15); border: 1px solid rgba(124,106,255,0.3);
+      color: var(--accent2); font-size: 0.8rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .step-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .step-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.55; }
+
+    /* ALERT EXAMPLES */
+    .alert-demo {
+      background: #1a1f2b; border: 1px solid #2d3650;
+      border-radius: 14px; padding: 22px 24px; font-family: monospace;
+      font-size: 0.82rem; line-height: 1.7; margin-bottom: 24px;
+    }
+    .alert-demo .tag {
+      display: inline-block; padding: 1px 8px; border-radius: 4px;
+      font-size: 0.72rem; font-weight: 700; margin-right: 4px;
+    }
+    .tag-red { background: rgba(239,68,68,0.2); color: #f87171; }
+    .tag-green { background: rgba(112,240,168,0.15); color: var(--ok); }
+    .tag-yellow { background: rgba(251,191,36,0.15); color: var(--warn); }
+    .tag-blue { background: rgba(124,106,255,0.15); color: var(--accent2); }
+    .alert-demo .dim { color: #4a6080; }
+    .alert-demo .bold { color: var(--text); font-weight: 700; }
+
+    /* FEATURES GRID */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px; margin-bottom: 0;
+    }
+    .feat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .feat-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+    .feat-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+    .feat-card p { font-size: 0.81rem; color: var(--muted); line-height: 1.5; }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .pricing-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 30px 26px;
+    }
+    .pricing-card.featured {
+      border-color: var(--accent); position: relative;
+      background: linear-gradient(135deg, rgba(124,106,255,0.06) 0%, var(--card) 60%);
+    }
+    .popular-tag {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff; font-size: 0.7rem; font-weight: 800;
+      padding: 3px 14px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .plan-name { font-size: 0.8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .plan-price { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .plan-price span { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+    .plan-desc { font-size: 0.83rem; color: var(--muted); margin-bottom: 22px; line-height: 1.5; }
+    .plan-features { list-style: none; margin-bottom: 24px; }
+    .plan-features li {
+      font-size: 0.85rem; color: var(--muted); padding: 5px 0 5px 22px;
+      position: relative; border-bottom: 1px solid rgba(35,49,66,0.5);
+    }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li::before {
+      content: '✓'; position: absolute; left: 0;
+      color: var(--ok); font-weight: 700; font-size: 0.75rem;
+    }
+    .plan-features li.no::before { content: '✗'; color: #ef4444; }
+    .plan-features li.no { color: #4a6080; }
+    .btn-plan {
+      display: block; text-align: center; font-weight: 700; font-size: 0.9rem;
+      padding: 12px; border-radius: 9px; text-decoration: none; transition: opacity 0.2s;
+    }
+    .btn-plan.primary { background: var(--accent); color: #fff; }
+    .btn-plan.primary:hover { opacity: 0.85; }
+    .btn-plan.ghost {
+      background: transparent; color: var(--muted); border: 1px solid var(--border);
+    }
+    .btn-plan.ghost:hover { border-color: var(--accent); color: var(--text); }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 12px; }
+    .faq-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .faq-q {
+      padding: 16px 20px; font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    .faq-q:hover { color: var(--accent2); }
+    .faq-q::after { content: '+'; font-size: 1.2rem; color: var(--muted); }
+    .faq-item.open .faq-q::after { content: '−'; }
+    .faq-a {
+      display: none; padding: 0 20px 16px;
+      font-size: 0.85rem; color: var(--muted); line-height: 1.65;
+      border-top: 1px solid var(--border);
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border); padding: 24px 32px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    footer p { font-size: 0.78rem; color: #4a6080; }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.9rem; }
+      .hero { padding: 60px 20px 48px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>Edge</span>IQ</a>
+  <a class="back" href="/products/">← All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">🔗 New · Integrations</div>
+  <h1>Security alerts where<br><em>your team already lives</em></h1>
+  <p>Connect EdgeIQ to Slack, Discord, or any webhook. The moment your SSL expires, a vendor goes down, or your domain is flagged — your team knows instantly.</p>
+  <div class="hero-cta">
+    <a class="btn-primary" href="https://buy.stripe.com/28E8wR3XJ6d71bK3gk7wA3t">Get Integrations Pro — $7/mo</a>
+    <a class="btn-ghost" href="#how-it-works">See how it works</a>
+  </div>
+</div>
+
+<div class="channels">
+  <div class="channel">
+    <div class="channel-icon slack">💬</div>
+    <div class="channel-label">Slack</div>
+  </div>
+  <div class="channel">
+    <div class="channel-icon discord">🎮</div>
+    <div class="channel-label">Discord</div>
+  </div>
+  <div class="channel">
+    <div class="channel-icon webhook">⚡</div>
+    <div class="channel-label">Webhook</div>
+  </div>
+  <div class="channel">
+    <div class="channel-icon teams">🔷</div>
+    <div class="channel-label">Teams</div>
+  </div>
+</div>
+
+<section id="how-it-works" style="padding-top: 64px;">
+  <div class="section-label">How it works</div>
+  <h2>Up and running in 2 minutes</h2>
+  <p class="section-sub">No code required. Register your webhook URL once — every EdgeIQ alert fires to it automatically.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-n">1</div>
+      <h3>Grab your webhook URL</h3>
+      <p>From Slack, Discord, Teams, or any service that accepts HTTP POST — copy the incoming webhook URL.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-n">2</div>
+      <h3>Register it with EdgeIQ</h3>
+      <p>Paste it into your EdgeIQ dashboard. Choose which alert types to receive: SSL, vendor outage, domain, or all.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-n">3</div>
+      <h3>Fire a test ping</h3>
+      <p>Hit "Send Test" — a sample alert hits your channel in seconds so you can confirm everything's wired up.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-n">4</div>
+      <h3>Never miss an alert</h3>
+      <p>EdgeIQ runs around the clock. Your team gets notified the moment something needs attention.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">Sample alerts</div>
+  <h2>What your team will see</h2>
+  <p class="section-sub">Alerts are clear, actionable, and structured. No noise — only what matters.</p>
+
+  <div class="alert-demo">
+    <div><span class="tag tag-red">⚠ OUTAGE</span> <span class="bold">Stripe API</span> <span class="dim">— edgeiqlabs.com</span></div>
+    <div style="margin: 8px 0 0 4px;">
+      <div class="dim">Status: <span style="color:#f87171">Degraded Performance</span></div>
+      <div class="dim">Detected: <span style="color:var(--text)">2026-05-13 08:42 UTC</span></div>
+      <div class="dim">Affected: <span style="color:var(--text)">Payment processing</span></div>
+    </div>
+    <div style="margin-top: 10px; color: #4a6080;">→ https://status.stripe.com</div>
+  </div>
+
+  <div class="alert-demo">
+    <div><span class="tag tag-yellow">⏰ SSL EXPIRY</span> <span class="bold">edgeiqlabs.com</span></div>
+    <div style="margin: 8px 0 0 4px;">
+      <div class="dim">Certificate expires in <span style="color:var(--warn)">12 days</span></div>
+      <div class="dim">Issuer: <span style="color:var(--text)">Let's Encrypt</span></div>
+      <div class="dim">Auto-renew: <span style="color:var(--warn)">not detected</span></div>
+    </div>
+    <div style="margin-top: 10px; color: #4a6080;">→ https://edgeiqlabs.com/ssl/</div>
+  </div>
+
+  <div class="alert-demo">
+    <div><span class="tag tag-green">✓ ALL CLEAR</span> <span class="bold">Stripe API</span> <span class="dim">— edgeiqlabs.com</span></div>
+    <div style="margin: 8px 0 0 4px;">
+      <div class="dim">Outage resolved. Duration: <span style="color:var(--text)">43 minutes</span></div>
+      <div class="dim">Resolved: <span style="color:var(--text)">2026-05-13 09:25 UTC</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">Features</div>
+  <h2>Everything in the box</h2>
+  <p class="section-sub">One flat price. All your EdgeIQ alerts, everywhere your team already works.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">💬</div>
+      <div>
+        <h3>Slack Integration</h3>
+        <p>Paste your Slack incoming webhook URL. Alerts land in any channel you choose.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎮</div>
+      <div>
+        <h3>Discord Integration</h3>
+        <p>Use Discord's webhook URL for your #alerts channel. Works with server bots too.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <div>
+        <h3>Custom Webhooks</h3>
+        <p>POST JSON to any endpoint — PagerDuty, Zapier, your own API, or a custom script.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔷</div>
+      <div>
+        <h3>Microsoft Teams</h3>
+        <p>Send to Teams channels via incoming webhook. Formatted as an adaptive card.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🛡️</div>
+      <div>
+        <h3>All Alert Types</h3>
+        <p>SSL expiry, vendor outages, domain issues, Pulse risk changes — all wired in.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🧪</div>
+      <div>
+        <h3>Test Delivery</h3>
+        <p>Fire a test payload any time to confirm your integration is alive before it matters.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔁</div>
+      <div>
+        <h3>Retry on Failure</h3>
+        <p>If your endpoint is temporarily down, EdgeIQ retries with exponential backoff.</p>
+      </div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📦</div>
+      <div>
+        <h3>Structured JSON</h3>
+        <p>Every alert includes a consistent payload: type, domain, timestamp, severity, and details.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">Pricing</div>
+  <h2>Simple, flat pricing</h2>
+  <p class="section-sub">No per-seat fees. No alert limits. One subscription, all your integrations.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0 <span>/mo</span></div>
+      <div class="plan-desc">Email alerts only. Great for solo users checking in occasionally.</div>
+      <ul class="plan-features">
+        <li>Email alerts for all tools</li>
+        <li>SSL expiry warnings</li>
+        <li>Vendor status alerts</li>
+        <li class="no">Slack / Discord</li>
+        <li class="no">Custom webhooks</li>
+        <li class="no">Teams integration</li>
+        <li class="no">Test delivery</li>
+      </ul>
+      <a href="/" class="btn-plan ghost">Start free →</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="popular-tag">Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$7 <span>/mo</span></div>
+      <div class="plan-desc">Full integration suite for teams that need real-time alerts where they work.</div>
+      <ul class="plan-features">
+        <li>Everything in Free</li>
+        <li>Slack integration</li>
+        <li>Discord integration</li>
+        <li>Microsoft Teams</li>
+        <li>Custom webhook (any URL)</li>
+        <li>Test delivery button</li>
+        <li>Retry on failure</li>
+        <li>Structured JSON payloads</li>
+        <li>Up to 3 webhook destinations</li>
+        <li>Cancel any time</li>
+      </ul>
+      <a href="https://buy.stripe.com/28E8wR3XJ6d71bK3gk7wA3t" class="btn-plan primary">Get Pro — $7/mo</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">FAQ</div>
+  <h2>Common questions</h2>
+  <p class="section-sub">Anything else? Email <a href="mailto:support@edgeiqlabs.com" style="color:var(--accent);">support@edgeiqlabs.com</a></p>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Does this work with Slack's free plan?</div>
+      <div class="faq-a">Yes. Slack's incoming webhooks are available on all plans including free. Just create an incoming webhook in your Slack app settings and paste the URL.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does the JSON payload look like?</div>
+      <div class="faq-a">Every alert includes: <code>{"type": "ssl_expiry", "domain": "example.com", "severity": "warning", "message": "...", "timestamp": "...", "details": {...}}</code>. Consistent across all alert types so your automation can handle them uniformly.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I send alerts to multiple destinations?</div>
+      <div class="faq-a">Yes. Pro supports up to 3 webhook destinations. You can send to Slack, Discord, and a custom endpoint simultaneously.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Which EdgeIQ tools send webhooks?</div>
+      <div class="faq-a">All of them: SSL Watcher (expiry alerts), Vendor Watch (outage + all-clear), Pulse (daily risk digest), and Inbox Shield (email security changes). New tools automatically wire in.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What happens if my endpoint is down?</div>
+      <div class="faq-a">EdgeIQ retries the delivery up to 3 times with exponential backoff (1 min, 5 min, 15 min). If all retries fail, you'll receive an email fallback instead.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is there a contract or minimum commitment?</div>
+      <div class="faq-a">No. Month-to-month only. Cancel from your Stripe billing portal any time — no questions, no friction.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 EdgeIQ Labs · <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+  <p><a href="/">Home</a> · <a href="/products/">All Tools</a> · <a href="/dashboard/">Dashboard</a></p>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.faq-item').classList.toggle('open');
+    });
+  });
+</script>
+</body>
+</html>

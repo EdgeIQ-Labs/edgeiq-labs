@@ -226,6 +226,44 @@ function buildAllClearEmail({ email, plan, recoveredVendors, siteUrl }) {
   return { subject, html };
 }
 
+async function deliverWebhooks(env, email, domain, payload) {
+  const key = `webhooks:${email}:${domain}`;
+  const raw = await env.PULSE_KV.get(key).catch(() => null);
+  if (!raw) return;
+  let record;
+  try { record = JSON.parse(raw); } catch { return; }
+  if (!record.webhooks?.length) return;
+
+  const isSlackOrTeams = url => url.includes('hooks.slack.com') || url.includes('webhook.office.com');
+  const isDiscord = url => url.includes('discord.com');
+
+  const slackBody = {
+    text: payload.message,
+    blocks: [
+      { type: 'section', text: { type: 'mrkdwn', text: `*[EdgeIQ Vendor Watch]* ${payload.severity === 'critical' ? '🔴' : '✅'} *${payload.vendor}*\n${payload.message}` } },
+    ],
+  };
+
+  for (const wh of record.webhooks) {
+    let body;
+    if (isSlackOrTeams(wh.url)) {
+      body = slackBody;
+    } else if (isDiscord(wh.url)) {
+      body = { content: `**[EdgeIQ Vendor Watch]** ${payload.severity === 'critical' ? '🔴' : '✅'} **${payload.vendor}**: ${payload.message}` };
+    } else {
+      body = payload;
+    }
+    try {
+      await fetch(wh.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(8000),
+      });
+    } catch {}
+  }
+}
+
 async function sendEmail(env, to, subject, html) {
   const fromEmail = env.FROM_EMAIL || 'alerts@edgeiqlabs.com';
   const resp = await fetch('https://api.resend.com/emails', {
@@ -298,6 +336,15 @@ export default {
         } catch (err) {
           console.error(`Outage email error for ${subscriber.email}:`, err.message);
         }
+        for (const v of newOutages) {
+          await deliverWebhooks(env, subscriber.email, subscriber.domain, {
+            type: 'vendor_outage', source: 'edgeiq', domain: subscriber.domain,
+            vendor: v.name, severity: v.status === 'outage' ? 'critical' : 'warning',
+            message: `${v.name} is reporting ${v.status}. ${v.description || ''}`.trim(),
+            timestamp: new Date().toISOString(),
+            details: { vendor_id: v.id, status: v.status, category: v.category },
+          });
+        }
       }
 
       // Send all-clear only to Pro subscribers
@@ -313,6 +360,15 @@ export default {
           console.log(`All-clear sent to ${subscriber.email}: ${recovered.map(v => v.name).join(', ')}`);
         } catch (err) {
           console.error(`All-clear email error for ${subscriber.email}:`, err.message);
+        }
+        for (const v of recovered) {
+          await deliverWebhooks(env, subscriber.email, subscriber.domain, {
+            type: 'vendor_recovered', source: 'edgeiq', domain: subscriber.domain,
+            vendor: v.name, severity: 'info',
+            message: `${v.name} has recovered and is operational.`,
+            timestamp: new Date().toISOString(),
+            details: { vendor_id: v.id, status: 'operational', previous_status: v.prevStatus },
+          });
         }
       }
 

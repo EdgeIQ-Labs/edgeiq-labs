@@ -132,6 +132,22 @@
     "name": "Fix-it Pro",
     "billing": "monthly"
   },
+  "vendor_watch": {
+    "product_id": "prod_UVMhI4aCY4mq6H",
+    "price_id": "price_1TWLyKRC1NZ20yDTILMc6mbJ",
+    "amount": 900,
+    "name": "Vendor Watch Pro",
+    "billing": "monthly",
+    "checkout_url": "https://buy.stripe.com/3cIbJ3dyjgRL3jS3gk7wA3r"
+  },
+  "integrations": {
+    "product_id": "prod_UVg1VEFIpmqmqk",
+    "price_id": "price_1TWefHRC1NZ20yDTVHYwins1",
+    "amount": 700,
+    "name": "EdgeIQ Integrations Pro",
+    "billing": "monthly",
+    "checkout_url": "https://buy.stripe.com/28E8wR3XJ6d71bK3gk7wA3t"
+  },
   "compliance": {
     "essential": {
       "product_id": "prod_URvfU61X6zYPiU",
