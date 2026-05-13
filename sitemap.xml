@@ -67,6 +67,12 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://edgeiqlabs.com/workspace-posture/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
     <loc>https://edgeiqlabs.com/onboarding/</loc>
     <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>

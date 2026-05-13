@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workspace Posture Scanner · EdgeIQ Labs</title>
+  <meta name="description" content="Read-only OAuth scan of your M365 or Google Workspace tenant. MFA gaps, overprivileged sharing, stale admins — found in minutes. $39/mo." />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #4da6ff;
+      --accent2: #7ec8ff;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #fbbf24;
+      --ms: #0078d4;
+      --gws: #4285f4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 56px;
+      background: rgba(11,15,20,0.95); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+    nav a.back:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      text-align: center; padding: 80px 24px 64px;
+      max-width: 720px; margin: 0 auto;
+    }
+    .coming-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(77,166,255,0.1); border: 1px solid rgba(77,166,255,0.3);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 0.78rem; color: var(--accent2); font-weight: 600;
+      margin-bottom: 24px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .coming-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    h1 { font-size: 2.7rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.12; margin-bottom: 20px; }
+    h1 em { font-style: normal; color: var(--accent2); }
+    .hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 36px; max-width: 580px; margin-left: auto; margin-right: auto; }
+
+    /* Platform pills */
+    .platforms {
+      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .platform-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 16px;
+      font-size: 0.85rem; font-weight: 600; color: var(--text);
+    }
+    .platform-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* WAITLIST FORM */
+    .waitlist-wrap {
+      max-width: 520px; margin: 0 auto 80px;
+      background: var(--card); border: 1px solid rgba(77,166,255,0.25);
+      border-radius: 18px; padding: 36px 32px;
+    }
+    .waitlist-wrap h2 {
+      font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em;
+    }
+    .waitlist-wrap p { color: var(--muted); font-size: 0.88rem; line-height: 1.55; margin-bottom: 22px; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .field label { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+    .field input, .field select {
+      background: #0b0f14; border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 13px; color: var(--text);
+      font-size: 0.88rem; font-family: inherit; outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: var(--accent); }
+    .field input::placeholder { color: #4a6080; }
+    .field select option { background: #1a2535; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .submit-btn {
+      width: 100%; background: var(--accent); color: #071018;
+      font-weight: 700; font-size: 0.95rem; padding: 12px;
+      border-radius: 9px; border: none; cursor: pointer;
+      font-family: inherit; transition: opacity 0.2s; margin-top: 4px;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .form-note { font-size: 0.73rem; color: #4a6080; text-align: center; margin-top: 12px; }
+
+    #form-status {
+      display: none; padding: 10px 14px; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; margin-top: 14px; text-align: center;
+    }
+    #form-status.ok { background: rgba(112,240,168,0.08); border: 1px solid rgba(112,240,168,0.25); color: var(--ok); }
+    #form-status.err { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); color: #f87171; }
+
+    /* CHECKS PREVIEW */
+    section { max-width: 900px; margin: 0 auto; padding: 0 24px 72px; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent2); margin-bottom: 14px;
+    }
+    h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 36px; }
+
+    .checks-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .check-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .check-icon {
+      width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+      background: rgba(77,166,255,0.08); border: 1px solid rgba(77,166,255,0.15);
+    }
+    .check-card h3 { font-size: 0.88rem; font-weight: 700; margin-bottom: 3px; }
+    .check-card p { font-size: 0.79rem; color: var(--muted); line-height: 1.5; }
+    .check-platform {
+      display: inline-block; font-size: 0.65rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 4px; margin-top: 5px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .ms-tag { background: rgba(0,120,212,0.15); color: #5ba8f5; }
+    .gws-tag { background: rgba(66,133,244,0.15); color: #7ab4f7; }
+    .both-tag { background: rgba(77,166,255,0.1); color: var(--accent2); }
+
+    /* SAMPLE REPORT */
+    .report-mock {
+      background: #0f1620; border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px; margin-bottom: 0;
+      font-size: 0.83rem; line-height: 1.7;
+    }
+    .report-mock .r-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+    }
+    .report-mock .r-title { font-weight: 800; font-size: 1rem; }
+    .score-ring {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 3px solid var(--warn); display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .score-ring .score-num { font-size: 1.1rem; font-weight: 800; color: var(--warn); line-height: 1; }
+    .score-ring .score-label { font-size: 0.55rem; color: var(--muted); text-transform: uppercase; }
+    .r-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid rgba(35,49,66,0.5);
+    }
+    .r-row:last-child { border-bottom: none; }
+    .r-check { color: var(--muted); }
+    .r-check strong { color: var(--text); font-weight: 600; }
+    .r-badge {
+      font-size: 0.7rem; font-weight: 700; padding: 2px 9px; border-radius: 5px;
+    }
+    .badge-pass { background: rgba(112,240,168,0.12); color: var(--ok); }
+    .badge-fail { background: rgba(248,113,113,0.1); color: #f87171; }
+    .badge-warn { background: rgba(251,191,36,0.1); color: var(--warn); }
+
+    /* PRICING */
+    .pricing-box {
+      background: var(--card); border: 1px solid rgba(77,166,255,0.3);
+      border-radius: 16px; padding: 32px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;
+    }
+    .price-left h3 { font-size: 0.8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .price-big { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; }
+    .price-big span { font-size: 0.9rem; font-weight: 500; color: var(--muted); }
+    .price-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.55; margin-top: 10px; }
+    .price-right ul { list-style: none; }
+    .price-right li {
+      font-size: 0.85rem; color: var(--muted); padding: 5px 0 5px 20px;
+      position: relative; border-bottom: 1px solid rgba(35,49,66,0.5);
+    }
+    .price-right li:last-child { border-bottom: none; }
+    .price-right li::before { content: '✓'; position: absolute; left: 0; color: var(--ok); font-weight: 700; font-size: 0.75rem; }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 10px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .faq-q { padding: 15px 20px; font-weight: 600; font-size: 0.88rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .faq-q:hover { color: var(--accent2); }
+    .faq-q::after { content: '+'; font-size: 1.2rem; color: var(--muted); }
+    .faq-item.open .faq-q::after { content: '−'; }
+    .faq-a { display: none; padding: 0 20px 15px; font-size: 0.83rem; color: var(--muted); line-height: 1.65; border-top: 1px solid var(--border); }
+    .faq-item.open .faq-a { display: block; }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 24px 32px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    footer p { font-size: 0.78rem; color: #4a6080; }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.95rem; }
+      .hero { padding: 56px 20px 48px; }
+      .waitlist-wrap { padding: 28px 20px; }
+      .field-row { grid-template-columns: 1fr; }
+      .pricing-box { grid-template-columns: 1fr; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>Edge</span>IQ</a>
+  <a class="back" href="/products/">← All Tools</a>
+</nav>
+
+<div class="hero">
+  <div class="coming-badge"><span class="coming-dot"></span> Coming Soon · Join Waitlist</div>
+  <h1>Your M365 and Google Workspace have<br><em>security gaps you can't see</em></h1>
+  <p>A read-only OAuth scan of your tenant reveals misconfigured MFA policies, overprivileged external sharing, stale admin accounts, and more — in minutes, not weeks.</p>
+
+  <div class="platforms">
+    <div class="platform-pill">
+      <span style="font-size:1.2rem;">🔷</span>
+      <span>Microsoft 365</span>
+    </div>
+    <div class="platform-pill">
+      <span style="font-size:1.2rem;">🔵</span>
+      <span>Google Workspace</span>
+    </div>
+  </div>
+</div>
+
+<!-- WAITLIST -->
+<div class="waitlist-wrap" id="waitlist">
+  <h2>Join the waitlist — first 50 get 50% off</h2>
+  <p>We're building this now. Drop your email and we'll notify you the moment it's ready — and lock in your early adopter rate.</p>
+
+  <form id="waitlist-form" onsubmit="submitWaitlist(event)">
+    <div class="field-row">
+      <div class="field">
+        <label for="wl-email">Work email</label>
+        <input type="email" id="wl-email" placeholder="you@company.com" required />
+      </div>
+      <div class="field">
+        <label for="wl-domain">Your domain</label>
+        <input type="text" id="wl-domain" placeholder="company.com" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="wl-platform">Which platform?</label>
+      <select id="wl-platform">
+        <option value="m365">Microsoft 365</option>
+        <option value="google">Google Workspace</option>
+        <option value="both">Both M365 and Google Workspace</option>
+      </select>
+    </div>
+    <button class="submit-btn" type="submit" id="wl-btn">Reserve my spot →</button>
+    <p class="form-note">No credit card. No spam. One email when it launches.</p>
+  </form>
+  <div id="form-status"></div>
+</div>
+
+<!-- CHECKS PREVIEW -->
+<section>
+  <div class="section-label">What we scan</div>
+  <h2>30+ checks across identity, sharing, and admin</h2>
+  <p class="section-sub">Everything a threat actor looks for when they compromise a workspace — surfaced before they get the chance.</p>
+
+  <div class="checks-grid">
+    <div class="check-card">
+      <div class="check-icon">🔐</div>
+      <div>
+        <h3>MFA enforcement gaps</h3>
+        <p>Which users and admin accounts lack MFA. Conditional access policy coverage.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">👑</div>
+      <div>
+        <h3>Stale admin accounts</h3>
+        <p>Global admins who haven't signed in for 30+ days. Break-glass account hygiene.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">🌐</div>
+      <div>
+        <h3>External sharing settings</h3>
+        <p>SharePoint / Drive sharing scope. Guest access policies. Anonymous link permissions.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">📧</div>
+      <div>
+        <h3>Email forwarding rules</h3>
+        <p>Inbox rules forwarding mail to external domains — a common post-compromise exfil technique.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">🔑</div>
+      <div>
+        <h3>OAuth app permissions</h3>
+        <p>Third-party apps with delegated access to mail, calendar, or files. Risky consent grants.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">🏢</div>
+      <div>
+        <h3>Conditional access policies</h3>
+        <p>Missing location-based, device compliance, or risk-based access controls.</p>
+        <span class="check-platform ms-tag">M365</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">📱</div>
+      <div>
+        <h3>Mobile device management</h3>
+        <p>Devices accessing company data without MDM enrollment or compliance policy.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">🛡️</div>
+      <div>
+        <h3>Legacy auth protocols</h3>
+        <p>SMTP AUTH, POP3, IMAP enabled — common vectors for credential stuffing that bypass MFA.</p>
+        <span class="check-platform ms-tag">M365</span>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-icon">📋</div>
+      <div>
+        <h3>Audit log retention</h3>
+        <p>Whether audit logging is enabled and how long logs are retained for incident response.</p>
+        <span class="check-platform both-tag">M365 + GWS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE REPORT -->
+<section>
+  <div class="section-label">Sample output</div>
+  <h2>What your report looks like</h2>
+  <p class="section-sub">A scored, prioritized breakdown of every check — with plain-English remediation steps, not just raw API output.</p>
+
+  <div class="report-mock">
+    <div class="r-header">
+      <div>
+        <div class="r-title">Workspace Posture Report</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">contoso.com · Microsoft 365 · May 2026</div>
+      </div>
+      <div class="score-ring">
+        <div class="score-num">61</div>
+        <div class="score-label">score</div>
+      </div>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>MFA enforcement</strong> — 4 admin accounts without MFA</span>
+      <span class="r-badge badge-fail">Critical</span>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>External sharing</strong> — Anonymous links enabled on SharePoint</span>
+      <span class="r-badge badge-fail">High</span>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>Legacy auth</strong> — SMTP AUTH enabled tenant-wide</span>
+      <span class="r-badge badge-warn">Medium</span>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>Email forwarding</strong> — 2 users forwarding to external domains</span>
+      <span class="r-badge badge-warn">Medium</span>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>Stale admins</strong> — 1 Global Admin inactive 47 days</span>
+      <span class="r-badge badge-warn">Medium</span>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>Audit logging</strong> — Enabled, 90-day retention</span>
+      <span class="r-badge badge-pass">Pass</span>
+    </div>
+    <div class="r-row">
+      <span class="r-check"><strong>Conditional access</strong> — Device compliance policy active</span>
+      <span class="r-badge badge-pass">Pass</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section>
+  <div class="section-label">Pricing</div>
+  <h2>One flat rate, both platforms</h2>
+  <p class="section-sub">No per-seat pricing. No enterprise sales call. One subscription covers your entire tenant.</p>
+  <div class="pricing-box">
+    <div class="price-left">
+      <h3>Workspace Posture Pro</h3>
+      <div class="price-big">$39 <span>/mo</span></div>
+      <p class="price-desc">Monthly automated scans of your M365 or Google Workspace tenant. Cancel any time — no contract, no minimum.</p>
+      <p style="font-size:0.78rem;color:var(--accent2);margin-top:14px;font-weight:600;">🎯 Early adopters get 50% off for life — join the waitlist above.</p>
+    </div>
+    <div class="price-right">
+      <ul>
+        <li>M365 and / or Google Workspace</li>
+        <li>30+ security checks per scan</li>
+        <li>0–100 posture score</li>
+        <li>Monthly automated scans</li>
+        <li>Remediation steps per finding</li>
+        <li>Score trend over time</li>
+        <li>Slack / webhook alerts on new findings</li>
+        <li>Read-only OAuth — nothing is changed</li>
+        <li>Cancel any time</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="section-label">FAQ</div>
+  <h2>Common questions</h2>
+  <p class="section-sub">More questions? <a href="mailto:support@edgeiqlabs.com" style="color:var(--accent);">support@edgeiqlabs.com</a></p>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">What does "read-only OAuth" mean exactly?</div>
+      <div class="faq-a">When you connect your tenant, you'll authorize EdgeIQ's app with read-only permissions. We can see your configuration settings but cannot create users, change policies, send email, or modify anything. The OAuth scopes are shown explicitly during the consent flow before you approve.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Do you store my tenant data?</div>
+      <div class="faq-a">We store your scan results (the findings and scores) so you can track posture over time. We do not store the raw API responses or personal data about your users. Your OAuth tokens are encrypted at rest. You can revoke access at any time from your Microsoft or Google admin console.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Will my IT admin need to approve this?</div>
+      <div class="faq-a">Yes. Connecting an OAuth app to M365 or Google Workspace requires a Global Admin (M365) or Super Admin (GWS) to authorize it. This is standard for any third-party integration — the same flow as connecting Slack, Zoom, or DocuSign.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">When will this be available?</div>
+      <div class="faq-a">We're targeting a beta in Q3 2026. Waitlist signups get first access and a permanent 50% discount for being early. We'll send one email when it's ready — no marketing drip, no upsell sequence.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does $39/mo cover both M365 and Google Workspace?</div>
+      <div class="faq-a">Yes. One subscription covers one tenant. If you run both M365 and Google Workspace, you'd have two subscriptions at $39/mo each — or $78/mo total. Early adopter pricing locks in at 50% off.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 EdgeIQ Labs · <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+  <p><a href="/">Home</a> · <a href="/products/">All Tools</a></p>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(function(q) {
+    q.addEventListener('click', function() { q.closest('.faq-item').classList.toggle('open'); });
+  });
+
+  window.submitWaitlist = function(e) {
+    e.preventDefault();
+    var email = document.getElementById('wl-email').value.trim();
+    var domain = document.getElementById('wl-domain').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+    var platform = document.getElementById('wl-platform').value;
+    var btn = document.getElementById('wl-btn');
+    var status = document.getElementById('form-status');
+
+    btn.disabled = true; btn.textContent = 'Joining…';
+    status.style.display = 'none';
+
+    fetch('/api/workspace-posture-waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, domain: domain, platform: platform }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.disabled = false; btn.textContent = 'Reserve my spot →';
+      if (data.ok) {
+        document.getElementById('waitlist-form').style.display = 'none';
+        status.className = 'ok'; status.style.display = 'block';
+        status.textContent = "You're on the list ✓ We'll email you at " + email + " when it's ready.";
+      } else {
+        status.className = 'err'; status.style.display = 'block';
+        status.textContent = data.error || 'Something went wrong — try again.';
+      }
+    })
+    .catch(function() {
+      btn.disabled = false; btn.textContent = 'Reserve my spot →';
+      status.className = 'err'; status.style.display = 'block';
+      status.textContent = 'Network error — please try again.';
+    });
+  };
+</script>
+</body>
+</html>
