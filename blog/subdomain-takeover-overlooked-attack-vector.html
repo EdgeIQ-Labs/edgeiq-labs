@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Subdomain Takeovers Are the Forgotten Attack Vector — EdgeIQ Labs</title>
+  <meta name="description" content="Subdomain takeovers are a silent threat that most organizations miss until it's too late. Learn how dangling DNS records expose your infrastructure and how to find them before attackers do." />
+  <meta property="og:title" content="Why Subdomain Takeovers Are the Forgotten Attack Vector" />
+  <meta property="og:description" content="Dangling DNS records can give attackers control of your subdomain — and your reputation. Here's how to find the gaps before someone else does." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/subdomain-takeover-overlooked-attack-vector.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Why Subdomain Takeovers Are the Forgotten Attack Vector" />
+  <meta name="twitter:description" content="Dangling DNS records can give attackers control of your subdomain — and your reputation. Here's how to find the gaps before someone else does." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/subdomain-takeover-overlooked-attack-vector.html" />
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+    .nav-logo-img { height:52px; width:auto; border-radius:10px; }
+    .nav-wordmark { display:flex; flex-direction:column; line-height:1.1; }
+    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--text); }
+    .nav-brand-name span { color:var(--accent); }
+    .nav-brand-tag { font-size:0.68rem; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:8px 16px !important; border-radius:8px !important; }
+    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:20px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.2; margin-bottom:16px; }
+    h2 { font-size:1.5rem; margin:34px 0 14px; }
+    h3 { font-size:1.15rem; margin:24px 0 10px; color:var(--text); }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul, ol { margin:0 0 18px 22px; }
+    li { margin-bottom:6px; }
+    .tag { display:inline-block; background:rgba(61,217,255,0.08); border:1px solid rgba(61,217,255,0.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.1rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; }
+    pre { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; overflow:auto; margin:16px 0; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .cta-box { background:var(--card); border:1px solid var(--accent); border-radius:14px; padding:26px; margin:36px 0; text-align:center; }
+    .cta-btn { display:inline-block; background:var(--accent); color:#071018; font-weight:700; padding:11px 22px; border-radius:10px; text-decoration:none; }
+    .warn-box { background:rgba(255,180,0,0.06); border:1px solid rgba(255,180,0,0.25); border-radius:10px; padding:18px 20px; margin:20px 0; }
+    .warn-box strong { color:#ffb400; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Why Subdomain Takeovers Are the Forgotten Attack Vector",
+    "description": "Dangling DNS records can give attackers control of your subdomain — and your reputation. Here's how to find the gaps before someone else does.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-05-13",
+    "dateModified": "2026-05-13",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/subdomain-takeover-overlooked-attack-vector.html"
+    }
+  }
+  </script>
+
+</head>
+<body>
+  <nav><div class="container"><div class="nav-inner"><a href="../" class="nav-brand"><img src="../logo-edgeiq-selected.png" alt="EdgeIQ Labs" class="nav-logo-img" /><div class="nav-wordmark"><div class="nav-brand-name">Edge<span>IQ</span> Labs</div><div class="nav-brand-tag">Security Intelligence</div></div></a><div class="nav-links"><a href="../">Tools</a><a href="../#pricing">Pricing</a><a href="./">Blog</a><a href="../#contact">Contact</a><a href="https://buy.stripe.com/3cF7v6bCygS6c0F8gA" class="nav-cta">Get Pro</a></div></div></div></nav>
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">May 13, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">DNS Security</span><span class="tag">Attack Surface</span><span class="tag">Takeover</span></div>
+      <h1>Why Subdomain Takeovers Are the Forgotten Attack Vector (And How to Check for Them)</h1>
+      <p class="lead">Your DNS has gaps. Not configuration errors you can spot from a dashboard — actual ownership gaps that let anyone claim a subdomain your users trust. Here's how the attack works, why it keeps succeeding, and how to find your exposure before an attacker does.</p>
+    </div>
+
+    <h2>What a subdomain takeover actually is</h2>
+    <p>When you create a CNAME record pointing to a third-party service — say, <code>docs.yourcompany.com → ghithub.io</code> — you are delegating control of that subdomain to that service. If you later stop using the service but forget to remove the CNAME record, the domain record still points to an address you no longer own or control.</p>
+    <p>An attacker notices the dangling record, spins up an account on that platform, provisions a matching endpoint, and your subdomain now points to <em>their</em> server. Every cookie, token, or credential your users send to that subdomain goes straight to the attacker.</p>
+    <p>You wouldn't leave your front door open just because you moved out of a house. But this is effectively what a dangling DNS record does — and it's far more common than it should be.</p>
+
+    <h2>The real-world damage</h2>
+    <p>Subdomain takeovers are not theoretical. They have been used in real campaigns against real organizations:</p>
+    <ul>
+      <li><strong>Uber (2016–2017)</strong> — A forgotten <code>sc.io</code> subdomain was taken over, allowing attackers to serve phishing pages under Uber's trusted domain. Cookies harvested from the fake page gave full account access to Uber's internal tools.</li>
+      <li><strong>Coinbase (2019)</strong> — Attackers leveraged a dangling subdomain to host credential-harvesting pages during a spear-phishing campaign, impersonating Coinbase login portals with an apparently legitimate domain.</li>
+      <li><strong>Pickman (2024, OAuth bypass)</strong> — Researchers found that abandoned SaaS tool subdomains were used to host malicious OAuth callbacks, bypassing token validation in a series of supply-chain attacks against developers.</li>
+    </ul>
+    <p>The common thread: in every case, the victim organization had no idea a subdomain was pointing to infrastructure they no longer owned. The attacker used trust — the trust your users place in anything under your domain — as the entry point.</p>
+
+    <div class="warn-box">
+      <strong>Heads up:</strong> Browser vendors and email providers have started penalizing domains used in phishing campaigns. Even if an attacker doesn't target your organization directly, a compromised subdomain used in someone else's campaign can hurt your email deliverability and SEO.
+    </div>
+
+    <h2>Common vulnerable patterns</h2>
+    <p>Most takeovers follow a handful of recurring patterns. If your DNS has any of these, you have a gap:</p>
+
+    <h3>Expired cloud services</h3>
+    <p>AWS, Azure, and GCP all assign predictable S3/Blob storage endpoints. When a bucket is deleted but the DNS record remains, the subdomain starts returning a "bucket not found" error — a clear signal to any attacker running automated scanners. The attacker provisions a bucket with the same name and the subdomain is theirs.</p>
+    <pre><code># Dangling CNAME pointing to a deleted AWS S3 bucket
+docs.yourcompany.com  CNAME  docs.yourcompany.com.s3.amazonaws.com
+# Attacker creates a bucket named "docs.yourcompany.com" — it's game over</code></pre>
+
+    <h3>Forgotten GitHub Pages</h3>
+    <p>GitHub Pages uses a predictable domain structure: <code>[username].github.io</code>. If you set up a project site or organization page, then deleted the repo or let the plan lapse, the CNAME record stays live. An attacker forks the repo, pushes to their own account under the same name, and controls your subdomain.</p>
+    <pre><code># Dangling CNAME from a decommissioned GitHub Pages site
+blog.yourcompany.com  CNAME  yourcompany.github.io
+# Attacker creates repo "yourcompany" under their GitHub account</code></pre>
+
+    <h3>Abandoned SaaS tools</h3>
+    <p>Marketing automation platforms, changelog tools, feedback widgets, support portals — these all require DNS delegation when you set them up. When the contract ends or the startup dies, those CNAME records often outlive the service. Inbox tools, SurveyMonkey alternative portals, and customer analytics platforms have all been weaponized this way.</p>
+    <pre><code># Common dangling patterns after SaaS tool deprovisioning
+feedback.yourcompany.com  CNAME  yourcompany.feedbacksaas.com  # SaaS shutdown
+support.yourcompany.com  CNAME  yourcompany.zendesk-support.com  # plan cancelled
+status.yourcompany.com  CNAME  yourcompany.statuspage.io  # service shut down</code></pre>
+
+    <h3>Test and dev environments</h3>
+    <p>Staging and QA subdomains are prime targets — they're often pointed at ephemeral infrastructure that gets decommissioned frequently, and nobody's watching them as closely as production. A <code>staging.yourcompany.com</code> pointing to a deleted Elastic Beanstalk environment is as good as unclaimed territory for an attacker running passive reconnaissance at scale.</p>
+
+    <h2>How to check if your subdomains are vulnerable</h2>
+    <p>The core of a takeover check is straightforward: for every CNAME record in your zone, verify that the target still resolves to infrastructure you control. If it doesn't, you have a dangling record.</p>
+
+    <h3>Step 1: Enumerate your CNAME records</h3>
+    <p>Start with a zone transfer or dig output for your domain:</p>
+    <pre><code># Find all CNAME records for your domain
+dig +short yourcompany.com CNAME
+dig +short _dcim._tcp.yourcompany.com CNAME   # SRV records too
+
+# Or use DNSRecon for a full zone dump
+dnsrecon -d yourcompany.com -t axfr</code></pre>
+    <p>Look for anything pointing to third-party domains: AWS, GitHub, Cloudflare, Zendesk, Intercom, HubSpot, generic SaaS platforms. These are your takeover candidates.</p>
+
+    <h3>Step 2: Check which targets are dangling</h3>
+    <p>For each CNAME target, run a dig query against it and inspect the response. The telltale signs of a dangling record:</p>
+    <ul>
+      <li>The domain resolves to a cloud provider's IP range but returns an error or NXDOMAIN when visited in a browser</li>
+      <li>The DNS query returns a 404 or ownership-error page from the cloud provider (AWS "No such bucket", Azure "Resource not found", GitHub "404 — not found")</li>
+      <li>The CNAME resolves but the HTTP host header check rejects the request</li>
+    </ul>
+    <pre><code># Check if the CNAME target resolves and responds
+dig +short some-old-service.yourcompany.com CNAME
+# Result: old-service.herokudns.com
+
+# Try an HTTP request against the target
+curl -I -H "Host: some-old-service.yourcompany.com" https://12.34.56.78
+# 404 or 403 means it's likely dangling</code></pre>
+
+    <h3>Step 3: Know which providers are highest risk</h3>
+    <p>Not all dangling records are equally exploitable. Some providers will let anyone claim a matching endpoint, while others require account ownership or specific verification steps. Here's the risk breakdown:</p>
+    <ul>
+      <li><strong>AWS S3, Azure Blob, GCP Cloud Storage</strong> — Anyone can claim a deleted bucket name. Highest risk.</li>
+      <li><strong>GitHub Pages</strong> — CNAME must match a repo you own, but typosquatting on org names can work.</li>
+      <li><strong>Heroku</strong> — App names are first-come, first-served after deletion.</li>
+      <li><strong>ReadMe.io, Intercom, Zendesk</strong> — Require account ownership, but can still be exploited via phishing pages under your domain.</li>
+      <li><strong>Cloudflare Pages</strong> — Requires Cloudflare account verification for custom domains, lower risk but not zero.</li>
+    </ul>
+
+    <h3>Step 4: Automate it at scale</h3>
+    <p>Manual checks work for a handful of subdomains. For a real attack surface assessment, you need automation. EdgeIQ Labs maps your entire DNS footprint, identifies dangling CNAME patterns pointing to decommissioned infrastructure, and flags takeover candidates by risk level — so you can close the gaps before someone finds them.</p>
+
+    <div class="cta-box">
+      <h2 style="margin-top:0;">Find your exposed subdomains</h2>
+      <p>EdgeIQ Labs automatically enumerates all your subdomains and detects dangling CNAMEs pointing to abandoned or deleted services. No manual zone exports required.</p>
+      <a href="../#subdomain" class="cta-btn">Run a subdomain check →</a>
+    </div>
+
+    <h2>What to do if you find a dangling record</h2>
+    <ol>
+      <li><strong>Immediately remove or update the CNAME record</strong> — if you no longer use the service, delete the record entirely. A null MX or A pointing to <code>127.0.0.1</code> is safer than a dangling CNAME.</li>
+      <li><strong>Audit your other DNS records at the same time</strong> — finding one dangling record usually means there are more. Run a full zone review.</li>
+      <li><strong>Check if the subdomain has already been taken over</strong> — visit it in a browser and check for unexpected content, OAuth screens, or login pages. If it has, treat it as an active incident.</li>
+      <li><strong>Add subdomain monitoring to your asset inventory</strong> — DNS records should be reviewed on a schedule, not just at provisioning time.</li>
+      <li><strong>Document the deprecation process for services</strong> — whenever a service is sunsetted or a contract ends, DNS cleanup should be part of the offboarding checklist.</li>
+    </ol>
+
+    <h2>Why this attack vector keeps working</h2>
+    <p>Subdomain takeovers persist because DNS ownership and service ownership are managed in separate systems by separate teams. The developer who spins up a Heroku app and creates the CNAME moves on. The DNS admin doesn't know the app was deleted. Nobody's watching the subdomain to begin with.</p>
+    <p>Automated reconnaissance tools have made this worse. Attackers run passive scans against entire domain lists, flagging any CNAME pointing to a known-vulnerable provider in minutes. The window between a service being decommissioned and an attacker claiming the subdomain can be very short — and there's no automated alert telling you it's happened.</p>
+    <p>The fix is simple in concept: treat your DNS zone as an active inventory, not a static configuration. Every record should have a purpose and an owner. Every decommissioned service should trigger a DNS cleanup. And you should be scanning your own subdomains before someone else does it for you.</p>
+
+    <h2>Quick checklist</h2>
+    <ul>
+      <li>☐ Enumerate all CNAME records across your domain</li>
+      <li>☐ Verify each target resolves to infrastructure you still control</li>
+      <li>☐ Flag anything pointing to deleted S3 buckets, Heroku apps, GitHub repos, or dead SaaS tools</li>
+      <li>☐ Remove or update dangling records immediately</li>
+      <li>☐ Add DNS review to your service offboarding checklist</li>
+      <li>☐ Set up automated monitoring to catch future gaps</li>
+    </ul>
+
+    <div class="cta-box">
+      <h2 style="margin-top:0;">Don't leave your subdomains exposed</h2>
+      <p>EdgeIQ Labs continuously monitors your DNS footprint for dangling records and takeover patterns. Get a full report in under two minutes.</p>
+      <a href="../#subdomain" class="cta-btn">Scan my subdomains →</a>
+    </div>
+  </div>
+</body>
+</html>

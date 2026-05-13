@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down — EdgeIQ Labs</title>
+  <meta name="description" content="When Stripe has an outage, the last thing you want is to scramble. This checklist covers everything your SaaS team needs to have in place before payments go down — and how to recover fast when they do." />
+  <meta property="og:title" content="Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down" />
+  <meta property="og:description" content="Practical pre-outage prep, during-outage response, and post-outage recovery for SaaS teams that can't afford payment downtime." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/stripe-outage-checklist-saas.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down" />
+  <meta name="twitter:description" content="Practical pre-outage prep, during-outage response, and post-outage recovery for SaaS teams that can't afford payment downtime." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/stripe-outage-checklist-saas.html" />
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+    .nav-logo-img { height:52px; width:auto; border-radius:10px; }
+    .nav-wordmark { display:flex; flex-direction:column; line-height:1.1; }
+    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--text); }
+    .nav-brand-name span { color:var(--accent); }
+    .nav-brand-tag { font-size:0.68rem; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:8px 16px !important; border-radius:8px !important; }
+    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:20px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.2; margin-bottom:16px; }
+    h2 { font-size:1.5rem; margin:34px 0 14px; }
+    h3 { font-size:1.15rem; margin:24px 0 10px; }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul, ol { margin:0 0 18px 22px; }
+    li { margin-bottom:8px; }
+    .tag { display:inline-block; background:rgba(61,217,255,0.08); border:1px solid rgba(61,217,255,0.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.1rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; }
+    pre { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; overflow:auto; margin:16px 0; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .checklist { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0; }
+    .checklist li { color:var(--text); font-weight:500; }
+    .checklist li strong { color:var(--accent); }
+    .cta-box { background:var(--card); border:1px solid var(--accent); border-radius:14px; padding:26px; margin:36px 0; text-align:center; }
+    .cta-btn { display:inline-block; background:var(--accent); color:#071018; font-weight:700; padding:11px 22px; border-radius:10px; text-decoration:none; }
+    .callout { background:rgba(61,217,255,0.05); border:1px solid rgba(61,217,255,0.15); border-radius:10px; padding:16px 18px; margin:20px 0; }
+    .callout p { margin-bottom:0; }
+    hr { border:none; border-top:1px solid var(--border); margin:40px 0; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down",
+    "description": "Practical pre-outage prep, during-outage response, and post-outage recovery for SaaS teams that can't afford payment downtime.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-05-13",
+    "dateModified": "2026-05-13",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/stripe-outage-checklist-saas.html"
+    }
+  }
+  </script>
+
+</head>
+<body>
+  <nav><div class="container"><div class="nav-inner"><a href="../" class="nav-brand"><img src="../logo-edgeiq-selected.png" alt="EdgeIQ Labs" class="nav-logo-img" /><div class="nav-wordmark"><div class="nav-brand-name">Edge<span>IQ</span> Labs</div><div class="nav-brand-tag">Security Intelligence</div></div></a><div class="nav-links"><a href="../">Tools</a><a href="../#pricing">Pricing</a><a href="./">Blog</a><a href="../#contact">Contact</a><a href="https://buy.stripe.com/3cF7v6bCygS6c0F8gA" class="nav-cta">Get Pro</a></div></div></div></nav>
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">May 13, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">Payments</span><span class="tag">Reliability</span><span class="tag">SRE</span></div>
+      <h1>Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down</h1>
+      <p class="lead">Stripe's last major outage lasted 90 minutes and cost some teams millions in failed renewals. Most of those teams had no runbook. Don't be them.</p>
+    </div>
+
+    <h2>Stripe outages happen. Your readiness is the variable.</h2>
+    <p>Stripe publishes a status page and a solid API, but it is infrastructure — and infrastructure fails. Since 2020, Stripe has experienced at least three significant disruptions affecting payment processing, webhooks, and the Dashboard simultaneously. When it happens:</p>
+    <ul>
+      <li>New subscriptions fail silently</li>
+      <li>Renewals don't charge — and customers don't notice until you're chasing them</li>
+      <li>Webhook events drop, so your dunning emails, seat provisioning, and lifecycle automations all break</li>
+      <li>Your engineers scramble for 90 minutes instead of executing a plan</li>
+    </ul>
+    <p>The goal isn't to prevent Stripe from having issues. It's to make sure your product keeps running when Stripe does.</p>
+
+    <div class="callout">
+      <p><strong>Before you read further:</strong> if your payment flow has no idempotency keys, no retry queue, and no documented fallback path — stop everything and build those three things first. Everything below is additive.</p>
+    </div>
+
+    <hr />
+
+    <h2>Pre-outage prep: build the buffer before the ground shakes</h2>
+
+    <h3>1. Webhook retry queue — your event bus insurance</h3>
+    <p>Stripe delivers webhooks at-least-once. If your handler crashes during a Stripe outage, that event is gone unless you've built your own retry buffer. The fix:</p>
+    <ul>
+      <li>Push every incoming Stripe event to a durable queue (SQS, Redis with persistence, or a managed service like Inngest or Trigger.dev) <em>before</em> processing</li>
+      <li>Process asynchronously from the queue — your handler can fail and retry without losing events</li>
+      <li>Store the raw event payload plus a <code>processed</code> flag keyed on <code>event.id</code></li>
+      <li>Set a TTL on unprocessed events long enough to cover a worst-case outage window (72 hours is reasonable)</li>
+    </ul>
+    <div class="callout">
+      <p><strong>EdgeIQ Labs note:</strong> Our uptime monitoring tracks webhook delivery failures across your integrations. If Stripe events start dropping, you'll get an alert before customers notice. <a href="../#monitoring" style="color:var(--accent);">See the setup →</a></p>
+    </div>
+
+    <h3>2. Idempotency keys on every mutation</h3>
+    <p>Payment operations are not idempotent by default. If a network timeout occurs after Stripe charges a card but before your server writes the confirmation, you have no reliable way to know whether to retry. The result: duplicate charges, refund headaches, and angry customers.</p>
+    <p>Stripe supports idempotency keys natively on all payment endpoints. Use them:</p>
+    <pre><code>stripe.charges.create(
+  { amount: 4900, currency: 'usd', source: 'tok_visa' },
+  { idempotencyKey: 'sub_renewal_user123_2026_05' }
+);</code></pre>
+    <p>Your key should be deterministic — tied to the user, the operation type, and a time bucket (billing period, subscription cycle). Never generate random idempotency keys for financial operations.</p>
+    <p>For non-Stripe payment calls, implement your own idempotency layer: store a hash of <code>(user_id + operation_type + params)</code> with a <code>CREATED</code>/<code>COMPLETED</code> state in your DB before calling the provider. Check the state before retrying.</p>
+
+    <h3>3. Fallback payment path — don't put everything behind one gate</h3>
+    <p>If Stripe is your only payment processor, you have a single point of failure. Even a partial outage (say, only ACH processing is down) can block a segment of customers. Build at minimum one fallback:</p>
+    <ul>
+      <li><strong>Braintree or Adyen:</strong> Both process cards and ACH. A secondary gateway costs ~$500/month but gives you a real alternative when Stripe is degraded</li>
+      <li><strong>Manual invoice flow:</strong> For enterprise customers, have a process to email a Stripe payment link or direct wire instructions when automated billing fails</li>
+      <li><strong>Payment method pre-validation:</strong> Before a renewal window opens, verify the stored payment method is still valid using Stripe's <code>payment_methods.test</code> or the <code>payment_intents.test</code> flow. Flag at-risk accounts before they go past due</li>
+    </ul>
+    <p>Route failover should be automatic where possible, manual where necessary. Document the manual trigger procedure — your on-call engineer at 2 AM shouldn't be figuring out how to flip the switch.</p>
+
+    <h3>4. Pre-written communication templates</h3>
+    <p>You will not write good customer communication at 2 AM while Stripe's status page flickers. Write it now. You'll need at minimum:</p>
+    <ul>
+      <li><strong>Outage notification (public):</strong> Short statement, current known impact, next update time. Post to status page, Twitter/X, and your in-app banner system</li>
+      <li><strong>Scheduled downtime notice (internal):</strong> If a known outage window overlaps a billing cycle, warn customers 24-48 hours in advance with a clear expectation: "Your renewal on [date] may be delayed by up to 48 hours"</li>
+      <li><strong>Post-outage resolution note:</strong> Brief explanation of what happened and what you did to prevent recurrence — transparency builds trust</li>
+      <li><strong>Individual customer reassurance:</strong> If a customer writes in asking if they were charged twice or if their subscription is safe, have a template ready that shows their current status in plain terms</li>
+    </ul>
+    <p>Store these in Notion, your internal wiki, or a shared doc — not in someone's personal Drafts folder.</p>
+
+    <h3>5. Test your retry and failover flows quarterly</h3>
+    <p>Everything above is worthless if it doesn't actually work when you need it. Set a recurring calendar reminder to simulate a payment failure scenario:</p>
+    <ul>
+      <li>Trigger your webhook retry queue with a test event and verify it processes correctly</li>
+      <li>Use Stripe's test mode to simulate network timeouts and verify idempotency key behavior</li>
+      <li>Walk through the fallback gateway path manually — confirm the credentials are current, the API keys haven't rotated, and the failover routing logic still evaluates correctly</li>
+      <li>Send a test communication template to your internal channel to verify the process works</li>
+    </ul>
+
+    <hr />
+
+    <h2>During the outage: execute, don't improvise</h2>
+
+    <h3>Monitor Stripe's status page — but don't trust it alone</h3>
+    <p>Stripe's <a href="https://status.stripe.com" style="color:var(--accent);">status.stripe.com</a> is the official source of truth. But during the 2024 webhook incident, the status page showed "degraded performance" for over 40 minutes before acknowledging the full scope. Supplement with:</p>
+    <ul>
+      <li>Your own payment success rate dashboard — if your charge success rate drops 5%+ in 10 minutes, that's your alert before Stripe confirms anything</li>
+      <li>Webhook event volume tracking — a sudden drop in incoming Stripe events is a stronger signal than the status page in many cases</li>
+      <li>EdgeIQ Labs uptime monitoring: our synthetic checks can alert you within 60 seconds of a payment endpoint becoming unreachable, independent of Stripe's own disclosure timeline</li>
+    </ul>
+
+    <h3>Activate your incident response process</h3>
+    <ol>
+      <li><strong>Page on-call:</strong> If payment failures hit a threshold (% of charges failing, absolute count, or revenue impact), trigger your PagerDuty/opsgenie incident immediately</li>
+      <li><strong>Open a status page incident:</strong> Use your pre-written template. Set a recurrence reminder to update every 30 minutes until resolved</li>
+      <li><strong>Assess scope:</strong> Are new signups failing? Renewals? Webhook-driven automations? Triage each and assign a separate owner</li>
+      <li><strong>Post to #incidents in Slack (or your bridge channel):</strong> Brief, factual updates. No speculation on cause until Stripe confirms.</li>
+    </ol>
+
+    <h3>Customer comms during the window</h3>
+    <p>Don't go silent. Even if you don't have a full diagnosis yet:</p>
+    <ul>
+      <li>Update the status page even if the update is "we are aware and investigating"</li>
+      <li>If billing is affected for a specific cohort (e.g., annual renewals today), proactively email those customers with a clear expected resolution window</li>
+      <li>Monitor your support queue for duplicate charge reports — respond within 15 minutes with a reassurance that you're checking and you'll follow up with confirmation</li>
+    </ul>
+
+    <h3>Manual workarounds for critical paths</h3>
+    <p>If a key payment flow is broken and you need to unblock customers immediately:</p>
+    <ul>
+      <li><strong>Subscription activation:</strong> If Stripe is down and a customer can't complete signup, manually provision access and flag the account for billing retry once Stripe recovers. Track these manually in a shared sheet — do not leave them in a gray state.</li>
+      <li><strong>Failed renewal grace period:</strong> Extend subscription expiry by 48-72 hours automatically. Stripe's outage is not your customer's problem to solve.</li>
+      <li><strong>Invoice reissuance:</strong> If an invoice was created but payment failed, hold the invoice in Stripe's dashboard rather than creating a new one — Stripe's retry logic will pick it up automatically when services restore.</li>
+    </ul>
+
+    <hr />
+
+    <h2>Post-outage recovery: close the loop completely</h2>
+
+    <h3>Reconciliation — do this before you let users back into the flow</h3>
+    <p>The most dangerous thing you can do post-outage is assume everything processed correctly the moment Stripe comes back. It probably didn't — for the full duration of the outage, payment attempts either silently failed or landed in an ambiguous state.</p>
+    <p>Run a reconciliation report comparing:</p>
+    <ul>
+      <li><strong>Expected charges</strong> (your billing schedule) vs. <strong>successful charges</strong> (your DB + Stripe dashboard)</li>
+      <li><strong>Webhook events received</strong> during the outage window vs. <strong>events processed</strong></li>
+      <li><strong>Subscription states</strong> in your DB vs. <strong>payment states</strong> in Stripe — look for subscriptions marked active where the underlying charge failed</li>
+    </ul>
+    <p>For any accounts where payment failed but the subscription remained active, assess your dunning policy. You may need to trigger a retry immediately, send a past-due notice, or — if the customer was charged twice — process a refund within 24 hours.</p>
+
+    <h3>Retry failed transactions in priority order</h3>
+    <p>Stripe's automatic retry logic will handle some of this, but if you have a large backlog of failed charges, Stripe's queue may be saturated. Prioritize:</p>
+    <ol>
+      <li><strong>Annual subscriptions</strong> — highest MRR impact, highest urgency</li>
+      <li><strong>Enterprise accounts</strong> — relationship risk is higher, often have dedicated billing contacts</li>
+      <li><strong>Monthly subscriptions</strong> past their billing date — don't let them slide into a second failed attempt</li>
+    </ol>
+    <p>Use your idempotency keys when retrying — the original attempt's state will be preserved and no duplicate charges will occur. If you don't have idempotency keys implemented, you'll need to manually deduplicate, which will take much longer.</p>
+
+    <h3>Update your status page with the resolution</h3>
+    <p>Post a final resolution note: what happened (to the degree Stripe has disclosed), what you did during the outage, and what you're doing to prevent recurrence. This is not just good customer relations — it's a record your team can learn from.</p>
+    <p>Set a follow-up task for your next weekly review: incident retrospective within 5 business days, action items assigned and tracked.</p>
+
+    <h3>Review and update your runbook</h3>
+    <p>Every outage produces at least one thing you didn't anticipate. Update the checklist above with:</p>
+    <ul>
+      <li>What worked and what didn't in your failover routing</li>
+      <li>Communication templates that needed modification</li>
+      <li>Thresholds that were too high or too low (e.g., "we waited too long before activating the fallback gateway")</li>
+      <li>Any gaps in your idempotency or retry logic exposed by the event</li>
+    </ul>
+
+    <hr />
+
+    <h2>The short version — your checklist to own today</h2>
+    <div class="checklist">
+      <ol>
+        <li><strong>Webhook retry queue</strong> — events buffered before processing, durable storage, 72-hour TTL</li>
+        <li><strong>Idempotency keys</strong> — on every payment mutation, deterministic, stored with state</li>
+        <li><strong>Fallback payment path</strong> — secondary gateway or manual invoice flow, tested quarterly</li>
+        <li><strong>Communication templates</strong> — pre-written for outage notification, renewal delay, resolution, and customer reassurance</li>
+        <li><strong>Payment success rate dashboard</strong> — alert threshold set, on-call triggered at 5% drop from baseline</li>
+        <li><strong>Incident runbook</strong> — owned by a specific person, updated post-every-incident</li>
+      </ol>
+    </div>
+
+    <p>If you have all six of these in place before the next Stripe incident, you'll spend the next outage executing a plan instead of writing one.</p>
+
+    <div class="cta-box">
+      <h2 style="margin-top:0;">Monitor your payment infrastructure before Stripe tells you to.</h2>
+      <p>EdgeIQ Labs provides real-time uptime monitoring and synthetic checks for your payment endpoints — independent of Stripe's own status page. Get alerts in seconds, not minutes.</p>
+      <a href="../#monitoring" class="cta-btn">Explore EdgeIQ monitoring →</a>
+    </div>
+  </div>
+</body>
+</html>
