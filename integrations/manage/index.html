@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Integrations · EdgeIQ Labs</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --card2: #0f1620;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #fbbf24;
+      --err: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; height: 52px;
+      background: rgba(11,15,20,0.95); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-weight: 800; font-size: 1rem; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    nav .nav-sub { font-size: 0.8rem; color: var(--muted); }
+
+    .page { max-width: 660px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    h1 { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .page-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.55; margin-bottom: 32px; }
+
+    /* Step blocks */
+    .step-block {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px; margin-bottom: 16px;
+    }
+    .step-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em;
+      color: var(--accent2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .step-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(124,106,255,0.15); border: 1px solid rgba(124,106,255,0.3);
+      color: var(--accent2); font-size: 0.65rem; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    /* Form inputs */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+    .field input, .field select {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 12px; color: var(--text);
+      font-size: 0.87rem; font-family: inherit; outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: var(--accent); }
+    .field input::placeholder { color: #4a6080; }
+    .field select option { background: #1a2535; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 700; font-size: 0.85rem; padding: 9px 18px;
+      border-radius: 8px; border: none; cursor: pointer; transition: opacity 0.15s;
+      font-family: inherit; text-decoration: none;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn:not(:disabled):hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:not(:disabled):hover { border-color: var(--accent); color: var(--text); }
+    .btn-ok { background: rgba(112,240,168,0.12); color: var(--ok); border: 1px solid rgba(112,240,168,0.25); }
+    .btn-danger { background: rgba(248,113,113,0.1); color: var(--err); border: 1px solid rgba(248,113,113,0.2); }
+    .btn-sm { font-size: 0.78rem; padding: 6px 12px; }
+
+    /* Webhook list */
+    .webhook-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .webhook-item {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .wh-type-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+      background: rgba(124,106,255,0.1); border: 1px solid rgba(124,106,255,0.2);
+    }
+    .wh-info { flex: 1; min-width: 0; }
+    .wh-type { font-size: 0.75rem; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .wh-url { font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; font-family: monospace; }
+    .wh-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .wh-status { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 4px; }
+    .wh-status.ok { background: rgba(112,240,168,0.12); color: var(--ok); }
+    .wh-status.fail { background: rgba(248,113,113,0.1); color: var(--err); }
+    .wh-status.testing { background: rgba(124,106,255,0.1); color: var(--accent2); }
+
+    /* Add webhook form */
+    .add-webhook-form {
+      border: 1px dashed rgba(124,106,255,0.25); border-radius: 10px;
+      padding: 16px; background: rgba(124,106,255,0.03);
+    }
+    .add-webhook-form .field-row { grid-template-columns: 140px 1fr; }
+
+    /* Toast / status banner */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      padding: 10px 22px; border-radius: 9px; font-size: 0.85rem; font-weight: 600;
+      display: none; z-index: 999; white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    #toast.ok { background: rgba(112,240,168,0.15); border: 1px solid rgba(112,240,168,0.4); color: var(--ok); }
+    #toast.err { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.35); color: var(--err); }
+    #toast.info { background: rgba(124,106,255,0.12); border: 1px solid rgba(124,106,255,0.35); color: var(--accent2); }
+
+    /* Inline status */
+    .inline-status {
+      font-size: 0.82rem; padding: 8px 12px; border-radius: 7px;
+      margin-top: 10px; display: none;
+    }
+    .inline-status.ok { background: rgba(112,240,168,0.08); border: 1px solid rgba(112,240,168,0.2); color: var(--ok); }
+    .inline-status.err { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); color: var(--err); }
+    .inline-status.info { background: rgba(124,106,255,0.08); border: 1px solid rgba(124,106,255,0.2); color: var(--accent2); }
+
+    /* Plan badge */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 12px;
+      background: rgba(124,106,255,0.12); border: 1px solid rgba(124,106,255,0.25);
+      color: var(--accent2);
+    }
+
+    .limit-note { font-size: 0.78rem; color: #4a6080; margin-top: 8px; }
+    .limit-note a { color: var(--accent); text-decoration: none; }
+
+    .empty-state {
+      text-align: center; padding: 24px 16px;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    .empty-state .empty-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+    .section-actions { display: flex; gap: 8px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+
+    #save-btn-wrap { margin-top: 4px; }
+
+    @media (max-width: 500px) {
+      .field-row { grid-template-columns: 1fr; }
+      .add-webhook-form .field-row { grid-template-columns: 1fr; }
+      .wh-url { max-width: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>Edge</span>IQ</a>
+  <span class="nav-sub">🔗 Integrations Manager</span>
+</nav>
+
+<div class="page">
+  <h1>Manage Your Integrations</h1>
+  <p class="page-sub">Register webhook destinations for Slack, Discord, Teams, or any custom URL. EdgeIQ will fire alerts to all of them automatically.</p>
+
+  <!-- Step 1: Identity -->
+  <div class="step-block">
+    <div class="step-label"><span class="step-num">1</span> Your account</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@company.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="domain">Domain you're monitoring</label>
+        <input type="text" id="domain" placeholder="example.com" />
+      </div>
+    </div>
+    <div class="section-actions">
+      <button class="btn btn-ghost" id="load-btn" onclick="loadConfig()">Load existing config</button>
+      <span id="load-status" style="font-size:0.8rem;color:var(--muted);"></span>
+    </div>
+  </div>
+
+  <!-- Step 2: Webhooks -->
+  <div class="step-block" id="webhooks-block" style="display:none;">
+    <div class="step-label" style="justify-content:space-between;">
+      <span><span class="step-num">2</span> Webhook destinations</span>
+      <span id="plan-badge-wrap"></span>
+    </div>
+
+    <div class="webhook-list" id="webhook-list">
+      <!-- populated by JS -->
+    </div>
+
+    <div id="add-form-wrap">
+      <div class="add-webhook-form" id="add-form">
+        <div class="field-row" style="margin-bottom:10px;">
+          <div class="field">
+            <label for="new-type">Type</label>
+            <select id="new-type">
+              <option value="slack">💬 Slack</option>
+              <option value="discord">🎮 Discord</option>
+              <option value="teams">🔷 Teams</option>
+              <option value="webhook">⚡ Custom Webhook</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="new-url">Webhook URL</label>
+            <input type="url" id="new-url" placeholder="https://hooks.slack.com/..." />
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="addWebhook()">+ Add</button>
+      </div>
+    </div>
+
+    <p class="limit-note" id="limit-note"></p>
+    <div id="add-status" class="inline-status"></div>
+
+    <div class="section-actions" id="save-btn-wrap">
+      <button class="btn btn-primary" id="save-btn" onclick="saveConfig()">Save all changes</button>
+      <span id="save-status" style="font-size:0.8rem;"></span>
+    </div>
+  </div>
+
+  <!-- Step 3: upgrade nudge if free -->
+  <div id="upgrade-block" style="display:none;">
+    <div class="step-block" style="border-color:rgba(124,106,255,0.3);background:linear-gradient(135deg,rgba(124,106,255,0.06),var(--card));">
+      <div class="step-label"><span class="step-num">!</span> Webhooks require Pro</div>
+      <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">Your current plan sends email alerts only. Upgrade to Integrations Pro to register Slack, Discord, Teams, and custom webhook destinations.</p>
+      <a class="btn btn-primary" href="https://buy.stripe.com/28E8wR3XJ6d71bK3gk7wA3t" target="_blank" rel="noopener">Upgrade to Pro — $7/mo →</a>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function() {
+  var webhooks = [];
+  var loadedPlan = null;
+
+  var TYPE_ICON = { slack:'💬', discord:'🎮', teams:'🔷', webhook:'⚡' };
+  var TYPE_HELP = {
+    slack: 'Create an Incoming Webhook in your Slack app settings',
+    discord: 'Server Settings → Integrations → Webhooks → New Webhook',
+    teams: 'Channel → Connectors → Incoming Webhook',
+    webhook: 'Any URL that accepts HTTP POST with JSON body',
+  };
+
+  function toast(msg, type) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = type || 'info';
+    el.style.display = 'block';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(function() { el.style.display = 'none'; }, 3500);
+  }
+
+  function setStatus(id, msg, type) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'inline-status ' + (type || 'info');
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  function getEmail() { return document.getElementById('email').value.trim().toLowerCase(); }
+  function getDomain() {
+    return document.getElementById('domain').value.trim().toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/\/$/, '');
+  }
+
+  window.loadConfig = function() {
+    var email = getEmail(); var domain = getDomain();
+    if (!email || !email.includes('@')) { toast('Enter your email first', 'err'); return; }
+    if (!domain) { toast('Enter your domain first', 'err'); return; }
+
+    var btn = document.getElementById('load-btn');
+    var statusEl = document.getElementById('load-status');
+    btn.disabled = true; btn.textContent = 'Loading…';
+    statusEl.textContent = '';
+
+    fetch('/api/integrations/get?email=' + encodeURIComponent(email) + '&domain=' + encodeURIComponent(domain))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        btn.disabled = false; btn.textContent = 'Load existing config';
+        if (data.error) { statusEl.textContent = data.error; return; }
+        loadedPlan = data.plan || 'free';
+        webhooks = data.webhooks ? data.webhooks.slice() : [];
+        showWebhooksBlock();
+        if (data.found) {
+          statusEl.textContent = 'Config loaded · ' + (data.updated_at ? 'Updated ' + new Date(data.updated_at).toLocaleDateString() : '');
+          toast('Config loaded — ' + webhooks.length + ' webhook' + (webhooks.length !== 1 ? 's' : '') + ' registered', 'ok');
+        } else {
+          statusEl.textContent = 'No existing config — add your first webhook below';
+          loadedPlan = 'pro'; // assume pro since they got here from welcome page
+        }
+        renderWebhooks();
+      })
+      .catch(function(err) {
+        btn.disabled = false; btn.textContent = 'Load existing config';
+        statusEl.textContent = 'Could not load — check your email and domain';
+      });
+  };
+
+  function showWebhooksBlock() {
+    document.getElementById('webhooks-block').style.display = 'block';
+    if (loadedPlan === 'free') {
+      document.getElementById('upgrade-block').style.display = 'block';
+      document.getElementById('add-form-wrap').style.display = 'none';
+      document.getElementById('save-btn-wrap').style.display = 'none';
+    } else {
+      document.getElementById('upgrade-block').style.display = 'none';
+      document.getElementById('add-form-wrap').style.display = 'block';
+      document.getElementById('save-btn-wrap').style.display = 'flex';
+    }
+    var badge = document.getElementById('plan-badge-wrap');
+    badge.innerHTML = loadedPlan === 'pro'
+      ? '<span class="plan-badge">✓ Integrations Pro</span>'
+      : '<span class="plan-badge" style="background:rgba(255,255,255,0.05);border-color:var(--border);color:var(--muted);">Free plan</span>';
+  }
+
+  function renderWebhooks() {
+    var list = document.getElementById('webhook-list');
+    var MAX = 3;
+
+    if (webhooks.length === 0) {
+      list.innerHTML = '<div class="empty-state"><span class="empty-icon">🔗</span>No webhooks yet. Add one below.</div>';
+    } else {
+      list.innerHTML = webhooks.map(function(wh, i) {
+        return '<div class="webhook-item" id="wh-' + i + '">' +
+          '<div class="wh-type-icon">' + (TYPE_ICON[wh.type] || '⚡') + '</div>' +
+          '<div class="wh-info">' +
+            '<div class="wh-type">' + wh.type + '</div>' +
+            '<div class="wh-url" title="' + escHtml(wh.url) + '">' + escHtml(wh.url) + '</div>' +
+          '</div>' +
+          '<div class="wh-actions">' +
+            '<button class="btn btn-ok btn-sm" onclick="testOne(' + i + ')" id="test-btn-' + i + '">Test</button>' +
+            '<button class="btn btn-danger btn-sm" onclick="removeWebhook(' + i + ')">✕</button>' +
+            '<span class="wh-status" id="wh-status-' + i + '"></span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    var noteEl = document.getElementById('limit-note');
+    if (loadedPlan === 'pro') {
+      var remaining = MAX - webhooks.length;
+      noteEl.innerHTML = webhooks.length + ' / ' + MAX + ' destinations used' +
+        (remaining === 0 ? ' — <a href="mailto:support@edgeiqlabs.com">contact us</a> for more' : '');
+      var addForm = document.getElementById('add-form');
+      if (addForm) addForm.style.display = webhooks.length >= MAX ? 'none' : 'block';
+    }
+  }
+
+  function escHtml(s) {
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  window.addWebhook = function() {
+    var type = document.getElementById('new-type').value;
+    var url = document.getElementById('new-url').value.trim();
+    if (!url || !url.startsWith('https://')) {
+      setStatus('add-status', 'URL must start with https://', 'err'); return;
+    }
+    if (webhooks.length >= 3) {
+      setStatus('add-status', 'Pro plan supports up to 3 destinations', 'err'); return;
+    }
+    webhooks.push({ type: type, url: url });
+    document.getElementById('new-url').value = '';
+    setStatus('add-status', '', '');
+    renderWebhooks();
+    toast('Webhook added — click Save to apply', 'info');
+  };
+
+  window.removeWebhook = function(i) {
+    webhooks.splice(i, 1);
+    renderWebhooks();
+    toast('Removed — click Save to apply', 'info');
+  };
+
+  window.testOne = function(i) {
+    var email = getEmail(); var domain = getDomain();
+    if (!email || !domain) { toast('Enter email and domain first', 'err'); return; }
+    var btn = document.getElementById('test-btn-' + i);
+    var statusEl = document.getElementById('wh-status-' + i);
+    btn.disabled = true; btn.textContent = '…';
+    statusEl.textContent = 'sending'; statusEl.className = 'wh-status testing';
+
+    fetch('/api/integrations/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, domain: domain }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.disabled = false; btn.textContent = 'Test';
+      if (data.ok && data.results) {
+        var result = data.results[i];
+        if (result && result.ok) {
+          statusEl.textContent = '✓ sent'; statusEl.className = 'wh-status ok';
+          toast('Test delivered ✓', 'ok');
+        } else if (result) {
+          statusEl.textContent = '✗ ' + (result.status || 'failed'); statusEl.className = 'wh-status fail';
+          toast('Test failed — check your webhook URL', 'err');
+        } else {
+          statusEl.textContent = '?'; statusEl.className = 'wh-status fail';
+          toast('Save your config first, then test', 'err');
+        }
+      } else {
+        statusEl.textContent = '✗'; statusEl.className = 'wh-status fail';
+        toast(data.error || 'Test failed', 'err');
+      }
+    })
+    .catch(function() {
+      btn.disabled = false; btn.textContent = 'Test';
+      statusEl.textContent = '✗'; statusEl.className = 'wh-status fail';
+      toast('Network error — try again', 'err');
+    });
+  };
+
+  window.saveConfig = function() {
+    var email = getEmail(); var domain = getDomain();
+    if (!email || !email.includes('@')) { toast('Enter your email', 'err'); return; }
+    if (!domain) { toast('Enter your domain', 'err'); return; }
+
+    var btn = document.getElementById('save-btn');
+    var statusEl = document.getElementById('save-status');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    statusEl.textContent = ''; statusEl.style.color = '';
+
+    fetch('/api/integrations/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, domain: domain, plan: loadedPlan || 'pro', webhooks: webhooks }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.disabled = false; btn.textContent = 'Save all changes';
+      if (data.ok) {
+        statusEl.textContent = '✓ Saved · ' + data.registered + ' webhook' + (data.registered !== 1 ? 's' : '') + ' active';
+        statusEl.style.color = 'var(--ok)';
+        toast('Saved! ' + data.registered + ' webhook' + (data.registered !== 1 ? 's' : '') + ' registered', 'ok');
+      } else {
+        statusEl.textContent = data.error || 'Save failed';
+        statusEl.style.color = 'var(--err)';
+        toast(data.error || 'Save failed', 'err');
+      }
+    })
+    .catch(function() {
+      btn.disabled = false; btn.textContent = 'Save all changes';
+      statusEl.textContent = 'Network error — try again';
+      statusEl.style.color = 'var(--err)';
+      toast('Network error', 'err');
+    });
+  };
+
+  // Pre-fill from URL params (e.g. ?email=...&domain=... from welcome page)
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('email')) document.getElementById('email').value = params.get('email');
+  if (params.get('domain')) document.getElementById('domain').value = params.get('domain');
+  if (params.get('email') && params.get('domain')) {
+    loadedPlan = 'pro';
+    webhooks = [];
+    showWebhooksBlock();
+    renderWebhooks();
+  }
+})();
+</script>
+</body>
+</html>
