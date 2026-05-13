@@ -64,6 +64,7 @@ export default {
 
     // ── FREE Check 1: Docker Hub API metadata ─────────────────────────────────
     let hubData = null;
+    let hubUnavailable = false;
     try {
       const hubResp = await fetch(
         `https://hub.docker.com/v2/repositories/${imageRepo}/`,
@@ -76,28 +77,28 @@ export default {
           status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
       } else {
-        return new Response(JSON.stringify({ error: `Docker Hub returned status ${hubResp.status}. Try again shortly.` }), {
-          status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-        });
+        hubUnavailable = true;
       }
     } catch {
-      return new Response(JSON.stringify({ error: 'Failed to reach Docker Hub API.' }), {
-        status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      });
+      hubUnavailable = true;
     }
 
-    const pullCount = hubData.pull_count || 0;
-    const starCount = hubData.star_count || 0;
-    const isOfficial = hubData.is_official || false;
-    const isAutomated = hubData.is_automated || false;
-    const lastUpdated = hubData.last_updated ? hubData.last_updated.split('T')[0] : 'unknown';
-    const description = hubData.description || '';
+    if (hubUnavailable) {
+      addFinding('info', 'HUB_METADATA_UNAVAILABLE', 'Docker Hub metadata temporarily unavailable (rate limit). Image name analysis and tag checks completed; re-run in a few minutes for full registry metadata.');
+    }
+
+    const pullCount = hubData ? (hubData.pull_count || 0) : 0;
+    const starCount = hubData ? (hubData.star_count || 0) : 0;
+    const isOfficial = hubData ? (hubData.is_official || false) : false;
+    const lastUpdated = hubData && hubData.last_updated ? hubData.last_updated.split('T')[0] : 'unknown';
 
     // ── FREE Check 2: Official image status ──────────────────────────────────
-    if (!isOfficial) {
-      addFinding('medium', 'NOT_OFFICIAL_IMAGE', `This image is not Docker Official — it hasn't been verified by Docker/the publisher. Consider using an official alternative.`);
-    } else {
-      addFinding('info', 'OFFICIAL_IMAGE', `✅ Image is a Docker Official Image — maintained and regularly scanned by Docker Hub.`);
+    if (hubData) {
+      if (!isOfficial) {
+        addFinding('medium', 'NOT_OFFICIAL_IMAGE', `This image is not Docker Official — it hasn't been verified by Docker/the publisher. Consider using an official alternative.`);
+      } else {
+        addFinding('info', 'OFFICIAL_IMAGE', `Image is a Docker Official Image — maintained and regularly scanned by Docker Hub.`);
+      }
     }
 
     // ── FREE Check 3: Latest tag usage ───────────────────────────────────────
@@ -106,7 +107,7 @@ export default {
     }
 
     // ── FREE Check 4: Stale image check ──────────────────────────────────────
-    if (lastUpdated !== 'unknown') {
+    if (hubData && lastUpdated !== 'unknown') {
       const daysSince = Math.floor((Date.now() - new Date(lastUpdated).getTime()) / 86400000);
       if (daysSince > 365) {
         addFinding('high', 'STALE_IMAGE', `Image was last pushed ${daysSince} days ago (${lastUpdated}). Unmaintained images accumulate unpatched OS-level vulnerabilities.`);
@@ -132,7 +133,7 @@ export default {
     }
 
     // ── FREE Check 7: Pull count anomaly (too popular can mean supply chain risk) ──
-    if (pullCount > 1000000000) {
+    if (hubData && pullCount > 1000000000) {
       addFinding('info', 'HIGH_PULL_COUNT', `Image has ${(pullCount / 1e9).toFixed(1)}B+ pulls — extremely high usage. Verify the publisher identity to rule out supply chain substitution.`);
     }
 
@@ -155,6 +156,7 @@ export default {
 
     const lockedCount = findings.filter(f => f.severity === 'locked').length;
     const freeCount = findings.filter(f => f.severity !== 'locked').length;
+    const summaryNote = hubUnavailable ? ' (registry metadata unavailable — re-run for full results)' : '';
 
     return new Response(JSON.stringify({
       image: `${imageRepo.replace('library/', '')}:${imageTag}`,
@@ -164,7 +166,7 @@ export default {
       starCount,
       isOfficial,
       lastUpdated,
-      summary: `${freeCount} checks evaluated, ${lockedCount} deep container scans locked.`,
+      summary: `${freeCount} checks evaluated, ${lockedCount} deep container scans locked${summaryNote}.`,
       findings
     }), {
       status: 200,
