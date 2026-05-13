@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Watch Pro Activated · EdgeIQ Labs</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #ff9f43;
+      --border: #233142;
+      --ok: #70f0a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,159,67,0.15), 0 0 60px rgba(255,159,67,0.05); }
+      50%       { box-shadow: 0 0 30px rgba(255,159,67,0.25), 0 0 80px rgba(255,159,67,0.10); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(1);    opacity: 0.6; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 52px 44px;
+      text-align: center; max-width: 540px; width: 100%;
+      animation: glow 3s ease-in-out infinite; position: relative;
+    }
+
+    .emoji-wrap { position: relative; display: inline-block; margin-bottom: 24px; }
+    .emoji-ring {
+      position: absolute; inset: -10px;
+      border: 2px solid var(--accent); border-radius: 50%;
+      animation: pulse-ring 2s ease-out infinite;
+    }
+    .emoji {
+      font-size: 4.5rem; position: relative; z-index: 1;
+      display: block; animation: float 3s ease-in-out infinite;
+    }
+
+    h1 { font-size: 1.65rem; margin-bottom: 10px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px; }
+
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,159,67,0.1); border: 1px solid rgba(255,159,67,0.3);
+      color: var(--accent); font-size: 0.75rem; font-weight: 700;
+      padding: 4px 12px; border-radius: 20px; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 20px;
+    }
+
+    .steps {
+      text-align: left; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 22px 24px; margin: 0 0 28px;
+    }
+    .step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      background: rgba(255,159,67,0.12); color: var(--accent);
+      font-size: 0.72rem; font-weight: 700; width: 24px; height: 24px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px; border: 1px solid rgba(255,159,67,0.25);
+    }
+    .step-text { font-size: 0.88rem; color: var(--muted); line-height: 1.55; }
+    .step-text strong { color: var(--text); }
+
+    .included {
+      text-align: left;
+      background: rgba(255,159,67,0.04); border: 1px solid rgba(255,159,67,0.18);
+      border-radius: 12px; padding: 20px 24px; margin-bottom: 28px;
+    }
+    .included h2 {
+      font-size: 0.85rem; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px;
+    }
+    .included ul {
+      list-style: none; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 10px 20px;
+    }
+    .included li {
+      font-size: 0.87rem; color: var(--muted);
+      padding-left: 20px; position: relative;
+    }
+    .included li::before {
+      content: '✓'; position: absolute; left: 0;
+      color: var(--ok); font-weight: 700; font-size: 0.75rem; top: 2px;
+    }
+
+    .vendor-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px; margin-bottom: 28px;
+    }
+    .vendor-chip {
+      background: rgba(255,159,67,0.06); border: 1px solid rgba(255,159,67,0.2);
+      border-radius: 8px; padding: 8px 10px; text-align: center;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .vendor-chip span { display: block; font-size: 1.1rem; margin-bottom: 3px; }
+
+    .btn {
+      display: inline-block; background: var(--accent);
+      color: #1a0a00; font-weight: 700; font-size: 0.92rem;
+      padding: 12px 28px; border-radius: 9px; text-decoration: none;
+      margin-top: 4px; transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+
+    .footer { font-size: 0.75rem; color: #4a6080; margin-top: 24px; }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px; }
+      .included ul { grid-template-columns: 1fr; }
+      h1 { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="emoji-wrap">
+      <div class="emoji-ring"></div>
+      <div class="emoji">📡</div>
+    </div>
+
+    <div class="plan-badge">📡 Vendor Watch Pro Active</div>
+
+    <h1>You're covered — all 14 vendors now watched</h1>
+    <p class="sub">Vendor Watch Pro is live. You'll get outage alerts and all-clear notifications the moment anything in your stack changes status.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Open Vendor Watch</strong> — head to the live status dashboard and select the vendors your business depends on.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Enter your email</strong> — subscribe with your email to activate outage alerts. Pro unlocks all 14 vendors.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Get outage alerts</strong> — when a vendor goes degraded or down, you'll get an email within 15 minutes of detection.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Get all-clear alerts</strong> — Pro exclusive: you'll also be notified the moment a vendor recovers so you know it's safe to resume operations.</div>
+      </div>
+    </div>
+
+    <div class="included">
+      <h2>What's included with Vendor Watch Pro:</h2>
+      <ul>
+        <li>All 14 vendors monitored</li>
+        <li>Outage alerts (all plans)</li>
+        <li>All-clear recovery alerts</li>
+        <li>Checks every 15 minutes</li>
+        <li>Degraded + outage detection</li>
+        <li>Category filter (payments, hosting…)</li>
+        <li>Live status dashboard</li>
+        <li>Cancel any time</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <p style="font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Vendors you're now watching:</p>
+      <div class="vendor-grid">
+        <div class="vendor-chip"><span>💳</span>Stripe</div>
+        <div class="vendor-chip"><span>🐙</span>GitHub</div>
+        <div class="vendor-chip"><span>☁️</span>Cloudflare</div>
+        <div class="vendor-chip"><span>▲</span>Vercel</div>
+        <div class="vendor-chip"><span>💬</span>Slack</div>
+        <div class="vendor-chip"><span>📦</span>AWS</div>
+        <div class="vendor-chip"><span>🔵</span>Twilio</div>
+        <div class="vendor-chip"><span>📧</span>SendGrid</div>
+        <div class="vendor-chip"><span>🔐</span>Auth0</div>
+        <div class="vendor-chip"><span>📊</span>Datadog</div>
+        <div class="vendor-chip"><span>🛒</span>Shopify</div>
+        <div class="vendor-chip"><span>🌊</span>DigitalOcean</div>
+        <div class="vendor-chip"><span>🗄️</span>PlanetScale</div>
+        <div class="vendor-chip"><span>🔴</span>Redis</div>
+      </div>
+    </div>
+
+    <a class="btn" href="/vendor-watch/">Open Vendor Watch →</a>
+
+    <div class="footer">
+      Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> ·
+      <a href="/vendor-watch/">edgeiqlabs.com/vendor-watch</a>
+    </div>
+  </div>
+</body>
+</html>
