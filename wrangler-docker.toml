@@ -1,0 +1,3 @@
+name = "edgeiq-docker-scanner"
+main = "functions/api/docker-scanner-worker.js"
+compatibility_date = "2026-04-23"
