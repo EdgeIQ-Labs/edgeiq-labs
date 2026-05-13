@@ -539,28 +539,36 @@
     var f = [];
     switch (scanner) {
       case 'ssl':
-        if (!data.valid) {
-          f.push({ severity:'critical', type:'SSL_INVALID', message: data.error || 'SSL certificate invalid or expired' });
-        } else if (data.daysLeft !== undefined) {
-          if (data.daysLeft < 7)  f.push({ severity:'critical', type:'SSL_EXPIRY_IMMINENT', message:'Certificate expires in ' + data.daysLeft + ' days — renew immediately' });
-          else if (data.daysLeft < 14) f.push({ severity:'high',    type:'SSL_EXPIRY_CRITICAL', message:'Certificate expires in ' + data.daysLeft + ' days' });
-          else if (data.daysLeft < 30) f.push({ severity:'medium',  type:'SSL_EXPIRY_WARN',    message:'Certificate expires in ' + data.daysLeft + ' days' });
-          else f.push({ severity:'info', type:'SSL_VALID', message:'Valid · ' + data.daysLeft + ' days remaining · ' + (data.issuer || '') });
+        // Worker returns: { grade, issues:[{severity,message}], certificate, score }
+        var sslIssues = data.issues || [];
+        if (sslIssues.length > 0) {
+          sslIssues.forEach(function(issue) {
+            var sev = issue.severity === 'critical' ? 'critical' : issue.severity === 'high' ? 'high' : issue.severity === 'medium' ? 'medium' : issue.severity === 'low' ? 'low' : 'info';
+            var typeKey = 'SSL_' + issue.message.replace(/[^a-zA-Z0-9]/g,'_').toUpperCase().slice(0, 40);
+            f.push({ severity: sev, type: typeKey, message: issue.message });
+          });
         } else {
-          f.push({ severity:'info', type:'SSL_VALID', message:'Certificate valid' });
+          var certInfo = (data.certificate || {});
+          var issuerLabel = certInfo.issuer && certInfo.issuer !== 'Check manually' ? ' · ' + certInfo.issuer : '';
+          f.push({ severity:'info', type:'SSL_VALID', message:'SSL configuration clean (Grade ' + (data.grade||'A') + ')' + issuerLabel });
         }
-        if (data.grade && data.grade !== 'A') f.push({ severity:'low', type:'SSL_GRADE_' + data.grade, message:'SSL configuration grade: ' + data.grade });
         break;
 
       case 'headers':
-        var missingHeaders = data.missing || [];
-        var importantHeaders = ['Content-Security-Policy','Strict-Transport-Security','X-Frame-Options','X-Content-Type-Options'];
-        missingHeaders.forEach(function(h) {
-          var sev = importantHeaders.indexOf(h) >= 0 ? 'medium' : 'low';
-          f.push({ severity: sev, type: 'HEADER_' + h.replace(/-/g,'_').toUpperCase(), message: 'Missing: ' + h });
-        });
-        if (missingHeaders.length === 0) {
-          f.push({ severity:'info', type:'HEADERS_ALL_PRESENT', message:'All critical security headers present (Grade ' + (data.grade||'A') + ')' });
+        // Worker returns: { grade, issues:['header-name is missing (CRITICAL)', ...], foundCount, totalCount }
+        var headerIssues = data.issues || [];
+        if (headerIssues.length > 0) {
+          var criticalHeaders = ['strict-transport-security','content-security-policy','x-frame-options','x-content-type-options'];
+          headerIssues.forEach(function(issue) {
+            var nameMatch = issue.match(/^([a-z][\w-]+)\s+is missing/i);
+            var headerName = nameMatch ? nameMatch[1].toLowerCase() : '';
+            var isCritical = issue.toUpperCase().indexOf('CRITICAL') >= 0 || criticalHeaders.indexOf(headerName) >= 0;
+            var sev = isCritical ? 'medium' : 'low';
+            var typeKey = 'HEADER_' + (headerName || 'MISSING').replace(/-/g,'_').toUpperCase();
+            f.push({ severity: sev, type: typeKey, message: 'Missing: ' + (headerName || issue.split(' ')[0]) });
+          });
+        } else {
+          f.push({ severity:'info', type:'HEADERS_ALL_PRESENT', message:'All security headers present (Grade ' + (data.grade||'A') + ')' });
         }
         break;
 
@@ -580,11 +588,19 @@
         break;
 
       case 'dns':
-        if (data.hasSPF === false) f.push({ severity:'medium', type:'DNS_NO_SPF', message:'No SPF record found — domain vulnerable to email spoofing' });
-        if (data.hasDMARC === false) f.push({ severity:'medium', type:'DNS_NO_DMARC', message:'No DMARC record found' });
-        if (!data.hasSPF && !data.hasDMARC && !data.error) {
-          f.push({ severity:'info', type:'DNS_CHECKED', message: data.summary || 'DNS records verified' });
-        }
+        // Worker returns: { domain, totalRecords, results:[{type, records[]}] }
+        var dnsResults = data.results || [];
+        var allTxt = [];
+        dnsResults.forEach(function(r) { if (r.type === 'TXT') allTxt = allTxt.concat(r.records || []); });
+        var txtJoined = allTxt.join(' ');
+        var hasSPF  = /v=spf1/i.test(txtJoined);
+        var hasDMARC = dnsResults.some(function(r) {
+          return r.type === 'TXT' && (r.records || []).some(function(rec) { return /v=DMARC1/i.test(rec); });
+        });
+        if (!hasSPF)  f.push({ severity:'medium', type:'DNS_NO_SPF',   message:'No SPF record — domain is vulnerable to email spoofing' });
+        if (!hasDMARC) f.push({ severity:'medium', type:'DNS_NO_DMARC', message:'No DMARC record — unauthenticated email can pass' });
+        if (hasSPF && hasDMARC) f.push({ severity:'info', type:'DNS_EMAIL_AUTH_OK', message:'SPF and DMARC both present — email authentication configured' });
+        f.push({ severity:'info', type:'DNS_RECORDS', message:(data.totalRecords || dnsResults.length) + ' DNS records enumerated' });
         break;
 
       case 'cve':
@@ -594,7 +610,7 @@
         } else {
           (data.results || []).slice(0, 10).forEach(function(r) {
             var sev = (r.severity || 'MEDIUM').toLowerCase();
-            if (!['critical','high','medium','low'].includes(sev)) sev = 'medium';
+            if (['critical','high','medium','low'].indexOf(sev) < 0) sev = 'medium';
             f.push({ severity: sev, type: 'CVE_' + (r.id || 'UNKNOWN'), message: (r.id || '') + ': ' + (r.description || r.summary || '').slice(0, 120) });
           });
         }
