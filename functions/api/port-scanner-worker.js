@@ -37,6 +37,44 @@ const PORTS = [
   { port: 27017, label: 'MongoDB',    severity: 'high',     message: 'Historically deployed without authentication. Block at firewall immediately.' },
 ];
 
+// Cloudflare published IPv4 ranges (https://www.cloudflare.com/ips-v4)
+function isCloudflareIP(ip) {
+  const p = ip.split('.').map(Number);
+  if (p.length !== 4 || p.some(isNaN)) return false;
+  const [a, b, c] = p;
+  if (a === 173 && b === 245 && c >= 48  && c <= 63)  return true; // 173.245.48.0/20
+  if (a === 103 && b === 21  && c >= 244 && c <= 247) return true; // 103.21.244.0/22
+  if (a === 103 && b === 22  && c >= 200 && c <= 203) return true; // 103.22.200.0/22
+  if (a === 103 && b === 31  && c >= 4   && c <= 7)   return true; // 103.31.4.0/22
+  if (a === 141 && b === 101 && c >= 64  && c <= 127) return true; // 141.101.64.0/18
+  if (a === 108 && b === 162 && c >= 192)              return true; // 108.162.192.0/18
+  if (a === 190 && b === 93  && c >= 240)              return true; // 190.93.240.0/20
+  if (a === 188 && b === 114 && c >= 96  && c <= 111) return true; // 188.114.96.0/20
+  if (a === 162 && b >= 158  && b <= 159)              return true; // 162.158.0.0/15
+  if (a === 104 && b >= 16   && b <= 23)               return true; // 104.16.0.0/13
+  if (a === 172 && b >= 64   && b <= 71)               return true; // 172.64.0.0/13
+  if (a === 131 && b === 0   && c >= 72  && c <= 75)  return true; // 131.0.72.0/22
+  if (a === 198 && b === 41  && c >= 128)              return true; // 198.41.128.0/17
+  if (a === 197 && b === 234 && c >= 240 && c <= 243) return true; // 197.234.240.0/22
+  return false;
+}
+
+async function resolveCDN(target) {
+  try {
+    const resp = await fetch(
+      `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(target)}&type=A`,
+      { headers: { 'Accept': 'application/dns-json' }, cf: { timeout: 3000 } }
+    );
+    if (!resp.ok) return { isCDN: false, cdnName: null };
+    const data = await resp.json();
+    const ips = (data.Answer || []).filter(r => r.type === 1).map(r => r.data);
+    if (ips.some(isCloudflareIP)) return { isCDN: true, cdnName: 'Cloudflare' };
+    return { isCDN: false, cdnName: null };
+  } catch {
+    return { isCDN: false, cdnName: null };
+  }
+}
+
 function jsonResp(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -86,17 +124,28 @@ export default {
     const findings = [];
     function add(severity, type, message) { findings.push({ severity, type, message }); }
 
-    // Probe all 20 ports in parallel
-    const results = await Promise.allSettled(
-      PORTS.map(p => probePort(target, p.port).then(open => ({ ...p, open })))
-    );
+    // CDN detection (DNS-based) + all port probes in parallel
+    const [{ isCDN, cdnName }, ...portResults] = await Promise.all([
+      resolveCDN(target),
+      ...PORTS.map(p => probePort(target, p.port).then(open => ({ ...p, open }))),
+    ]);
+
+    // Ports that are known Cloudflare-edge artifacts (not the origin server)
+    const CDN_ARTIFACT_PORTS = isCDN ? new Set([80, 443, 8080, 8443]) : new Set();
+
+    if (isCDN) {
+      add('info', 'CDN_PROXY_DETECTED',
+        `Target is proxied through ${cdnName}. Port probes hit the CDN edge, not the origin server — results for ports 80, 443, 8080, and 8443 reflect ${cdnName} infrastructure and are excluded. Dangerous service ports (databases, RDP, SMB) probe the origin directly and remain accurate.`);
+    }
 
     const openPorts = [];
     const closedLabels = [];
 
-    results.forEach(r => {
-      if (r.status !== 'fulfilled') return;
-      const { port, label, severity, message, open } = r.value;
+    portResults.forEach(r => {
+      if (!r) return;
+      const { port, label, severity, message, open } = r;
+      // Skip CDN edge artifact ports
+      if (isCDN && CDN_ARTIFACT_PORTS.has(port)) return;
       if (open) {
         openPorts.push({ port, label, severity });
         add(severity, `PORT_${port}_${label.toUpperCase().replace(/[^A-Z0-9]/g, '_')}`,
