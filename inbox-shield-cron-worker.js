@@ -199,6 +199,45 @@ async function sendShieldDigest(env, subscriber, result, changes) {
   return true;
 }
 
+async function deliverWebhooks(env, email, domain, payload) {
+  const key = `webhooks:${email}:${domain}`;
+  const raw = await env.PULSE_KV.get(key).catch(() => null);
+  if (!raw) return;
+  let record;
+  try { record = JSON.parse(raw); } catch { return; }
+  if (!record.webhooks?.length) return;
+
+  const isSlackOrTeams = url => url.includes('hooks.slack.com') || url.includes('webhook.office.com');
+  const isDiscord = url => url.includes('discord.com');
+
+  const status = payload.changes_count > 0 ? '⚠️' : '✅';
+  const slackBody = {
+    text: `${status} EdgeIQ Inbox Shield digest for ${domain}`,
+    blocks: [
+      { type: 'section', text: { type: 'mrkdwn', text: `*[EdgeIQ Inbox Shield]* ${status} *${domain}*\n${payload.message}` } },
+    ],
+  };
+
+  for (const wh of record.webhooks) {
+    let body;
+    if (isSlackOrTeams(wh.url)) {
+      body = slackBody;
+    } else if (isDiscord(wh.url)) {
+      body = { content: `**[EdgeIQ Inbox Shield]** ${status} **${domain}**: ${payload.message}` };
+    } else {
+      body = payload;
+    }
+    try {
+      await fetch(wh.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(8000),
+      });
+    } catch {}
+  }
+}
+
 export default {
   async scheduled(event, env, ctx) {
     if (!env.PULSE_KV || !env.RESEND_API_KEY) {
@@ -234,6 +273,17 @@ export default {
       } catch (err) {
         console.error(`Email error for ${subscriber.email}:`, err.message);
       }
+
+      await deliverWebhooks(env, subscriber.email, subscriber.domain, {
+        type: 'inbox_shield_digest', source: 'edgeiq', domain: subscriber.domain,
+        severity: changes.length > 0 ? 'warning' : 'info',
+        message: changes.length > 0
+          ? `${changes.length} email security change${changes.length > 1 ? 's' : ''} detected on ${subscriber.domain}.`
+          : `Weekly Inbox Shield scan complete for ${subscriber.domain} — no changes detected.`,
+        timestamp: new Date().toISOString(),
+        changes_count: changes.length,
+        details: { grade: result.grade, checks: result.checks, changes, plan: subscriber.plan },
+      });
 
       const updated = { ...subscriber, last_scan: new Date().toISOString(), last_findings: result };
       try {

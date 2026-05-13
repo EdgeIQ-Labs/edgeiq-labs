@@ -182,6 +182,45 @@ function buildEmailHtml(domain, findings, changes, plan, siteUrl) {
 </html>`;
 }
 
+async function deliverWebhooks(env, email, domain, payload) {
+  const key = `webhooks:${email}:${domain}`;
+  const raw = await env.PULSE_KV.get(key).catch(() => null);
+  if (!raw) return;
+  let record;
+  try { record = JSON.parse(raw); } catch { return; }
+  if (!record.webhooks?.length) return;
+
+  const isSlackOrTeams = url => url.includes('hooks.slack.com') || url.includes('webhook.office.com');
+  const isDiscord = url => url.includes('discord.com');
+
+  const status = payload.changes_count > 0 ? '⚠️' : '✅';
+  const slackBody = {
+    text: `${status} EdgeIQ Pulse digest for ${domain}`,
+    blocks: [
+      { type: 'section', text: { type: 'mrkdwn', text: `*[EdgeIQ Pulse]* ${status} *${domain}*\n${payload.message}` } },
+    ],
+  };
+
+  for (const wh of record.webhooks) {
+    let body;
+    if (isSlackOrTeams(wh.url)) {
+      body = slackBody;
+    } else if (isDiscord(wh.url)) {
+      body = { content: `**[EdgeIQ Pulse]** ${status} **${domain}**: ${payload.message}` };
+    } else {
+      body = payload;
+    }
+    try {
+      await fetch(wh.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(8000),
+      });
+    } catch {}
+  }
+}
+
 async function sendDigest(env, subscriber, findings, changes) {
   const { email, domain, plan } = subscriber;
   const siteUrl = env.SITE_URL || 'https://edgeiqlabs.com';
@@ -272,6 +311,20 @@ export default {
       } catch (err) {
         console.error(`Email error for ${email}:`, err.message);
       }
+
+      // Deliver webhook notification
+      const badCount = Object.values(findings).filter(f => f.status === 'bad' || f.status === 'warning').length;
+      await deliverWebhooks(env, email, domain, {
+        type: 'pulse_digest', source: 'edgeiq', domain,
+        severity: changes.length > 0 ? 'warning' : 'info',
+        message: changes.length > 0
+          ? `${changes.length} change${changes.length > 1 ? 's' : ''} detected on ${domain} — ${badCount} check${badCount !== 1 ? 's' : ''} need attention.`
+          : `Weekly scan complete for ${domain} — all ${Object.keys(findings).length} checks passed.`,
+        timestamp: new Date().toISOString(),
+        changes_count: changes.length,
+        findings_summary: Object.fromEntries(Object.entries(findings).map(([k, v]) => [k, v.status])),
+        details: { plan, checks_run: Object.keys(findings).length, changes },
+      });
 
       // Update KV with new scan state
       const updated = {
