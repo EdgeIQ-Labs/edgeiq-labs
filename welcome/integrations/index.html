@@ -127,19 +127,19 @@
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text"><strong>Grab a webhook URL</strong> — From Slack (App Settings → Incoming Webhooks), Discord (Server Settings → Integrations), Teams, or any custom endpoint</div>
+        <div class="step-text"><strong>Open the Integrations Manager</strong> — Click the button below. Enter your email and domain, then click "Load existing config."</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-text"><strong>Register it</strong> — POST your email, domain, and webhook URL to <code>/api/integrations/register</code> with <code>plan: "pro"</code></div>
+        <div class="step-text"><strong>Add your webhook URL</strong> — Paste your Slack, Discord, Teams, or custom URL. Choose the type from the dropdown.</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-text"><strong>Fire a test</strong> — POST to <code>/api/integrations/test</code> with your email and domain — a test alert will hit your channel within seconds</div>
+        <div class="step-text"><strong>Save and test</strong> — Hit "Save all changes," then click "Test" next to your webhook to confirm a live alert fires.</div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
-        <div class="step-text"><strong>You're done</strong> — EdgeIQ runs 24/7 and will push alerts automatically when SSL, vendors, or domain changes are detected</div>
+        <div class="step-text"><strong>You're live</strong> — EdgeIQ runs 24/7 and pushes alerts automatically when SSL, vendors, or domain issues are detected.</div>
       </div>
     </div>
 
@@ -157,7 +157,7 @@
       </ul>
     </div>
 
-    <a class="btn" href="/dashboard/">Open Dashboard →</a>
+    <a class="btn" href="/integrations/manage/">Open Integrations Manager →</a>
 
     <div class="footer">
       Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> ·
