@@ -1198,8 +1198,8 @@
               <li>Agency $149/mo — Multi-client</li>
             </ul>
             <div class="plan-actions">
-              <a class="btn btn-secondary" href="https://phishsim.edgeiqlabs.com" target="_blank" rel="noopener" style="font-size:0.8rem;">Open App →</a>
-              <a class="btn btn-primary" href="https://buy.stripe.com/3cI28tdyjgRLbQoaIM7wA1C" target="_blank" rel="noopener" style="font-size:0.8rem;background:var(--ok);color:#071018;font-weight:800;">Get Started</a>
+              <a class="btn btn-secondary" href="/phishsim/" style="font-size:0.8rem;">Open Dashboard →</a>
+              <button class="btn btn-primary" onclick="phishsimCheckout(this)" style="font-size:0.8rem;background:var(--ok);color:#071018;font-weight:800;">Get Started</button>
             </div>
           </article>
         </div>
@@ -2415,6 +2415,25 @@
     GATED_IDS.forEach(watch);
   }
 })();
+</script>
+<script>
+async function phishsimCheckout(btn) {
+  btn.disabled = true;
+  btn.textContent = 'Redirecting…';
+  try {
+    const resp = await fetch('/api/phishsim/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const data = await resp.json();
+    if (data.checkoutUrl) {
+      location.href = data.checkoutUrl;
+    } else {
+      alert('Could not start checkout. Please try again or contact support@edgeiqlabs.com');
+      btn.disabled = false; btn.textContent = 'Get Started';
+    }
+  } catch {
+    alert('Network error. Please try again.');
+    btn.disabled = false; btn.textContent = 'Get Started';
+  }
+}
 </script>
 <!-- Cloudflare Pages Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b99e6cb0ac5c45cd9d163a490a7a4419"}'></script><!-- Cloudflare Pages Analytics --></body>
 </html>

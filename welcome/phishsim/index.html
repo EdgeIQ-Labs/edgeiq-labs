@@ -6,130 +6,88 @@
   <title>PhishSim Activated · EdgeIQ Labs</title>
   <style>
     :root {
-      --bg: #0b0f14;
-      --card: #121923;
-      --text: #e8eef7;
-      --muted: #9fb0c7;
-      --accent: #3dd9ff;
-      --border: #233142;
-      --ok: #70f0a8;
+      --bg: #0b0f14; --card: #121923; --text: #e8eef7;
+      --muted: #9fb0c7; --accent: #3dd9ff; --border: #233142; --ok: #70f0a8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: Inter, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; padding: 20px;
     }
     @keyframes glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(61, 217, 255, 0.15), 0 0 60px rgba(61, 217, 255, 0.05); }
-      50%       { box-shadow: 0 0 30px rgba(61, 217, 255, 0.25), 0 0 80px rgba(61, 217, 255, 0.10); }
+      0%,100% { box-shadow: 0 0 20px rgba(61,217,255,.15),0 0 60px rgba(61,217,255,.05); }
+      50%      { box-shadow: 0 0 30px rgba(61,217,255,.25),0 0 80px rgba(61,217,255,.10); }
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-8px); }
-    }
+    @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 52px 44px;
-      text-align: center;
-      max-width: 520px;
-      width: 100%;
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 52px 44px; text-align: center; max-width: 540px; width: 100%;
       animation: glow 3s ease-in-out infinite;
     }
-    .emoji-wrap {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 24px;
+    .emoji { font-size: 4rem; display: inline-block; animation: float 3s ease-in-out infinite; margin-bottom: 24px; }
+    h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 12px; }
+    p.sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px; }
+
+    /* Customer ID box */
+    .cid-box {
+      background: var(--bg); border: 1px solid var(--accent);
+      border-radius: 12px; padding: 18px 20px; margin-bottom: 28px;
     }
-    .emoji {
-      font-size: 4rem;
-      display: inline-block;
-      animation: float 3s ease-in-out infinite;
+    .cid-label { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .cid-row { display: flex; align-items: center; gap: 10px; }
+    .cid-value {
+      flex: 1; background: #0b0f14; border: 1px solid var(--border);
+      border-radius: 7px; padding: 9px 12px; font-family: monospace;
+      font-size: 0.82rem; color: var(--text); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; text-align: left;
     }
-    h1 {
-      font-size: 1.7rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: var(--text);
+    .copy-btn {
+      background: rgba(61,217,255,.12); border: 1px solid var(--accent);
+      color: var(--accent); font-size: 0.75rem; font-weight: 700;
+      padding: 8px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap;
+      transition: background .15s;
     }
-    p.sub {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
+    .copy-btn:hover { background: rgba(61,217,255,.22); }
+    .cid-note { font-size: 0.75rem; color: var(--muted); margin-top: 10px; text-align: left; }
+
+    /* Steps */
     .steps {
-      text-align: left;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 28px;
+      text-align: left; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; margin-bottom: 28px;
     }
-    .step {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      margin-bottom: 18px;
-    }
+    .step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
     .step:last-child { margin-bottom: 0; }
     .step-num {
-      background: rgba(61, 217, 255, 0.15);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 700;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      background: rgba(61,217,255,.15); color: var(--accent); font-size: .75rem;
+      font-weight: 700; width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .step-text { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .step-text { font-size: .88rem; color: var(--muted); line-height: 1.5; }
     .step-text strong { color: var(--text); }
-    .features {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 28px;
-      text-align: left;
-    }
+
+    /* Features */
+    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; text-align: left; }
     .feat {
-      background: rgba(112, 240, 168, 0.07);
-      border: 1px solid rgba(112, 240, 168, 0.2);
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      color: var(--ok);
-      text-align: left;
+      background: rgba(112,240,168,.07); border: 1px solid rgba(112,240,168,.2);
+      border-radius: 8px; padding: 12px 14px; font-size: .82rem; color: var(--ok);
     }
-    .feat span { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .feat span { display: block; font-size: .7rem; color: var(--muted); margin-top: 2px; }
+
     .cta {
-      display: inline-block;
-      background: var(--accent);
-      color: #071018;
-      font-weight: 700;
-      font-size: 0.9rem;
-      padding: 11px 24px;
-      border-radius: 8px;
-      text-decoration: none;
-      margin-bottom: 16px;
+      display: inline-block; background: var(--accent); color: #071018;
+      font-weight: 700; font-size: .9rem; padding: 12px 28px; border-radius: 8px;
+      text-decoration: none; margin-bottom: 16px; transition: opacity .15s;
     }
-    .cta:hover { opacity: 0.85; }
-    .footer {
-      font-size: 0.75rem;
-      color: #4a6080;
-      margin-top: 24px;
-    }
+    .cta:hover { opacity: .85; }
+    .footer { font-size: .75rem; color: #4a6080; margin-top: 24px; }
     .footer a { color: var(--accent); text-decoration: none; }
+
+    /* Loading / error states */
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .err-box { background: rgba(255,80,80,.08); border: 1px solid rgba(255,80,80,.3); border-radius: 12px; padding: 20px; color: #ff8080; font-size: .88rem; line-height: 1.6; }
     @media (max-width: 480px) {
       .card { padding: 36px 24px; }
       .features { grid-template-columns: 1fr; }
@@ -137,44 +95,125 @@
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="emoji-wrap">
-      <div class="emoji">🎣</div>
+<div class="card" id="card">
+  <!-- Loading state -->
+  <div id="stateLoading">
+    <div class="spinner"></div>
+    <p style="color:var(--muted);font-size:.9rem;">Activating your PhishSim instance…</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="stateError" style="display:none;">
+    <div class="emoji">⚠️</div>
+    <h1>Activation issue</h1>
+    <div class="err-box" id="errMsg">Something went wrong.</div>
+    <p style="color:var(--muted);font-size:.83rem;margin-top:18px;">
+      Email <a href="mailto:support@edgeiqlabs.com" style="color:var(--accent)">support@edgeiqlabs.com</a> — we'll sort it out in minutes.
+    </p>
+  </div>
+
+  <!-- Success state -->
+  <div id="stateSuccess" style="display:none;">
+    <div class="emoji">🎣</div>
+    <h1>PhishSim is live — your first campaign awaits</h1>
+    <p class="sub">Your phishing simulation platform is ready. Save your Customer ID below — you'll need it to log in.</p>
+
+    <div class="cid-box">
+      <div class="cid-label">Your Customer ID</div>
+      <div class="cid-row">
+        <div class="cid-value" id="cidDisplay">—</div>
+        <button class="copy-btn" onclick="copyId()">Copy</button>
+      </div>
+      <p class="cid-note">Save this somewhere safe. You'll enter it to access your dashboard.</p>
     </div>
-    <h1>PhishSim activated — your first campaign awaits</h1>
-    <p class="sub">Your phishing simulation platform is live. Train your team before the bad guys do.</p>
 
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text"><strong>Access the platform</strong> — check your inbox for login credentials</div>
+        <div class="step-text"><strong>Open your dashboard</strong> — click the button below; your ID is pre-filled</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-text"><strong>Create your first template</strong> — choose from 20+ pre-built templates or build your own</div>
+        <div class="step-text"><strong>Create your first template</strong> — choose from pre-built phishing templates or craft your own</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-text"><strong>Import your target list</strong> — upload CSV or add emails manually</div>
+        <div class="step-text"><strong>Import your target list</strong> — upload a CSV or add emails manually</div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
-        <div class="step-text"><strong>Launch & track</strong> — monitor clicks, reports, and response rates in real time</div>
+        <div class="step-text"><strong>Launch & track</strong> — monitor clicks, submissions, and response rates in real time</div>
       </div>
     </div>
 
     <div class="features">
-      <div class="feat">📧 Email Simulation<span>Realistic templates that bypass filters</span></div>
+      <div class="feat">📧 Email Simulation<span>Realistic templates, real domains</span></div>
       <div class="feat">📊 Click Tracking<span>Know exactly who took the bait</span></div>
-      <div class="feat">🔔 Instant Alerts<span>Notify SOC when someone clicks</span></div>
-      <div class="feat">📋 PDF Reports<span>Compliance-ready training reports</span></div>
+      <div class="feat">🔔 Campaign Analytics<span>Open, click, and submit rates</span></div>
+      <div class="feat">📋 GoPhish Powered<span>Enterprise-grade simulation engine</span></div>
     </div>
 
-    <a href="https://phishsim.edgeiqlabs.com" class="cta">Open PhishSim Dashboard</a>
+    <a href="#" id="dashBtn" class="cta">Open PhishSim Dashboard</a>
 
     <div class="footer">
-      Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> · <a href="https://phishsim.edgeiqlabs.com">phishsim.edgeiqlabs.com</a>
+      Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
     </div>
   </div>
+</div>
+
+<script>
+(async () => {
+  const params    = new URLSearchParams(location.search);
+  const sessionId = params.get('session_id');
+
+  function showError(msg) {
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('stateError').style.display   = '';
+    document.getElementById('errMsg').textContent = msg;
+  }
+
+  function showSuccess(customerId) {
+    document.getElementById('stateLoading').style.display  = 'none';
+    document.getElementById('stateSuccess').style.display  = '';
+    document.getElementById('cidDisplay').textContent = customerId;
+    document.getElementById('dashBtn').href = '/phishsim/?cid=' + encodeURIComponent(customerId);
+    localStorage.setItem('phishsim_cid', customerId);
+  }
+
+  if (!sessionId) {
+    // Direct visit without session_id — check localStorage
+    const saved = localStorage.getItem('phishsim_cid');
+    if (saved) {
+      showSuccess(saved);
+    } else {
+      showError('No session found. If you just paid, try refreshing. Otherwise contact support@edgeiqlabs.com.');
+    }
+    return;
+  }
+
+  try {
+    const resp = await fetch('/api/phishsim/session?id=' + encodeURIComponent(sessionId));
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      showError(data.error || 'Could not activate your instance. Please contact support.');
+      return;
+    }
+
+    showSuccess(data.customerId);
+  } catch (e) {
+    showError('Network error during activation. Please refresh or contact support@edgeiqlabs.com.');
+  }
+})();
+
+function copyId() {
+  const val = document.getElementById('cidDisplay').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
 </body>
 </html>
