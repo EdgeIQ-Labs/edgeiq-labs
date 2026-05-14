@@ -969,64 +969,32 @@ python3 edgeiq-price-intelligence.py --target "https://competitor.com/pricing"</
 
     <div class="tool-card" id="phishsim">
       <h3>🎓 PhishSim Training — phishing awareness training for your team</h3>
-      <p>PhishSim sends realistic phishing test emails to your employees and tracks who clicks, reports, or falls for them — so you know exactly who needs more training.</p>
-      <pre><code># Download the PhishSim dashboard installer
-curl -sL https://edgeiqlabs.com/dl/edgeiq-phishsim-setup.py -o edgeiq-phishsim-setup.py
-python3 edgeiq-phishsim-setup.py --install</code></pre>
-      <h4>What You Need</h4>
-      <ul>
-        <li><strong>Python 3</strong> — <a href="https://python.org">Download from python.org</a> if you don't have it</li>
-        <li><strong>Email list of your team</strong> — a CSV with names and email addresses</li>
-        <li><strong>SMTP server or email provider</strong> — to send the phishing test emails (Gmail, Outlook, or any SMTP service)</li>
-        <li><strong>Internet connection</strong></li>
-      </ul>
-      <h4>Step-by-Step Setup (Starter)</h4>
+      <p>PhishSim sends realistic phishing test emails to your employees and tracks who clicks, reports, or falls for them — so you know exactly who needs more training. Fully hosted — no install required.</p>
+      <h4>Getting Started</h4>
       <ol>
-        <li>Download the setup script using the curl command above</li>
-        <li>Prepare your employee list as a CSV file with two columns: <code>name</code> and <code>email</code></li>
-        <li>Run <code>python3 edgeiq-phishsim-setup.py --install</code></li>
-        <li>Enter your company name, the SMTP settings for your email provider, and the path to your CSV</li>
-        <li>Choose which phishing template to use (password expiration, package delivery, IT support request)</li>
-        <li>Set the launch date and time for the campaign</li>
-        <li>PhishSim automatically sends the test emails and starts tracking results</li>
+        <li>Subscribe at <a href="https://edgeiqlabs.com/services.html">edgeiqlabs.com/services.html</a> — $49/mo</li>
+        <li>After payment you'll receive your Customer ID on the welcome page</li>
+        <li>Open your dashboard at <a href="https://edgeiqlabs.com/phishsim/">edgeiqlabs.com/phishsim/</a> and enter your Customer ID</li>
+        <li>Create a target group, add a phishing template, and launch your first campaign</li>
       </ol>
-      <h4>How to Run</h4>
-      <p>Launch a phishing campaign from the dashboard:</p>
-      <pre><code>python3 edgeiq-phishsim-setup.py --launch --campaign "Q2 Security Test"</code></pre>
-      <p>View campaign results:</p>
-      <pre><code>python3 edgeiq-phishsim-setup.py --report --campaign "Q2 Security Test"</code></pre>
-      <p>Add a new phishing template:</p>
-      <pre><code>python3 edgeiq-phishsim-setup.py --add-template</code></pre>
-      <div class="tier-box tier-free">
-        <div class="tier-label">✓ Starter — What's Included</div>
-        <ul class="checklist">
-          <li>1 phishing campaign per month</li>
-          <li>Up to 25 employee emails</li>
-          <li>3 pre-built phishing templates</li>
-          <li>Basic click and report tracking</li>
-        </ul>
-      </div>
+      <h4>How to Run a Campaign</h4>
+      <ol>
+        <li>Go to <strong>Campaigns → New Campaign</strong></li>
+        <li>Select a phishing template (password reset, IT support request, package delivery)</li>
+        <li>Select or create a target group with your employees' names and emails</li>
+        <li>Set the launch date and click <strong>Launch</strong></li>
+        <li>Monitor click rates, credential submissions, and open rates in real time</li>
+      </ol>
       <div class="tier-box tier-pro">
-        <div class="tier-label">★ Pro — Everything in Starter, Plus</div>
+        <div class="tier-label">★ PhishSim — $49/mo — What's Included</div>
         <ul class="checklist pro">
-          <li>Unlimited campaigns</li>
-          <li>Up to 500 employee emails</li>
-          <li>15+ phishing templates</li>
-          <li>Scheduled recurring campaigns</li>
-          <li>Detailed per-employee risk scoring</li>
-          <li>Custom phishing template builder</li>
-          <li>PDF training report per employee and org-wide</li>
-        </ul>
-      </div>
-      <div class="tier-box tier-pro">
-        <div class="tier-label">★ Agency — Everything in Pro, Plus</div>
-        <ul class="checklist pro">
-          <li>Unlimited employees and campaigns</li>
-          <li>Multi-client management dashboard</li>
-          <li>Client-branded reports with your logo</li>
-          <li>API access for integration with your existing tools</li>
-          <li>White-label portal for your clients to view results</li>
-          <li>Dedicated account manager</li>
+          <li>Unlimited phishing campaigns</li>
+          <li>Unlimited target employees</li>
+          <li>Full GoPhish simulation engine</li>
+          <li>Custom phishing templates</li>
+          <li>Click, open, and credential-submission tracking</li>
+          <li>Real-time campaign results dashboard</li>
+          <li>SES-powered email delivery</li>
         </ul>
       </div>
     </div>
