@@ -20,6 +20,7 @@ const DKIM_SELECTORS = [
   'mandrill', 'mailchimp', 'mc', 'sendgrid', 'sg',
   'amazonses', 'ses', 'postmaster', 'pm',
   'mimecast', 'proofpoint', 'mx',
+  'resend', 'r1', 'r2', 'brevo', 'sparkpost', 'mailgun',
 ];
 
 async function dnsQuery(name, type) {
