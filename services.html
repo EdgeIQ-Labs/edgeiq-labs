@@ -1416,7 +1416,12 @@
         <div class="newsletter-card">
           <h2>📬 Security Intelligence, In Your Inbox</h2>
           <p class="newsletter-sub">Get attack technique breakdowns, tool releases, and practical guides. No fluff, unsubscribe anytime.</p>
-          <iframe src="https://edgeiqlabs.substack.com/embed" width="480" height="320" style="border:none; background:transparent;" frameborder="0" scrolling="no"></iframe>
+          <form class="newsletter-form" id="nlf2">
+            <input type="email" placeholder="your@email.com" required>
+            <button type="submit">Subscribe →</button>
+          </form>
+          <p id="nlok2" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+          <script>(function(){var f=document.getElementById('nlf2');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok2').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
           <p class="newsletter-note">Free forever. No spam. Unsubscribe anytime.</p>
         </div>
       </div>
