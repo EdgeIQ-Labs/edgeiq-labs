@@ -9,6 +9,8 @@ User=guy
 WorkingDirectory=/home/guy/phishsim-manager
 Environment="PHISHSIM_SECRET=Z5bNMuzGDrmCQgo2xLVk6q8scFXwAHYIh3PUEyKd"
 Environment="PHISH_HOST=phishsim.edgeiqlabs.com"
+Environment="SES_SMTP_HOST=email-smtp.us-east-2.amazonaws.com"
+# SES_SMTP_USER and SES_SMTP_PASS are set directly on the server — not in git
 ExecStart=/usr/bin/python3 /home/guy/phishsim-manager/server.py
 Restart=always
 RestartSec=5

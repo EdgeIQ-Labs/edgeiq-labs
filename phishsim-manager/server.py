@@ -21,7 +21,11 @@ ADMIN_PORT_BASE = 3400
 PHISH_PORT_BASE = 8100
 MAX_INSTANCES   = 80
 GOPHISH_IMAGE   = "gophish/gophish:latest"
-PHISH_HOST      = os.environ.get("PHISH_HOST", "phishsim.edgeiqlabs.com")  # base domain for Traefik routing
+PHISH_HOST      = os.environ.get("PHISH_HOST", "phishsim.edgeiqlabs.com")
+
+SES_SMTP_HOST = os.environ.get("SES_SMTP_HOST", "email-smtp.us-east-2.amazonaws.com")
+SES_SMTP_USER = os.environ.get("SES_SMTP_USER", "")
+SES_SMTP_PASS = os.environ.get("SES_SMTP_PASS", "")
 
 # ── State helpers ─────────────────────────────────────────────────────────────
 
@@ -84,6 +88,32 @@ def extract_api_key(container_name):
 
 def generate_password():
     return secrets.token_urlsafe(16)
+
+def create_default_smtp_profile(admin_port, api_key):
+    if not SES_SMTP_USER or not SES_SMTP_PASS:
+        return False
+    import urllib.request, json as _json, ssl
+    payload = _json.dumps({
+        "name": "EdgeIQ SES",
+        "host": f"{SES_SMTP_HOST}:587",
+        "from_address": "PhishSim Training <noreply@phishsim.edgeiqlabs.com>",
+        "username": SES_SMTP_USER,
+        "password": SES_SMTP_PASS,
+        "ignore_cert_errors": True,
+    }).encode()
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    req = urllib.request.Request(
+        f"https://localhost:{admin_port}/api/smtp/",
+        data=payload, method="POST",
+        headers={"Content-Type": "application/json", "Authorization": api_key}
+    )
+    try:
+        with urllib.request.urlopen(req, context=ctx, timeout=5) as r:
+            return r.status in (200, 201)
+    except Exception:
+        return False
 
 def change_gophish_password(admin_port, api_key, new_password):
     import urllib.request, json as _json, ssl
@@ -160,6 +190,8 @@ def provision():
         change_gophish_password(admin_port, api_key, new_password)
     except Exception:
         pass  # non-fatal — key still works
+
+    create_default_smtp_profile(admin_port, api_key)
 
     record = {
         "customer_id":  customer_id,
