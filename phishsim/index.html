@@ -6,148 +6,298 @@
   <title>PhishSim Dashboard · EdgeIQ Labs</title>
   <style>
     :root {
-      --bg: #0b0f14; --card: #121923; --text: #e8eef7; --muted: #9fb0c7;
-      --accent: #3dd9ff; --border: #233142; --ok: #70f0a8; --warn: #ffb347;
-      --danger: #ff6b6b; --purple: #c084fc;
+      --bg:#0b0f14; --card:#121923; --card2:#0f1620; --text:#e8eef7; --muted:#9fb0c7;
+      --accent:#3dd9ff; --border:#1e2d3d; --ok:#70f0a8; --warn:#ffb347;
+      --danger:#ff6b6b; --purple:#c084fc; --pink:#ff6b7a;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    header { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
-    header .logo { font-weight: 800; font-size: 1rem; color: var(--accent); }
-    header .tag { font-size: 0.75rem; background: rgba(61,217,255,0.12); color: var(--accent); border-radius: 4px; padding: 2px 8px; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
-    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
-    .stat .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
-    .stat .value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
-    .stat .sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
-    h2 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
-    .btn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #071018; font-weight: 700; font-size: 0.85rem; padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; }
-    .btn:hover { opacity: 0.85; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-danger { background: rgba(255,107,107,0.15); color: var(--danger); border: 1px solid rgba(255,107,107,0.3); }
-    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
-    .section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 22px; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 8px 12px; border-bottom: 1px solid var(--border); }
-    td { padding: 11px 12px; font-size: 0.85rem; border-bottom: 1px solid rgba(35,49,66,0.5); vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; font-weight: 600; }
-    .badge-green { background: rgba(112,240,168,0.12); color: var(--ok); }
-    .badge-yellow { background: rgba(255,179,71,0.12); color: var(--warn); }
-    .badge-red { background: rgba(255,107,107,0.12); color: var(--danger); }
-    .badge-blue { background: rgba(61,217,255,0.12); color: var(--accent); }
-    .badge-grey { background: rgba(159,176,199,0.12); color: var(--muted); }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; width: 100%; max-width: 540px; }
-    .modal h3 { margin-bottom: 18px; }
-    .form-row { margin-bottom: 14px; }
-    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 5px; }
-    input, textarea, select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.88rem; padding: 9px 12px; outline: none; font-family: inherit; }
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    textarea { min-height: 120px; resize: vertical; }
-    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-    .loading { color: var(--muted); font-size: 0.88rem; padding: 24px; text-align: center; }
-    .bar-wrap { background: rgba(35,49,66,0.8); border-radius: 4px; height: 6px; overflow: hidden; min-width: 80px; }
-    .bar { height: 100%; border-radius: 4px; background: var(--danger); transition: width .4s; }
-    .id-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: var(--muted); word-break: break-all; }
-    .tabs { display: flex; gap: 4px; margin-bottom: 18px; background: var(--bg); border-radius: 8px; padding: 4px; border: 1px solid var(--border); }
-    .tab { flex: 1; text-align: center; padding: 7px; font-size: 0.82rem; border-radius: 6px; cursor: pointer; color: var(--muted); border: none; background: transparent; }
-    .tab.active { background: var(--card); color: var(--text); font-weight: 600; }
-    @media (max-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* ── Header ── */
+    header{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:0;height:52px;flex-shrink:0;}
+    .logo{font-weight:800;font-size:.95rem;color:var(--accent);margin-right:20px;white-space:nowrap;}
+    nav{display:flex;gap:2px;flex:1;}
+    .nav-btn{background:transparent;border:none;color:var(--muted);font-size:.82rem;font-weight:500;padding:6px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;}
+    .nav-btn:hover{background:rgba(255,255,255,.05);color:var(--text);}
+    .nav-btn.active{background:rgba(61,217,255,.12);color:var(--accent);font-weight:700;}
+    .header-right{display:flex;align-items:center;gap:12px;margin-left:auto;}
+    #customerLabel{font-size:.75rem;color:var(--muted);}
+    .refresh-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:.78rem;}
+    .refresh-btn:hover{color:var(--text);border-color:var(--accent);}
+
+    /* ── Layout ── */
+    .page{display:none;flex:1;padding:24px 20px;max-width:1200px;margin:0 auto;width:100%;}
+    .page.active{display:block;}
+
+    /* ── Stats ── */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px;}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+    .stat .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+    .stat .value{font-size:1.7rem;font-weight:800;color:var(--accent);}
+    .stat .sub{font-size:.72rem;color:var(--muted);margin-top:3px;}
+
+    /* ── Section cards ── */
+    .section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .section-head h2{font-size:.95rem;font-weight:700;}
+
+    /* ── Tables ── */
+    table{width:100%;border-collapse:collapse;}
+    th{text-align:left;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border-bottom:1px solid var(--border);}
+    td{padding:10px 12px;font-size:.83rem;border-bottom:1px solid rgba(30,45,61,.6);vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(255,255,255,.015);}
+
+    /* ── Badges ── */
+    .badge{display:inline-block;border-radius:4px;padding:2px 7px;font-size:.7rem;font-weight:600;}
+    .ok{background:rgba(112,240,168,.12);color:var(--ok);}
+    .warn{background:rgba(255,179,71,.12);color:var(--warn);}
+    .danger{background:rgba(255,107,107,.12);color:var(--danger);}
+    .blue{background:rgba(61,217,255,.12);color:var(--accent);}
+    .grey{background:rgba(159,176,199,.1);color:var(--muted);}
+    .purple{background:rgba(192,132,252,.12);color:var(--purple);}
+
+    /* ── Buttons ── */
+    .btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#071018;font-weight:700;font-size:.82rem;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:opacity .15s;}
+    .btn:hover{opacity:.85;}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+    .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-danger{background:rgba(255,107,107,.12);color:var(--danger);border:1px solid rgba(255,107,107,.25);}
+    .btn-danger:hover{background:rgba(255,107,107,.22);}
+    .btn-sm{padding:5px 10px;font-size:.75rem;}
+    .btn-green{background:var(--ok);color:#071018;}
+
+    /* ── Progress bar ── */
+    .bar-wrap{background:rgba(30,45,61,.9);border-radius:4px;height:5px;overflow:hidden;min-width:70px;}
+    .bar{height:100%;border-radius:4px;background:var(--danger);transition:width .4s;}
+
+    /* ── Modals ── */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px;}
+    .overlay.open{display:flex;}
+    .modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;}
+    .modal.modal-lg{max-width:860px;}
+    .modal h3{font-size:1rem;font-weight:700;margin-bottom:18px;}
+    .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+
+    /* ── Forms ── */
+    .form-row{margin-bottom:13px;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;}
+    input,textarea,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;padding:9px 11px;outline:none;font-family:inherit;}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+    textarea{min-height:110px;resize:vertical;}
+    .hint{font-size:.72rem;color:var(--muted);margin-top:4px;}
+    .hint code{color:var(--accent);background:rgba(61,217,255,.08);padding:1px 5px;border-radius:3px;}
+
+    /* ── Tabs inside modal ── */
+    .tabs{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;border:1px solid var(--border);margin-bottom:16px;}
+    .tab{flex:1;text-align:center;padding:6px;font-size:.8rem;border-radius:6px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:background .15s,color .15s;}
+    .tab.active{background:var(--card);color:var(--text);font-weight:600;}
+
+    /* ── Empty state ── */
+    .empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:.85rem;}
+
+    /* ── List items (templates / groups / pages) ── */
+    .list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+    .list-item:last-child{border-bottom:none;}
+    .list-item .info{flex:1;min-width:0;}
+    .list-item .name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .list-item .sub{font-size:.73rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .list-item .actions{display:flex;gap:6px;flex-shrink:0;}
+
+    /* ── Results table specifics ── */
+    .status-sent{color:var(--muted);}
+    .status-opened{color:var(--warn);}
+    .status-clicked{color:var(--accent);}
+    .status-submitted{color:var(--danger);}
+
+    /* ── Account page ── */
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .info-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+    .info-box .key{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+    .info-box .val{font-size:.85rem;word-break:break-all;}
+    .info-box .val.mono{font-family:monospace;font-size:.78rem;color:var(--accent);}
+
+    /* ── Toast ── */
+    #toast-container{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.82rem;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideIn .2s ease;}
+    .toast.ok{border-color:rgba(112,240,168,.4);color:var(--ok);}
+    .toast.err{border-color:rgba(255,107,107,.4);color:var(--danger);}
+    .toast.info{border-color:rgba(61,217,255,.3);color:var(--accent);}
+    @keyframes slideIn{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+    /* ── Setup screen ── */
+    #setupSection{max-width:440px;margin:80px auto;}
+
+    /* ── Responsive ── */
+    @media(max-width:640px){
+      .form-grid{grid-template-columns:1fr;}
+      .info-grid{grid-template-columns:1fr;}
+      nav .nav-btn span{display:none;}
+      .grid{grid-template-columns:1fr 1fr;}
+    }
   </style>
 </head>
 <body>
+
 <header>
-  <span class="logo">🎣 EdgeIQ PhishSim</span>
-  <span class="tag">Live Dashboard</span>
-  <span style="flex:1"></span>
-  <span id="customerLabel" style="font-size:0.78rem;color:var(--muted);"></span>
+  <span class="logo">🎣 PhishSim</span>
+  <nav id="mainNav" style="display:none;">
+    <button class="nav-btn active" onclick="showPage('campaigns',this)">📋 Campaigns</button>
+    <button class="nav-btn" onclick="showPage('templates',this)">✉️ Templates</button>
+    <button class="nav-btn" onclick="showPage('pages',this)">🪤 Landing Pages</button>
+    <button class="nav-btn" onclick="showPage('groups',this)">👥 Groups</button>
+    <button class="nav-btn" onclick="showPage('account',this)">⚙️ Account</button>
+  </nav>
+  <div class="header-right">
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshAll()" style="display:none;">↺ Refresh</button>
+    <span id="customerLabel"></span>
+  </div>
 </header>
 
-<div class="container">
-  <!-- Customer ID setup -->
-  <div id="setupSection" class="section" style="display:none;max-width:460px;margin:60px auto;">
-    <h2>Enter your Customer ID</h2>
-    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">You received this in your welcome email after subscribing to PhishSim.</p>
+<div id="toast-container"></div>
+
+<!-- ── Setup ── -->
+<div class="page active" id="page-setup">
+  <div class="section" id="setupSection">
+    <h2 style="margin-bottom:8px;">Enter your Customer ID</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px;">You received this in your welcome email after subscribing to PhishSim.</p>
     <div class="form-row">
-      <input id="cidInput" type="text" placeholder="e.g. cs_live_abc123..." />
+      <input id="cidInput" type="text" placeholder="ps_live_abc123…" />
     </div>
-    <button class="btn" onclick="saveCustomerId()">Access Dashboard</button>
-  </div>
-
-  <!-- Main dashboard -->
-  <div id="mainDash" style="display:none;">
-    <div class="grid" id="statsGrid">
-      <div class="stat"><div class="label">Campaigns</div><div class="value" id="sTotalCampaigns">—</div><div class="sub">total launched</div></div>
-      <div class="stat"><div class="label">Emails Sent</div><div class="value" id="sTotalSent">—</div><div class="sub">across all campaigns</div></div>
-      <div class="stat"><div class="label">Click Rate</div><div class="value" id="sClickRate">—</div><div class="sub">avg across campaigns</div></div>
-      <div class="stat"><div class="label">Submitted Data</div><div class="value" id="sSubmitRate">—</div><div class="sub">avg credential submission</div></div>
-    </div>
-
-    <div class="section">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h2>Campaigns</h2>
-        <button class="btn" onclick="openNewCampaign()">+ New Campaign</button>
-      </div>
-      <div id="campaignsList"><div class="loading">Loading campaigns…</div></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
-      <div class="section">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <h2>Email Templates</h2>
-          <button class="btn btn-outline btn-sm" onclick="openNewTemplate()">+ Add</button>
-        </div>
-        <div id="templatesList"><div class="loading">Loading…</div></div>
-      </div>
-      <div class="section">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <h2>Target Groups</h2>
-          <button class="btn btn-outline btn-sm" onclick="openNewGroup()">+ Add</button>
-        </div>
-        <div id="groupsList"><div class="loading">Loading…</div></div>
-      </div>
-    </div>
+    <button class="btn" onclick="saveCustomerId()">Access Dashboard →</button>
   </div>
 </div>
 
-<!-- New Campaign Modal -->
-<div class="modal-overlay" id="campaignModal">
+<!-- ── Campaigns ── -->
+<div class="page" id="page-campaigns">
+  <div class="grid" id="statsGrid">
+    <div class="stat"><div class="label">Campaigns</div><div class="value" id="sTotalCampaigns">—</div><div class="sub">total launched</div></div>
+    <div class="stat"><div class="label">Emails Sent</div><div class="value" id="sTotalSent">—</div><div class="sub">across all campaigns</div></div>
+    <div class="stat"><div class="label">Avg Click Rate</div><div class="value" id="sClickRate">—</div><div class="sub">of emails sent</div></div>
+    <div class="stat"><div class="label">Credentials Captured</div><div class="value" id="sSubmitRate">—</div><div class="sub">avg submission rate</div></div>
+  </div>
+  <div class="section">
+    <div class="section-head">
+      <h2>Campaigns</h2>
+      <button class="btn" onclick="openNewCampaign()">+ New Campaign</button>
+    </div>
+    <div id="campaignsList"><div class="empty">Loading campaigns…</div></div>
+  </div>
+</div>
+
+<!-- ── Templates ── -->
+<div class="page" id="page-templates">
+  <div class="section">
+    <div class="section-head">
+      <h2>Email Templates <span id="templateCount" style="color:var(--muted);font-weight:400;font-size:.8rem;"></span></h2>
+      <button class="btn" onclick="openNewTemplate()">+ New Template</button>
+    </div>
+    <div id="templatesList"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<!-- ── Landing Pages ── -->
+<div class="page" id="page-pages">
+  <div class="section">
+    <div class="section-head">
+      <h2>Landing Pages <span id="pagesCount" style="color:var(--muted);font-weight:400;font-size:.8rem;"></span></h2>
+      <button class="btn" onclick="openNewPage()">+ New Page</button>
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);margin-bottom:16px;">Landing pages are shown to targets who click your phishing link. Captured credentials are logged in campaign results.</p>
+    <div id="pagesList"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<!-- ── Groups ── -->
+<div class="page" id="page-groups">
+  <div class="section">
+    <div class="section-head">
+      <h2>Target Groups <span id="groupsCount" style="color:var(--muted);font-weight:400;font-size:.8rem;"></span></h2>
+      <button class="btn" onclick="openNewGroup()">+ New Group</button>
+    </div>
+    <div id="groupsList"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<!-- ── Account ── -->
+<div class="page" id="page-account">
+  <div class="section">
+    <div class="section-head"><h2>Instance Information</h2></div>
+    <div class="info-grid" id="accountInfo"><div class="empty">Loading…</div></div>
+  </div>
+  <div class="section">
+    <div class="section-head"><h2>Sending Profile</h2></div>
+    <div id="smtpInfo"><div class="empty">Loading…</div></div>
+  </div>
+  <div class="section" style="border-color:rgba(255,107,107,.2);">
+    <div class="section-head"><h2 style="color:var(--danger);">Danger Zone</h2></div>
+    <p style="font-size:.83rem;color:var(--muted);margin-bottom:14px;">Sign out of this dashboard on this device.</p>
+    <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- New Campaign -->
+<div class="overlay" id="campaignModal">
   <div class="modal">
     <h3>New Campaign</h3>
     <div class="tabs">
-      <button class="tab active" onclick="switchTab(this,'tabCampaign1')">Setup</button>
-      <button class="tab" onclick="switchTab(this,'tabCampaign2')">Target & Template</button>
+      <button class="tab active" onclick="switchTab(this,'tabC1',['tabC1','tabC2'])">① Setup</button>
+      <button class="tab" onclick="switchTab(this,'tabC2',['tabC1','tabC2'])">② Targeting</button>
     </div>
-    <div id="tabCampaign1">
-      <div class="form-row"><label>Campaign Name</label><input id="cName" placeholder="Q2 Phish Test" /></div>
-      <div class="form-row"><label>Phishing URL (landing page host)</label><input id="cUrl" readonly style="color:var(--muted)" /></div>
-      <div class="form-row"><label>Launch Date</label><input id="cLaunch" type="datetime-local" /></div>
-      <div class="form-row"><label>Send Emails By</label><input id="cSendBy" type="datetime-local" /></div>
+    <div id="tabC1">
+      <div class="form-row"><label>Campaign Name</label><input id="cName" placeholder="Q2 Finance Phish Test" /></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Launch Date &amp; Time</label><input id="cLaunch" type="datetime-local" /></div>
+        <div class="form-row"><label>Send Emails By (optional)</label><input id="cSendBy" type="datetime-local" /></div>
+      </div>
+      <div class="form-row">
+        <label>Phishing URL</label>
+        <input id="cUrl" readonly style="color:var(--muted);cursor:default;" />
+        <p class="hint">Auto-filled from your instance. This is where targets land when they click.</p>
+      </div>
     </div>
-    <div id="tabCampaign2" style="display:none;">
-      <div class="form-row"><label>Email Template</label><select id="cTemplate"><option value="">Loading…</option></select></div>
-      <div class="form-row"><label>Target Group</label><select id="cGroup"><option value="">Loading…</option></select></div>
-      <div class="form-row"><label>Sending Profile (SMTP)</label><select id="cSMTP"><option value="">Loading…</option></select></div>
+    <div id="tabC2" style="display:none;">
+      <div class="form-row"><label>Email Template</label><select id="cTemplate"></select></div>
+      <div class="form-row"><label>Landing Page</label><select id="cPage"></select></div>
+      <div class="form-row"><label>Target Group</label><select id="cGroup"></select></div>
+      <div class="form-row"><label>Sending Profile (SMTP)</label><select id="cSMTP"></select></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('campaignModal')">Cancel</button>
-      <button class="btn" onclick="createCampaign()">Launch Campaign</button>
+      <button class="btn" onclick="createCampaign()">🚀 Launch Campaign</button>
     </div>
   </div>
 </div>
 
-<!-- New Template Modal -->
-<div class="modal-overlay" id="templateModal">
+<!-- Campaign Results -->
+<div class="overlay" id="resultsModal">
+  <div class="modal modal-lg">
+    <h3 id="resultsTitle">Campaign Results</h3>
+    <div id="resultsSummary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;"></div>
+    <div id="resultsBody"><div class="empty">Loading…</div></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('resultsModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Template -->
+<div class="overlay" id="templateModal">
   <div class="modal">
     <h3>New Email Template</h3>
     <div class="form-row"><label>Template Name</label><input id="tName" placeholder="IT Password Reset" /></div>
-    <div class="form-row"><label>Subject</label><input id="tSubject" placeholder="Action Required: Reset Your Password" /></div>
-    <div class="form-row"><label>From Display Name</label><input id="tFrom" placeholder="IT Helpdesk" /></div>
-    <div class="form-row"><label>HTML Body</label><textarea id="tHtml" placeholder="<p>Click <a href='{{.URL}}'>here</a> to reset your password.</p>"></textarea></div>
-    <p style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Use <code style="color:var(--accent)">{{.URL}}</code> for the phishing link and <code style="color:var(--accent)">{{.FirstName}}</code> for personalization.</p>
+    <div class="form-grid">
+      <div class="form-row"><label>From Display Name</label><input id="tFrom" placeholder="IT Helpdesk" /></div>
+      <div class="form-row"><label>Subject Line</label><input id="tSubject" placeholder="Action Required: Reset Your Password" /></div>
+    </div>
+    <div class="form-row">
+      <label>HTML Body</label>
+      <textarea id="tHtml" style="min-height:160px;font-family:monospace;font-size:.8rem;" placeholder="<p>Hi {{.FirstName}},</p>&#10;<p>Click <a href=&quot;{{.URL}}&quot;>here</a> to reset your password.</p>"></textarea>
+      <p class="hint">Variables: <code>{{.FirstName}}</code> <code>{{.Email}}</code> <code>{{.URL}}</code> (required — phishing link)</p>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('templateModal')">Cancel</button>
       <button class="btn" onclick="createTemplate()">Save Template</button>
@@ -155,14 +305,42 @@
   </div>
 </div>
 
-<!-- New Group Modal -->
-<div class="modal-overlay" id="groupModal">
+<!-- New Landing Page -->
+<div class="overlay" id="pageModal">
+  <div class="modal modal-lg">
+    <h3>New Landing Page</h3>
+    <div class="form-grid">
+      <div class="form-row"><label>Page Name</label><input id="pName" placeholder="Microsoft 365 Sign In" /></div>
+      <div class="form-row"><label>Redirect URL after submission</label><input id="pRedirect" placeholder="https://edgeiqlabs.com/phishsim/" /></div>
+    </div>
+    <div class="form-grid" style="margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.83rem;color:var(--text);">
+        <input type="checkbox" id="pCaptureCreds" style="width:auto;" checked /> Capture credentials (username/password)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.83rem;color:var(--text);">
+        <input type="checkbox" id="pCapturePasswords" style="width:auto;" checked /> Capture passwords
+      </label>
+    </div>
+    <div class="form-row">
+      <label>HTML (the fake login page shown to targets)</label>
+      <textarea id="pHtml" style="min-height:220px;font-family:monospace;font-size:.78rem;" placeholder="<!DOCTYPE html><html>..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('pageModal')">Cancel</button>
+      <button class="btn" onclick="createPage()">Save Page</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Group -->
+<div class="overlay" id="groupModal">
   <div class="modal">
     <h3>New Target Group</h3>
-    <div class="form-row"><label>Group Name</label><input id="gName" placeholder="Engineering Team" /></div>
+    <div class="form-row"><label>Group Name</label><input id="gName" placeholder="Finance Team Q2" /></div>
     <div class="form-row">
-      <label>Targets (one per line: First,Last,Email,Position)</label>
-      <textarea id="gTargets" placeholder="Alice,Smith,alice@company.com,Engineer&#10;Bob,Jones,bob@company.com,Manager"></textarea>
+      <label>Targets — one per line: <code style="color:var(--accent)">FirstName,LastName,Email,Position</code></label>
+      <textarea id="gTargets" style="min-height:160px;" placeholder="Alice,Smith,alice@company.com,Finance Manager&#10;Bob,Jones,bob@company.com,CFO&#10;Carol,Lee,carol@company.com,Accountant"></textarea>
+      <p class="hint">Position is optional. Email is required.</p>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('groupModal')">Cancel</button>
@@ -171,36 +349,38 @@
   </div>
 </div>
 
+<!-- Preview Page -->
+<div class="overlay" id="previewModal">
+  <div class="modal modal-lg" style="max-width:700px;padding:0;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <span id="previewTitle" style="font-weight:700;font-size:.9rem;"></span>
+      <button class="btn btn-outline btn-sm" onclick="closeModal('previewModal')">✕ Close</button>
+    </div>
+    <iframe id="previewFrame" style="width:100%;height:520px;border:none;background:#fff;"></iframe>
+  </div>
+</div>
+
 <script>
 const API = '/api/phishsim';
+let customerId = null;
+let instanceData = null;
+let _templates = [], _pages = [], _groups = [];
+let _refreshTimer = null;
 
-// Auto-populate from ?cid= URL param (post-payment redirect from welcome page)
-(function() {
+// ── Init ────────────────────────────────────────────────────────────────────
+
+;(function(){
   const p = new URLSearchParams(location.search).get('cid');
-  if (p) {
-    localStorage.setItem('phishsim_cid', p);
-    // Clean up URL without reload
-    history.replaceState(null, '', location.pathname);
-  }
+  if (p) { localStorage.setItem('phishsim_cid', p); history.replaceState(null,'',location.pathname); }
+  customerId = localStorage.getItem('phishsim_cid');
+  if (customerId) initDashboard(); else showSetup();
 })();
 
-let customerId = localStorage.getItem('phishsim_cid');
-let instanceData = null;
-
-async function apiFetch(path, method='GET', body=null) {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json', 'X-Customer-ID': customerId }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(API + path, opts);
-  if (!r.ok && r.status === 401) { showSetup(); throw new Error('Unauthorized'); }
-  return r.json();
-}
-
 function showSetup() {
-  document.getElementById('setupSection').style.display = '';
-  document.getElementById('mainDash').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-setup').classList.add('active');
+  document.getElementById('mainNav').style.display = 'none';
+  document.getElementById('refreshBtn').style.display = 'none';
 }
 
 function saveCustomerId() {
@@ -212,215 +392,530 @@ function saveCustomerId() {
 }
 
 async function initDashboard() {
-  if (!customerId) { showSetup(); return; }
   try {
     instanceData = await apiFetch('/instance');
-    document.getElementById('customerLabel').textContent = 'ID: ' + customerId.slice(0, 18) + '…';
+    document.getElementById('mainNav').style.display = '';
+    document.getElementById('refreshBtn').style.display = '';
+    document.getElementById('customerLabel').textContent = customerId.length > 20 ? customerId.slice(0,18)+'…' : customerId;
     document.getElementById('cUrl').value = instanceData.phish_url || '';
-    document.getElementById('setupSection').style.display = 'none';
-    document.getElementById('mainDash').style.display = '';
-    await Promise.all([loadCampaigns(), loadTemplates(), loadGroups()]);
+    document.getElementById('pRedirect').value = 'https://edgeiqlabs.com/phishsim/';
+    showPage('campaigns', document.querySelector('.nav-btn.active'));
+    await refreshAll();
   } catch(e) {
+    toast('Could not connect to your instance. Check your Customer ID.', 'err');
     showSetup();
   }
 }
 
-async function loadCampaigns() {
-  const campaigns = await apiFetch('/campaigns');
-  const arr = Array.isArray(campaigns) ? campaigns : [];
-
-  // Compute stats
-  let totalSent=0, clicks=0, submits=0;
-  arr.forEach(c => {
-    totalSent += c.stats?.sent || 0;
-    clicks    += c.stats?.clicked || 0;
-    submits   += c.stats?.submitted_data || 0;
-  });
-  document.getElementById('sTotalCampaigns').textContent = arr.length;
-  document.getElementById('sTotalSent').textContent = totalSent;
-  document.getElementById('sClickRate').textContent = totalSent ? Math.round(clicks/totalSent*100)+'%' : '0%';
-  document.getElementById('sSubmitRate').textContent = totalSent ? Math.round(submits/totalSent*100)+'%' : '0%';
-
-  if (!arr.length) {
-    document.getElementById('campaignsList').innerHTML = '<div class="loading">No campaigns yet. Launch your first one above.</div>';
-    return;
-  }
-
-  const rows = arr.map(c => {
-    const pct = c.stats?.sent ? Math.round((c.stats.clicked||0)/c.stats.sent*100) : 0;
-    const statusBadge = {
-      'In progress': 'badge-blue', 'Completed': 'badge-green',
-      'Scheduled': 'badge-yellow', 'Paused': 'badge-grey'
-    }[c.status] || 'badge-grey';
-    return `<tr>
-      <td><strong>${esc(c.name)}</strong></td>
-      <td><span class="badge ${statusBadge}">${esc(c.status)}</span></td>
-      <td>${c.stats?.sent||0}</td>
-      <td>${c.stats?.opened||0}</td>
-      <td>${c.stats?.clicked||0}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div>
-          <span style="font-size:0.8rem;color:${pct>30?'var(--danger)':pct>15?'var(--warn)':'var(--ok)'}">${pct}%</span>
-        </div>
-      </td>
-      <td>
-        <button class="btn btn-outline btn-sm" onclick="viewResults(${c.id})">Results</button>
-        <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="deleteCampaign(${c.id})">Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('campaignsList').innerHTML = `
-    <table>
-      <thead><tr><th>Name</th><th>Status</th><th>Sent</th><th>Opened</th><th>Clicked</th><th>Click Rate</th><th></th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+function signOut() {
+  if (!confirm('Sign out of this device?')) return;
+  localStorage.removeItem('phishsim_cid');
+  customerId = null; instanceData = null;
+  showSetup();
 }
+
+// ── Navigation ──────────────────────────────────────────────────────────────
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (name === 'account') loadAccount();
+}
+
+// ── API helper ───────────────────────────────────────────────────────────────
+
+async function apiFetch(path, method='GET', body=null) {
+  const opts = { method, headers: { 'Content-Type':'application/json', 'X-Customer-ID': customerId } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (r.status === 401) { showSetup(); throw new Error('Unauthorized'); }
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || data.message || 'Request failed');
+  return data;
+}
+
+// ── Refresh all ──────────────────────────────────────────────────────────────
+
+async function refreshAll() {
+  await Promise.all([loadCampaigns(), loadTemplates(), loadPages(), loadGroups()]);
+}
+
+// ── Campaigns ────────────────────────────────────────────────────────────────
+
+async function loadCampaigns() {
+  try {
+    const campaigns = await apiFetch('/campaigns');
+    const arr = Array.isArray(campaigns) ? campaigns : [];
+    let totalSent=0, clicks=0, submits=0;
+    arr.forEach(c => {
+      totalSent += c.stats?.sent || 0;
+      clicks    += c.stats?.clicked || 0;
+      submits   += c.stats?.submitted_data || 0;
+    });
+    document.getElementById('sTotalCampaigns').textContent = arr.length;
+    document.getElementById('sTotalSent').textContent = totalSent;
+    document.getElementById('sClickRate').textContent = totalSent ? Math.round(clicks/totalSent*100)+'%' : '0%';
+    document.getElementById('sSubmitRate').textContent = totalSent ? Math.round(submits/totalSent*100)+'%' : '0%';
+
+    if (!arr.length) {
+      document.getElementById('campaignsList').innerHTML = '<div class="empty">No campaigns yet. Click <strong>+ New Campaign</strong> to launch your first phishing simulation.</div>';
+      clearAutoRefresh();
+      return;
+    }
+
+    const hasActive = arr.some(c => c.status === 'In progress');
+    if (hasActive) scheduleAutoRefresh(); else clearAutoRefresh();
+
+    const rows = arr.map(c => {
+      const pct = c.stats?.sent ? Math.round((c.stats.clicked||0)/c.stats.sent*100) : 0;
+      const subPct = c.stats?.sent ? Math.round((c.stats.submitted_data||0)/c.stats.sent*100) : 0;
+      const badgeCls = {'In progress':'blue','Completed':'ok','Scheduled':'warn','Paused':'grey'}[c.status] || 'grey';
+      return `<tr>
+        <td><strong>${esc(c.name)}</strong><br><span style="font-size:.72rem;color:var(--muted);">${fmtDate(c.launch_date)}</span></td>
+        <td><span class="badge ${badgeCls}">${esc(c.status)}</span></td>
+        <td>${c.stats?.sent||0}</td>
+        <td>${c.stats?.opened||0}</td>
+        <td>${c.stats?.clicked||0}</td>
+        <td>${c.stats?.submitted_data||0}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:7px;">
+            <div class="bar-wrap"><div class="bar" style="background:${pct>30?'var(--danger)':pct>15?'var(--warn)':'var(--ok)'};width:${pct}%"></div></div>
+            <span style="font-size:.78rem;color:${pct>30?'var(--danger)':pct>15?'var(--warn)':'var(--ok)'}">${pct}%</span>
+          </div>
+          <div style="font-size:.7rem;color:var(--danger);margin-top:2px;">${subPct}% submitted</div>
+        </td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="viewResults(${c.id},'${esc(c.name)}')">Results</button>
+          <button class="btn btn-danger btn-sm" style="margin-left:5px" onclick="deleteCampaign(${c.id})">Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('campaignsList').innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Status</th><th>Sent</th><th>Opened</th><th>Clicked</th><th>Submitted</th><th>Click Rate</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch(e) {
+    document.getElementById('campaignsList').innerHTML = `<div class="empty">Error loading campaigns: ${esc(e.message)}</div>`;
+  }
+}
+
+function scheduleAutoRefresh() {
+  if (_refreshTimer) return;
+  _refreshTimer = setInterval(() => { loadCampaigns(); }, 30000);
+}
+
+function clearAutoRefresh() {
+  if (_refreshTimer) { clearInterval(_refreshTimer); _refreshTimer = null; }
+}
+
+async function deleteCampaign(id) {
+  if (!confirm('Delete this campaign and all its results? This cannot be undone.')) return;
+  try {
+    await apiFetch('/campaigns/'+id, 'DELETE');
+    toast('Campaign deleted', 'ok');
+    loadCampaigns();
+  } catch(e) { toast('Delete failed: '+e.message, 'err'); }
+}
+
+async function viewResults(id, name) {
+  document.getElementById('resultsTitle').textContent = '📊 ' + name;
+  document.getElementById('resultsBody').innerHTML = '<div class="empty">Loading results…</div>';
+  document.getElementById('resultsSummary').innerHTML = '';
+  document.getElementById('resultsModal').classList.add('open');
+
+  try {
+    const data = await apiFetch('/campaigns/'+id);
+    const s = data.stats || {};
+    const summary = [
+      ['Sent', s.sent||0, 'muted'],
+      ['Opened', s.opened||0, 'warn'],
+      ['Clicked', s.clicked||0, 'blue'],
+      ['Submitted Credentials', s.submitted_data||0, 'danger'],
+      ['Email Reported', s.email_reported||0, 'ok'],
+    ];
+    document.getElementById('resultsSummary').innerHTML = summary.map(([label,val,cls]) =>
+      `<div class="stat" style="min-width:130px;padding:12px 14px;">
+        <div class="label">${label}</div>
+        <div class="value" style="font-size:1.4rem;color:var(--${cls})">${val}</div>
+      </div>`
+    ).join('');
+
+    const results = data.results || [];
+    if (!results.length) {
+      document.getElementById('resultsBody').innerHTML = '<div class="empty">No results yet — emails may still be sending.</div>';
+      return;
+    }
+
+    const statusOrder = { 'Email Sent':1, 'Email Opened':2, 'Clicked Link':3, 'Submitted Data':4 };
+    results.sort((a,b) => (statusOrder[b.status]||0) - (statusOrder[a.status]||0));
+
+    const rows = results.map(r => {
+      const cls = {'Email Sent':'status-sent','Email Opened':'status-opened','Clicked Link':'status-clicked','Submitted Data':'status-submitted'}[r.status] || '';
+      const details = r.details || [];
+      const lastEvent = details[details.length-1];
+      const ip = lastEvent?.details?.browser?.address || '—';
+      const ua = lastEvent?.details?.browser?.user_agent || '';
+      const uaShort = ua ? ua.split(' ').slice(0,3).join(' ')+'…' : '—';
+      return `<tr>
+        <td>${esc(r.first_name)} ${esc(r.last_name)}</td>
+        <td style="color:var(--muted);font-size:.78rem;">${esc(r.email)}</td>
+        <td><span class="${cls}" style="font-weight:600;">${esc(r.status)}</span></td>
+        <td style="font-size:.75rem;color:var(--muted);">${ip}</td>
+        <td style="font-size:.72rem;color:var(--muted);" title="${esc(ua)}">${uaShort}</td>
+        <td style="font-size:.75rem;color:var(--muted);">${fmtDate(lastEvent?.time)}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('resultsBody').innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>IP</th><th>Browser</th><th>Last Event</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch(e) {
+    document.getElementById('resultsBody').innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+// ── Templates ────────────────────────────────────────────────────────────────
 
 async function loadTemplates() {
-  const templates = await apiFetch('/templates');
-  const arr = Array.isArray(templates) ? templates : [];
-  const sel = document.getElementById('cTemplate');
-  sel.innerHTML = arr.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('') || '<option value="">No templates</option>';
-  if (!arr.length) {
-    document.getElementById('templatesList').innerHTML = '<div class="loading">No templates yet.</div>';
-    return;
+  try {
+    _templates = await apiFetch('/templates');
+    if (!Array.isArray(_templates)) _templates = [];
+    document.getElementById('templateCount').textContent = `(${_templates.length})`;
+    if (!_templates.length) {
+      document.getElementById('templatesList').innerHTML = '<div class="empty">No templates yet.</div>';
+      return;
+    }
+    document.getElementById('templatesList').innerHTML = _templates.map(t =>
+      `<div class="list-item">
+        <div class="info">
+          <div class="name">${esc(t.name)}</div>
+          <div class="sub">${esc(t.subject||'(no subject)')}</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteTemplate(${t.id},'${esc(t.name).replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`
+    ).join('');
+  } catch(e) {
+    document.getElementById('templatesList').innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
   }
-  document.getElementById('templatesList').innerHTML = arr.map(t =>
-    `<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;">
-      <strong>${esc(t.name)}</strong>
-      <span style="color:var(--muted);font-size:0.75rem;display:block">${esc(t.subject||'')}</span>
-    </div>`
-  ).join('');
 }
+
+async function deleteTemplate(id, name) {
+  if (!confirm(`Delete template "${name}"?`)) return;
+  try {
+    await apiFetch('/templates/'+id, 'DELETE');
+    toast('Template deleted', 'ok');
+    loadTemplates();
+  } catch(e) { toast('Delete failed: '+e.message, 'err'); }
+}
+
+async function createTemplate() {
+  const name = document.getElementById('tName').value.trim();
+  const subject = document.getElementById('tSubject').value.trim();
+  const from = document.getElementById('tFrom').value.trim() || 'IT Helpdesk';
+  const html = document.getElementById('tHtml').value.trim();
+  if (!name || !subject || !html) return toast('Name, subject, and HTML body are required.', 'err');
+  try {
+    await apiFetch('/templates', 'POST', { name, subject, envelope_sender:'', html, text:'', attachments:[] });
+    toast('Template saved', 'ok');
+    closeModal('templateModal');
+    loadTemplates();
+  } catch(e) { toast('Save failed: '+e.message, 'err'); }
+}
+
+// ── Landing Pages ────────────────────────────────────────────────────────────
+
+async function loadPages() {
+  try {
+    _pages = await apiFetch('/pages');
+    if (!Array.isArray(_pages)) _pages = [];
+    document.getElementById('pagesCount').textContent = `(${_pages.length})`;
+    if (!_pages.length) {
+      document.getElementById('pagesList').innerHTML = '<div class="empty">No landing pages yet.</div>';
+      return;
+    }
+    document.getElementById('pagesList').innerHTML = _pages.map(p => {
+      const badges = [];
+      if (p.capture_credentials) badges.push('<span class="badge danger">Captures Creds</span>');
+      if (!p.capture_credentials) badges.push('<span class="badge grey">No Capture</span>');
+      return `<div class="list-item">
+        <div class="info">
+          <div class="name">${esc(p.name)}</div>
+          <div class="sub" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+            ${badges.join('')}
+            <span style="color:var(--muted);">→ ${esc(p.redirect_url||'no redirect')}</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" onclick="previewPage(${p.id},'${esc(p.name).replace(/'/g,"\\'")}')">Preview</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePage(${p.id},'${esc(p.name).replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('pagesList').innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+async function deletePage(id, name) {
+  if (!confirm(`Delete landing page "${name}"?`)) return;
+  try {
+    await apiFetch('/pages/'+id, 'DELETE');
+    toast('Page deleted', 'ok');
+    loadPages();
+  } catch(e) { toast('Delete failed: '+e.message, 'err'); }
+}
+
+async function createPage() {
+  const name = document.getElementById('pName').value.trim();
+  const redirect = document.getElementById('pRedirect').value.trim();
+  const html = document.getElementById('pHtml').value.trim();
+  const captureCreds = document.getElementById('pCaptureCreds').checked;
+  const capturePasswords = document.getElementById('pCapturePasswords').checked;
+  if (!name || !html) return toast('Name and HTML are required.', 'err');
+  try {
+    await apiFetch('/pages', 'POST', { name, html, redirect_url: redirect, capture_credentials: captureCreds, capture_passwords: capturePasswords });
+    toast('Landing page saved', 'ok');
+    closeModal('pageModal');
+    loadPages();
+  } catch(e) { toast('Save failed: '+e.message, 'err'); }
+}
+
+function previewPage(id, name) {
+  const page = _pages.find(p => p.id === id);
+  if (!page) return;
+  document.getElementById('previewTitle').textContent = '🪤 ' + name;
+  const frame = document.getElementById('previewFrame');
+  frame.srcdoc = page.html || '<p>No HTML</p>';
+  document.getElementById('previewModal').classList.add('open');
+}
+
+// ── Groups ───────────────────────────────────────────────────────────────────
 
 async function loadGroups() {
-  const groups = await apiFetch('/groups');
-  const arr = Array.isArray(groups) ? groups : [];
-  const sel = document.getElementById('cGroup');
-  sel.innerHTML = arr.map(g => `<option value="${g.id}">${esc(g.name)} (${g.targets?.length||0})</option>`).join('') || '<option value="">No groups</option>';
-  if (!arr.length) {
-    document.getElementById('groupsList').innerHTML = '<div class="loading">No target groups yet.</div>';
-    return;
+  try {
+    _groups = await apiFetch('/groups');
+    if (!Array.isArray(_groups)) _groups = [];
+    document.getElementById('groupsCount').textContent = `(${_groups.length})`;
+    if (!_groups.length) {
+      document.getElementById('groupsList').innerHTML = '<div class="empty">No target groups yet.</div>';
+      return;
+    }
+    document.getElementById('groupsList').innerHTML = _groups.map(g =>
+      `<div class="list-item">
+        <div class="info">
+          <div class="name">${esc(g.name)}</div>
+          <div class="sub">${g.targets?.length||0} targets${g.targets?.length ? ': '+g.targets.slice(0,3).map(t=>esc(t.email)).join(', ')+(g.targets.length>3?'…':'') : ''}</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteGroup(${g.id},'${esc(g.name).replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`
+    ).join('');
+  } catch(e) {
+    document.getElementById('groupsList').innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
   }
-  document.getElementById('groupsList').innerHTML = arr.map(g =>
-    `<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;">
-      <strong>${esc(g.name)}</strong>
-      <span style="color:var(--muted);font-size:0.75rem;display:block">${g.targets?.length||0} targets</span>
-    </div>`
-  ).join('');
 }
 
-async function loadSMTPProfiles() {
+async function deleteGroup(id, name) {
+  if (!confirm(`Delete group "${name}"?`)) return;
+  try {
+    await apiFetch('/groups/'+id, 'DELETE');
+    toast('Group deleted', 'ok');
+    loadGroups();
+  } catch(e) { toast('Delete failed: '+e.message, 'err'); }
+}
+
+async function createGroup() {
+  const name = document.getElementById('gName').value.trim();
+  const lines = document.getElementById('gTargets').value.trim().split('\n').filter(Boolean);
+  const targets = lines.map(l => {
+    const [fn,ln,email,pos] = l.split(',').map(s=>s.trim());
+    return { first_name:fn||'', last_name:ln||'', email:email||'', position:pos||'' };
+  }).filter(t => t.email);
+  if (!name) return toast('Group name is required.', 'err');
+  if (!targets.length) return toast('Add at least one target with a valid email.', 'err');
+  try {
+    await apiFetch('/groups', 'POST', { name, targets });
+    toast(`Group saved with ${targets.length} targets`, 'ok');
+    closeModal('groupModal');
+    loadGroups();
+  } catch(e) { toast('Save failed: '+e.message, 'err'); }
+}
+
+// ── Account ──────────────────────────────────────────────────────────────────
+
+async function loadAccount() {
+  if (!instanceData) return;
+  const fields = [
+    ['Customer ID', customerId, true],
+    ['Phishing URL', instanceData.phish_url || '—', true],
+    ['Admin Port', instanceData.admin_port ? 'localhost:'+instanceData.admin_port : '—', false],
+    ['Container', instanceData.container || '—', false],
+    ['Provisioned', instanceData.created_at ? new Date(instanceData.created_at*1000).toLocaleDateString() : '—', false],
+    ['Status', 'Active ✓', false],
+  ];
+  document.getElementById('accountInfo').innerHTML = fields.map(([k,v,mono]) =>
+    `<div class="info-box">
+      <div class="key">${k}</div>
+      <div class="val${mono?' mono':''}">${esc(String(v))}</div>
+    </div>`
+  ).join('');
+
   try {
     const profiles = await apiFetch('/smtp');
     const arr = Array.isArray(profiles) ? profiles : [];
-    const sel = document.getElementById('cSMTP');
-    sel.innerHTML = arr.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') || '<option value="">No sending profiles — add via GoPhish</option>';
-  } catch {}
+    if (!arr.length) {
+      document.getElementById('smtpInfo').innerHTML = '<div class="empty">No sending profiles configured.</div>';
+    } else {
+      document.getElementById('smtpInfo').innerHTML = arr.map(p =>
+        `<div class="list-item">
+          <div class="info">
+            <div class="name">${esc(p.name)}</div>
+            <div class="sub">${esc(p.host||'')} — From: ${esc(p.from_address||'')}</div>
+          </div>
+          <span class="badge ok">Configured</span>
+        </div>`
+      ).join('');
+    }
+  } catch(e) {
+    document.getElementById('smtpInfo').innerHTML = `<div class="empty">Error loading: ${esc(e.message)}</div>`;
+  }
+}
+
+// ── Campaign modal helpers ────────────────────────────────────────────────────
+
+function openNewCampaign() {
+  document.getElementById('cName').value = '';
+  document.getElementById('cLaunch').value = '';
+  document.getElementById('cSendBy').value = '';
+  // Pre-fill launch to now
+  const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('cLaunch').value = now.toISOString().slice(0,16);
+
+  // Populate selects from cached data
+  populateSelect('cTemplate', _templates, 'id', 'name', 'No templates — add some first');
+  populateSelect('cPage', _pages, 'id', 'name', 'No pages — add some first');
+  populateSelect('cGroup', _groups, 'id', g => g.name+' ('+g.targets?.length+' targets)', 'No groups — add some first');
+
+  apiFetch('/smtp').then(profiles => {
+    const arr = Array.isArray(profiles) ? profiles : [];
+    populateSelect('cSMTP', arr, 'id', 'name', 'No sending profiles');
+  }).catch(()=>{});
+
+  // Reset to first tab
+  switchTab(document.querySelector('#campaignModal .tab'), 'tabC1', ['tabC1','tabC2']);
+
+  document.getElementById('campaignModal').classList.add('open');
 }
 
 async function createCampaign() {
   const name     = document.getElementById('cName').value.trim();
   const template = parseInt(document.getElementById('cTemplate').value);
+  const page     = parseInt(document.getElementById('cPage').value);
   const group    = parseInt(document.getElementById('cGroup').value);
   const smtp     = parseInt(document.getElementById('cSMTP').value) || 1;
   const launch   = document.getElementById('cLaunch').value;
   const sendBy   = document.getElementById('cSendBy').value;
   const url      = document.getElementById('cUrl').value;
-  if (!name || !template || !group) return alert('Name, template, and group are required.');
+
+  if (!name) return toast('Campaign name is required.', 'err');
+  if (!template) return toast('Select an email template.', 'err');
+  if (!group) return toast('Select a target group.', 'err');
+
   const payload = {
-    name, template: { id: template }, groups: [{ id: group }],
-    smtp: { id: smtp }, url,
+    name,
+    template: { id: template },
+    page: page ? { id: page } : undefined,
+    groups: [{ id: group }],
+    smtp: { id: smtp },
+    url,
     launch_date: launch ? new Date(launch).toISOString() : new Date().toISOString(),
-    send_by_date: sendBy ? new Date(sendBy).toISOString() : null,
+    send_by_date: sendBy ? new Date(sendBy).toISOString() : '',
   };
+  if (!payload.page) delete payload.page;
+
   try {
     await apiFetch('/campaigns', 'POST', payload);
+    toast('Campaign launched!', 'ok');
     closeModal('campaignModal');
-    await loadCampaigns();
-  } catch(e) { alert('Failed to create campaign: ' + e.message); }
+    loadCampaigns();
+  } catch(e) { toast('Launch failed: '+e.message, 'err'); }
 }
 
-async function deleteCampaign(id) {
-  if (!confirm('Delete this campaign?')) return;
-  await apiFetch('/campaigns/' + id, 'DELETE');
-  await loadCampaigns();
-}
-
-async function viewResults(id) {
-  const data = await apiFetch('/campaigns/' + id);
-  const results = data.results || [];
-  const info = `Campaign: ${esc(data.name)}\nStatus: ${data.status}\nSent: ${data.stats?.sent||0} | Opened: ${data.stats?.opened||0} | Clicked: ${data.stats?.clicked||0} | Submitted: ${data.stats?.submitted_data||0}\n\nTop results:\n${results.slice(0,10).map(r=>`  ${r.email}: ${r.status}`).join('\n')}`;
-  alert(info);
-}
-
-async function createTemplate() {
-  const name    = document.getElementById('tName').value.trim();
-  const subject = document.getElementById('tSubject').value.trim();
-  const from    = document.getElementById('tFrom').value.trim() || 'IT Helpdesk';
-  const html    = document.getElementById('tHtml').value.trim();
-  if (!name || !subject || !html) return alert('All fields required.');
-  await apiFetch('/templates', 'POST', { name, subject, from_address: from, html });
-  closeModal('templateModal');
-  await loadTemplates();
-}
-
-async function createGroup() {
-  const name  = document.getElementById('gName').value.trim();
-  const lines = document.getElementById('gTargets').value.trim().split('\n').filter(Boolean);
-  const targets = lines.map(l => {
-    const [fn, ln, email, pos] = l.split(',').map(s => s.trim());
-    return { first_name: fn||'', last_name: ln||'', email: email||'', position: pos||'' };
-  }).filter(t => t.email);
-  if (!name || !targets.length) return alert('Group name and at least one target required.');
-  await apiFetch('/groups', 'POST', { name, targets });
-  closeModal('groupModal');
-  await loadGroups();
-}
-
-function openNewCampaign() {
-  loadSMTPProfiles();
-  document.getElementById('cName').value = '';
-  document.getElementById('campaignModal').classList.add('open');
-}
+// ── Modal helpers ────────────────────────────────────────────────────────────
 
 function openNewTemplate() {
-  document.getElementById('tName').value = '';
-  document.getElementById('tSubject').value = '';
-  document.getElementById('tHtml').value = '';
+  ['tName','tSubject','tFrom','tHtml'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('templateModal').classList.add('open');
 }
 
+function openNewPage() {
+  ['pName','pHtml'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pRedirect').value = 'https://edgeiqlabs.com/phishsim/';
+  document.getElementById('pCaptureCreds').checked = true;
+  document.getElementById('pCapturePasswords').checked = true;
+  document.getElementById('pageModal').classList.add('open');
+}
+
 function openNewGroup() {
-  document.getElementById('gName').value = '';
-  document.getElementById('gTargets').value = '';
+  ['gName','gTargets'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('groupModal').classList.add('open');
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-function switchTab(el, tabId) {
-  const modal = el.closest('.modal');
+function switchTab(el, active, all) {
+  const modal = el.closest('.modal') || document;
   modal.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  ['tabCampaign1','tabCampaign2'].forEach(id => {
+  all.forEach(id => {
     const el2 = document.getElementById(id);
-    if (el2) el2.style.display = id === tabId ? '' : 'none';
+    if (el2) el2.style.display = id === active ? '' : 'none';
   });
+}
+
+// ── Utilities ────────────────────────────────────────────────────────────────
+
+function populateSelect(id, items, valKey, labelKey, emptyMsg) {
+  const sel = document.getElementById(id);
+  if (!items.length) { sel.innerHTML = `<option value="">${emptyMsg}</option>`; return; }
+  sel.innerHTML = items.map(item => {
+    const label = typeof labelKey === 'function' ? labelKey(item) : item[labelKey];
+    return `<option value="${item[valKey]}">${esc(label)}</option>`;
+  }).join('');
 }
 
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(o => {
+function fmtDate(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleString(undefined, {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch { return iso; }
+}
+
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+
+// ── Close overlays on backdrop click ────────────────────────────────────────
+
+document.querySelectorAll('.overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
 });
-
-initDashboard();
 </script>
 </body>
 </html>
