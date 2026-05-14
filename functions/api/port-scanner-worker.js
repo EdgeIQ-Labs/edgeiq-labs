@@ -185,6 +185,6 @@ export default {
     if (highCount > 0) parts.push(`${highCount} high`);
     parts.push('3 deep checks locked');
 
-    return jsonResp({ hostname: target, grade, score, summary: parts.join(' · '), findings });
+    return jsonResp({ hostname: target, grade, score, summary: parts.join(' | '), findings });
   },
 };

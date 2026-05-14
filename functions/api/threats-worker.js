@@ -151,7 +151,7 @@ export default {
       }),
       probe(`${base}/wp-config.php`, { text: true }),
       probe(`${base}/phpinfo.php`, { text: true }),
-      probe(`${base}/backup.sql`, { method: 'HEAD' }),
+      probe(`${base}/backup.sql`, { text: true }),
       probe(`${base}/.well-known/security.txt`, { text: true }),
       fetchKEV(),
     ]);
@@ -171,7 +171,7 @@ export default {
 
     // ── .env exposure ────────────────────────────────────────────────────────
     const envR = envResult.status === 'fulfilled' ? envResult.value : {};
-    if (envR.status === 200 && envR.text) {
+    if (envR.status === 200 && envR.text && !envR.text.trimStart().startsWith('<')) {
       if (/DB_|SECRET|API_KEY|TOKEN|PASSWORD|PASS\s*=/i.test(envR.text)) {
         add('critical', 'ENV_CREDENTIAL_EXPOSURE', '/.env is publicly readable and contains credentials (DB_, SECRET, API_KEY, or PASSWORD pattern detected). Rotate all secrets immediately.');
       } else if (envR.text.trim().length > 20) {
@@ -205,7 +205,7 @@ export default {
 
     // ── Backup file exposure ─────────────────────────────────────────────────
     const bakR = backupResult.status === 'fulfilled' ? backupResult.value : {};
-    if (bakR.ok && bakR.status === 200) {
+    if (bakR.ok && bakR.status === 200 && bakR.text && !bakR.text.trimStart().startsWith('<')) {
       add('high', 'BACKUP_FILE_EXPOSED', '/backup.sql is accessible — may expose full database schema, user data, or credentials.');
     }
 
@@ -273,7 +273,7 @@ export default {
       hostname: targetUrl.hostname,
       grade,
       score,
-      summary: parts.join(' · '),
+      summary: parts.join(' | '),
       findings,
     });
   },
