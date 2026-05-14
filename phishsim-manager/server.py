@@ -96,7 +96,7 @@ def create_default_smtp_profile(admin_port, api_key):
     payload = _json.dumps({
         "name": "EdgeIQ SES",
         "host": f"{SES_SMTP_HOST}:587",
-        "from_address": "PhishSim Training <noreply@phishsim.edgeiqlabs.com>",
+        "from_address": "noreply@phishsim.edgeiqlabs.com",
         "username": SES_SMTP_USER,
         "password": SES_SMTP_PASS,
         "ignore_cert_errors": True,
