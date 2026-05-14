@@ -285,6 +285,15 @@ async function handleSendingProfiles(request, env, customerId) {
   return json(data, status);
 }
 
+async function handlePages(request, env, customerId, pageId = null) {
+  const method = request.method;
+  let path = pageId ? `pages/${pageId}` : 'pages/';
+  let body = null;
+  if (method === 'POST' || method === 'PUT') { try { body = await request.json(); } catch {} }
+  const { status, data } = await gophishProxy(env, customerId, path, method, body);
+  return json(data, status);
+}
+
 // ── Main fetch handler ────────────────────────────────────────────────────────
 
 export async function onRequest(context) {
@@ -353,6 +362,9 @@ export async function onRequest(context) {
 
     case 'smtp':
       return handleSendingProfiles(request, env, customerId);
+
+    case 'pages':
+      return handlePages(request, env, customerId, resourceId);
 
     default:
       return json({ error: 'Not found' }, 404);
