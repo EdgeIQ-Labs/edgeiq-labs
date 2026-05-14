@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishSim Dashboard · EdgeIQ Labs</title>
+  <style>
+    :root {
+      --bg: #0b0f14; --card: #121923; --text: #e8eef7; --muted: #9fb0c7;
+      --accent: #3dd9ff; --border: #233142; --ok: #70f0a8; --warn: #ffb347;
+      --danger: #ff6b6b; --purple: #c084fc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    header .logo { font-weight: 800; font-size: 1rem; color: var(--accent); }
+    header .tag { font-size: 0.75rem; background: rgba(61,217,255,0.12); color: var(--accent); border-radius: 4px; padding: 2px 8px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+    .stat .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    .stat .value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+    .stat .sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    h2 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #071018; font-weight: 700; font-size: 0.85rem; padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; }
+    .btn:hover { opacity: 0.85; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-danger { background: rgba(255,107,107,0.15); color: var(--danger); border: 1px solid rgba(255,107,107,0.3); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 22px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    td { padding: 11px 12px; font-size: 0.85rem; border-bottom: 1px solid rgba(35,49,66,0.5); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; font-weight: 600; }
+    .badge-green { background: rgba(112,240,168,0.12); color: var(--ok); }
+    .badge-yellow { background: rgba(255,179,71,0.12); color: var(--warn); }
+    .badge-red { background: rgba(255,107,107,0.12); color: var(--danger); }
+    .badge-blue { background: rgba(61,217,255,0.12); color: var(--accent); }
+    .badge-grey { background: rgba(159,176,199,0.12); color: var(--muted); }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; width: 100%; max-width: 540px; }
+    .modal h3 { margin-bottom: 18px; }
+    .form-row { margin-bottom: 14px; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 5px; }
+    input, textarea, select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.88rem; padding: 9px 12px; outline: none; font-family: inherit; }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { min-height: 120px; resize: vertical; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .loading { color: var(--muted); font-size: 0.88rem; padding: 24px; text-align: center; }
+    .bar-wrap { background: rgba(35,49,66,0.8); border-radius: 4px; height: 6px; overflow: hidden; min-width: 80px; }
+    .bar { height: 100%; border-radius: 4px; background: var(--danger); transition: width .4s; }
+    .id-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: var(--muted); word-break: break-all; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 18px; background: var(--bg); border-radius: 8px; padding: 4px; border: 1px solid var(--border); }
+    .tab { flex: 1; text-align: center; padding: 7px; font-size: 0.82rem; border-radius: 6px; cursor: pointer; color: var(--muted); border: none; background: transparent; }
+    .tab.active { background: var(--card); color: var(--text); font-weight: 600; }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <span class="logo">🎣 EdgeIQ PhishSim</span>
+  <span class="tag">Live Dashboard</span>
+  <span style="flex:1"></span>
+  <span id="customerLabel" style="font-size:0.78rem;color:var(--muted);"></span>
+</header>
+
+<div class="container">
+  <!-- Customer ID setup -->
+  <div id="setupSection" class="section" style="display:none;max-width:460px;margin:60px auto;">
+    <h2>Enter your Customer ID</h2>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">You received this in your welcome email after subscribing to PhishSim.</p>
+    <div class="form-row">
+      <input id="cidInput" type="text" placeholder="e.g. cs_live_abc123..." />
+    </div>
+    <button class="btn" onclick="saveCustomerId()">Access Dashboard</button>
+  </div>
+
+  <!-- Main dashboard -->
+  <div id="mainDash" style="display:none;">
+    <div class="grid" id="statsGrid">
+      <div class="stat"><div class="label">Campaigns</div><div class="value" id="sTotalCampaigns">—</div><div class="sub">total launched</div></div>
+      <div class="stat"><div class="label">Emails Sent</div><div class="value" id="sTotalSent">—</div><div class="sub">across all campaigns</div></div>
+      <div class="stat"><div class="label">Click Rate</div><div class="value" id="sClickRate">—</div><div class="sub">avg across campaigns</div></div>
+      <div class="stat"><div class="label">Submitted Data</div><div class="value" id="sSubmitRate">—</div><div class="sub">avg credential submission</div></div>
+    </div>
+
+    <div class="section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h2>Campaigns</h2>
+        <button class="btn" onclick="openNewCampaign()">+ New Campaign</button>
+      </div>
+      <div id="campaignsList"><div class="loading">Loading campaigns…</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div class="section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h2>Email Templates</h2>
+          <button class="btn btn-outline btn-sm" onclick="openNewTemplate()">+ Add</button>
+        </div>
+        <div id="templatesList"><div class="loading">Loading…</div></div>
+      </div>
+      <div class="section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h2>Target Groups</h2>
+          <button class="btn btn-outline btn-sm" onclick="openNewGroup()">+ Add</button>
+        </div>
+        <div id="groupsList"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Campaign Modal -->
+<div class="modal-overlay" id="campaignModal">
+  <div class="modal">
+    <h3>New Campaign</h3>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'tabCampaign1')">Setup</button>
+      <button class="tab" onclick="switchTab(this,'tabCampaign2')">Target & Template</button>
+    </div>
+    <div id="tabCampaign1">
+      <div class="form-row"><label>Campaign Name</label><input id="cName" placeholder="Q2 Phish Test" /></div>
+      <div class="form-row"><label>Phishing URL (landing page host)</label><input id="cUrl" readonly style="color:var(--muted)" /></div>
+      <div class="form-row"><label>Launch Date</label><input id="cLaunch" type="datetime-local" /></div>
+      <div class="form-row"><label>Send Emails By</label><input id="cSendBy" type="datetime-local" /></div>
+    </div>
+    <div id="tabCampaign2" style="display:none;">
+      <div class="form-row"><label>Email Template</label><select id="cTemplate"><option value="">Loading…</option></select></div>
+      <div class="form-row"><label>Target Group</label><select id="cGroup"><option value="">Loading…</option></select></div>
+      <div class="form-row"><label>Sending Profile (SMTP)</label><select id="cSMTP"><option value="">Loading…</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('campaignModal')">Cancel</button>
+      <button class="btn" onclick="createCampaign()">Launch Campaign</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Template Modal -->
+<div class="modal-overlay" id="templateModal">
+  <div class="modal">
+    <h3>New Email Template</h3>
+    <div class="form-row"><label>Template Name</label><input id="tName" placeholder="IT Password Reset" /></div>
+    <div class="form-row"><label>Subject</label><input id="tSubject" placeholder="Action Required: Reset Your Password" /></div>
+    <div class="form-row"><label>From Display Name</label><input id="tFrom" placeholder="IT Helpdesk" /></div>
+    <div class="form-row"><label>HTML Body</label><textarea id="tHtml" placeholder="<p>Click <a href='{{.URL}}'>here</a> to reset your password.</p>"></textarea></div>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Use <code style="color:var(--accent)">{{.URL}}</code> for the phishing link and <code style="color:var(--accent)">{{.FirstName}}</code> for personalization.</p>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('templateModal')">Cancel</button>
+      <button class="btn" onclick="createTemplate()">Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Group Modal -->
+<div class="modal-overlay" id="groupModal">
+  <div class="modal">
+    <h3>New Target Group</h3>
+    <div class="form-row"><label>Group Name</label><input id="gName" placeholder="Engineering Team" /></div>
+    <div class="form-row">
+      <label>Targets (one per line: First,Last,Email,Position)</label>
+      <textarea id="gTargets" placeholder="Alice,Smith,alice@company.com,Engineer&#10;Bob,Jones,bob@company.com,Manager"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('groupModal')">Cancel</button>
+      <button class="btn" onclick="createGroup()">Save Group</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '/api/phishsim';
+let customerId = localStorage.getItem('phishsim_cid');
+let instanceData = null;
+
+async function apiFetch(path, method='GET', body=null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'X-Customer-ID': customerId }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (!r.ok && r.status === 401) { showSetup(); throw new Error('Unauthorized'); }
+  return r.json();
+}
+
+function showSetup() {
+  document.getElementById('setupSection').style.display = '';
+  document.getElementById('mainDash').style.display = 'none';
+}
+
+function saveCustomerId() {
+  const v = document.getElementById('cidInput').value.trim();
+  if (!v) return;
+  localStorage.setItem('phishsim_cid', v);
+  customerId = v;
+  initDashboard();
+}
+
+async function initDashboard() {
+  if (!customerId) { showSetup(); return; }
+  try {
+    instanceData = await apiFetch('/instance');
+    document.getElementById('customerLabel').textContent = 'ID: ' + customerId.slice(0, 18) + '…';
+    document.getElementById('cUrl').value = instanceData.phish_url || '';
+    document.getElementById('setupSection').style.display = 'none';
+    document.getElementById('mainDash').style.display = '';
+    await Promise.all([loadCampaigns(), loadTemplates(), loadGroups()]);
+  } catch(e) {
+    showSetup();
+  }
+}
+
+async function loadCampaigns() {
+  const campaigns = await apiFetch('/campaigns');
+  const arr = Array.isArray(campaigns) ? campaigns : [];
+
+  // Compute stats
+  let totalSent=0, clicks=0, submits=0;
+  arr.forEach(c => {
+    totalSent += c.stats?.sent || 0;
+    clicks    += c.stats?.clicked || 0;
+    submits   += c.stats?.submitted_data || 0;
+  });
+  document.getElementById('sTotalCampaigns').textContent = arr.length;
+  document.getElementById('sTotalSent').textContent = totalSent;
+  document.getElementById('sClickRate').textContent = totalSent ? Math.round(clicks/totalSent*100)+'%' : '0%';
+  document.getElementById('sSubmitRate').textContent = totalSent ? Math.round(submits/totalSent*100)+'%' : '0%';
+
+  if (!arr.length) {
+    document.getElementById('campaignsList').innerHTML = '<div class="loading">No campaigns yet. Launch your first one above.</div>';
+    return;
+  }
+
+  const rows = arr.map(c => {
+    const pct = c.stats?.sent ? Math.round((c.stats.clicked||0)/c.stats.sent*100) : 0;
+    const statusBadge = {
+      'In progress': 'badge-blue', 'Completed': 'badge-green',
+      'Scheduled': 'badge-yellow', 'Paused': 'badge-grey'
+    }[c.status] || 'badge-grey';
+    return `<tr>
+      <td><strong>${esc(c.name)}</strong></td>
+      <td><span class="badge ${statusBadge}">${esc(c.status)}</span></td>
+      <td>${c.stats?.sent||0}</td>
+      <td>${c.stats?.opened||0}</td>
+      <td>${c.stats?.clicked||0}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div>
+          <span style="font-size:0.8rem;color:${pct>30?'var(--danger)':pct>15?'var(--warn)':'var(--ok)'}">${pct}%</span>
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="viewResults(${c.id})">Results</button>
+        <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="deleteCampaign(${c.id})">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('campaignsList').innerHTML = `
+    <table>
+      <thead><tr><th>Name</th><th>Status</th><th>Sent</th><th>Opened</th><th>Clicked</th><th>Click Rate</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+async function loadTemplates() {
+  const templates = await apiFetch('/templates');
+  const arr = Array.isArray(templates) ? templates : [];
+  const sel = document.getElementById('cTemplate');
+  sel.innerHTML = arr.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('') || '<option value="">No templates</option>';
+  if (!arr.length) {
+    document.getElementById('templatesList').innerHTML = '<div class="loading">No templates yet.</div>';
+    return;
+  }
+  document.getElementById('templatesList').innerHTML = arr.map(t =>
+    `<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;">
+      <strong>${esc(t.name)}</strong>
+      <span style="color:var(--muted);font-size:0.75rem;display:block">${esc(t.subject||'')}</span>
+    </div>`
+  ).join('');
+}
+
+async function loadGroups() {
+  const groups = await apiFetch('/groups');
+  const arr = Array.isArray(groups) ? groups : [];
+  const sel = document.getElementById('cGroup');
+  sel.innerHTML = arr.map(g => `<option value="${g.id}">${esc(g.name)} (${g.targets?.length||0})</option>`).join('') || '<option value="">No groups</option>';
+  if (!arr.length) {
+    document.getElementById('groupsList').innerHTML = '<div class="loading">No target groups yet.</div>';
+    return;
+  }
+  document.getElementById('groupsList').innerHTML = arr.map(g =>
+    `<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;">
+      <strong>${esc(g.name)}</strong>
+      <span style="color:var(--muted);font-size:0.75rem;display:block">${g.targets?.length||0} targets</span>
+    </div>`
+  ).join('');
+}
+
+async function loadSMTPProfiles() {
+  try {
+    const profiles = await apiFetch('/smtp');
+    const arr = Array.isArray(profiles) ? profiles : [];
+    const sel = document.getElementById('cSMTP');
+    sel.innerHTML = arr.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') || '<option value="">No sending profiles — add via GoPhish</option>';
+  } catch {}
+}
+
+async function createCampaign() {
+  const name     = document.getElementById('cName').value.trim();
+  const template = parseInt(document.getElementById('cTemplate').value);
+  const group    = parseInt(document.getElementById('cGroup').value);
+  const smtp     = parseInt(document.getElementById('cSMTP').value) || 1;
+  const launch   = document.getElementById('cLaunch').value;
+  const sendBy   = document.getElementById('cSendBy').value;
+  const url      = document.getElementById('cUrl').value;
+  if (!name || !template || !group) return alert('Name, template, and group are required.');
+  const payload = {
+    name, template: { id: template }, groups: [{ id: group }],
+    smtp: { id: smtp }, url,
+    launch_date: launch ? new Date(launch).toISOString() : new Date().toISOString(),
+    send_by_date: sendBy ? new Date(sendBy).toISOString() : null,
+  };
+  try {
+    await apiFetch('/campaigns', 'POST', payload);
+    closeModal('campaignModal');
+    await loadCampaigns();
+  } catch(e) { alert('Failed to create campaign: ' + e.message); }
+}
+
+async function deleteCampaign(id) {
+  if (!confirm('Delete this campaign?')) return;
+  await apiFetch('/campaigns/' + id, 'DELETE');
+  await loadCampaigns();
+}
+
+async function viewResults(id) {
+  const data = await apiFetch('/campaigns/' + id);
+  const results = data.results || [];
+  const info = `Campaign: ${esc(data.name)}\nStatus: ${data.status}\nSent: ${data.stats?.sent||0} | Opened: ${data.stats?.opened||0} | Clicked: ${data.stats?.clicked||0} | Submitted: ${data.stats?.submitted_data||0}\n\nTop results:\n${results.slice(0,10).map(r=>`  ${r.email}: ${r.status}`).join('\n')}`;
+  alert(info);
+}
+
+async function createTemplate() {
+  const name    = document.getElementById('tName').value.trim();
+  const subject = document.getElementById('tSubject').value.trim();
+  const from    = document.getElementById('tFrom').value.trim() || 'IT Helpdesk';
+  const html    = document.getElementById('tHtml').value.trim();
+  if (!name || !subject || !html) return alert('All fields required.');
+  await apiFetch('/templates', 'POST', { name, subject, from_address: from, html });
+  closeModal('templateModal');
+  await loadTemplates();
+}
+
+async function createGroup() {
+  const name  = document.getElementById('gName').value.trim();
+  const lines = document.getElementById('gTargets').value.trim().split('\n').filter(Boolean);
+  const targets = lines.map(l => {
+    const [fn, ln, email, pos] = l.split(',').map(s => s.trim());
+    return { first_name: fn||'', last_name: ln||'', email: email||'', position: pos||'' };
+  }).filter(t => t.email);
+  if (!name || !targets.length) return alert('Group name and at least one target required.');
+  await apiFetch('/groups', 'POST', { name, targets });
+  closeModal('groupModal');
+  await loadGroups();
+}
+
+function openNewCampaign() {
+  loadSMTPProfiles();
+  document.getElementById('cName').value = '';
+  document.getElementById('campaignModal').classList.add('open');
+}
+
+function openNewTemplate() {
+  document.getElementById('tName').value = '';
+  document.getElementById('tSubject').value = '';
+  document.getElementById('tHtml').value = '';
+  document.getElementById('templateModal').classList.add('open');
+}
+
+function openNewGroup() {
+  document.getElementById('gName').value = '';
+  document.getElementById('gTargets').value = '';
+  document.getElementById('groupModal').classList.add('open');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function switchTab(el, tabId) {
+  const modal = el.closest('.modal');
+  modal.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['tabCampaign1','tabCampaign2'].forEach(id => {
+    const el2 = document.getElementById(id);
+    if (el2) el2.style.display = id === tabId ? '' : 'none';
+  });
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+initDashboard();
+</script>
+</body>
+</html>

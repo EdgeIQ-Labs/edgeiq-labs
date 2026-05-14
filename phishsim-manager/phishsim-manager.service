@@ -1,0 +1,17 @@
+[Unit]
+Description=PhishSim Manager API
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=guy
+WorkingDirectory=/home/guy/phishsim-manager
+Environment="PHISHSIM_SECRET=Z5bNMuzGDrmCQgo2xLVk6q8scFXwAHYIh3PUEyKd"
+Environment="PHISH_HOST=phishsim.edgeiqlabs.com"
+ExecStart=/usr/bin/python3 /home/guy/phishsim-manager/server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
