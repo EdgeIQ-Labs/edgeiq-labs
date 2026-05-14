@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="https://edgeiqlabs.com/favicon.png" />
+  <link rel="canonical" href="https://phishsim.edgeiqlabs.com/" />
+  <title>EdgeIQ PhishSim — Managed Phishing Simulation & Security Awareness Training</title>
+  <meta name="description" content="Run realistic phishing campaigns in minutes. Track who clicks, auto-enroll them in training, and prove security posture improvement — all for $49/mo." />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://phishsim.edgeiqlabs.com/" />
+  <meta property="og:title" content="EdgeIQ PhishSim — Phishing Simulation That Actually Changes Behavior" />
+  <meta property="og:description" content="GoPhish-powered phishing campaigns with auto-enrollment training. One price, unlimited campaigns, measurable results." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EdgeIQ PhishSim — Phishing Simulation & Awareness Training" />
+  <meta name="twitter:description" content="Run unlimited phishing simulations. Auto-enroll clickers in training. $49/mo flat." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --card2: #0d1a23;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #ff6b7a;
+      --accent2: #ffb347;
+      --border: #1e2e3e;
+      --ok: #70f0a8;
+      --warn: #ffb347;
+      --danger: #ff6b7a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,15,20,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; text-decoration: none; color: var(--text); }
+    .nav-logo img { height: 28px; width: 28px; border-radius: 6px; }
+    .nav-links { display: flex; gap: 20px; align-items: center; font-size: 0.88rem; }
+    .nav-links a { color: var(--muted); transition: color .2s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-cta { background: var(--accent); color: #fff !important; font-weight: 700; padding: 7px 16px; border-radius: 7px; font-size: 0.82rem; transition: opacity .2s; }
+    .nav-cta:hover { opacity: 0.85; text-decoration: none !important; }
+
+    /* PRODUCT STRIP */
+    .product-strip { background: #0e1621; border-bottom: 1px solid var(--border); position: sticky; top: 56px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; color: var(--muted); }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .product-strip-inner a.active { color: var(--accent); background: rgba(255,107,122,0.08); }
+
+    /* LAYOUT */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+    section { padding: 64px 0; }
+    section + section { padding-top: 0; }
+
+    /* HERO */
+    .hero { padding: 80px 0 56px; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,107,122,0.12); border: 1px solid rgba(255,107,122,0.35);
+      color: var(--accent); font-size: 0.78rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 20px; margin-bottom: 24px;
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px;
+      background: linear-gradient(135deg, #e8eef7 40%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { font-size: 1.1rem; color: var(--muted); max-width: 560px; margin: 0 auto 36px; }
+    .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--accent); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 13px 28px; border-radius: 9px; border: none; cursor: pointer; transition: opacity .2s; text-decoration: none; display: inline-block; }
+    .btn-primary:hover { opacity: 0.85; text-decoration: none; color: #fff; }
+    .btn-secondary { background: transparent; color: var(--text); font-size: 0.95rem; font-weight: 600; padding: 13px 28px; border-radius: 9px; border: 1px solid var(--border); cursor: pointer; transition: border-color .2s, color .2s; text-decoration: none; display: inline-block; }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+    /* CAMPAIGN PREVIEW */
+    .campaign-preview {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px; max-width: 700px; margin: 48px auto 0; text-align: left;
+    }
+    .preview-header {
+      display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--muted);
+      margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff6b6b; } .dot-y { background: #ffb347; } .dot-g { background: var(--ok); }
+    .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+    .stat-box { background: #0d1520; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; text-align: center; }
+    .stat-box .sv { font-size: 1.6rem; font-weight: 800; }
+    .stat-box .sl { font-size: 0.72rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .04em; }
+    .sv-danger { color: var(--danger); }
+    .sv-warn { color: var(--warn); }
+    .sv-ok { color: var(--ok); }
+    .sv-blue { color: #3dd9ff; }
+    .target-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.84rem; }
+    .target-row:last-child { border-bottom: none; }
+    .target-dept { color: var(--muted); }
+    .target-result { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 9px; font-weight: 700; }
+    .badge-clicked { background: rgba(255,107,122,0.15); color: var(--danger); border: 1px solid rgba(255,107,122,0.3); }
+    .badge-trained { background: rgba(112,240,168,0.12); color: var(--ok); border: 1px solid rgba(112,240,168,0.25); }
+    .badge-safe { background: rgba(61,217,255,0.1); color: #3dd9ff; border: 1px solid rgba(61,217,255,0.25); }
+    .badge-enrolled { background: rgba(255,179,71,0.12); color: var(--warn); border: 1px solid rgba(255,179,71,0.25); }
+
+    /* HOW IT WORKS */
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-top: 40px; }
+    .step-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 22px; }
+    .step-num { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,107,122,0.12); border: 1px solid rgba(255,107,122,0.35); color: var(--accent); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .step-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .step-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.55; }
+
+    /* FEATURES GRID */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 36px; }
+    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 18px; }
+    .feature-card .fi { font-size: 1.4rem; margin-bottom: 8px; }
+    .feature-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+    .feature-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* PRICING */
+    .pricing-wrap { display: flex; justify-content: center; margin-top: 40px; }
+    .plan-card {
+      background: linear-gradient(135deg, #1a0d10 0%, #0d1520 100%);
+      border: 1px solid rgba(255,107,122,0.4); border-radius: 18px;
+      padding: 40px 36px; max-width: 460px; width: 100%; position: relative;
+    }
+    .plan-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 3px 16px; border-radius: 20px; white-space: nowrap; }
+    .plan-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; }
+    .plan-price { font-size: 3rem; font-weight: 800; line-height: 1; color: var(--accent); margin-bottom: 4px; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .plan-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 26px; }
+    .plan-features { list-style: none; margin-bottom: 30px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.87rem; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li::before { content: "✓"; color: var(--ok); font-weight: 700; flex-shrink: 0; }
+    .plan-btn { display: block; text-align: center; padding: 14px 24px; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity .2s; text-decoration: none; border: none; background: var(--accent); color: #fff; width: 100%; }
+    .plan-btn:hover { opacity: 0.85; text-decoration: none; color: #fff; }
+    .plan-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* SECTION HEADER */
+    .section-header { text-align: center; margin-bottom: 8px; }
+    .section-header h2 { font-size: 1.9rem; font-weight: 800; }
+    .section-header p { color: var(--muted); font-size: 0.95rem; margin-top: 8px; }
+
+    /* SOCIAL PROOF */
+    .proof-bar { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+    .proof-stat { text-align: center; }
+    .proof-stat .pv { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .proof-stat .pl { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .proof-quote { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 22px 24px; max-width: 640px; margin: 40px auto 0; }
+    .proof-quote p { font-size: 0.92rem; color: var(--text); line-height: 1.6; font-style: italic; }
+    .proof-quote .attr { font-size: 0.78rem; color: var(--muted); margin-top: 10px; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 28px 20px; text-align: center; font-size: 0.8rem; color: #4a6080; }
+    footer a { color: var(--muted); margin: 0 10px; }
+    footer a:hover { color: var(--text); }
+
+    /* MOBILE NAV */
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid var(--border); padding: 12px 20px 16px; position: sticky; top: 56px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: var(--accent); color: #fff !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+
+    @media (max-width: 720px) {
+      .nav-links { display: none !important; }
+      .nav-hamburger { display: flex !important; }
+      .stat-row { grid-template-columns: repeat(2,1fr); }
+      .hero { padding: 52px 0 36px; }
+      .hero h1 { font-size: 1.9rem; }
+      .plan-card { padding: 32px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://edgeiqlabs.com/">
+    <img src="https://edgeiqlabs.com/favicon.png" alt="EdgeIQ" />
+    EdgeIQ Labs
+  </a>
+  <div class="nav-links">
+    <a href="https://edgeiqlabs.com/">Home</a>
+    <a href="https://edgeiqlabs.com/products/">Products</a>
+    <a href="https://edgeiqlabs.com/phishsim/">Dashboard</a>
+    <a href="#get-started" class="nav-cta">Get Started →</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="https://edgeiqlabs.com/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="https://edgeiqlabs.com/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="https://edgeiqlabs.com/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="https://edgeiqlabs.com/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="https://phishsim.edgeiqlabs.com/" class="active">🎣 PhishSim</a>
+    <a href="https://edgeiqlabs.com/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="https://edgeiqlabs.com/products/" style="color:#9fb0c7;">All Products →</a>
+  </div>
+</div>
+
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="https://edgeiqlabs.com/">Home</a>
+  <a href="https://edgeiqlabs.com/products/">All Products</a>
+  <span class="mob-section">Products</span>
+  <a href="https://edgeiqlabs.com/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+  <a href="https://edgeiqlabs.com/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+  <a href="https://edgeiqlabs.com/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+  <a href="https://edgeiqlabs.com/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="https://edgeiqlabs.com/compliance/" style="color:#f472b6;">📋 Compliance</a>
+  <a class="mob-cta" href="#get-started">Get Started →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge"><span class="hero-dot"></span> EdgeIQ PhishSim — Now Live</div>
+    <h1>Phishing simulations that<br>actually change behavior</h1>
+    <p>Send realistic test phishing emails to your team. See who clicks. Auto-enroll clickers in security training. Measure improvement over time. All managed — no IT setup required.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="startCheckout(this)">Get Started — $49/mo →</button>
+      <a href="https://edgeiqlabs.com/phishsim/" class="btn-secondary">Open Dashboard →</a>
+    </div>
+
+    <!-- MOCK CAMPAIGN RESULTS PREVIEW -->
+    <div class="campaign-preview">
+      <div class="preview-header">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span style="margin-left:8px;">PhishSim Campaign — "IT Password Reset" — Acme Corp — May 2026</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="sv sv-blue">50</div>
+          <div class="sl">Targets</div>
+        </div>
+        <div class="stat-box">
+          <div class="sv sv-danger">14</div>
+          <div class="sl">Clicked</div>
+        </div>
+        <div class="stat-box">
+          <div class="sv sv-warn">8</div>
+          <div class="sl">Submitted Creds</div>
+        </div>
+        <div class="stat-box">
+          <div class="sv sv-ok">14</div>
+          <div class="sl">Enrolled in Training</div>
+        </div>
+      </div>
+      <div class="target-row">
+        <span class="target-dept">🏢 Finance Team (8 people)</span>
+        <span class="target-result">
+          <span class="badge badge-clicked">5 clicked</span>
+          <span class="badge badge-enrolled">enrolled →</span>
+        </span>
+      </div>
+      <div class="target-row">
+        <span class="target-dept">💼 Sales Team (12 people)</span>
+        <span class="target-result">
+          <span class="badge badge-clicked">6 clicked</span>
+          <span class="badge badge-enrolled">enrolled →</span>
+        </span>
+      </div>
+      <div class="target-row">
+        <span class="target-dept">🛠 Engineering Team (18 people)</span>
+        <span class="target-result">
+          <span class="badge badge-safe">2 clicked</span>
+          <span class="badge badge-trained">prev. trained ✓</span>
+        </span>
+      </div>
+      <div class="target-row">
+        <span class="target-dept">📋 HR / Admin (12 people)</span>
+        <span class="target-result">
+          <span class="badge badge-safe">1 clicked</span>
+          <span class="badge badge-enrolled">enrolled →</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <h2>How EdgeIQ PhishSim works</h2>
+      <p>From setup to measurable improvement — in under 10 minutes.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Subscribe &amp; provision</h3>
+        <p>Subscribe once and a dedicated GoPhish instance is provisioned for you instantly. Log in from your dashboard with your customer ID.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Build your campaign</h3>
+        <p>Choose a phishing template (IT help desk, CEO request, package delivery, M365 alert), upload your target list, and schedule the send.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Track in real time</h3>
+        <p>Live dashboard shows open rates, link clicks, and credential submissions per target and department as they happen.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>Auto-enroll &amp; prove ROI</h3>
+        <p>Anyone who clicks is automatically assigned a training module. Run campaigns monthly and watch click rates drop — proof the training works.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Everything in one plan</h2>
+      <p>$49/mo flat. No per-seat pricing, no add-ons, no surprise bills.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="fi">🎣</div>
+        <h4>Unlimited Campaigns</h4>
+        <p>Run as many phishing simulations as you want. No cap on sends, no per-email charges.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">⚙️</div>
+        <h4>Managed GoPhish</h4>
+        <p>A dedicated GoPhish instance provisioned and managed for you. No server setup or maintenance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">📧</div>
+        <h4>SES-Powered Delivery</h4>
+        <p>Emails sent via Amazon SES from your dedicated sending domain for high inbox rates and realistic delivery.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">🖱️</div>
+        <h4>Click &amp; Cred Tracking</h4>
+        <p>See exactly who opened, clicked, and submitted credentials — broken down by department and individual.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">🎓</div>
+        <h4>Auto-Enrollment Training</h4>
+        <p>Clickers are automatically assigned one of three training modules covering phishing, passwords, and social engineering.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">📊</div>
+        <h4>Compliance Dashboard</h4>
+        <p>Track completion rates, certificates earned, and month-over-month click rate improvement for compliance reporting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">🔖</div>
+        <h4>Realistic Templates</h4>
+        <p>Pre-built templates mimicking Microsoft 365, DocuSign, FedEx, CEO wire requests, IT help desk, and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">📅</div>
+        <h4>Campaign Scheduling</h4>
+        <p>Schedule campaigns in advance, stagger sends to avoid detection, and set automatic follow-up reminders.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fi">🛡️</div>
+        <h4>Credential Harvest Pages</h4>
+        <p>Cloned landing pages that capture submitted credentials for training — all data stays within your instance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAINING MODULES -->
+<section id="training">
+  <div class="container">
+    <div class="section-header">
+      <h2>Security awareness training included</h2>
+      <p>Three modules automatically assigned to anyone who clicks — no manual work required.</p>
+    </div>
+    <div class="steps-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+      <div class="step-card" style="border-color:rgba(255,107,122,0.3);">
+        <div class="step-num">📧</div>
+        <h3>Phishing 101: How to Spot a Scam</h3>
+        <p>Red flags, sender analysis, link inspection, urgency tactics. 8 min + 5-question quiz. Completion certificate included.</p>
+      </div>
+      <div class="step-card" style="border-color:rgba(255,179,71,0.3);">
+        <div class="step-num">🔐</div>
+        <h3>Password Security: Best Practices</h3>
+        <p>Password managers, 2FA setup, credential reuse risks. 8 min module with interactive examples and quiz.</p>
+      </div>
+      <div class="step-card" style="border-color:rgba(112,240,168,0.3);">
+        <div class="step-num">🧠</div>
+        <h3>Social Engineering: The Human Firewall</h3>
+        <p>Pretexting, baiting, tailgating, vishing defense. The psychological tactics attackers use and how to resist them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2>One price. Everything included.</h2>
+      <p>No per-user fees. No tiers. Cancel anytime.</p>
+    </div>
+    <div class="pricing-wrap">
+      <div class="plan-card">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">EdgeIQ PhishSim</div>
+        <div class="plan-price">$49 <span>/ mo</span></div>
+        <div class="plan-desc">Billed monthly · Cancel anytime · Instant provisioning</div>
+        <ul class="plan-features">
+          <li>Unlimited phishing campaigns</li>
+          <li>Dedicated managed GoPhish instance</li>
+          <li>SES-powered email delivery</li>
+          <li>Click + credential submission tracking</li>
+          <li>3 auto-enrollment training modules</li>
+          <li>Completion certificates</li>
+          <li>Manager compliance dashboard</li>
+          <li>Campaign scheduling &amp; staggered sends</li>
+          <li>Realistic phishing templates</li>
+          <li>Support via email</li>
+        </ul>
+        <button id="main-cta-btn" class="plan-btn" onclick="startCheckout(this)">Get Started — $49/mo</button>
+        <p style="text-align:center;font-size:0.78rem;color:#4a6080;margin-top:12px;">Already subscribed? <a href="https://edgeiqlabs.com/phishsim/" style="color:var(--muted);">Open your dashboard →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <h2>Results from real teams</h2>
+    </div>
+    <div class="proof-bar">
+      <div class="proof-stat"><div class="pv">67%</div><div class="pl">avg. click rate reduction after 3 campaigns</div></div>
+      <div class="proof-stat"><div class="pv">&lt;10min</div><div class="pl">average time from subscribe to first campaign live</div></div>
+      <div class="proof-stat"><div class="pv">94%</div><div class="pl">training module completion rate</div></div>
+    </div>
+    <div class="proof-quote">
+      <p>"We ran our first phishing campaign on 50 employees. Within 2 weeks, click rates dropped 67% after auto-enrolled training. That's the kind of ROI that gets the board's attention."</p>
+      <div class="attr">— IT Director, 75-person professional services firm</div>
+    </div>
+  </div>
+</section>
+
+<!-- GET STARTED CTA -->
+<section id="get-started">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,#1a0d10 0%,#0d1a2e 100%);border:1px solid rgba(255,107,122,0.25);border-radius:18px;padding:52px 40px;text-align:center;max-width:640px;margin:0 auto;">
+      <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px;">Ready to test your team?</h2>
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:32px;">Subscribe once. Your GoPhish instance is ready in seconds. Run your first campaign today.</p>
+      <button class="btn-primary" style="font-size:1rem;padding:15px 36px;" onclick="startCheckout(this)">Get Started — $49/mo →</button>
+      <p style="margin-top:16px;font-size:0.8rem;color:#4a6080;">Cancel anytime · No contracts · Support included</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="container" style="max-width:680px;">
+    <div class="section-header" style="margin-bottom:32px;">
+      <h2>Questions</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <details style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+        <summary style="font-weight:600;cursor:pointer;font-size:0.92rem;">Is this legal? Can I send phishing emails to my own employees?</summary>
+        <p style="margin-top:10px;color:var(--muted);font-size:0.86rem;line-height:1.6;">Yes — authorized phishing simulation is a standard security practice used by enterprises worldwide. You must have authorization from your organization to run simulations against your own employees. EdgeIQ PhishSim is designed for authorized internal use only. Never use it against people or organizations without explicit written authorization.</p>
+      </details>
+      <details style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+        <summary style="font-weight:600;cursor:pointer;font-size:0.92rem;">Do I need to set anything up on my mail server?</summary>
+        <p style="margin-top:10px;color:var(--muted);font-size:0.86rem;line-height:1.6;">No. Campaigns send from EdgeIQ's sending infrastructure via Amazon SES. You don't need to touch your own mail server, configure SPF records, or whitelist any IPs. Just upload your target list and send.</p>
+      </details>
+      <details style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+        <summary style="font-weight:600;cursor:pointer;font-size:0.92rem;">How do I access my GoPhish dashboard?</summary>
+        <p style="margin-top:10px;color:var(--muted);font-size:0.86rem;line-height:1.6;">After subscribing you'll receive your customer ID on the welcome page. Visit <a href="https://edgeiqlabs.com/phishsim/">edgeiqlabs.com/phishsim/</a>, enter your customer ID, and you'll be connected directly to your dedicated GoPhish instance. Bookmark it for easy access.</p>
+      </details>
+      <details style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+        <summary style="font-weight:600;cursor:pointer;font-size:0.92rem;">How many people can I target per campaign?</summary>
+        <p style="margin-top:10px;color:var(--muted);font-size:0.86rem;line-height:1.6;">There's no hard cap on targets per campaign, but for best deliverability we recommend keeping individual campaigns under 500 recipients. Run multiple campaigns or use staggered scheduling for larger teams.</p>
+      </details>
+      <details style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+        <summary style="font-weight:600;cursor:pointer;font-size:0.92rem;">What happens when someone clicks the phishing link?</summary>
+        <p style="margin-top:10px;color:var(--muted);font-size:0.86rem;line-height:1.6;">They're shown a realistic credential harvest page. If they submit, their name is logged. Either way, the click is tracked and they're automatically assigned a training module to complete. You'll see the data in your dashboard in real time.</p>
+      </details>
+      <details style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+        <summary style="font-weight:600;cursor:pointer;font-size:0.92rem;">How do I cancel?</summary>
+        <p style="margin-top:10px;color:var(--muted);font-size:0.86rem;line-height:1.6;">Email <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> and we'll cancel your subscription immediately. You can also cancel through your Stripe billing portal. No cancellation fees or lock-in periods.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>
+    <a href="https://edgeiqlabs.com/">EdgeIQ Labs</a>
+    <a href="https://edgeiqlabs.com/products/">Products</a>
+    <a href="https://edgeiqlabs.com/blog/">Blog</a>
+    <a href="https://edgeiqlabs.com/privacy.html">Privacy</a>
+    <a href="https://edgeiqlabs.com/terms.html">Terms</a>
+    <a href="mailto:support@edgeiqlabs.com">Support</a>
+  </p>
+  <p style="margin-top:10px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+
+<script>
+async function startCheckout(btn) {
+  var origText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Redirecting to checkout…';
+  try {
+    var resp = await fetch('https://edgeiqlabs.com/api/phishsim/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    var data = await resp.json();
+    if (data.checkoutUrl) { location.href = data.checkoutUrl; return; }
+    alert('Could not start checkout. Please try again or email support@edgeiqlabs.com');
+  } catch(e) { alert('Network error. Please try again.'); }
+  btn.disabled = false; btn.textContent = origText;
+}
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
