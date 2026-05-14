@@ -440,7 +440,12 @@
     <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:0 auto 48px;max-width:580px;">
       <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
       <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">Get attack technique breakdowns, tool releases, and practical guides. No fluff, unsubscribe anytime.</p>
-      <iframe src="https://edgeiqlabs.substack.com/embed" width="480" height="320" style="border:none; background:transparent;" frameborder="0" scrolling="no"></iframe>
+      <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+        <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+        <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+      </form>
+      <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+      <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
       <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
     </div>
   </div>
