@@ -721,6 +721,7 @@
       <p>The complete catalog. Lifetime tools for security pros, dashboards for agencies, white-label reports for consultants, setup services, and developer APIs.</p>
       <div class="tag-row">
         <a href="#monitoring">🟢 Monitoring</a>
+        <a href="#phishsim">🎣 PhishSim</a>
         <a href="#lifetime-plans">🔍 Lifetime Tools</a>
         <a href="#one-time">🔔 One-Time Tools</a>
         <a href="#fixit">🔧 Fix-it</a>
@@ -847,6 +848,23 @@
             <a class="btn btn-primary" href="/compliance/" style="background:#3dd9ff;color:#071018;font-weight:800;">Track Posture →</a>
             <a class="btn btn-secondary" href="https://buy.stripe.com/eVq3cxam730V9Ig5os7wA2N" target="_blank" rel="noopener" style="font-size:0.8rem;">Essential $49/mo</a>
             <a class="btn btn-secondary" href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" target="_blank" rel="noopener" style="font-size:0.8rem;">Business $99/mo</a>
+          </div>
+        </article>
+
+        <article id="phishsim" class="card anim-card" style="background:linear-gradient(135deg,#1a0d10 0%,#0b0f14 100%);border-color:rgba(255,80,100,0.35);position:relative;overflow:hidden;">
+          <div style="position:absolute;top:12px;right:14px;background:rgba(255,80,100,0.15);border:1px solid rgba(255,80,100,0.35);color:#ff6b7a;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">LIVE</div>
+          <h3>🎣 EdgeIQ PhishSim</h3>
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">GoPhish-powered phishing simulation for your team. Run unlimited campaigns, track who clicks, and auto-enroll clickers in security awareness training.</p>
+          <ul>
+            <li>✅ <strong>$49/mo — Unlimited campaigns</strong></li>
+            <li>✅ Managed GoPhish instance, provisioned instantly</li>
+            <li>✅ Click tracking + credential submission stats</li>
+            <li>✅ Auto-enroll clickers in training modules</li>
+            <li>🎣 SES-powered delivery for high inbox rates</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="/phishsim/" style="background:#ff6b7a;color:#fff;font-weight:800;">Open App →</a>
+            <button class="btn btn-secondary" onclick="phishsimCheckout(this)" style="font-size:0.8rem;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--text);">Subscribe — $49/mo</button>
           </div>
         </article>
 
@@ -1446,6 +1464,18 @@ document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(functio
     document.getElementById('nav-mobile-menu').classList.remove('open');
   });
 });
+</script>
+<script>
+async function phishsimCheckout(btn) {
+  btn.disabled = true; btn.textContent = 'Redirecting…';
+  try {
+    const resp = await fetch('/api/phishsim/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const data = await resp.json();
+    if (data.checkoutUrl) { location.href = data.checkoutUrl; return; }
+    alert('Could not start checkout. Please try again.');
+  } catch { alert('Network error. Please try again.'); }
+  btn.disabled = false; btn.textContent = 'Subscribe — $49/mo';
+}
 </script>
 </body>
 </html>
