@@ -173,6 +173,17 @@
 
 <script>
 const API = '/api/phishsim';
+
+// Auto-populate from ?cid= URL param (post-payment redirect from welcome page)
+(function() {
+  const p = new URLSearchParams(location.search).get('cid');
+  if (p) {
+    localStorage.setItem('phishsim_cid', p);
+    // Clean up URL without reload
+    history.replaceState(null, '', location.pathname);
+  }
+})();
+
 let customerId = localStorage.getItem('phishsim_cid');
 let instanceData = null;
 

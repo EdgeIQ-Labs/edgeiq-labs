@@ -3,29 +3,21 @@
  * Deploy as Cloudflare Pages Function at /api/phishsim/*
  *
  * Env vars required:
- *   PHISHSIM_SECRET   — shared secret for the R720 management API
- *   PHISHSIM_MGR_URL  — https://phishsim-api.edgeiqlabs.com
- *   PHISHSIM_KV       — KV namespace binding for customer instance data
- *
- * Routes:
- *   POST   /api/phishsim/provision          — called by Stripe success webhook
- *   GET    /api/phishsim/instance           — return instance info for authenticated customer
- *   GET    /api/phishsim/campaigns          — list campaigns
- *   POST   /api/phishsim/campaigns          — create campaign
- *   GET    /api/phishsim/campaigns/:id      — get campaign + results
- *   DELETE /api/phishsim/campaigns/:id      — delete campaign
- *   GET    /api/phishsim/templates          — list email templates
- *   POST   /api/phishsim/templates          — create template
- *   GET    /api/phishsim/groups             — list target groups
- *   POST   /api/phishsim/groups             — create target group
- *   POST   /api/phishsim/stripe-webhook     — Stripe webhook (provision on payment)
+ *   PHISHSIM_SECRET        — shared secret for the R720 management API
+ *   PHISHSIM_MGR_URL       — https://phishsim-api.edgeiqlabs.com
+ *   PHISHSIM_KV            — KV namespace binding for customer instance data
+ *   STRIPE_SECRET_KEY      — Stripe secret key (sk_live_... or sk_test_...)
+ *   STRIPE_WEBHOOK_SECRET  — Stripe webhook signing secret (set after /setup runs)
+ *   PHISHSIM_PRICE_ID      — Stripe price ID for PhishSim subscription (set after /setup runs)
  */
 
 const CORS = {
   'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Customer-ID, X-Stripe-Signature',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Customer-ID, X-Stripe-Signature, X-Provision-Secret',
 };
+
+const SITE_URL = 'https://edgeiqlabs.com';
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -78,6 +70,20 @@ async function saveCustomerInstance(env, customerId, data) {
   await env.PHISHSIM_KV.put(`instance:${customerId}`, JSON.stringify(data));
 }
 
+// ── Stripe helpers ────────────────────────────────────────────────────────────
+
+async function stripeRequest(env, path, method = 'GET', params = null) {
+  const resp = await fetch(`https://api.stripe.com/v1${path}`, {
+    method,
+    headers: {
+      'Authorization':  `Bearer ${env.STRIPE_SECRET_KEY}`,
+      'Content-Type':   'application/x-www-form-urlencoded',
+    },
+    body: params ? new URLSearchParams(params).toString() : undefined,
+  });
+  return resp.json();
+}
+
 // ── Stripe signature verification ─────────────────────────────────────────────
 
 async function verifyStripeSignature(payload, sigHeader, secret) {
@@ -97,16 +103,120 @@ async function verifyStripeSignature(payload, sigHeader, secret) {
 
 // ── Route handlers ────────────────────────────────────────────────────────────
 
+async function handleCheckout(request, env) {
+  if (!env.STRIPE_SECRET_KEY) return json({ error: 'Stripe not configured' }, 500);
+
+  let body = {};
+  try { body = await request.json(); } catch {}
+
+  // Generate a stable customer ID for this purchase
+  const arr = new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  const customerId = 'ps_' + [...arr].map(b => b.toString(16).padStart(2, '0')).join('');
+
+  const priceId = env.PHISHSIM_PRICE_ID;
+  if (!priceId) return json({ error: 'PhishSim pricing not configured — run /api/phishsim/setup first' }, 500);
+
+  const params = {
+    mode: 'subscription',
+    'line_items[0][price]': priceId,
+    'line_items[0][quantity]': '1',
+    client_reference_id: customerId,
+    success_url: `${SITE_URL}/welcome/phishsim/?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${SITE_URL}/services.html`,
+  };
+  if (body.email) params.customer_email = body.email;
+
+  const session = await stripeRequest(env, '/checkout/sessions', 'POST', params);
+  if (!session.url) return json({ error: 'Failed to create checkout session', detail: session }, 502);
+
+  return json({ checkoutUrl: session.url, customerId });
+}
+
+async function handleSession(request, env) {
+  // Resolves a Stripe checkout session_id → customer info + auto-provisions
+  const url = new URL(request.url);
+  const sessionId = url.searchParams.get('id');
+  if (!sessionId) return json({ error: 'session id required' }, 400);
+  if (!env.STRIPE_SECRET_KEY) return json({ error: 'Stripe not configured' }, 500);
+
+  const session = await stripeRequest(env, `/checkout/sessions/${sessionId}`);
+  if (!session.id) return json({ error: 'Invalid session' }, 404);
+
+  if (session.payment_status !== 'paid' && session.status !== 'complete') {
+    return json({ error: 'Payment not complete', status: session.payment_status }, 402);
+  }
+
+  const customerId = session.client_reference_id || session.customer || session.id;
+  const email      = session.customer_details?.email || session.customer_email || '';
+
+  // Check if already provisioned
+  let inst = await getCustomerInstance(env, customerId);
+  if (!inst) {
+    // Provision now (webhook may not have fired yet)
+    const { status, data } = await mgr(env, '/provision', 'POST', { customer_id: customerId });
+    if (status === 200 || status === 201) {
+      inst = { ...data, email };
+      await saveCustomerInstance(env, customerId, inst);
+    } else {
+      return json({ error: 'Provisioning failed — try again in a moment', detail: data }, 500);
+    }
+  }
+
+  return json({ customerId, email, ...inst });
+}
+
+async function handleSetup(request, env) {
+  // One-time admin route: creates Stripe product/price + webhook endpoint
+  // Requires X-Provision-Secret header
+  if (!env.STRIPE_SECRET_KEY) return json({ error: 'STRIPE_SECRET_KEY not set' }, 500);
+
+  const results = {};
+
+  // 1. Create or find product
+  const product = await stripeRequest(env, '/products', 'POST', {
+    name: 'EdgeIQ PhishSim',
+    description: 'Phishing simulation platform — train your team before attackers do',
+    'metadata[service]': 'phishsim',
+  });
+  results.product_id = product.id;
+
+  // 2. Create monthly recurring price at $49/month
+  const price = await stripeRequest(env, '/prices', 'POST', {
+    product: product.id,
+    unit_amount: '4900',
+    currency: 'usd',
+    'recurring[interval]': 'month',
+    nickname: 'PhishSim Starter Monthly',
+  });
+  results.price_id = price.id;
+
+  // 3. Register Stripe webhook endpoint
+  const hook = await stripeRequest(env, '/webhook_endpoints', 'POST', {
+    url: `${SITE_URL}/api/phishsim/stripe-webhook`,
+    'enabled_events[]': 'checkout.session.completed',
+    description: 'EdgeIQ PhishSim auto-provisioning',
+  });
+  results.webhook_id     = hook.id;
+  results.webhook_secret = hook.secret;
+
+  results.instructions = [
+    `Set PHISHSIM_PRICE_ID=${price.id} in Cloudflare Pages env vars`,
+    `Set STRIPE_WEBHOOK_SECRET=${hook.secret} in Cloudflare Pages env vars`,
+    'Then redeploy Pages for the new vars to take effect',
+  ];
+
+  return json(results, 201);
+}
+
 async function handleProvision(request, env) {
   const body       = await request.json();
   const customerId = body.customer_id;
   if (!customerId) return json({ error: 'customer_id required' }, 400);
 
-  // Check if already provisioned
   const existing = await getCustomerInstance(env, customerId);
   if (existing) return json({ status: 'exists', ...existing });
 
-  // Provision via management API
   const { status, data } = await mgr(env, '/provision', 'POST', { customer_id: customerId });
   if (status !== 201 && status !== 200) {
     return json({ error: data.error || 'Provisioning failed' }, 500);
@@ -133,7 +243,6 @@ async function handleStripeWebhook(request, env) {
     const customerId = session.client_reference_id || session.customer || session.id;
     const email      = session.customer_details?.email || '';
 
-    // Provision the GoPhish instance
     const { status, data } = await mgr(env, '/provision', 'POST', { customer_id: customerId });
     if (status === 201 || status === 200) {
       await saveCustomerInstance(env, customerId, { ...data, email });
@@ -185,28 +294,44 @@ export async function onRequest(context) {
     return new Response(null, { status: 204, headers: CORS });
   }
 
-  const url      = new URL(request.url);
-  const segments = url.pathname.replace(/^\/api\/phishsim\/?/, '').split('/').filter(Boolean);
-  const resource = segments[0] || '';
+  const url        = new URL(request.url);
+  const segments   = url.pathname.replace(/^\/api\/phishsim\/?/, '').split('/').filter(Boolean);
+  const resource   = segments[0] || '';
   const resourceId = segments[1] || null;
 
-  // Public routes (no customer auth needed)
-  if (resource === 'provision' && request.method === 'POST') {
-    // Require internal secret header for direct provision calls
-    const secret = request.headers.get('X-Provision-Secret');
-    if (secret !== env.PHISHSIM_SECRET) return json({ error: 'Forbidden' }, 403);
-    return handleProvision(request, env);
-  }
+  // ── Public / admin routes ──────────────────────────────────────────────────
 
   if (resource === 'stripe-webhook' && request.method === 'POST') {
     return handleStripeWebhook(request, env);
   }
 
-  // All other routes require a customer ID
+  if (resource === 'checkout' && request.method === 'POST') {
+    return handleCheckout(request, env);
+  }
+
+  if (resource === 'session' && request.method === 'GET') {
+    return handleSession(request, env);
+  }
+
+  // Admin-only routes require the provision secret
+  const secret = request.headers.get('X-Provision-Secret');
+  const isAdmin = secret === env.PHISHSIM_SECRET;
+
+  if (resource === 'provision' && request.method === 'POST') {
+    if (!isAdmin) return json({ error: 'Forbidden' }, 403);
+    return handleProvision(request, env);
+  }
+
+  if (resource === 'setup' && request.method === 'POST') {
+    if (!isAdmin) return json({ error: 'Forbidden' }, 403);
+    return handleSetup(request, env);
+  }
+
+  // ── Customer routes — require X-Customer-ID ────────────────────────────────
+
   const customerId = request.headers.get('X-Customer-ID');
   if (!customerId) return json({ error: 'X-Customer-ID header required' }, 401);
 
-  // Validate customer has a provisioned instance
   const inst = await getCustomerInstance(env, customerId);
   if (!inst && resource !== 'instance') {
     return json({ error: 'No PhishSim instance found. Please contact support.' }, 404);
