@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>Phishing Awareness Training · EdgeIQ Labs</title>
+  <meta name="description" content="Learn to recognize and avoid phishing attacks with EdgeIQ Labs security awareness training." />
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --card2: #0f1620;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #ffb347;
+      --danger: #ff6b6b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(11,15,20,0.95);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-img { height: 38px; width: auto; border-radius: 8px; }
+    .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+    .nav-brand-name { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-brand-name span { color: var(--accent); }
+    .nav-brand-tag { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-right a { color: var(--muted); text-decoration: none; font-size: 0.82rem; padding: 5px 8px; border-radius: 6px; }
+    .nav-right a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+    /* ── Page shell ── */
+    .training-wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
+
+    /* ── Caught banner ── */
+    .caught-banner {
+      background: linear-gradient(135deg, #1a0a0a 0%, #1f0f0f 100%);
+      border: 1px solid rgba(255,107,107,0.35);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .caught-icon { font-size: 2.4rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+    .caught-text h1 { font-size: 1.5rem; font-weight: 800; color: #ff9090; margin-bottom: 6px; }
+    .caught-text p { color: #c8a8a8; font-size: 0.95rem; line-height: 1.55; }
+    @media (max-width: 540px) {
+      .caught-banner { flex-direction: column; gap: 12px; padding: 20px; }
+      .caught-text h1 { font-size: 1.25rem; }
+    }
+
+    /* ── Progress indicator ── */
+    .progress-bar-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .progress-label { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+    .progress-track { flex: 1; height: 6px; background: rgba(35,49,66,0.8); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s ease; }
+    .progress-pct { font-size: 0.8rem; color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+    /* ── Section cards ── */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 18px;
+    }
+    .section-card h2 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .section-card p { font-size: 0.95rem; color: #c8d8ea; line-height: 1.65; }
+    .section-card p + p { margin-top: 10px; }
+    @media (max-width: 540px) {
+      .section-card { padding: 18px 16px; }
+    }
+
+    /* ── Red flags list ── */
+    .red-flags-list { list-style: none; margin-top: 4px; }
+    .red-flags-list li {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(35,49,66,0.6);
+      font-size: 0.92rem;
+      color: #c8d8ea;
+      line-height: 1.5;
+    }
+    .red-flags-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .red-flags-list .flag-dot {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      background: rgba(255,107,107,0.15);
+      border: 1px solid rgba(255,107,107,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .red-flags-list .flag-dot::after {
+      content: '!';
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--danger);
+    }
+
+    /* ── Tips list ── */
+    .tips-list { list-style: none; margin-top: 4px; }
+    .tips-list li {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(35,49,66,0.6);
+      font-size: 0.92rem;
+      color: #c8d8ea;
+      line-height: 1.5;
+    }
+    .tips-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .tip-num {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      background: rgba(61,217,255,0.1);
+      border: 1px solid rgba(61,217,255,0.2);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    /* ── Fundamentals box ── */
+    .fundamentals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    @media (max-width: 540px) { .fundamentals-grid { grid-template-columns: 1fr; } }
+    .fund-item {
+      background: #0d1620;
+      border: 1px solid rgba(35,49,66,0.8);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .fund-item .fund-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .fund-item p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Quiz ── */
+    .quiz-section { margin-top: 0; }
+    .quiz-q {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .quiz-q:last-of-type { border-bottom: none; padding-bottom: 0; }
+    .quiz-q-text {
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .quiz-q-num {
+      display: inline-block;
+      background: rgba(61,217,255,0.12);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .quiz-choices { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-choice {
+      background: #0d1620;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      text-align: left;
+      width: 100%;
+      position: relative;
+    }
+    .quiz-choice:hover:not(:disabled) {
+      border-color: rgba(61,217,255,0.4);
+      color: var(--text);
+    }
+    .quiz-choice.correct {
+      background: rgba(112,240,168,0.1);
+      border-color: rgba(112,240,168,0.4);
+      color: var(--ok);
+    }
+    .quiz-choice.wrong {
+      background: rgba(255,107,107,0.08);
+      border-color: rgba(255,107,107,0.3);
+      color: var(--danger);
+    }
+    .quiz-choice.revealed-correct {
+      background: rgba(112,240,168,0.07);
+      border-color: rgba(112,240,168,0.25);
+      color: var(--ok);
+    }
+    .quiz-choice:disabled { cursor: default; }
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.ok-fb {
+      background: rgba(112,240,168,0.1);
+      border: 1px solid rgba(112,240,168,0.25);
+      color: var(--ok);
+    }
+    .quiz-feedback.bad-fb {
+      background: rgba(255,107,107,0.08);
+      border: 1px solid rgba(255,107,107,0.2);
+      color: #ff9090;
+    }
+
+    /* ── Quiz score summary ── */
+    .quiz-score-wrap {
+      display: none;
+      margin-top: 18px;
+      background: #0d1620;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .quiz-score-wrap.show { display: block; }
+    .quiz-score-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .quiz-score-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── Complete button ── */
+    .complete-wrap { margin-top: 28px; text-align: center; }
+    .btn-complete {
+      background: var(--ok);
+      color: #071018;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 14px 36px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: -0.01em;
+    }
+    .btn-complete:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .btn-complete:disabled {
+      background: rgba(112,240,168,0.25);
+      color: rgba(7,16,24,0.5);
+      cursor: default;
+      transform: none;
+    }
+    .btn-complete.done {
+      background: var(--ok);
+      color: #071018;
+      cursor: default;
+      transform: none;
+    }
+    .complete-note { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
+
+    /* ── Unknown scenario ── */
+    .unknown-wrap { text-align: center; padding: 60px 20px; }
+    .unknown-wrap h2 { font-size: 1.4rem; margin-bottom: 12px; }
+    .unknown-wrap p { color: var(--muted); margin-bottom: 20px; }
+    .btn-home {
+      display: inline-block;
+      background: var(--accent);
+      color: #071018;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 9px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 24px 0 36px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Security Intelligence</div>
+      </div>
+    </a>
+    <div class="nav-right">
+      <a href="/phishsim/">PhishSim Dashboard</a>
+      <a href="/">Home</a>
+    </div>
+  </div>
+</nav>
+
+<div class="training-wrap" id="training-wrap">
+  <!-- Rendered by JS -->
+</div>
+
+<footer>
+  <div class="container">
+    <p>PhishSim Security Awareness Training &mdash; <a href="/">EdgeIQ Labs</a></p>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// Scenario data
+// ─────────────────────────────────────────────────────────────────────────────
+const SCENARIOS = {
+
+  microsoft365: {
+    title: 'Microsoft 365 Login Phish',
+    icon: '🪟',
+    attackType: 'Credential harvesting via branded login page clone',
+    howUsed: `Attackers build pixel-perfect copies of the Microsoft 365 sign-in page and send emails claiming your password has expired, a shared file needs your approval, or unusual activity was detected on your account. The goal is to capture your username and password — which then gives them access to your email, OneDrive, Teams, and every business app connected to your M365 account.`,
+    howUsed2: `These attacks are especially damaging in business settings because a compromised M365 account often means attackers can read internal emails, impersonate you to colleagues and customers, and pivot to other systems.`,
+    redFlags: [
+      'The sender address used a domain that looked like Microsoft but wasn\'t — e.g. <code>no-reply@microsoft-accounts.net</code> instead of <code>@microsoft.com</code>',
+      'The login URL in the email didn\'t point to <code>login.microsoftonline.com</code> — it used a lookalike domain or a URL shortener',
+      'The email created artificial urgency: "Your account will be locked in 24 hours" or "Immediate action required"',
+      'The page asked for your password without first confirming your email — the real Microsoft flow always validates email before showing the password field',
+      'There was no personalization — a real Microsoft notification would address you by the name on your account',
+      'Hovering over links revealed redirect chains through unrelated domains before the fake login page'
+    ],
+    tips: [
+      '<strong>Bookmark your real Microsoft login.</strong> Always go to <code>https://login.microsoftonline.com</code> directly. Never click "sign in" links from email.',
+      '<strong>Enable MFA immediately</strong> if it isn\'t already on. Even if attackers steal your password, they can\'t log in without your second factor.',
+      '<strong>Check the URL before typing anything.</strong> The login page must be on <code>microsoftonline.com</code> or <code>microsoft.com</code> — nothing else is legitimate.',
+      '<strong>Treat urgency as a warning sign.</strong> Legitimate account warnings don\'t give you 24 hours to act. Urgency is a pressure tactic.',
+      '<strong>Report suspicious emails using the built-in "Report phish" button</strong> in Outlook — this feeds Microsoft\'s threat intelligence and protects your whole organization.',
+      '<strong>Use a password manager.</strong> Password managers won\'t auto-fill credentials on fake login pages because the domain doesn\'t match — this is a built-in phishing defense.'
+    ],
+    quiz: [
+      {
+        q: 'You get an email saying your Microsoft 365 password expires today. The link goes to "microsoft-365-login.com". What should you do?',
+        choices: [
+          'Click the link and log in quickly before it expires',
+          'Go to login.microsoftonline.com directly in a new browser tab',
+          'Reply to the email asking if it\'s legitimate',
+          'Forward it to a colleague to check'
+        ],
+        correct: 1,
+        explanation: 'Always navigate directly to the real Microsoft login URL. "microsoft-365-login.com" is not a Microsoft domain — it\'s a lookalike designed to steal your credentials.'
+      },
+      {
+        q: 'Your Microsoft 365 account has MFA enabled but your password was phished. What can the attacker do?',
+        choices: [
+          'Log in to your account immediately',
+          'They can\'t log in — MFA blocks them at the second factor',
+          'Reset your password using email recovery',
+          'Nothing, passwords are encrypted'
+        ],
+        correct: 1,
+        explanation: 'MFA is the most important defense here. Even with your password, the attacker is blocked because they don\'t have your second factor (app code, SMS, or hardware key).'
+      },
+      {
+        q: 'Which of these is a reliable indicator that a Microsoft login page is real?',
+        choices: [
+          'The page looks exactly like the real Microsoft page',
+          'The email that sent you there came from your IT department',
+          'The URL in your browser is on microsoftonline.com or microsoft.com',
+          'The page has the Microsoft logo and branding'
+        ],
+        correct: 2,
+        explanation: 'Visual appearance means nothing — attackers copy logos and layouts perfectly. The only reliable indicator is the domain in your browser\'s address bar.'
+      }
+    ]
+  },
+
+  google: {
+    title: 'Google Account Phish',
+    icon: '🔵',
+    attackType: 'Credential harvesting via Google sign-in clone',
+    howUsed: `Attackers impersonate Google sign-in pages or send fake security alerts claiming your account was accessed from an unusual location. Because Google accounts are connected to Gmail, Drive, Calendar, and often serve as the sign-in for hundreds of other services ("Sign in with Google"), stealing a Google account is extremely high value.`,
+    howUsed2: `Common lures include: "Someone signed into your account from [city]", fake Google Docs sharing notifications, and "Your storage is full — verify to keep your account".`,
+    redFlags: [
+      'The sender address wasn\'t from <code>@google.com</code> or <code>@accounts.google.com</code> — it used a lookalike like <code>@google-accounts.net</code>',
+      'The sign-in URL wasn\'t <code>accounts.google.com</code> — real Google login never happens on any other domain',
+      'The email claimed your account was accessed from a specific IP or location and demanded immediate verification',
+      'Hovering the "Secure your account" button revealed a URL that wasn\'t on google.com',
+      'The page asked for your password before Google\'s normal step-by-step flow',
+      'There was no Google account personalization — your name and profile photo weren\'t pre-loaded as they would be on a real Google page'
+    ],
+    tips: [
+      '<strong>Enable Google\'s Advanced Protection Program</strong> or at minimum enable 2-Step Verification with an authenticator app, not just SMS.',
+      '<strong>Check the URL every time.</strong> Google authentication only ever happens on <code>accounts.google.com</code>. If the domain is anything else, it\'s fake.',
+      '<strong>Use passkeys if your device supports them.</strong> Passkeys are phishing-resistant by design — they only work on the real website.',
+      '<strong>Review your connected apps</strong> at myaccount.google.com/permissions regularly. Remove apps you don\'t recognize.',
+      '<strong>Set up account recovery options</strong> in advance so you can recover quickly if something happens.',
+      '<strong>Google will never ask you to verify your password by clicking an email link.</strong> Any email claiming this is a phish.'
+    ],
+    quiz: [
+      {
+        q: 'You receive an email from "security@google-accounts-alert.com" saying your account was accessed from Brazil. What\'s the safest action?',
+        choices: [
+          'Click the link to secure your account immediately',
+          'Delete the email — it\'s almost certainly a phish',
+          'Go to myaccount.google.com directly to check your security events',
+          'Reply to ask for more information'
+        ],
+        correct: 2,
+        explanation: 'Go to myaccount.google.com directly. The sender domain is not google.com. Real Google security alerts come from @accounts.google.com and you can always verify events by navigating directly to your account.'
+      },
+      {
+        q: 'What makes passkeys more secure than passwords for Google sign-in?',
+        choices: [
+          'Passkeys are longer and harder to guess',
+          'Passkeys are stored on Google\'s servers',
+          'Passkeys only work on the real website — they can\'t be phished',
+          'Passkeys expire every 30 days'
+        ],
+        correct: 2,
+        explanation: 'Passkeys use cryptographic keys tied to the specific website domain. Even if you\'re tricked into visiting a fake login page, your device simply won\'t have a passkey that works there.'
+      },
+      {
+        q: 'Which domain is the only legitimate place Google handles account sign-in?',
+        choices: [
+          'google.com',
+          'accounts.google.com',
+          'login.google.com',
+          'signin.google.com'
+        ],
+        correct: 1,
+        explanation: 'Google authentication exclusively uses accounts.google.com. Other subdomains (login., signin.) are not real Google domains and should be treated as phishing attempts.'
+      }
+    ]
+  },
+
+  apple: {
+    title: 'Apple ID Phish',
+    icon: '🍎',
+    attackType: 'Account takeover via fake Apple security alert',
+    howUsed: `Attackers send emails mimicking Apple's design language — clean white layouts, the Apple logo, official-looking sender names — claiming your Apple ID was used to sign in on a new device, that your iCloud storage is locked, or that a purchase requires verification. Apple ID access means iCloud data, Find My, App Store purchases, and potentially payment methods.`,
+    howUsed2: `These attacks are especially targeted at iPhone users because many people use the same Apple ID for years and connect payment cards to it. A stolen Apple ID can also be used to lock the victim's own device via Find My.`,
+    redFlags: [
+      'The sender address wasn\'t from <code>@apple.com</code> — commonly spoofed as <code>@appleid-security.net</code> or <code>@id-apple.com</code>',
+      'The email said your account was accessed on a new device but listed a device you\'ve never owned',
+      'The "Review your account" button linked to a domain that wasn\'t <code>appleid.apple.com</code> or <code>apple.com</code>',
+      'The page asked for your Apple ID password AND your credit card details — Apple would never combine these in one form',
+      'The email used generic greetings like "Dear Apple User" instead of your name',
+      'Urgency language: "You have 24 hours to verify or your account will be suspended"'
+    ],
+    tips: [
+      '<strong>Enable two-factor authentication on your Apple ID</strong> at appleid.apple.com. This is Apple\'s strongest protection.',
+      '<strong>Apple ID management only happens at appleid.apple.com.</strong> Don\'t click email links — go there directly.',
+      '<strong>Check your devices list.</strong> In Settings > [your name] you can see every device signed in to your Apple ID. Review this regularly.',
+      '<strong>Never enter payment details on an Apple ID page reached via email.</strong> Real Apple purchase issues are handled through the App Store app.',
+      '<strong>Use Sign in with Apple</strong> wherever possible — it gives each app a unique email alias, limiting exposure.',
+      '<strong>Be skeptical of Apple logos alone.</strong> The Apple brand is easy to copy. Domain and sender address are the only reliable signals.'
+    ],
+    quiz: [
+      {
+        q: 'You get an email saying "Your Apple ID was used to sign in on an iPhone 15 in Paris." You don\'t own that device. What do you do?',
+        choices: [
+          'Click "Review the activity" link in the email',
+          'Go to appleid.apple.com directly and check your sign-in activity',
+          'Turn off your iPhone immediately',
+          'Reply to the email asking Apple to investigate'
+        ],
+        correct: 1,
+        explanation: 'Never click links in security alert emails. Navigate directly to appleid.apple.com and check your Recent Activity section to verify whether any real sign-ins occurred.'
+      },
+      {
+        q: 'A real Apple security email will always address you by:',
+        choices: [
+          '"Dear Customer"',
+          '"Dear Apple User"',
+          'Your full name as it appears on your Apple ID',
+          '"Valued Apple Member"'
+        ],
+        correct: 2,
+        explanation: 'Legitimate Apple emails always use your full name. Generic greetings like "Dear Customer" or "Dear Apple User" are a strong indicator of phishing.'
+      },
+      {
+        q: 'Two-factor authentication on your Apple ID means an attacker with your password:',
+        choices: [
+          'Can log in after a 30-minute delay',
+          'Can log in using account recovery',
+          'Cannot log in without a verification code sent to your trusted device',
+          'Can log in from any Apple device'
+        ],
+        correct: 2,
+        explanation: 'With 2FA enabled, every sign-in requires a 6-digit code sent to one of your trusted Apple devices. An attacker with only your password cannot complete sign-in.'
+      }
+    ]
+  },
+
+  linkedin: {
+    title: 'LinkedIn Credential Phish',
+    icon: '💼',
+    attackType: 'Credential harvest via fake connection or job alert',
+    howUsed: `LinkedIn phishing exploits professional trust. Attackers send fake "You have a new connection request", "Someone viewed your profile", or "A recruiter wants to connect" emails. The links lead to a fake LinkedIn login page. Because LinkedIn credentials are often reused for other corporate logins, this is a gateway to business systems.`,
+    howUsed2: `LinkedIn phishes are also used to deliver malicious file downloads — a fake job description PDF or a "case study" attached to an InMail — targeting people who are actively job searching and more likely to open documents from strangers.`,
+    redFlags: [
+      'The sender address was <code>@linkedin-notifications.net</code> or similar — not <code>@linkedin.com</code>',
+      'The email used generic copy like "Someone in your network shared something" without naming the person',
+      'The "Sign in to LinkedIn" button destination wasn\'t <code>linkedin.com</code> or <code>www.linkedin.com</code>',
+      'The connection request email didn\'t show the requester\'s name, photo, and headline as real LinkedIn emails do',
+      'A supposed recruiter asked you to "verify your profile" to apply — LinkedIn applications don\'t work this way',
+      'The email asked you to sign in to view a message that\'s supposedly already been sent to you — real LinkedIn message notifications show a preview'
+    ],
+    tips: [
+      '<strong>Go to linkedin.com directly</strong> to check notifications instead of clicking email links.',
+      '<strong>Don\'t reuse your LinkedIn password</strong> anywhere else — especially not on corporate systems.',
+      '<strong>Enable 2-step verification</strong> in LinkedIn Settings > Sign in & Security.',
+      '<strong>Scrutinize unsolicited job offers.</strong> Attackers impersonate recruiters to steal credentials or deliver malware via attached "job descriptions".',
+      '<strong>Verify connection requests by logging in directly,</strong> not by clicking the email button.',
+      '<strong>Be careful with LinkedIn InMail attachments.</strong> PDFs and Office documents from unknown contacts can contain malware or credential-stealing macros.'
+    ],
+    quiz: [
+      {
+        q: 'You receive a LinkedIn email saying "John Smith wants to connect" with a "Accept" button. What\'s safest?',
+        choices: [
+          'Click Accept — it\'s just a connection request',
+          'Open LinkedIn directly in your browser to review and accept there',
+          'Ignore it — all LinkedIn emails are phishing',
+          'Reply to the email to verify'
+        ],
+        correct: 1,
+        explanation: 'Always open LinkedIn.com directly rather than clicking email links. The email might be legitimate, but building the habit of navigating directly protects you from the ones that aren\'t.'
+      },
+      {
+        q: 'A recruiter sends you a LinkedIn message with a PDF "job description" attached. You\'re actively job searching. What\'s the risk?',
+        choices: [
+          'None — PDFs can\'t contain malware',
+          'The PDF might contain a link to a credential-stealing page or exploit a PDF reader vulnerability',
+          'The recruiter might be spam but the file is safe',
+          'Only .exe files are dangerous'
+        ],
+        correct: 1,
+        explanation: 'PDFs can contain links to phishing pages, embedded JavaScript, and (rarely) exploit PDF reader vulnerabilities. Verify the recruiter\'s profile carefully before opening any attachment from an unknown contact.'
+      },
+      {
+        q: 'What makes LinkedIn credentials especially valuable to attackers?',
+        choices: [
+          'LinkedIn stores your payment information',
+          'LinkedIn passwords are often reused on corporate systems',
+          'LinkedIn has access to your email contacts',
+          'LinkedIn accounts can\'t be disabled'
+        ],
+        correct: 1,
+        explanation: 'Password reuse is the primary risk. Many people use the same password for LinkedIn as for work email, VPNs, or other business systems — a stolen LinkedIn password can be a gateway to the whole organization.'
+      }
+    ]
+  },
+
+  paypal: {
+    title: 'PayPal Account Phish',
+    icon: '💳',
+    attackType: 'Financial credential harvest via account alert',
+    howUsed: `PayPal phishes create financial urgency — "unauthorized transaction detected", "your account has been limited", or "you sent $850 to [unknown person]". The goal is to make you panic, click quickly, and enter your PayPal login. Once they have access, attackers can drain linked bank accounts, make purchases, or extract stored card numbers.`,
+    howUsed2: `PayPal is also targeted because it bridges to real bank accounts. A compromised PayPal account can be used to send money to attacker-controlled accounts before the victim realizes what happened.`,
+    redFlags: [
+      'The sender wasn\'t from <code>@paypal.com</code> — real PayPal emails only come from <code>service@paypal.com</code> or <code>@e.paypal.com</code>',
+      'The email reported a transaction you never made — designed to cause panic and reduce critical thinking',
+      'The "Resolve issue" link destination wasn\'t on <code>paypal.com</code>',
+      'The email asked you to "confirm" or "verify" your card details — PayPal already has these and would never ask via email',
+      'There was a countdown timer or "your account will be permanently suspended in 48 hours" message',
+      'The email\'s footer lacked PayPal\'s real legal boilerplate, or included it poorly formatted'
+    ],
+    tips: [
+      '<strong>Log in to paypal.com directly</strong> to check your transaction history — never via email link.',
+      '<strong>PayPal will never ask for your card details via email.</strong> Any email requesting this is a phish.',
+      '<strong>Enable push notifications</strong> in the PayPal app for real-time transaction alerts from the official source.',
+      '<strong>Link a dedicated PayPal account</strong> with limited funds rather than your main checking account to limit exposure.',
+      '<strong>Treat urgency as a red flag.</strong> Real account limitations don\'t disappear if you wait 24 hours — take your time.',
+      '<strong>Forward suspicious emails to spoof@paypal.com</strong> — PayPal\'s anti-fraud team investigates these and can warn other users.'
+    ],
+    quiz: [
+      {
+        q: 'You receive an email from "service@paypal-security.com" saying $650 was sent from your account. What do you do?',
+        choices: [
+          'Click "Cancel this payment" in the email immediately',
+          'Open the PayPal app or go to paypal.com directly to check your transactions',
+          'Call the number provided in the email',
+          'Forward the email to your bank'
+        ],
+        correct: 1,
+        explanation: 'The sender domain is not paypal.com — this is a phish. Open the official PayPal app or navigate directly to paypal.com to check your actual transaction history. The fake transaction isn\'t real.'
+      },
+      {
+        q: 'A PayPal email asks you to "verify your bank account number to unlock your account." This is:',
+        choices: [
+          'Normal — PayPal occasionally needs to re-verify accounts',
+          'A phishing attempt — PayPal never requests account numbers via email',
+          'Only suspicious if the email came from an unknown sender',
+          'Legitimate if you recently changed your password'
+        ],
+        correct: 1,
+        explanation: 'PayPal already has your bank account information and never asks you to provide it again via email. Any email asking for financial details is a phishing attempt, regardless of how it looks.'
+      },
+      {
+        q: 'Why does an "urgent" tone in a financial alert email increase your risk?',
+        choices: [
+          'It doesn\'t — urgency just means it\'s important',
+          'Urgency triggers panic, which reduces critical thinking and makes you act before verifying',
+          'Urgent emails are more likely to be from real financial institutions',
+          'Only affects people who are not tech-savvy'
+        ],
+        correct: 1,
+        explanation: 'Creating urgency is an intentional social engineering tactic. When you feel rushed or threatened, you\'re less likely to pause and check the sender address, hover over links, or navigate to the real site directly.'
+      }
+    ]
+  },
+
+  amazon: {
+    title: 'Amazon Order / Account Phish',
+    icon: '📦',
+    attackType: 'Credential harvest via fake order or account security alert',
+    howUsed: `Amazon phishing is extremely common because nearly everyone has an Amazon account and regularly receives real order emails. Attackers send fake "Your order has shipped", "Verify your account to prevent suspension", or "Your Prime membership was declined" emails. The realistic order details (often made-up item + tracking number) make recipients feel the email might be about a real recent purchase.`,
+    howUsed2: `A compromised Amazon account exposes saved credit cards, home address, purchase history, and can be used to place fraudulent orders or access Amazon Business accounts.`,
+    redFlags: [
+      'The sender wasn\'t from <code>@amazon.com</code> or <code>@amazon.co.uk</code> — real Amazon emails come from <code>@amazon.com</code> only',
+      'The order details referenced a product you don\'t remember ordering — designed to make you click to investigate',
+      'The "View your order" button or "Manage account" link pointed to a non-Amazon domain',
+      'The email included a tracking number that produced no results on real carrier sites',
+      'You were asked to "confirm your payment method" by entering card details — Amazon never does this via email',
+      'The "Amazon" logo was slightly off — different shade, different font weight, or wrong favicon on the linked page'
+    ],
+    tips: [
+      '<strong>Check your orders in the Amazon app or at amazon.com directly</strong> — don\'t click "View order" in emails.',
+      '<strong>Amazon never emails you to ask for payment card details.</strong> Payment issues are resolved inside your account.',
+      '<strong>Enable Amazon\'s "one-time password" for sign-in</strong> in Account > Login & Security > Two-Step Verification.',
+      '<strong>Review your order history regularly.</strong> Spotting a real unauthorized order is different from a fake phishing email about one.',
+      '<strong>Use a virtual card number</strong> from your bank for online shopping — limits exposure if your details are ever compromised.',
+      '<strong>Check the order number format.</strong> Fake phishing emails usually have no order number, or a number that returns no results in your Amazon account.'
+    ],
+    quiz: [
+      {
+        q: 'An email from "orders@amazon-deliveries.net" says your package was undeliverable and you need to verify your address. What should you do?',
+        choices: [
+          'Click the link and update your address to ensure delivery',
+          'Go to amazon.com and check your orders directly',
+          'Call Amazon customer service using the number in the email',
+          'Wait — the delivery will retry automatically'
+        ],
+        correct: 1,
+        explanation: 'The sender domain is not amazon.com — this is a phishing email. Navigate directly to amazon.com to check your actual order status. Amazon\'s real delivery alerts come from @amazon.com and don\'t require you to verify your address via email.'
+      },
+      {
+        q: 'You receive a realistic-looking email claiming a $430 Amazon order is shipping to your address. You don\'t recognize it. What\'s the risk of clicking the "Cancel order" button in the email?',
+        choices: [
+          'None — cancelling an order is harmless',
+          'The link could go to a fake Amazon login page that steals your credentials',
+          'Amazon might cancel all your pending orders',
+          'The order might ship before you can cancel'
+        ],
+        correct: 1,
+        explanation: 'Fake order emails use your curiosity about an unrecognized order to get you to click. The "Cancel order" button leads to a fake Amazon login page. If the order exists, you\'ll see it when you log in directly at amazon.com.'
+      },
+      {
+        q: 'Two-step verification on Amazon means:',
+        choices: [
+          'You need to verify two orders at once',
+          'Attackers need both your password and a one-time code from your phone to log in',
+          'Amazon calls you before processing large orders',
+          'You set two security questions'
+        ],
+        correct: 1,
+        explanation: 'Two-step verification (2SV) requires a one-time code from your phone in addition to your password. Even if an attacker phishes your password, they can\'t log in without the code.'
+      }
+    ]
+  },
+
+  banking: {
+    title: 'Online Banking Phish',
+    icon: '🏦',
+    attackType: 'Credential harvest targeting online banking portals',
+    howUsed: `Banking phishes are the highest-stakes credential attacks. Attackers impersonate banks, credit unions, or financial aggregators (Plaid, Mint) with fake fraud alerts, login verification requests, or "temporary account holds." The emails are designed to create fear about your money being at risk, bypassing rational thinking.`,
+    howUsed2: `Once attackers have banking credentials, they typically move quickly — transferring funds, enrolling new payees, or using the account for money mule operations. Many banking phishes are followed by phone calls from fake "bank fraud departments" to complete the social engineering.`,
+    redFlags: [
+      'The sender email domain didn\'t match your bank\'s actual domain exactly',
+      'The email included partial account information (last 4 digits) to appear legitimate — but this information is widely available from data breaches',
+      'The login page URL used HTTPS (padlock icon) but the domain wasn\'t your bank — HTTPS only means the connection is encrypted, not that the site is legitimate',
+      'The email claimed a transaction was in progress and gave a reference number — designed to feel real and urgent',
+      'The page asked for your full account number, password, AND a security question answer — legitimate banking sites use progressive authentication, not all-at-once forms',
+      'The footer contained generic legal text not specific to your actual bank'
+    ],
+    tips: [
+      '<strong>Use your bank\'s official mobile app</strong> for all account access — apps are harder to phish than web browsers.',
+      '<strong>Set up real-time transaction alerts</strong> from your bank so you get push notifications for every transaction from the official source.',
+      '<strong>Your bank\'s fraud team will never ask for your full online banking password</strong> — not by phone, not by email, not ever.',
+      '<strong>A padlock (HTTPS) doesn\'t mean a site is safe</strong> — it only means your connection is encrypted. Always verify the domain too.',
+      '<strong>Enable transaction limits</strong> for online transfers and enroll in your bank\'s identity verification programs (like Verified by Visa).',
+      '<strong>Call the number on the back of your card,</strong> never a number provided in a suspicious email, to verify any fraud alerts.'
+    ],
+    quiz: [
+      {
+        q: 'A banking website has a green padlock (HTTPS). Does this mean it\'s your real bank\'s website?',
+        choices: [
+          'Yes — HTTPS means the site is verified and safe',
+          'No — HTTPS only encrypts the connection. The site could still be a fake',
+          'Only if the padlock is green, not grey',
+          'Yes, if the padlock has your bank\'s name on it'
+        ],
+        correct: 1,
+        explanation: 'HTTPS (the padlock) means the connection is encrypted, but it says nothing about whether you\'re on a legitimate site. Attackers obtain HTTPS certificates for phishing sites all the time. Always check the domain name, not just the padlock.'
+      },
+      {
+        q: 'Your "bank" calls and says there\'s fraud on your account. They ask for your online banking password to "verify your identity." What do you do?',
+        choices: [
+          'Give it — your bank needs it to help you',
+          'Give the last 4 digits only as a compromise',
+          'Hang up and call your bank back using the number on your card',
+          'Ask them to send an email instead'
+        ],
+        correct: 2,
+        explanation: 'No legitimate bank employee will ever ask for your password. Hang up and call your bank using the official number on the back of your card. This ensures you\'re talking to your actual bank, not a scammer.'
+      },
+      {
+        q: 'Which is the safest way to access your online banking?',
+        choices: [
+          'Click the link in your bank\'s email newsletter',
+          'Search "my bank login" on Google and click the first result',
+          'Use your bank\'s official mobile app or type the URL from memory',
+          'Save the login page as a browser bookmark from an email link'
+        ],
+        correct: 2,
+        explanation: 'The bank\'s official mobile app is the safest channel — it can\'t be spoofed like a webpage. If using a browser, type the URL yourself or use a bookmark you created by typing the URL — never click email links.'
+      }
+    ]
+  },
+
+  okta: {
+    title: 'Okta SSO Credential Phish',
+    icon: '🔐',
+    attackType: 'Identity provider (IdP) credential harvest',
+    howUsed: `Okta is a single sign-on (SSO) gateway — many organizations route all corporate app logins through it. Attackers who steal Okta credentials don\'t just get one app, they get every app the company has connected: email, Slack, Salesforce, GitHub, AWS, HR systems, everything. This makes Okta credential phishing extraordinarily high value for corporate espionage and ransomware operations.`,
+    howUsed2: `Real-world Okta phishing attacks have preceded major data breaches. Attackers often follow credential theft with MFA fatigue attacks — sending push notification after push notification until a tired employee taps "Approve" by mistake.`,
+    redFlags: [
+      'The sign-in URL wasn\'t your organization\'s Okta subdomain (e.g. <code>yourcompany.okta.com</code>) — it used a lookalike domain',
+      'The email claimed your session expired and you needed to sign in again — Okta sessions don\'t expire via email notification',
+      'You received an unexpected MFA push notification you didn\'t initiate — a sign that someone has your password and is attempting login',
+      'The phishing page asked for your username, password, AND TOTP code all on one page — real Okta uses separate steps',
+      'The email came from an IT address that didn\'t match your company\'s actual IT domain',
+      'The page\'s branding was slightly off — wrong logo, different color scheme, or no custom theming your IT team set up'
+    ],
+    tips: [
+      '<strong>If you receive an unexpected MFA push, deny it immediately</strong> and report it to IT — it means someone has your password.',
+      '<strong>Never approve an MFA push you didn\'t initiate.</strong> If you\'re asked to "approve" repeatedly, that\'s an MFA fatigue attack — deny all and call IT.',
+      '<strong>Know your organization\'s Okta subdomain</strong> (<code>yourcompany.okta.com</code>) and only sign in there.',
+      '<strong>Use phishing-resistant MFA like hardware keys (YubiKey)</strong> or passkeys wherever your organization allows it.',
+      '<strong>Report unexpected MFA prompts to IT security immediately</strong> — early reporting limits the blast radius of a compromised account.',
+      '<strong>Never enter your Okta credentials on any page that wasn\'t bookmarked by you personally.</strong>'
+    ],
+    quiz: [
+      {
+        q: 'You receive an Okta push notification asking you to approve a login — but you\'re not trying to log in anywhere. What does this likely mean?',
+        choices: [
+          'It\'s a system test — just approve it',
+          'Your session expired and Okta is refreshing it automatically',
+          'An attacker has your password and is trying to log in',
+          'Your phone is malfunctioning'
+        ],
+        correct: 2,
+        explanation: 'An unsolicited MFA push is a strong indicator that an attacker has obtained your password and is attempting to complete the login. Deny the request, change your password, and report it to IT security immediately.'
+      },
+      {
+        q: 'Why is stealing Okta credentials more damaging than stealing a single app\'s password?',
+        choices: [
+          'Okta stores payment information',
+          'Okta is the gateway to all corporate apps — one stolen credential can access dozens of systems',
+          'Okta passwords can\'t be reset',
+          'Okta doesn\'t use encryption'
+        ],
+        correct: 1,
+        explanation: 'SSO systems like Okta are an all-or-nothing gateway. A single stolen Okta credential can give an attacker access to every connected application — email, code repositories, HR systems, cloud infrastructure, and more.'
+      },
+      {
+        q: 'What is an "MFA fatigue" attack?',
+        choices: [
+          'When MFA codes expire too quickly',
+          'Sending repeated push notifications hoping the user approves one out of frustration',
+          'A type of brute-force attack on MFA codes',
+          'When users forget their MFA device'
+        ],
+        correct: 1,
+        explanation: 'MFA fatigue attacks flood the target with push notifications. After receiving the 20th push at midnight, a tired user may tap "Approve" just to make it stop. The defense is simple: if you didn\'t initiate a login, deny every push and report it.'
+      }
+    ]
+  },
+
+  dropbox: {
+    title: 'Dropbox File Sharing Phish',
+    icon: '📁',
+    attackType: 'Credential harvest via fake file share notification',
+    howUsed: `Attackers send fake Dropbox "Someone shared a file with you" emails. The goal is dual-purpose: steal Dropbox credentials (which may contain sensitive documents), or use the file-share pretext to deliver a malicious download. Real file-share notifications look very similar to fake ones, making this attack effective even against alert users.`,
+    howUsed2: `Business-targeted variants impersonate colleagues sharing contracts, invoices, or "urgent documents" — exploiting the fact that you\'re expecting files from coworkers. Opening the "shared file" may lead to a credential page, a malware download, or both.`,
+    redFlags: [
+      'The sender email wasn\'t from <code>@dropbox.com</code> or <code>@dropboxmail.com</code>',
+      'The shared file had an urgency twist — "Please review and sign before EOD" from someone you don\'t know well',
+      'The "View file" button pointed to a non-Dropbox domain',
+      'Clicking the link led to a Dropbox login page — but you were already logged into Dropbox in another tab, suggesting the page was fake',
+      'The shared filename was generic — "Invoice.pdf", "Contract_Final.docx" — not matching any real expected document',
+      'The sharing notification included no preview text or thumbnail, which real Dropbox notifications often include'
+    ],
+    tips: [
+      '<strong>Navigate to dropbox.com directly</strong> to check your "Shared with me" folder rather than clicking email links.',
+      '<strong>Enable 2-step verification on Dropbox</strong> at dropbox.com/account/security.',
+      '<strong>If you\'re already logged into Dropbox and an email link asks you to log in again — close it.</strong> That\'s a fake page.',
+      '<strong>Be skeptical of unexpected files from people you know.</strong> Their account might have been compromised and is now being used to send you malware.',
+      '<strong>Preview files in Dropbox before downloading</strong> — many malicious file types can\'t execute inside the Dropbox preview.',
+      '<strong>Don\'t enable macros in Office documents shared via cloud storage</strong> from people you don\'t regularly collaborate with.'
+    ],
+    quiz: [
+      {
+        q: 'You click a "View shared file" link in a Dropbox email and it takes you to a Dropbox login page. But you\'re already logged into Dropbox in another tab. What\'s happening?',
+        choices: [
+          'Dropbox logged you out automatically',
+          'The shared file requires a separate account',
+          'The link likely went to a fake Dropbox page designed to steal your credentials',
+          'This is normal for shared links from outside your organization'
+        ],
+        correct: 2,
+        explanation: 'If you\'re already authenticated to Dropbox, clicking a real Dropbox share link won\'t ask you to log in again. Being prompted to log in when you\'re already logged in is a strong indicator the login page is fake.'
+      },
+      {
+        q: 'A colleague\'s Dropbox account sends you a file named "Q2 Invoice URGENT.docx" asking you to enable macros. What should you do?',
+        choices: [
+          'Enable macros — it\'s from a trusted colleague',
+          'Contact your colleague directly through a different channel to verify they sent it',
+          'Open it but don\'t enable macros',
+          'Download but don\'t open'
+        ],
+        correct: 1,
+        explanation: 'Your colleague\'s account may have been compromised and used to send malware to their contacts — a common attack. Contact them directly (call, text, or separate email) to verify before opening. Never enable macros in unexpected Office documents.'
+      },
+      {
+        q: 'What is the safest way to access files shared with you on Dropbox?',
+        choices: [
+          'Click the "View file" button in the email notification',
+          'Log in to dropbox.com directly and check your "Shared with me" folder',
+          'Download the attached file in the notification email',
+          'Open the link using a private browsing window'
+        ],
+        correct: 1,
+        explanation: 'Always navigate directly to dropbox.com and check your Shared with me folder. This completely bypasses email link manipulation and ensures you\'re on the real Dropbox site.'
+      }
+    ]
+  },
+
+  helpdesk: {
+    title: 'IT Helpdesk Impersonation Phish',
+    icon: '🖥️',
+    attackType: 'Internal impersonation for credential or access theft',
+    howUsed: `Attackers impersonate your organization\'s IT helpdesk to steal credentials or install remote access software. Common pretexts: "Your password expires today", "Click here to complete mandatory security training", "IT needs to update your computer remotely — click this link to allow access." The familiar IT authority figure lowers suspicion significantly.`,
+    howUsed2: `This attack is particularly effective in organizations where employees are used to receiving IT communications asking for action. Attackers research the company first — finding the IT helpdesk email format, the ticketing system name, and even the names of real IT staff — to make the impersonation convincing.`,
+    redFlags: [
+      'The sender\'s email domain differed from your company domain — even by one character',
+      'The email asked for your current password to "verify your identity" — IT helpdesks never need your password',
+      'The "remote support" link pointed to a commercial remote access tool download rather than your company\'s known support tool',
+      'The email referenced a ticket number but clicking the link didn\'t show any ticket on your actual IT portal',
+      'The request came outside of normal business hours without an explanation',
+      'The email contained a slightly wrong logo version or different email signature formatting than real IT communications'
+    ],
+    tips: [
+      '<strong>Your IT team will never ask for your password.</strong> Not by email, not by phone, not ever. This is a universal IT security rule.',
+      '<strong>Verify IT requests through a known-good channel</strong> — call the IT helpdesk directly using the number from your company intranet, not the one in the email.',
+      '<strong>Only install remote support tools your IT team has pre-approved.</strong> Legitimate IT departments have standard tools they\'ve already deployed.',
+      '<strong>Check your actual IT ticketing system</strong> if a ticket number is referenced — does the ticket exist?',
+      '<strong>Be especially cautious of urgency from IT.</strong> Real IT helpdesk processes rarely require instant action — they have queues and SLAs.',
+      '<strong>Report the phish to your real IT security team</strong> — they can alert the rest of the organization and analyze the attack.'
+    ],
+    quiz: [
+      {
+        q: 'An IT helpdesk email asks for your current password to "verify your account before resetting it." What\'s your response?',
+        choices: [
+          'Provide it — IT needs it to help you',
+          'Provide only the first 3 characters as a partial verification',
+          'Do not provide it — IT will never legitimately ask for your password',
+          'Provide it if the email came from your company domain'
+        ],
+        correct: 2,
+        explanation: 'No legitimate IT helpdesk ever asks for your current password. Password resets don\'t require the old password — they\'re done via identity verification processes that don\'t expose your credential. This request is a phishing attempt.'
+      },
+      {
+        q: 'How do you verify that an IT request is legitimate?',
+        choices: [
+          'Check that the email came from your company\'s domain',
+          'Call the IT helpdesk using the number found on your company intranet',
+          'Reply to the email asking for confirmation',
+          'Check that the email uses your company\'s logo'
+        ],
+        correct: 1,
+        explanation: 'Email domains can be spoofed, logos can be copied, and replying to the email just reaches the attacker. The only reliable verification is contacting IT through a known-good channel you found independently — the intranet number, a known colleague, or your manager.'
+      },
+      {
+        q: 'An attacker who has compromised your company\'s IT helpdesk email account sends you a "remote support" link. What\'s the risk of clicking it?',
+        choices: [
+          'None — the link came from a company email',
+          'The link could install remote access software giving the attacker full control of your computer',
+          'The risk is low if you have antivirus installed',
+          'Only a risk if you provide your password on the linked page'
+        ],
+        correct: 1,
+        explanation: 'A compromised internal email account is used to send highly convincing phishing emails. Clicking a "remote support" link can install remote access software (RATs) that gives the attacker full control of your machine without requiring any password from you.'
+      }
+    ]
+  },
+
+  vpn: {
+    title: 'VPN Portal Credential Phish',
+    icon: '🔒',
+    attackType: 'Corporate network access credential harvest',
+    howUsed: `VPN login credentials are prime targets because they grant access to the internal corporate network — the same resources available from the office. Attackers send fake "VPN session expired", "Mandatory VPN certificate update", or "New security policy requires re-authentication" emails. Once they have VPN credentials, they can access internal systems, file servers, databases, and other infrastructure.`,
+    howUsed2: `VPN phishing is particularly valuable because internal network access often has less monitoring than internet-facing systems. An attacker inside the VPN appears as a trusted insider, which can allow lateral movement for weeks before detection.`,
+    redFlags: [
+      'The VPN login URL wasn\'t your organization\'s known VPN endpoint domain',
+      'The email referenced a "certificate update" requiring you to download a new VPN client — the download link pointed to a third-party site',
+      'The login page looked like your VPN portal but lacked your company\'s custom branding or SAML integration',
+      'The email created urgency: "VPN access expires at midnight unless you re-authenticate"',
+      'The sender\'s email came from IT but the domain had a subtle typo',
+      'The certificate the VPN page presented in your browser didn\'t match your organization\'s known certificate'
+    ],
+    tips: [
+      '<strong>Know your VPN URL by heart</strong> or bookmark it from a verified source. Only ever connect to the VPN from that address.',
+      '<strong>Don\'t download VPN client updates from email links.</strong> Real VPN software updates come through your IT-managed deployment tools (SCCM, Jamf, etc.).',
+      '<strong>Report unexpected VPN access issues to IT</strong> through a known channel before taking any action from an email.',
+      '<strong>Use MFA on your VPN.</strong> Credentials alone aren\'t enough — require a second factor for remote access.',
+      '<strong>Check the SSL certificate</strong> of your VPN portal. Your browser can show you the certificate details — verify it matches what IT has told you to expect.',
+      '<strong>Be aware that VPN phishing often precedes ransomware attacks.</strong> Reporting it fast can prevent a larger incident.'
+    ],
+    quiz: [
+      {
+        q: 'An email says your VPN certificate expired and provides a download link for a new client. The link points to "vpn-update-secure.com". What should you do?',
+        choices: [
+          'Download and install — expired certificates break VPN connectivity',
+          'Contact IT through your company intranet and report the email',
+          'Download but scan with antivirus first',
+          'Use a personal device to connect instead'
+        ],
+        correct: 1,
+        explanation: 'VPN client updates are pushed by IT through managed deployment — they don\'t come via email download links to third-party domains. This is a phishing email. Report it to IT and do not download anything.'
+      },
+      {
+        q: 'Why are VPN credentials especially valuable to attackers?',
+        choices: [
+          'VPN accounts can be sold on the dark web for high prices',
+          'VPN credentials provide access to internal corporate networks that have fewer external protections',
+          'VPN accounts have access to payment systems',
+          'VPN passwords are always reused for email'
+        ],
+        correct: 1,
+        explanation: 'VPN access puts an attacker inside your corporate network as a trusted user. Internal systems often have weaker authentication requirements and less monitoring than public-facing services — making VPN access a critical entry point for attackers.'
+      },
+      {
+        q: 'What\'s the most effective additional protection for a corporate VPN?',
+        choices: [
+          'A longer and more complex password',
+          'Multi-factor authentication (MFA) requiring a second factor to connect',
+          'Changing the VPN password monthly',
+          'Using a dedicated VPN device'
+        ],
+        correct: 1,
+        explanation: 'MFA on VPN is the highest-impact protection. Even if an attacker phishes your VPN credentials, they cannot connect without the second factor. This is why organizations that require MFA for VPN experience dramatically fewer successful intrusions from credential theft.'
+      }
+    ]
+  },
+
+  docusign: {
+    title: 'DocuSign Document Signing Phish',
+    icon: '📝',
+    attackType: 'Credential harvest via fake document signing request',
+    howUsed: `DocuSign phishes exploit the fact that people receive real DocuSign requests regularly and are trained to complete them promptly. Attackers send fake "You have a document to sign" emails with professional subject lines like "Employment Contract", "NDA for Review", or "Updated Terms of Service." Clicking the "Review Document" button leads to a fake DocuSign login page or downloads a malicious document.`,
+    howUsed2: `Business Email Compromise (BEC) variants are especially dangerous — attackers compromise a vendor\'s email and send fake DocuSign requests for fraudulent invoices or contract amendments. The sender is legitimate; only the document and the signing link are fake.`,
+    redFlags: [
+      'The sender was <code>@docusign-esign.com</code> or similar — real DocuSign emails come from <code>@docusign.net</code> or <code>@docusign.com</code>',
+      'The document name was generic — "Important Document.pdf" rather than a specific contract name you\'re expecting',
+      'The "Review Document" button pointed to a non-DocuSign domain',
+      'The page asked for your email and password before showing you any document — real DocuSign shows the document first and only asks for authentication for signing',
+      'There was no reference to who sent the document, or the sender\'s organization wasn\'t one you do business with',
+      'The email had no DocuSign envelope ID in the footer (real DocuSign emails always include this)'
+    ],
+    tips: [
+      '<strong>Verify DocuSign requests out-of-band.</strong> If a contract arrives unexpectedly, call the supposed sender to confirm before clicking.',
+      '<strong>Real DocuSign shows you the document before asking you to sign.</strong> Any page asking for your password before showing the document is fake.',
+      '<strong>DocuSign emails always include an envelope ID.</strong> Check that this matches what\'s in your DocuSign account (docusign.com).',
+      '<strong>Enable notification preferences in DocuSign</strong> so you can cross-reference alerts directly in your account.',
+      '<strong>Be especially cautious with financial documents</strong> like invoice changes or wire transfer authorizations received via DocuSign — common BEC targets.',
+      '<strong>Never open the actual PDF attachment</strong> if the email feels off — even PDFs can deliver malware.'
+    ],
+    quiz: [
+      {
+        q: 'A DocuSign email arrives for an "Employment Contract" but you weren\'t expecting one. The "Review Document" button destination is "docusign-signing.net". What do you do?',
+        choices: [
+          'Open it — you might be up for a promotion',
+          'Do not click — go to docusign.com directly to check your inbox for pending envelopes',
+          'Open it but don\'t sign',
+          'Forward it to HR to ask if they sent it'
+        ],
+        correct: 1,
+        explanation: 'The domain "docusign-signing.net" is not DocuSign. Navigate directly to docusign.com and log in to see your actual pending envelopes. If no envelope exists, the email is a phish. Forward it to HR after confirming it\'s fake.'
+      },
+      {
+        q: 'A real DocuSign envelope will:',
+        choices: [
+          'Ask for your DocuSign password before showing the document',
+          'Show you the document first and only require authentication to complete signing',
+          'Always require you to create an account',
+          'Download a PDF automatically when opened'
+        ],
+        correct: 1,
+        explanation: 'Real DocuSign shows the document content immediately without requiring a password first. Being asked to authenticate before seeing any document is a red flag that you\'re on a credential-stealing fake page, not the real DocuSign platform.'
+      },
+      {
+        q: 'What is a Business Email Compromise (BEC) attack using DocuSign?',
+        choices: [
+          'Hackers compromise DocuSign\'s servers',
+          'Attackers compromise a legitimate vendor\'s email to send fake contract amendments',
+          'Phishing emails that only target businesses',
+          'Using DocuSign accounts to sign malicious contracts'
+        ],
+        correct: 1,
+        explanation: 'In BEC attacks, attackers compromise a real vendor or partner\'s email account and use it to send fake DocuSign requests for fraudulent invoices or altered payment instructions. Because the sender\'s email is legitimate, traditional email filters often miss these attacks.'
+      }
+    ]
+  },
+
+  onedrive: {
+    title: 'OneDrive File Share Phish',
+    icon: '☁️',
+    attackType: 'Credential harvest via Microsoft OneDrive share notification',
+    howUsed: `OneDrive phishing is closely related to Microsoft 365 phishing — a fake "someone shared a file with you" email leads to either a fake Microsoft login page or directly delivers a malicious file download. Because OneDrive is deeply integrated into Office 365, compromising it may give attackers access to the full M365 tenant.`,
+    howUsed2: `A particularly effective variant sends fake notifications about a shared file with a business-relevant name ("Q1 Budget Review", "HR Policy Update"). These targeted lures are assembled from information on LinkedIn and company websites — the attacker knows who you are and what files you\'d believably receive.`,
+    redFlags: [
+      'The sender wasn\'t from <code>@microsoft.com</code>, <code>@sharepoint.com</code>, or your organization\'s M365 domain',
+      'The "Open" or "View file" button pointed to a non-Microsoft domain',
+      'The shared file name was suspiciously relevant to your role but came from someone you don\'t know',
+      'Clicking the link led to a Microsoft login page hosted on a non-Microsoft domain',
+      'The notification email\'s formatting was slightly off compared to real OneDrive share notifications',
+      'The email asked you to click a link to "accept the share" before you could view — real OneDrive shares don\'t require acceptance'
+    ],
+    tips: [
+      '<strong>Navigate to onedrive.live.com or your SharePoint site directly</strong> to find files shared with you.',
+      '<strong>Enable MFA on your Microsoft account</strong> — a compromised OneDrive credential without MFA exposes your entire organization.',
+      '<strong>Microsoft file share links point to sharepoint.com or 1drv.ms.</strong> Any other domain for a "OneDrive link" is fake.',
+      '<strong>Check file sender identity carefully.</strong> If you receive a file share from a colleague, verify with them directly before opening.',
+      '<strong>Use Microsoft Defender for Office 365\'s safe links feature</strong> — it rewrites URLs and scans them before you visit.',
+      '<strong>Enable sensitivity labels in M365</strong> to protect documents that shouldn\'t leave the organization, which limits damage from a compromised account.'
+    ],
+    quiz: [
+      {
+        q: 'A "Microsoft OneDrive" notification says your colleague shared a file. The open link goes to "onedrive-shared.com". What should you do?',
+        choices: [
+          'Open it — it\'s from a colleague',
+          'Navigate directly to onedrive.live.com or your SharePoint site to check shared files',
+          'Open in a private browser window for safety',
+          'Ask your colleague to resend through a different method'
+        ],
+        correct: 1,
+        explanation: '"onedrive-shared.com" is not a Microsoft domain. Navigate directly to your OneDrive or SharePoint site. Real OneDrive share links use sharepoint.com or 1drv.ms — anything else is a fake page designed to steal your credentials.'
+      },
+      {
+        q: 'What does compromising a OneDrive account (as part of Microsoft 365) typically give an attacker access to?',
+        choices: [
+          'Only the files stored in OneDrive',
+          'OneDrive files and SharePoint, plus often Outlook, Teams, and other connected M365 applications',
+          'Only documents created in the last 30 days',
+          'Nothing beyond OneDrive — it\'s isolated from other M365 services'
+        ],
+        correct: 1,
+        explanation: 'Microsoft 365 uses a single identity (Azure AD). Compromising that identity typically gives attackers access to all connected services: OneDrive, SharePoint, Outlook, Teams, and any other M365 applications the user is licensed for.'
+      },
+      {
+        q: 'Which URL format indicates a legitimate Microsoft OneDrive or SharePoint share link?',
+        choices: [
+          'microsoft-onedrive.com/share/...',
+          'drive.microsoft.com/file/...',
+          'companyname.sharepoint.com/... or 1drv.ms/...',
+          'onedrive-secure.com/...'
+        ],
+        correct: 2,
+        explanation: 'Real OneDrive share links use your organization\'s SharePoint domain (companyname.sharepoint.com) or the Microsoft short link service (1drv.ms). Any other domain for a claimed OneDrive link is fraudulent.'
+      }
+    ]
+  }
+
+}; // end SCENARIOS
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Universal phishing fundamentals
+// ─────────────────────────────────────────────────────────────────────────────
+const FUNDAMENTALS = [
+  {
+    title: 'Verify the sender domain',
+    body: 'The display name can say anything. The actual email domain is what matters. Hover or tap the sender name to reveal it.'
+  },
+  {
+    title: 'Check the URL before you type',
+    body: 'Hover over links before clicking. Look at your browser\'s address bar after landing. One wrong character makes it fake.'
+  },
+  {
+    title: 'Never click — navigate directly',
+    body: 'For any sensitive action (banking, email, HR), open a new tab and type the URL yourself, or use a saved bookmark.'
+  },
+  {
+    title: 'HTTPS ≠ safe',
+    body: 'The padlock means the connection is encrypted. It does not mean the site is legitimate. Phishing sites have HTTPS too.'
+  },
+  {
+    title: 'Urgency is a weapon',
+    body: '"Act now or lose access" is designed to short-circuit your critical thinking. Slow down — real systems give you time.'
+  },
+  {
+    title: 'MFA stops most attacks',
+    body: 'Multi-factor authentication means stolen passwords aren\'t enough. Enable it everywhere you can, especially on work systems.'
+  }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────────────────────────────────
+const params   = new URLSearchParams(window.location.search);
+const scenario = (params.get('scenario') || '').toLowerCase().trim();
+const data     = SCENARIOS[scenario];
+
+// quiz state
+const quizState = {}; // { qIndex: { answered, correct } }
+let sectionsViewed = 0;
+const TOTAL_SECTIONS = 5; // caught, attack, redflags, tips, quiz
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Render
+// ─────────────────────────────────────────────────────────────────────────────
+function render() {
+  const wrap = document.getElementById('training-wrap');
+
+  if (!data) {
+    wrap.innerHTML = `
+      <div class="unknown-wrap">
+        <h2>Training module not found</h2>
+        <p>The scenario "<strong>${escHtml(scenario || 'unknown')}</strong>" doesn't match any training module.</p>
+        <a class="btn-home" href="/phishsim/">Go to PhishSim Dashboard</a>
+      </div>`;
+    return;
+  }
+
+  const isComplete = localStorage.getItem('phishsim_complete_' + scenario) === '1';
+
+  wrap.innerHTML = `
+    ${renderCaughtBanner()}
+    ${renderProgress(isComplete)}
+    ${renderAttackSection()}
+    ${renderRedFlags()}
+    ${renderTips()}
+    ${renderFundamentals()}
+    ${renderQuiz()}
+    ${renderCompleteButton(isComplete)}
+  `;
+
+  // Wire quiz
+  document.querySelectorAll('.quiz-choice').forEach(btn => {
+    btn.addEventListener('click', handleQuizChoice);
+  });
+
+  // Update progress on scroll
+  setupProgressTracking();
+
+  // If already complete, disable the button
+  if (isComplete) {
+    const btn = document.getElementById('btn-complete');
+    if (btn) {
+      btn.textContent = '✓ Training Complete';
+      btn.classList.add('done');
+      btn.disabled = true;
+    }
+  }
+}
+
+function renderCaughtBanner() {
+  return `
+    <div class="caught-banner">
+      <div class="caught-icon">${data.icon}</div>
+      <div class="caught-text">
+        <h1>You were caught by a phishing simulation.</h1>
+        <p>This was a controlled test run by your organization. No real harm was done — but this is exactly how real attackers operate. This training will show you what the attack looked like, why it works, and how to spot it next time.</p>
+      </div>
+    </div>`;
+}
+
+function renderProgress(isComplete) {
+  const pct = isComplete ? 100 : 0;
+  return `
+    <div class="progress-bar-wrap" id="progress-wrap">
+      <span class="progress-label">Module progress</span>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:${pct}%"></div></div>
+      <span class="progress-pct" id="progress-pct">${pct}%</span>
+    </div>`;
+}
+
+function renderAttackSection() {
+  return `
+    <div class="section-card" data-section="attack">
+      <h2>What this attack is</h2>
+      <p><strong>${data.attackType}.</strong></p>
+      <p>${data.howUsed}</p>
+      ${data.howUsed2 ? `<p>${data.howUsed2}</p>` : ''}
+    </div>`;
+}
+
+function renderRedFlags() {
+  const items = data.redFlags.map(flag => `
+    <li>
+      <span class="flag-dot"></span>
+      <span>${flag}</span>
+    </li>`).join('');
+  return `
+    <div class="section-card" data-section="redflags">
+      <h2>Red flags in this simulation</h2>
+      <p style="margin-bottom:12px;font-size:0.88rem;color:var(--muted);">Here are the specific signals that should have indicated this was a phishing attempt:</p>
+      <ul class="red-flags-list">${items}</ul>
+    </div>`;
+}
+
+function renderTips() {
+  const items = data.tips.map((tip, i) => `
+    <li>
+      <span class="tip-num">${i + 1}</span>
+      <span>${tip}</span>
+    </li>`).join('');
+  return `
+    <div class="section-card" data-section="tips">
+      <h2>How to protect yourself</h2>
+      <ul class="tips-list">${items}</ul>
+    </div>`;
+}
+
+function renderFundamentals() {
+  const items = FUNDAMENTALS.map(f => `
+    <div class="fund-item">
+      <div class="fund-title">${f.title}</div>
+      <p>${f.body}</p>
+    </div>`).join('');
+  return `
+    <div class="section-card" data-section="fundamentals">
+      <h2>Universal phishing fundamentals</h2>
+      <p style="margin-bottom:14px;font-size:0.88rem;color:var(--muted);">These principles apply to every phishing attack, not just this scenario.</p>
+      <div class="fundamentals-grid">${items}</div>
+    </div>`;
+}
+
+function renderQuiz() {
+  const qs = data.quiz.map((q, qi) => `
+    <div class="quiz-q" id="quiz-q-${qi}">
+      <span class="quiz-q-num">Question ${qi + 1} of ${data.quiz.length}</span>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="quiz-choices">
+        ${q.choices.map((c, ci) => `
+          <button class="quiz-choice" data-qi="${qi}" data-ci="${ci}" type="button">${c}</button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="quiz-fb-${qi}"></div>
+    </div>`).join('');
+
+  return `
+    <div class="section-card quiz-section" data-section="quiz">
+      <h2>Quick check — test your understanding</h2>
+      <p style="margin-bottom:20px;font-size:0.88rem;color:var(--muted);">Select the best answer for each question.</p>
+      ${qs}
+      <div class="quiz-score-wrap" id="quiz-score"></div>
+    </div>`;
+}
+
+function renderCompleteButton(isComplete) {
+  return `
+    <div class="complete-wrap">
+      <button class="btn-complete ${isComplete ? 'done' : ''}" id="btn-complete" ${isComplete ? 'disabled' : ''} onclick="markComplete()">
+        ${isComplete ? '✓ Training Complete' : 'Mark as Complete'}
+      </button>
+      <div class="complete-note" id="complete-note">
+        ${isComplete ? 'Recorded on ' + (localStorage.getItem('phishsim_complete_' + scenario + '_date') || 'this device') : 'Click after reading all sections and completing the quiz.'}
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Quiz logic
+// ─────────────────────────────────────────────────────────────────────────────
+function handleQuizChoice(e) {
+  const btn = e.currentTarget;
+  const qi = parseInt(btn.dataset.qi);
+  const ci = parseInt(btn.dataset.ci);
+
+  if (quizState[qi]) return; // already answered
+
+  const q = data.quiz[qi];
+  const correct = q.correct;
+  const isCorrect = ci === correct;
+
+  quizState[qi] = { answered: true, correct: isCorrect };
+
+  // Disable all choices for this question
+  const allChoices = document.querySelectorAll(`.quiz-choice[data-qi="${qi}"]`);
+  allChoices.forEach(b => {
+    b.disabled = true;
+    if (parseInt(b.dataset.ci) === correct) b.classList.add('revealed-correct');
+  });
+
+  // Style the clicked button
+  btn.classList.remove('revealed-correct');
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  // Show feedback
+  const fb = document.getElementById('quiz-fb-' + qi);
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'ok-fb' : 'bad-fb');
+  fb.innerHTML = (isCorrect ? '<strong>Correct.</strong> ' : '<strong>Not quite.</strong> ') + q.explanation;
+
+  updateProgress();
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const answered = Object.keys(quizState).length;
+  if (answered < data.quiz.length) return;
+
+  const correct = Object.values(quizState).filter(s => s.correct).length;
+  const pct = Math.round((correct / data.quiz.length) * 100);
+
+  const scoreWrap = document.getElementById('quiz-score');
+  scoreWrap.className = 'quiz-score-wrap show';
+  scoreWrap.innerHTML = `
+    <div class="quiz-score-num">${correct}/${data.quiz.length}</div>
+    <div class="quiz-score-label">${pct}% — ${scoreMsg(pct)}</div>
+  `;
+
+  updateProgress();
+}
+
+function scoreMsg(pct) {
+  if (pct === 100) return 'Perfect score. Well done.';
+  if (pct >= 67)  return 'Good understanding. Review any questions you missed.';
+  return 'Take another look at the sections above and retake the quiz.';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Progress tracking
+// ─────────────────────────────────────────────────────────────────────────────
+const visibleSections = new Set();
+
+function setupProgressTracking() {
+  const sections = document.querySelectorAll('[data-section]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        visibleSections.add(entry.target.dataset.section);
+        updateProgress();
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => observer.observe(s));
+}
+
+function updateProgress() {
+  const sectionCount = visibleSections.size;
+  const quizAnswered = Object.keys(quizState).length;
+  const quizTotal = data ? data.quiz.length : 3;
+  const isComplete = localStorage.getItem('phishsim_complete_' + scenario) === '1';
+
+  if (isComplete) {
+    setProgress(100);
+    return;
+  }
+
+  // 70% from scrolling through sections, 30% from answering quiz
+  const sectionPct = Math.min((sectionCount / 5) * 70, 70);
+  const quizPct = (quizAnswered / quizTotal) * 30;
+  const total = Math.round(sectionPct + quizPct);
+  setProgress(Math.min(total, 95)); // cap at 95 until marked complete
+}
+
+function setProgress(pct) {
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('progress-pct');
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = pct + '%';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mark complete
+// ─────────────────────────────────────────────────────────────────────────────
+function markComplete() {
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  localStorage.setItem('phishsim_complete_' + scenario, '1');
+  localStorage.setItem('phishsim_complete_' + scenario + '_date', date);
+
+  setProgress(100);
+
+  const btn = document.getElementById('btn-complete');
+  const note = document.getElementById('complete-note');
+  if (btn) {
+    btn.textContent = '✓ Training Complete';
+    btn.classList.add('done');
+    btn.disabled = true;
+  }
+  if (note) note.textContent = 'Recorded on ' + date;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Utils
+// ─────────────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return str.replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
