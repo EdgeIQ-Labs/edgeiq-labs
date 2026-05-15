@@ -59,6 +59,35 @@ async function gophishProxy(env, customerId, gophishPath, method = 'GET', body =
   catch { return { status: resp.status, data: { raw: text } }; }
 }
 
+// ── Welcome email ─────────────────────────────────────────────────────────────
+
+async function sendWelcomeEmail(env, email, customerId) {
+  if (!env.RESEND_API_KEY || !email) return;
+  const dashUrl = `${SITE_URL}/phishsim/?cid=${encodeURIComponent(customerId)}`;
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+    },
+    body: JSON.stringify({
+      from: 'EdgeIQ PhishSim <phishsim@edgeiqlabs.com>',
+      to: [email],
+      subject: 'Your PhishSim Customer ID — Save This',
+      html: `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;background:#0b0f14;color:#e8eef7;padding:36px;border-radius:14px;">
+  <h1 style="font-size:1.4rem;margin:0 0 8px;">🎣 PhishSim is ready</h1>
+  <p style="color:#9fb0c7;margin:0 0 28px;line-height:1.6;">Your phishing simulation platform has been provisioned. Save your Customer ID below — you'll need it every time you log in.</p>
+  <div style="background:#0f1620;border:1px solid #3dd9ff;border-radius:10px;padding:18px 20px;margin-bottom:28px;">
+    <div style="font-size:0.68rem;color:#3dd9ff;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Customer ID</div>
+    <div style="font-family:monospace;font-size:0.88rem;word-break:break-all;color:#e8eef7;">${customerId}</div>
+  </div>
+  <a href="${dashUrl}" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;font-size:0.9rem;padding:13px 28px;border-radius:8px;text-decoration:none;">Open Dashboard →</a>
+  <p style="color:#4a6080;font-size:0.75rem;margin:28px 0 0;line-height:1.6;">Questions? Email <a href="mailto:support@edgeiqlabs.com" style="color:#9fb0c7;">support@edgeiqlabs.com</a> — we reply within a few hours.</p>
+</div>`,
+    }),
+  }).catch(() => {});
+}
+
 // ── KV helpers ────────────────────────────────────────────────────────────────
 
 async function getCustomerInstance(env, customerId) {
@@ -156,14 +185,21 @@ async function handleSession(request, env) {
     // Provision now (webhook may not have fired yet)
     const { status, data } = await mgr(env, '/provision', 'POST', { customer_id: customerId });
     if (status === 200 || status === 201) {
-      inst = { ...data, email };
+      inst = { ...data, email, _emailSent: false };
       await saveCustomerInstance(env, customerId, inst);
     } else {
       return json({ error: 'Provisioning failed — try again in a moment', detail: data }, 500);
     }
   }
 
-  return json({ customerId, email, ...inst });
+  // Send welcome email exactly once
+  if (!inst._emailSent) {
+    await sendWelcomeEmail(env, email || inst.email, customerId);
+    inst._emailSent = true;
+    await saveCustomerInstance(env, customerId, inst);
+  }
+
+  return json({ customerId, email: email || inst.email, ...inst });
 }
 
 async function handleSetup(request, env) {
@@ -245,7 +281,9 @@ async function handleStripeWebhook(request, env) {
 
     const { status, data } = await mgr(env, '/provision', 'POST', { customer_id: customerId });
     if (status === 201 || status === 200) {
-      await saveCustomerInstance(env, customerId, { ...data, email });
+      await saveCustomerInstance(env, customerId, { ...data, email, _emailSent: false });
+      await sendWelcomeEmail(env, email, customerId);
+      await saveCustomerInstance(env, customerId, { ...data, email, _emailSent: true });
     }
   }
 
@@ -264,19 +302,21 @@ async function handleCampaigns(request, env, customerId, campaignId = null) {
   return json(data, status);
 }
 
-async function handleTemplates(request, env, customerId) {
+async function handleTemplates(request, env, customerId, templateId = null) {
   const method = request.method;
+  const path   = templateId ? `templates/${templateId}` : 'templates/';
   let body = null;
-  if (method === 'POST') { try { body = await request.json(); } catch {} }
-  const { status, data } = await gophishProxy(env, customerId, 'templates/', method, body);
+  if (method === 'POST' || method === 'PUT') { try { body = await request.json(); } catch {} }
+  const { status, data } = await gophishProxy(env, customerId, path, method, body);
   return json(data, status);
 }
 
-async function handleGroups(request, env, customerId) {
+async function handleGroups(request, env, customerId, groupId = null) {
   const method = request.method;
+  const path   = groupId ? `groups/${groupId}` : 'groups/';
   let body = null;
-  if (method === 'POST') { try { body = await request.json(); } catch {} }
-  const { status, data } = await gophishProxy(env, customerId, 'groups/', method, body);
+  if (method === 'POST' || method === 'PUT') { try { body = await request.json(); } catch {} }
+  const { status, data } = await gophishProxy(env, customerId, path, method, body);
   return json(data, status);
 }
 
@@ -355,10 +395,10 @@ export async function onRequest(context) {
       return handleCampaigns(request, env, customerId, resourceId);
 
     case 'templates':
-      return handleTemplates(request, env, customerId);
+      return handleTemplates(request, env, customerId, resourceId);
 
     case 'groups':
-      return handleGroups(request, env, customerId);
+      return handleGroups(request, env, customerId, resourceId);
 
     case 'smtp':
       return handleSendingProfiles(request, env, customerId);
