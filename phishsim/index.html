@@ -832,7 +832,7 @@ function openSmtpModal(profile = null) {
   document.getElementById('smtpUser').value        = profile ? (profile.username || '') : '';
   document.getElementById('smtpPass').value        = '';
   document.getElementById('smtpIgnoreCert').checked = profile ? !!profile.ignore_cert_errors : true;
-  document.getElementById('smtpModal').classList.add('active');
+  document.getElementById('smtpModal').classList.add('open');
 }
 
 async function saveSmtp() {
