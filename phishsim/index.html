@@ -228,7 +228,10 @@
     <div class="info-grid" id="accountInfo"><div class="empty">Loading…</div></div>
   </div>
   <div class="section">
-    <div class="section-head"><h2>Sending Profile</h2></div>
+    <div class="section-head">
+      <h2>Sending Profiles</h2>
+      <button class="btn btn-sm" onclick="openSmtpModal()">+ Add Profile</button>
+    </div>
     <div id="smtpInfo"><div class="empty">Loading…</div></div>
   </div>
   <div class="section" style="border-color:rgba(255,107,107,.2);">
@@ -269,6 +272,29 @@
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('campaignModal')">Cancel</button>
       <button class="btn" onclick="createCampaign()">🚀 Launch Campaign</button>
+    </div>
+  </div>
+</div>
+
+<!-- SMTP Profile Modal -->
+<div class="overlay" id="smtpModal">
+  <div class="modal">
+    <h3 id="smtpModalTitle">Add Sending Profile</h3>
+    <input type="hidden" id="smtpId" value="" />
+    <div class="form-row"><label>Profile Name</label><input id="smtpName" placeholder="Local Postfix (Self-hosted)" /></div>
+    <div class="form-row"><label>SMTP Host:Port</label><input id="smtpHost" placeholder="172.17.0.1:25" /></div>
+    <div class="form-row"><label>From Address</label><input id="smtpFrom" placeholder="security@yourdomain.com" /></div>
+    <div class="form-grid">
+      <div class="form-row"><label>Username (optional)</label><input id="smtpUser" placeholder="leave blank if none" /></div>
+      <div class="form-row"><label>Password (optional)</label><input id="smtpPass" type="password" placeholder="leave blank if none" /></div>
+    </div>
+    <div class="form-row" style="flex-direction:row;align-items:center;gap:10px;">
+      <input type="checkbox" id="smtpIgnoreCert" style="width:auto;margin:0;" />
+      <label for="smtpIgnoreCert" style="margin:0;font-size:.85rem;">Ignore TLS certificate errors</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('smtpModal')">Cancel</button>
+      <button class="btn" onclick="saveSmtp()">Save Profile</button>
     </div>
   </div>
 </div>
@@ -782,12 +808,75 @@ async function loadAccount() {
             <div class="name">${esc(p.name)}</div>
             <div class="sub">${esc(p.host||'')} — From: ${esc(p.from_address||'')}</div>
           </div>
-          <span class="badge ok">Configured</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn btn-sm btn-outline" onclick='openSmtpModal(${JSON.stringify(p)})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteSmtp(${p.id},${JSON.stringify(p.name)})">Delete</button>
+          </div>
         </div>`
       ).join('');
     }
   } catch(e) {
     document.getElementById('smtpInfo').innerHTML = `<div class="empty">Error loading: ${esc(e.message)}</div>`;
+  }
+}
+
+// ── SMTP Profile helpers ──────────────────────────────────────────────────────
+
+function openSmtpModal(profile = null) {
+  document.getElementById('smtpModalTitle').textContent = profile ? 'Edit Sending Profile' : 'Add Sending Profile';
+  document.getElementById('smtpId').value          = profile ? profile.id : '';
+  document.getElementById('smtpName').value        = profile ? profile.name : '';
+  document.getElementById('smtpHost').value        = profile ? profile.host : '';
+  document.getElementById('smtpFrom').value        = profile ? (profile.from_address || '') : '';
+  document.getElementById('smtpUser').value        = profile ? (profile.username || '') : '';
+  document.getElementById('smtpPass').value        = '';
+  document.getElementById('smtpIgnoreCert').checked = profile ? !!profile.ignore_cert_errors : true;
+  document.getElementById('smtpModal').classList.add('active');
+}
+
+async function saveSmtp() {
+  const id   = document.getElementById('smtpId').value;
+  const name = document.getElementById('smtpName').value.trim();
+  const host = document.getElementById('smtpHost').value.trim();
+  const from = document.getElementById('smtpFrom').value.trim();
+  if (!name) return toast('Profile name is required.', 'err');
+  if (!host) return toast('Host:port is required.', 'err');
+  if (!from) return toast('From address is required.', 'err');
+
+  const payload = {
+    name,
+    host,
+    from_address:        from,
+    username:            document.getElementById('smtpUser').value.trim(),
+    password:            document.getElementById('smtpPass').value,
+    ignore_cert_errors:  document.getElementById('smtpIgnoreCert').checked,
+    headers:             [],
+  };
+  if (id) payload.id = parseInt(id);
+
+  try {
+    if (id) {
+      await apiFetch(`/smtp/${id}`, 'PUT', payload);
+      toast('Sending profile updated.', 'ok');
+    } else {
+      await apiFetch('/smtp/', 'POST', payload);
+      toast('Sending profile created.', 'ok');
+    }
+    closeModal('smtpModal');
+    loadAccount();
+  } catch(e) {
+    toast(e.message, 'err');
+  }
+}
+
+async function deleteSmtp(id, name) {
+  if (!confirm(`Delete sending profile "${name}"?`)) return;
+  try {
+    await apiFetch(`/smtp/${id}`, 'DELETE');
+    toast('Sending profile deleted.', 'ok');
+    loadAccount();
+  } catch(e) {
+    toast(e.message, 'err');
   }
 }
 
