@@ -1,0 +1,25 @@
+name: Hashnode Autopost
+
+on:
+  schedule:
+    - cron: '0 14 * * 1,3,5'
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Post to Hashnode
+        env:
+          HASHNODE_KEY: ${{ secrets.HASHNODE_API_KEY }}
+        run: python3 scripts/hashnode_autopilot.py
