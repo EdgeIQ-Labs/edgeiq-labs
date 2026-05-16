@@ -59,11 +59,139 @@ async function gophishProxy(env, customerId, gophishPath, method = 'GET', body =
   catch { return { status: resp.status, data: { raw: text } }; }
 }
 
-// ── Welcome email ─────────────────────────────────────────────────────────────
+// ── Welcome / onboarding email ────────────────────────────────────────────────
 
 async function sendWelcomeEmail(env, email, customerId) {
   if (!env.RESEND_API_KEY || !email) return;
   const dashUrl = `${SITE_URL}/phishsim/?cid=${encodeURIComponent(customerId)}`;
+
+  const s = (css) => `style="${css}"`;
+  const bg      = '#0b0f14';
+  const card    = '#0f1620';
+  const border  = '#1e2d3d';
+  const text    = '#e8eef7';
+  const muted   = '#9fb0c7';
+  const accent  = '#3dd9ff';
+  const ok      = '#70f0a8';
+  const warn    = '#ffb347';
+  const dim     = '#4a6080';
+
+  const section = (title, color, body) => `
+    <div ${s(`background:${card};border:1px solid ${border};border-radius:12px;padding:22px 24px;margin-bottom:20px;`)}>
+      <div ${s(`font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:${color};margin-bottom:12px;`)}>${title}</div>
+      ${body}
+    </div>`;
+
+  const step = (n, title, desc) => `
+    <div ${s(`display:flex;gap:14px;margin-bottom:14px;`)}>
+      <div ${s(`flex-shrink:0;width:26px;height:26px;border-radius:50%;background:rgba(61,217,255,0.15);color:${accent};font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;`)}>${n}</div>
+      <div><div ${s(`font-size:0.85rem;font-weight:600;color:${text};margin-bottom:3px;`)}>${title}</div><div ${s(`font-size:0.8rem;color:${muted};line-height:1.55;`)}>${desc}</div></div>
+    </div>`;
+
+  const wlRow = (platform, instruction) => `
+    <tr>
+      <td ${s(`padding:9px 12px;font-size:0.8rem;font-weight:600;color:${text};border-bottom:1px solid ${border};white-space:nowrap;`)}>${platform}</td>
+      <td ${s(`padding:9px 12px;font-size:0.78rem;color:${muted};border-bottom:1px solid ${border};line-height:1.5;`)}>${instruction}</td>
+    </tr>`;
+
+  const html = `
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body ${s(`margin:0;padding:0;background:#060a0f;font-family:Inter,system-ui,-apple-system,sans-serif;`)}>
+<div ${s(`max-width:600px;margin:0 auto;padding:28px 16px;`)}>
+
+  <!-- Header -->
+  <div ${s(`text-align:center;margin-bottom:28px;`)}>
+    <div ${s(`font-size:1.8rem;margin-bottom:6px;`)}>🎣</div>
+    <div ${s(`font-size:1.3rem;font-weight:800;color:${text};`)}>PhishSim is ready</div>
+    <div ${s(`font-size:0.85rem;color:${muted};margin-top:6px;`)}>Your phishing simulation platform has been provisioned.</div>
+  </div>
+
+  <!-- Customer ID -->
+  <div ${s(`background:${card};border:2px solid ${accent};border-radius:12px;padding:20px 24px;margin-bottom:20px;`)}>
+    <div ${s(`font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:${accent};margin-bottom:8px;`)}>Your Customer ID — Save This</div>
+    <div ${s(`font-family:monospace;font-size:0.9rem;word-break:break-all;color:${text};background:#060a0f;border-radius:8px;padding:12px 14px;`)}>${customerId}</div>
+    <div ${s(`font-size:0.73rem;color:${dim};margin-top:10px;`)}>You will need this ID every time you log into the dashboard. Store it somewhere safe.</div>
+  </div>
+
+  <!-- CTA -->
+  <div ${s(`text-align:center;margin-bottom:28px;`)}>
+    <a href="${dashUrl}" ${s(`display:inline-block;background:${accent};color:#071018;font-weight:800;font-size:0.9rem;padding:14px 32px;border-radius:10px;text-decoration:none;`)}>Open Your Dashboard →</a>
+  </div>
+
+  <!-- STEP 1: Whitelist -->
+  ${section('⚠️ Step 1 — Required Before Campaigns Work: Whitelist Our Mail Server', warn, `
+    <p ${s(`font-size:0.82rem;color:${muted};line-height:1.6;margin:0 0 14px;`)}>
+      PhishSim sends simulation emails from our dedicated mail server. Most corporate email gateways will block or quarantine these emails unless you whitelist our sending IP and domain first.
+      <strong ${s(`color:${text};`)}>Complete this step before launching your first campaign.</strong>
+    </p>
+
+    <div ${s(`background:#060a0f;border-radius:8px;padding:14px 16px;margin-bottom:16px;`)}>
+      <div ${s(`font-size:0.68rem;color:${warn};text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;`)}>Whitelist these values</div>
+      <div ${s(`margin-bottom:6px;`)}>
+        <span ${s(`font-size:0.72rem;color:${muted};`)}>Sending IP</span><br/>
+        <code ${s(`font-size:0.85rem;color:${accent};`)} >100.33.233.11</code>
+      </div>
+      <div ${s(`margin-bottom:6px;`)}>
+        <span ${s(`font-size:0.72rem;color:${muted};`)}>Sending Domain</span><br/>
+        <code ${s(`font-size:0.85rem;color:${accent};`)}>edgeiqlabs.com</code>
+      </div>
+      <div>
+        <span ${s(`font-size:0.72rem;color:${muted};`)}>From Address</span><br/>
+        <code ${s(`font-size:0.85rem;color:${accent};`)}>security@edgeiqlabs.com</code>
+      </div>
+    </div>
+
+    <div ${s(`font-size:0.72rem;font-weight:700;color:${muted};text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;`)}>Instructions by platform</div>
+    <table ${s(`width:100%;border-collapse:collapse;border:1px solid ${border};border-radius:8px;overflow:hidden;`)}>
+      <thead>
+        <tr ${s(`background:#060a0f;`)}>
+          <th ${s(`padding:8px 12px;font-size:0.68rem;color:${muted};text-transform:uppercase;letter-spacing:0.06em;text-align:left;border-bottom:1px solid ${border};`)}>Platform</th>
+          <th ${s(`padding:8px 12px;font-size:0.68rem;color:${muted};text-transform:uppercase;letter-spacing:0.06em;text-align:left;border-bottom:1px solid ${border};`)}>How to whitelist</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${wlRow('Microsoft 365', 'Admin Center → Security → Email &amp; Collaboration → Policies → Anti-spam → Connection filter → <strong>Add 100.33.233.11 to the IP Allow list</strong>. Also add edgeiqlabs.com to the Safe Sender list in Anti-spam inbound policy.')}
+        ${wlRow('Google Workspace', 'Admin Console → Apps → Google Workspace → Gmail → Spam, phishing &amp; malware → <strong>Email allowlist</strong> → add <code>100.33.233.11</code>. Also add edgeiqlabs.com under Inbound gateway.')}
+        ${wlRow('Mimecast', 'Administration → Gateway → Policies → Anti-Spoofing → Create <strong>Permitted Senders</strong> policy for IP <code>100.33.233.11</code> and domain <code>edgeiqlabs.com</code>.')}
+        ${wlRow('Proofpoint', 'Email Protection → Email Firewall → Rules → Add rule with IP <code>100.33.233.11</code> and domain <code>edgeiqlabs.com</code> set to Allow.')}
+        ${wlRow('Barracuda', 'Settings → Inbound → IP Whitelist → Add <code>100.33.233.11</code>.')}
+        ${wlRow('Other / On-premise', 'Add <code>100.33.233.11</code> to your SMTP relay whitelist / trusted IP list. Add <code>edgeiqlabs.com</code> to your domain allowlist or safe sender list.')}
+      </tbody>
+    </table>
+    <p ${s(`font-size:0.75rem;color:${dim};margin:10px 0 0;line-height:1.5;`)}>Need help with a platform not listed? Email <a href="mailto:support@edgeiqlabs.com" ${s(`color:${muted};`)}>support@edgeiqlabs.com</a> and we'll walk you through it.</p>
+  `)}
+
+  <!-- STEP 2: Quick-start -->
+  ${section('🚀 Step 2 — Launch Your First Campaign (5 Minutes)', accent, `
+    ${step(1, 'Add a Target Group', 'Go to <strong>Groups</strong> in the dashboard and click <strong>+ New Group</strong>. Add your test targets in the format: <code>FirstName,LastName,Email,Position</code> — one per line. Start with a small internal group for your first test.')}
+    ${step(2, 'Choose an Email Template', 'Go to <strong>Templates</strong>. Pre-built templates (Microsoft 365 password reset, IT helpdesk alerts, etc.) were added when your instance was provisioned. You can edit them or create your own with custom HTML.')}
+    ${step(3, 'Pick a Landing Page', 'Go to <strong>Landing Pages</strong>. Pre-built pages matching common phishing scenarios are already loaded. The page is shown to targets who click your link — credentials entered are logged (no real accounts are affected).')}
+    ${step(4, 'Launch the Campaign', 'Go to <strong>Campaigns</strong> → <strong>+ New Campaign</strong>. Set a name, select your template, landing page, group, and sending profile. The Phishing URL is auto-filled from your instance. Hit <strong>Launch</strong>.')}
+    ${step(5, 'Review Results', 'Results update in real time. You\'ll see who received, opened, clicked, and submitted credentials. Use this to generate your security awareness training report.')}
+  `)}
+
+  <!-- STEP 3: Tips -->
+  ${section('💡 Tips for Realistic Simulations', ok, `
+    <ul ${s(`margin:0;padding:0 0 0 18px;`)}>
+      <li ${s(`font-size:0.8rem;color:${muted};line-height:1.6;margin-bottom:6px;`)}>Set your campaign send window to business hours (9am–5pm) to mimic real attacks.</li>
+      <li ${s(`font-size:0.8rem;color:${muted};line-height:1.6;margin-bottom:6px;`)}>Use templates that match services your organisation actually uses (M365, Okta, HR portals).</li>
+      <li ${s(`font-size:0.8rem;color:${muted};line-height:1.6;margin-bottom:6px;`)}>Start with a subset of users, check delivery, then roll out to the full organisation.</li>
+      <li ${s(`font-size:0.8rem;color:${muted};line-height:1.6;`)}>After a campaign, follow up with security awareness training for employees who clicked.</li>
+    </ul>
+  `)}
+
+  <!-- Support -->
+  <div ${s(`text-align:center;padding:20px 0 8px;`)}>
+    <div ${s(`font-size:0.78rem;color:${dim};line-height:1.7;`)}>
+      Questions or issues? <a href="mailto:support@edgeiqlabs.com" ${s(`color:${muted};font-weight:600;`)}>support@edgeiqlabs.com</a><br/>
+      We respond within a few hours on business days.
+    </div>
+    <div ${s(`font-size:0.68rem;color:${dim};margin-top:16px;`)}>EdgeIQ Labs · <a href="${SITE_URL}" ${s(`color:${dim};`)}>edgeiqlabs.com</a></div>
+  </div>
+
+</div>
+</body></html>`;
+
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -73,17 +201,8 @@ async function sendWelcomeEmail(env, email, customerId) {
     body: JSON.stringify({
       from: 'EdgeIQ PhishSim <phishsim@edgeiqlabs.com>',
       to: [email],
-      subject: 'Your PhishSim Customer ID — Save This',
-      html: `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;background:#0b0f14;color:#e8eef7;padding:36px;border-radius:14px;">
-  <h1 style="font-size:1.4rem;margin:0 0 8px;">🎣 PhishSim is ready</h1>
-  <p style="color:#9fb0c7;margin:0 0 28px;line-height:1.6;">Your phishing simulation platform has been provisioned. Save your Customer ID below — you'll need it every time you log in.</p>
-  <div style="background:#0f1620;border:1px solid #3dd9ff;border-radius:10px;padding:18px 20px;margin-bottom:28px;">
-    <div style="font-size:0.68rem;color:#3dd9ff;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Customer ID</div>
-    <div style="font-family:monospace;font-size:0.88rem;word-break:break-all;color:#e8eef7;">${customerId}</div>
-  </div>
-  <a href="${dashUrl}" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;font-size:0.9rem;padding:13px 28px;border-radius:8px;text-decoration:none;">Open Dashboard →</a>
-  <p style="color:#4a6080;font-size:0.75rem;margin:28px 0 0;line-height:1.6;">Questions? Email <a href="mailto:support@edgeiqlabs.com" style="color:#9fb0c7;">support@edgeiqlabs.com</a> — we reply within a few hours.</p>
-</div>`,
+      subject: 'Your PhishSim is ready — Customer ID + Onboarding Guide',
+      html,
     }),
   }).catch(() => {});
 }
