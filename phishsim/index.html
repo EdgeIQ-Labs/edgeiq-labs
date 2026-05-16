@@ -166,7 +166,7 @@
       <input id="cidInput" type="text" placeholder="ps_ee2db673…" />
     </div>
     <button class="btn" onclick="saveCustomerId()">Access Dashboard →</button>
-    <p style="margin-top:16px;font-size:.8rem;color:var(--muted);">Don't have an account? <a href="https://phishsim.edgeiqlabs.com/" style="color:var(--accent);">Subscribe to PhishSim →</a></p>
+    <p style="margin-top:16px;font-size:.8rem;color:var(--muted);">Don't have an account? <a href="https://edgeiqlabs.com/services.html" style="color:var(--accent);">Subscribe to PhishSim →</a></p>
   </div>
 </div>
 
@@ -259,7 +259,7 @@
       </div>
       <div class="form-row">
         <label>Phishing URL</label>
-        <input id="cUrl" readonly style="color:var(--muted);cursor:default;" />
+        <input id="cUrl" placeholder="https://c0.phishsim.edgeiqlabs.com" />
         <p class="hint">Auto-filled from your instance. This is where targets land when they click.</p>
       </div>
     </div>
@@ -282,7 +282,7 @@
     <h3 id="smtpModalTitle">Add Sending Profile</h3>
     <input type="hidden" id="smtpId" value="" />
     <div class="form-row"><label>Profile Name</label><input id="smtpName" placeholder="Local Postfix (Self-hosted)" /></div>
-    <div class="form-row"><label>SMTP Host:Port</label><input id="smtpHost" placeholder="172.17.0.1:25" /></div>
+    <div class="form-row"><label>SMTP Host:Port</label><input id="smtpHost" placeholder="10.0.0.1:25" /></div>
     <div class="form-row"><label>From Address</label><input id="smtpFrom" placeholder="security@yourdomain.com" /></div>
     <div class="form-grid">
       <div class="form-row"><label>Username (optional)</label><input id="smtpUser" placeholder="leave blank if none" /></div>
@@ -424,7 +424,9 @@ async function initDashboard() {
     document.getElementById('mainNav').style.display = '';
     document.getElementById('refreshBtn').style.display = '';
     document.getElementById('customerLabel').textContent = customerId.length > 20 ? customerId.slice(0,18)+'…' : customerId;
-    document.getElementById('cUrl').value = instanceData.phish_url || '';
+    const phishUrl = (instanceData.phish_url || '').replace(/^http:\/\//, 'https://');
+    instanceData.phish_url = phishUrl;
+    document.getElementById('cUrl').value = phishUrl;
     document.getElementById('pRedirect').value = 'https://edgeiqlabs.com/phishsim/';
     showPage('campaigns', document.querySelector('.nav-btn.active'));
     await refreshAll();
