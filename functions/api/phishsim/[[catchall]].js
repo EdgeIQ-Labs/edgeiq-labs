@@ -320,8 +320,12 @@ async function handleGroups(request, env, customerId, groupId = null) {
   return json(data, status);
 }
 
-async function handleSendingProfiles(request, env, customerId) {
-  const { status, data } = await gophishProxy(env, customerId, 'smtp/', 'GET');
+async function handleSendingProfiles(request, env, customerId, profileId = null) {
+  const method = request.method;
+  let path = profileId ? `smtp/${profileId}` : 'smtp/';
+  let body = null;
+  if (method === 'POST' || method === 'PUT') { try { body = await request.json(); } catch {} }
+  const { status, data } = await gophishProxy(env, customerId, path, method, body);
   return json(data, status);
 }
 
@@ -401,7 +405,7 @@ export async function onRequest(context) {
       return handleGroups(request, env, customerId, resourceId);
 
     case 'smtp':
-      return handleSendingProfiles(request, env, customerId);
+      return handleSendingProfiles(request, env, customerId, resourceId);
 
     case 'pages':
       return handlePages(request, env, customerId, resourceId);
