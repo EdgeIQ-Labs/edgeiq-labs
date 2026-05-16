@@ -802,15 +802,16 @@ async function loadAccount() {
     if (!arr.length) {
       document.getElementById('smtpInfo').innerHTML = '<div class="empty">No sending profiles configured.</div>';
     } else {
-      document.getElementById('smtpInfo').innerHTML = arr.map(p =>
+      window._smtpProfiles = arr;
+      document.getElementById('smtpInfo').innerHTML = arr.map((p, i) =>
         `<div class="list-item">
           <div class="info">
             <div class="name">${esc(p.name)}</div>
             <div class="sub">${esc(p.host||'')} — From: ${esc(p.from_address||'')}</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <button class="btn btn-sm btn-outline" onclick='openSmtpModal(${JSON.stringify(p)})'>Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteSmtp(${p.id},${JSON.stringify(p.name)})">Delete</button>
+            <button class="btn btn-sm btn-outline" onclick="openSmtpModal(window._smtpProfiles[${i}])">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteSmtp(${p.id}, '${esc(p.name)}')">Delete</button>
           </div>
         </div>`
       ).join('');
