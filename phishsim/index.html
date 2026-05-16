@@ -365,7 +365,7 @@
 const API = '/api/phishsim';
 let customerId = null;
 let instanceData = null;
-let _templates = [], _pages = [], _groups = [];
+let _templates = [], _pages = [], _groups = [], _smtp = [];
 let _refreshTimer = null;
 
 // ── Init ────────────────────────────────────────────────────────────────────
@@ -807,8 +807,8 @@ function openNewCampaign() {
   populateSelect('cGroup', _groups, 'id', g => g.name+' ('+g.targets?.length+' targets)', 'No groups — add some first');
 
   apiFetch('/smtp').then(profiles => {
-    const arr = Array.isArray(profiles) ? profiles : [];
-    populateSelect('cSMTP', arr, 'id', 'name', 'No sending profiles');
+    _smtp = Array.isArray(profiles) ? profiles : [];
+    populateSelect('cSMTP', _smtp, 'id', 'name', 'No sending profiles');
   }).catch(()=>{});
 
   // Reset to first tab
@@ -818,28 +818,38 @@ function openNewCampaign() {
 }
 
 async function createCampaign() {
-  const name     = document.getElementById('cName').value.trim();
-  const template = parseInt(document.getElementById('cTemplate').value);
-  const page     = parseInt(document.getElementById('cPage').value);
-  const group    = parseInt(document.getElementById('cGroup').value);
-  const smtp     = parseInt(document.getElementById('cSMTP').value) || 1;
-  const launch   = document.getElementById('cLaunch').value;
-  const sendBy   = document.getElementById('cSendBy').value;
-  const url      = document.getElementById('cUrl').value;
+  const name       = document.getElementById('cName').value.trim();
+  const templateId = parseInt(document.getElementById('cTemplate').value);
+  const pageId     = parseInt(document.getElementById('cPage').value);
+  const groupId    = parseInt(document.getElementById('cGroup').value);
+  const smtpId     = parseInt(document.getElementById('cSMTP').value);
+  const launch     = document.getElementById('cLaunch').value;
+  const sendBy     = document.getElementById('cSendBy').value;
+  const url        = document.getElementById('cUrl').value;
 
   if (!name) return toast('Campaign name is required.', 'err');
-  if (!template) return toast('Select an email template.', 'err');
-  if (!group) return toast('Select a target group.', 'err');
+  if (!templateId) return toast('Select an email template.', 'err');
+  if (!groupId) return toast('Select a target group.', 'err');
+
+  // GoPhish requires names, not IDs, when creating campaigns
+  const templateObj = _templates.find(t => t.id === templateId);
+  const pageObj     = _pages.find(p => p.id === pageId);
+  const groupObj    = _groups.find(g => g.id === groupId);
+  const smtpObj     = _smtp.find(s => s.id === smtpId);
+
+  if (!templateObj) return toast('Template not found — reload and try again.', 'err');
+  if (!groupObj)    return toast('Group not found — reload and try again.', 'err');
+  if (!smtpObj)     return toast('Sending profile not found — reload and try again.', 'err');
 
   const payload = {
     name,
-    template: { id: template },
-    page: page ? { id: page } : undefined,
-    groups: [{ id: group }],
-    smtp: { id: smtp },
+    template: { name: templateObj.name },
+    page: pageObj ? { name: pageObj.name } : undefined,
+    groups: [{ name: groupObj.name }],
+    smtp: { name: smtpObj.name },
     url,
     launch_date: launch ? new Date(launch).toISOString() : new Date().toISOString(),
-    send_by_date: sendBy ? new Date(sendBy).toISOString() : '',
+    send_by_date: sendBy ? new Date(sendBy).toISOString() : null,
   };
   if (!payload.page) delete payload.page;
 
