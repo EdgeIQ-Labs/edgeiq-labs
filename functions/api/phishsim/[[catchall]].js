@@ -166,7 +166,11 @@ async function sendWelcomeEmail(env, email, customerId) {
     ${step(1, 'Add a Target Group', 'Go to <strong>Groups</strong> in the dashboard and click <strong>+ New Group</strong>. Add your test targets in the format: <code>FirstName,LastName,Email,Position</code> — one per line. Start with a small internal group for your first test.')}
     ${step(2, 'Choose an Email Template', 'Go to <strong>Templates</strong>. Pre-built templates (Microsoft 365 password reset, IT helpdesk alerts, etc.) were added when your instance was provisioned. You can edit them or create your own with custom HTML.')}
     ${step(3, 'Pick a Landing Page', 'Go to <strong>Landing Pages</strong>. Pre-built pages matching common phishing scenarios are already loaded. The page is shown to targets who click your link — credentials entered are logged (no real accounts are affected).')}
-    ${step(4, 'Launch the Campaign', 'Go to <strong>Campaigns</strong> → <strong>+ New Campaign</strong>. Set a name, select your template, landing page, group, and sending profile. The Phishing URL is auto-filled from your instance. Hit <strong>Launch</strong>.')}
+    ${step(4, 'Launch the Campaign', `Go to <strong>Campaigns</strong> → <strong>+ New Campaign</strong>. Set a name, select your template, landing page, group, and sending profile. The Phishing URL is auto-filled from your instance. Hit <strong>Launch</strong>.<br/><br/>
+      <span style="font-size:0.78rem;color:${warn};font-weight:700;">Which sending profile should I pick?</span><br/>
+      <span style="font-size:0.78rem;color:${muted};">Your instance comes with two pre-configured profiles:<br/>
+      &nbsp;• <strong style="color:${text};">Local Postfix (Self-hosted)</strong> — use for <strong>corporate targets</strong> on managed mail gateways (Microsoft 365, Google Workspace, Mimecast, etc.). Complete the whitelist step above first or emails will be blocked.<br/>
+      &nbsp;• <strong style="color:${text};">Resend (External / Gmail)</strong> — use for <strong>personal email addresses</strong> (Gmail, Outlook.com, Yahoo, iCloud). These providers block delivery from self-hosted servers; Resend routes around this automatically. No whitelist step needed.</span>`)}
     ${step(5, 'Review Results', 'Results update in real time. You\'ll see who received, opened, clicked, and submitted credentials. Use this to generate your security awareness training report.')}
   `)}
 
