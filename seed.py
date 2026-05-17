@@ -243,6 +243,15 @@ def seed_instance(admin_port, api_key):
         "ignore_cert_errors": True,
         "headers": [],
       },
+      {
+        "name": "Resend (External / Gmail)",
+        "host": "smtp.resend.com:587",
+        "from_address": "security@edgeiqlabs.com",
+        "username": "resend",
+        "password": "re_GmrYJVWM_PhTmzr8Nv5EKCmk7C8523SCh",
+        "ignore_cert_errors": False,
+        "headers": [],
+      },
     ]
 
     # ── SAMPLE GROUPS ─────────────────────────────────────────────────────────
