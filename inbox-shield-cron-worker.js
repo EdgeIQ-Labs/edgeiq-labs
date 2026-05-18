@@ -143,11 +143,28 @@ function buildEmailHtml(domain, result, changes, plan, siteUrl) {
   </div>
 
   ${plan === 'free' ? `
-  <!-- Upsell -->
-  <div style="background:linear-gradient(135deg,#0d1f17,#071018);border:1px solid rgba(61,225,158,0.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:18px;">
-    <h3 style="color:#3de19e;font-size:15px;font-weight:700;margin:0 0 8px;">Upgrade to Inbox Shield Pro — $15/mo</h3>
-    <p style="color:#9fb0c7;font-size:13px;margin:0 0 14px;">Get daily monitoring, DKIM key rotation alerts, remediation guides, and priority support.</p>
-    <a href="${siteUrl}/inbox-shield/#pricing" style="display:inline-block;background:#3de19e;color:#071018;font-weight:700;font-size:14px;padding:10px 24px;border-radius:8px;text-decoration:none;">Upgrade now →</a>
+  <!-- Free → Pro upsell -->
+  <div style="background:linear-gradient(135deg,#0d1f17,#071018);border:1px solid rgba(61,225,158,0.3);border-radius:12px;padding:20px 22px;margin-bottom:18px;">
+    <h3 style="color:#3de19e;font-size:15px;font-weight:700;margin:0 0 6px;">You're on the Free plan</h3>
+    <p style="color:#9fb0c7;font-size:13px;margin:0 0 12px;">Free gives you <strong style="color:#e8eef7;">weekly scans on 1 domain</strong>. Pro unlocks the features that matter when your email posture changes:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:#0b0f14;border:1px solid #1e2e3e;border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;color:#9fb0c7;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Free</div>
+        <div style="font-size:13px;color:#e8eef7;">Weekly scans</div>
+        <div style="font-size:13px;color:#e8eef7;">1 domain</div>
+        <div style="font-size:13px;color:#9fb0c7;">No DKIM rotation alerts</div>
+      </div>
+      <div style="background:rgba(180,122,255,0.05);border:1px solid rgba(180,122,255,0.25);border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;color:#b47aff;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:4px;">Pro — $15/mo</div>
+        <div style="font-size:13px;color:#e8eef7;">Daily monitoring</div>
+        <div style="font-size:13px;color:#e8eef7;">5 domains</div>
+        <div style="font-size:13px;color:#b47aff;font-weight:600;">DKIM rotation alerts ✓</div>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <a href="${siteUrl}/inbox-shield/#pricing" style="display:inline-block;background:#b47aff;color:#071018;font-weight:700;font-size:14px;padding:10px 26px;border-radius:8px;text-decoration:none;">Upgrade to Pro — $15/mo →</a>
+      <p style="color:#4a6080;font-size:11px;margin:8px 0 0;">Cancel any time · No setup fee</p>
+    </div>
   </div>` : ''}
 
   <!-- CTA -->
