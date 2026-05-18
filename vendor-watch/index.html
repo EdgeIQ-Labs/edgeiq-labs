@@ -680,6 +680,16 @@ function toggleFaq(btn) {
 // Auto-refresh every 3 minutes
 setInterval(function(){ loadVendors(false); }, 3 * 60 * 1000);
 loadVendors(false);
+
+// ── Save pending vendor data before Stripe redirect (Pro upgrade) ─────────
+document.getElementById('pro-cta').addEventListener('click', function() {
+  var email = (document.getElementById('signup-email') || {}).value || '';
+  var vendors = getSelectedVendors();
+  try {
+    sessionStorage.setItem('vendor_pending', JSON.stringify({ email: email.trim(), vendors: vendors }));
+  } catch (x) {}
+});
+// ─────────────────────────────────────────────────────────────────────────
 </script>
 <script>
 function toggleMobileMenu() {

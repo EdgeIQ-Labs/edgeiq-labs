@@ -204,5 +204,51 @@
       <a href="/vendor-watch/">edgeiqlabs.com/vendor-watch</a>
     </div>
   </div>
+
+  <script>
+    // ── Auto-register Pro subscriber after Stripe checkout ────────────────────
+    (function registerAfterCheckout() {
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get('session_id') || '';
+      if (!sessionId) return;
+
+      var pending = {};
+      try { pending = JSON.parse(sessionStorage.getItem('vendor_pending') || '{}'); } catch (x) {}
+
+      // Need at least an email to register
+      if (!pending.email) return;
+
+      var vendors = Array.isArray(pending.vendors) && pending.vendors.length > 0
+        ? pending.vendors
+        : ['stripe', 'github', 'cloudflare', 'vercel', 'aws', 'slack', 'shopify',
+           'twilio', 'sendgrid', 'netlify', 'digitalocean', 'fastly', 'pagerduty', 'planetscale'];
+
+      fetch('/api/vendor-watch-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: pending.email,
+          vendors: vendors,
+          plan: 'pro',
+          stripe_session_id: sessionId,
+        }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          sessionStorage.removeItem('vendor_pending');
+          try {
+            var clean = new URL(window.location.href);
+            clean.searchParams.delete('session_id');
+            window.history.replaceState({}, '', clean.toString());
+          } catch (x) {}
+        } else {
+          console.warn('Vendor Watch signup after checkout:', data.error || data);
+        }
+      })
+      .catch(function(err) { console.warn('Vendor Watch signup fetch error:', err); });
+    })();
+    // ──────────────────────────────────────────────────────────────────────────
+  </script>
 </body>
 </html>
