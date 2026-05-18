@@ -162,7 +162,7 @@
     <a href="/dashboard/">Dashboard</a>
     <a href="/pulse/">Pulse</a>
     <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="#plans" class="nav-cta" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'});return false;">Upgrade</a>
+    <a href="#plans" class="nav-cta" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'});return false;" style="background:#ffb347;color:#071018;">Join Waitlist</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
@@ -278,37 +278,20 @@
     </div>
 
     <div class="plans-card" id="plans">
-      <div class="sidebar-title">Upgrade plan</div>
-
-      <div class="plan-tier featured">
-        <div class="plan-tier-name">Essential</div>
-        <div class="plan-tier-price">$49<span>/mo</span></div>
-        <ul class="plan-tier-features">
-          <li>SOC 2 + HIPAA frameworks</li>
-          <li>Automated monthly scans</li>
-          <li>Email posture report</li>
-          <li>Up to 3 domains</li>
-          <li class="no">PCI-DSS framework</li>
-          <li class="no">PDF audit-ready export</li>
-          <li class="no">Executive summary report</li>
-        </ul>
-        <a href="https://buy.stripe.com/eVq3cxam730V9Ig5os7wA2N" class="plan-tier-btn primary">Get Essential →</a>
+      <div class="sidebar-title">Automated Monitoring</div>
+      <div style="background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.35);border-radius:8px;padding:14px;margin-bottom:14px;">
+        <p style="font-size:11px;font-weight:700;color:#ffb347;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">⚠️ Paid plans paused</p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.55;margin:0;">Automated compliance monitoring is being upgraded to run live per-domain scans. The current scanner returns indicative results only. Paid subscriptions are on hold until live scanning is ready.</p>
       </div>
-
-      <div class="plan-tier">
-        <div class="plan-tier-name">Business</div>
-        <div class="plan-tier-price">$99<span>/mo</span></div>
-        <ul class="plan-tier-features">
-          <li>SOC 2, HIPAA + PCI-DSS</li>
-          <li>Automated monthly scans</li>
-          <li>Email posture report</li>
-          <li>Up to 10 domains</li>
-          <li>PDF audit-ready export</li>
-          <li>Executive summary report</li>
-          <li>Priority support</li>
-        </ul>
-        <a href="https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O" class="plan-tier-btn secondary">Get Business →</a>
-      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Get notified when automated monitoring launches — we'll email you directly when it's ready.</p>
+      <form id="compliance-waitlist-form" onsubmit="submitComplianceWaitlist(event)">
+        <input type="email" id="compliance-waitlist-email" placeholder="you@company.com" required
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px;">
+        <button type="submit" style="width:100%;background:var(--blue);color:#071018;font-weight:700;font-size:13px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;">
+          Notify me when ready →
+        </button>
+      </form>
+      <div id="compliance-waitlist-confirm" style="display:none;font-size:12px;color:var(--green);margin-top:8px;text-align:center;">✓ You're on the list — we'll email you when live monitoring launches.</div>
     </div>
 
     <div class="sidebar-card">
@@ -626,6 +609,24 @@ if (urlDomain) {
 }
 </script>
 <script>
+async function submitComplianceWaitlist(e) {
+  e.preventDefault();
+  var email = document.getElementById('compliance-waitlist-email').value.trim();
+  if (!email) return;
+  var btn = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    // Store in Pulse KV via the free signup endpoint (reuses existing infrastructure)
+    await fetch('/api/pulse-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, domain: 'compliance-waitlist', plan: 'free' }),
+    });
+  } catch (x) {}
+  document.getElementById('compliance-waitlist-form').style.display = 'none';
+  document.getElementById('compliance-waitlist-confirm').style.display = 'block';
+}
+
 function toggleMobileMenu() {
   var btn = document.getElementById('nav-hamburger');
   var menu = document.getElementById('nav-mobile-menu');
