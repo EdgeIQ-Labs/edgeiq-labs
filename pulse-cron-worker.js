@@ -292,7 +292,20 @@ export default {
 
       if (!subscriber.active) continue;
 
-      const { email, domain, plan, last_findings } = subscriber;
+      const { email, domain, last_findings } = subscriber;
+
+      // ── Plan integrity gate ──────────────────────────────────────────────
+      // Any subscriber claiming pro/business must have had a verified Stripe
+      // session recorded at signup time (stripe_session_id in KV). If the
+      // field is missing the record pre-dates our verification fix — treat it
+      // as free to avoid running paid scanners for unverified subscribers.
+      let plan = subscriber.plan || 'free';
+      if ((plan === 'pro' || plan === 'business') && !subscriber.stripe_session_id) {
+        console.warn(`Subscriber ${email}/${domain} claims plan="${plan}" but has no stripe_session_id — downgrading to free for this run.`);
+        plan = 'free';
+      }
+      // ────────────────────────────────────────────────────────────────────
+
       const scanners = scannersForPlan(plan);
 
       // Run all scans concurrently
