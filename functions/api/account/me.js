@@ -97,10 +97,11 @@ export async function onRequestGet({ request, env }) {
   const siteUrl = env.SITE_URL || 'https://edgeiqlabs.com';
 
   // Fetch all subscriptions for this email in parallel
-  const [pulseList, shieldList, vendorRaw] = await Promise.all([
+  const [pulseList, shieldList, vendorRaw, mspRaw] = await Promise.all([
     env.PULSE_KV.list({ prefix: `sub:${email}:` }),
     env.PULSE_KV.list({ prefix: `shield:${email}:` }),
     fetchKvJson(env, `vendor:${email}`),
+    fetchKvJson(env, `msp:${email}`),
   ]);
 
   // Fetch full subscriber records for Pulse
@@ -157,6 +158,15 @@ export async function onRequestGet({ request, env }) {
     last_statuses: vendorRaw.last_statuses || {},
   } : null;
 
+  // MSP Essentials (single record per email)
+  const mspRecord = mspRaw ? {
+    plan: 'msp',
+    seats: mspRaw.seats || 10,
+    clients: mspRaw.clients || [],
+    active: mspRaw.active !== false,
+    created_at: mspRaw.created_at,
+  } : null;
+
   // Try to create a Stripe billing portal URL (best-effort)
   const portalUrl = await getStripePortalUrl(env, email, `${siteUrl}/account/`);
 
@@ -167,6 +177,7 @@ export async function onRequestGet({ request, env }) {
       pulse: pulseRecords,
       inbox_shield: shieldRecords,
       vendor_watch: vendorRecord,
+      msp: mspRecord,
     },
     billing_portal_url: portalUrl,
     site_url: siteUrl,

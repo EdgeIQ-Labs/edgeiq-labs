@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/msp/" />
+  <title>MSP Essentials — Security Monitoring for IT Consultants | EdgeIQ Labs</title>
+  <meta name="description" content="One subscription covers 10 client domains with Pulse + Inbox Shield monitoring. Weekly security digests per client. Built for IT consultants and MSPs. $199/mo." />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://edgeiqlabs.com/msp/" />
+  <meta property="og:title" content="MSP Essentials — Security Monitoring for 10 Client Domains" />
+  <meta property="og:description" content="Pulse + Inbox Shield for every client. One bill. Central dashboard. $199/mo for 10 seats." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "MSP Essentials",
+    "description": "Security monitoring for 10 client domains — Pulse + Inbox Shield per client. Built for IT consultants and MSPs.",
+    "brand": { "@type": "Brand", "name": "EdgeIQ Labs" },
+    "offers": {
+      "@type": "Offer",
+      "price": "199.00",
+      "priceCurrency": "USD",
+      "priceSpecification": { "@type": "RecurringCharge", "billingDuration": "P1M" },
+      "url": "https://buy.stripe.com/4gM14p0Lxatnf2A6sw7wA3w"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #c084fc;
+      --accent2: #3dd9ff;
+      --border: #1e2e3e;
+      --ok: #70f0a8;
+      --warn: #ffb347;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,15,20,0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent2); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.88rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent) !important; color: #1a0033 !important; font-weight: 700 !important; }
+    .nav-cta:hover { opacity: 0.88; }
+    @media (max-width: 640px) { .nav-links { display: none; } }
+
+    .container { max-width: 940px; margin: 0 auto; padding: 0 20px; }
+
+    /* Hero */
+    .hero { padding: 72px 0 56px; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.3);
+      color: var(--accent); font-size: 11px; font-weight: 700;
+      padding: 5px 14px; border-radius: 20px; letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 20px;
+    }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; font-weight: 900; margin-bottom: 20px; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero .subtitle { color: var(--muted); font-size: 1.1rem; max-width: 620px; margin: 0 auto 32px; line-height: 1.6; }
+    .hero-price {
+      display: inline-flex; align-items: baseline; gap: 4px;
+      font-size: 3rem; font-weight: 900; color: var(--text); margin-bottom: 6px;
+    }
+    .hero-price .currency { font-size: 1.4rem; color: var(--muted); }
+    .hero-price .period { font-size: 1rem; color: var(--muted); font-weight: 500; }
+    .hero-price-note { color: var(--muted); font-size: 0.88rem; margin-bottom: 28px; }
+    .hero-price-note strong { color: var(--accent); }
+
+    .btn-hero {
+      display: inline-block;
+      background: var(--accent);
+      color: #1a0033;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 15px 36px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: -0.01em;
+    }
+    .btn-hero:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-secondary-link {
+      display: inline-block;
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 14px;
+      text-decoration: none;
+    }
+    .btn-secondary-link:hover { color: var(--text); }
+
+    .hero-meta { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 24px; }
+    .hero-meta-item { display: flex; align-items: center; gap: 7px; font-size: 0.83rem; color: var(--muted); }
+    .hero-meta-item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex-shrink: 0; }
+
+    /* Divider */
+    .section { padding: 52px 0; }
+    .section-border { border-top: 1px solid var(--border); }
+    h2.section-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 10px; }
+    .section-sub { color: var(--muted); margin-bottom: 32px; }
+
+    /* Seats visual */
+    .seats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      max-width: 520px;
+      margin: 0 auto 28px;
+    }
+    @media (max-width: 500px) { .seats-grid { grid-template-columns: repeat(4, 1fr); } }
+    .seat-card {
+      background: rgba(192,132,252,0.08);
+      border: 1px solid rgba(192,132,252,0.25);
+      border-radius: 10px;
+      padding: 14px 8px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    .seat-card .seat-icon { font-size: 1.4rem; margin-bottom: 4px; }
+    .seat-card.active { border-color: rgba(192,132,252,0.5); color: var(--accent); }
+
+    /* What's included */
+    .includes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .include-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .include-card .icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .include-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .include-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+    .include-tag {
+      display: inline-block;
+      background: rgba(192,132,252,0.1);
+      border: 1px solid rgba(192,132,252,0.25);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    /* Comparison table */
+    .compare-wrap { overflow-x: auto; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .compare-table th {
+      text-align: left; padding: 14px 16px;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.8rem; color: var(--muted); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .compare-table th.highlight { color: var(--accent); border-bottom-color: rgba(192,132,252,0.4); }
+    .compare-table td { padding: 13px 16px; border-bottom: 1px solid rgba(30,46,62,0.6); vertical-align: middle; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.015); }
+    .compare-table td.feature { color: var(--text); font-weight: 500; }
+    .compare-table td.check-ok { color: var(--ok); text-align: center; }
+    .compare-table td.check-no { color: #3d5070; text-align: center; }
+    .compare-table td.check-accent { color: var(--accent); text-align: center; font-weight: 700; }
+    .compare-table .col-msp { background: rgba(192,132,252,0.04); }
+
+    /* Workflow steps */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; }
+    .step { display: flex; gap: 16px; padding: 22px; position: relative; }
+    .step::after { content: '→'; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); color: var(--border); font-size: 1.2rem; }
+    .step:last-child::after { display: none; }
+    @media (max-width: 600px) { .steps { grid-template-columns: 1fr; } .step::after { display: none; } }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(192,132,252,0.15); border: 1px solid rgba(192,132,252,0.3);
+      color: var(--accent); font-weight: 800; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-body h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .step-body p { color: var(--muted); font-size: 0.83rem; line-height: 1.45; }
+
+    /* Pricing card */
+    .pricing-card {
+      max-width: 460px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid rgba(192,132,252,0.35);
+      border-radius: 20px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #c084fc, #3dd9ff, #70f0a8);
+    }
+    .pricing-card .plan-label {
+      display: inline-block;
+      background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.3);
+      color: var(--accent); font-size: 0.72rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px; margin-bottom: 14px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .pricing-card .price { font-size: 3rem; font-weight: 900; }
+    .pricing-card .price sup { font-size: 1.2rem; vertical-align: super; }
+    .pricing-card .price-period { color: var(--muted); font-size: 0.9rem; }
+    .pricing-card .price-note { color: var(--muted); font-size: 0.82rem; margin: 6px 0 22px; }
+    .pricing-card ul { list-style: none; margin: 0 0 26px; }
+    .pricing-card li {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid rgba(30,46,62,0.7);
+      font-size: 0.9rem; color: var(--text);
+    }
+    .pricing-card li:last-child { border-bottom: none; }
+    .pricing-card li .check { color: var(--ok); flex-shrink: 0; margin-top: 2px; }
+    .pricing-card li .sub-note { color: var(--muted); font-size: 0.8rem; display: block; margin-top: 2px; }
+    .btn-cta {
+      display: block; width: 100%;
+      background: var(--accent); color: #1a0033;
+      font-weight: 800; font-size: 1rem;
+      padding: 14px; border-radius: 11px;
+      text-align: center; text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .btn-cta:hover { opacity: 0.88; }
+
+    /* FAQ */
+    .faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .faq-item h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .faq-item p { color: var(--muted); font-size: 0.87rem; line-height: 1.55; }
+
+    /* CTA strip */
+    .cta-strip {
+      background: linear-gradient(135deg, #1a0a2e 0%, #071018 100%);
+      border: 1px solid rgba(192,132,252,0.25);
+      border-radius: 18px;
+      padding: 44px 36px;
+      text-align: center;
+      margin: 40px 0 60px;
+    }
+    .cta-strip h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 10px; }
+    .cta-strip p { color: var(--muted); margin-bottom: 26px; }
+
+    footer { border-top: 1px solid var(--border); color: var(--muted); text-align: center; padding: 28px 0 40px; font-size: 0.88rem; }
+    footer a { color: var(--muted); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Edge<span>IQ</span> Labs</a>
+  <div class="nav-links">
+    <a href="/products/">Plans</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/account/">My Account</a>
+    <a href="https://buy.stripe.com/4gM14p0Lxatnf2A6sw7wA3w" class="nav-cta">Get MSP Plan →</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span>🏢</span> MSP Essentials — New
+    </div>
+    <h1>Security monitoring<br>for <em>every client</em>.<br>One subscription.</h1>
+    <p class="subtitle">
+      Pulse attack-surface scans + Inbox Shield email security grades for up to 10 client domains.
+      Weekly digests. Central dashboard. $199/mo flat.
+    </p>
+
+    <div class="hero-price">
+      <span class="currency">$</span>199<span class="period">/mo</span>
+    </div>
+    <p class="hero-price-note">10 client seats · <strong>$19.90/seat</strong> — less than a Pro plan per client</p>
+
+    <a href="https://buy.stripe.com/4gM14p0Lxatnf2A6sw7wA3w" class="btn-hero" target="_blank" rel="noopener">
+      Start MSP Essentials →
+    </a>
+    <br>
+    <a href="/account/" class="btn-secondary-link">Already subscribed? Sign in to your dashboard →</a>
+
+    <div class="hero-meta">
+      <span class="hero-meta-item"><span class="dot"></span> Covers 10 client domains</span>
+      <span class="hero-meta-item"><span class="dot"></span> Pulse + Inbox Shield per seat</span>
+      <span class="hero-meta-item"><span class="dot"></span> Weekly digest per client</span>
+      <span class="hero-meta-item"><span class="dot"></span> Cancel anytime</span>
+    </div>
+  </div>
+</section>
+
+<!-- Seat visual -->
+<section class="section section-border">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title">10 client seats, ready to fill</h2>
+    <p class="section-sub">Add any client domain to a seat. Each seat gets its own Pulse + Inbox Shield scans and weekly report.</p>
+
+    <div class="seats-grid">
+      <div class="seat-card active"><div class="seat-icon">🖥️</div>Seat 1<br><span style="color:var(--ok);font-size:0.65rem;">Active</span></div>
+      <div class="seat-card active"><div class="seat-icon">🖥️</div>Seat 2<br><span style="color:var(--ok);font-size:0.65rem;">Active</span></div>
+      <div class="seat-card active"><div class="seat-icon">🖥️</div>Seat 3<br><span style="color:var(--ok);font-size:0.65rem;">Active</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 4<br><span style="font-size:0.65rem;">Available</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 5<br><span style="font-size:0.65rem;">Available</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 6<br><span style="font-size:0.65rem;">Available</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 7<br><span style="font-size:0.65rem;">Available</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 8<br><span style="font-size:0.65rem;">Available</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 9<br><span style="font-size:0.65rem;">Available</span></div>
+      <div class="seat-card"><div class="seat-icon">⬜</div>Seat 10<br><span style="font-size:0.65rem;">Available</span></div>
+    </div>
+    <p style="color:var(--muted);font-size:0.83rem;">Add, swap, or remove client domains any time from your dashboard.</p>
+  </div>
+</section>
+
+<!-- What's included -->
+<section class="section section-border">
+  <div class="container">
+    <h2 class="section-title">Everything in one plan</h2>
+    <p class="section-sub">Each client seat gets the full Pulse + Inbox Shield feature set.</p>
+    <div class="includes-grid">
+      <div class="include-card">
+        <div class="icon">🛡️</div>
+        <h3>Pulse — Attack Surface Monitoring</h3>
+        <p>Weekly scans of SSL certs, HTTP security headers, subdomain enumeration, open ports, and DNS config for every client domain.</p>
+        <span class="include-tag">Per seat</span>
+      </div>
+      <div class="include-card">
+        <div class="icon">📧</div>
+        <h3>Inbox Shield — Email Security Grades</h3>
+        <p>SPF, DKIM, and DMARC validation with A–F letter grades. Detects misconfigs that let phishing emails impersonate your clients.</p>
+        <span class="include-tag">Per seat</span>
+      </div>
+      <div class="include-card">
+        <div class="icon">📊</div>
+        <h3>Central Dashboard</h3>
+        <p>View all 10 client domains in one place. See scan status, latest findings, and grade badges at a glance. No jumping between accounts.</p>
+        <span class="include-tag">Shared</span>
+      </div>
+      <div class="include-card">
+        <div class="icon">📬</div>
+        <h3>Weekly Digest per Client</h3>
+        <p>Each domain gets its own weekly security email — plain-English findings, change alerts, and issue summaries. Forward directly to clients.</p>
+        <span class="include-tag">Per seat</span>
+      </div>
+      <div class="include-card">
+        <div class="icon">🔔</div>
+        <h3>Change Alerts</h3>
+        <p>Instant notifications when something changes — certificate expiry, new subdomain, failing DMARC policy. Never miss a client issue.</p>
+        <span class="include-tag">Per seat</span>
+      </div>
+      <div class="include-card">
+        <div class="icon">💳</div>
+        <h3>One Bill, One Login</h3>
+        <p>All 10 seats under one Stripe subscription. Manage domains, review findings, and handle billing all from your EdgeIQ account.</p>
+        <span class="include-tag">Shared</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section section-border">
+  <div class="container">
+    <h2 class="section-title">Up and running in minutes</h2>
+    <p class="section-sub">No servers. No config files. Just domains.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Subscribe</h4>
+          <p>Click the button above. Stripe checkout — takes 60 seconds.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Sign In</h4>
+          <p>Magic link sent to your email. No passwords. Click to open your dashboard.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Add Clients</h4>
+          <p>Enter up to 10 client domains. Each one gets queued for Pulse + Shield scans.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Monitor</h4>
+          <p>Weekly digests per domain. Real-time alerts when something changes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison table -->
+<section class="section section-border">
+  <div class="container">
+    <h2 class="section-title">MSP vs. buying per product</h2>
+    <p class="section-sub">Compared to buying Pulse Pro + Inbox Shield Pro for each client separately.</p>
+    <div class="compare-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:40%">Feature</th>
+            <th>Pulse Pro (×10)</th>
+            <th>Shield Pro (×10)</th>
+            <th class="highlight">MSP Essentials</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature">Monthly cost</td>
+            <td>$190/mo</td>
+            <td>— (add-on)</td>
+            <td class="col-msp check-accent">$199/mo total</td>
+          </tr>
+          <tr>
+            <td class="feature">Client domains covered</td>
+            <td>10</td>
+            <td>10</td>
+            <td class="col-msp check-accent">10 (combined)</td>
+          </tr>
+          <tr>
+            <td class="feature">Pulse attack-surface scans</td>
+            <td class="check-ok">✓</td>
+            <td class="check-no">—</td>
+            <td class="col-msp check-ok">✓</td>
+          </tr>
+          <tr>
+            <td class="feature">Inbox Shield email grades</td>
+            <td class="check-no">—</td>
+            <td class="check-ok">✓</td>
+            <td class="col-msp check-ok">✓</td>
+          </tr>
+          <tr>
+            <td class="feature">Central MSP dashboard</td>
+            <td class="check-no">—</td>
+            <td class="check-no">—</td>
+            <td class="col-msp check-ok">✓</td>
+          </tr>
+          <tr>
+            <td class="feature">Weekly digest per domain</td>
+            <td class="check-ok">✓</td>
+            <td class="check-ok">✓</td>
+            <td class="col-msp check-ok">✓</td>
+          </tr>
+          <tr>
+            <td class="feature">Separate logins / billing</td>
+            <td>10 accounts</td>
+            <td>10 accounts</td>
+            <td class="col-msp check-accent">1 account</td>
+          </tr>
+          <tr>
+            <td class="feature">Add/swap client domains</td>
+            <td class="check-no">—</td>
+            <td class="check-no">—</td>
+            <td class="col-msp check-ok">✓ Any time</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:0.82rem;margin-top:12px;">* Pulse Pro is $19/mo per domain. 10 domains = $190/mo for Pulse alone. MSP Essentials includes Shield too.</p>
+  </div>
+</section>
+
+<!-- Pricing card -->
+<section class="section section-border">
+  <div class="container">
+    <h2 class="section-title" style="text-align:center;margin-bottom:28px;">One plan, no surprises</h2>
+    <div class="pricing-card">
+      <span class="plan-label">MSP Essentials</span>
+      <div class="price"><sup>$</sup>199<span class="price-period">/mo</span></div>
+      <p class="price-note">10 client seats · billed monthly · cancel any time</p>
+      <ul>
+        <li><span class="check">✓</span><span>Pulse scans for all 10 client domains<span class="sub-note">SSL, headers, subdomains, DNS, ports</span></span></li>
+        <li><span class="check">✓</span><span>Inbox Shield for all 10 client domains<span class="sub-note">SPF, DKIM, DMARC grading</span></span></li>
+        <li><span class="check">✓</span><span>Central MSP dashboard<span class="sub-note">All clients in one view</span></span></li>
+        <li><span class="check">✓</span><span>Weekly security digest per domain</li>
+        <li><span class="check">✓</span><span>Change & alert notifications</li>
+        <li><span class="check">✓</span><span>Add / swap domains any time</li>
+        <li><span class="check">✓</span><span>Stripe billing portal — download invoices</li>
+        <li><span class="check">✓</span><span>Email support</li>
+      </ul>
+      <a href="https://buy.stripe.com/4gM14p0Lxatnf2A6sw7wA3w" class="btn-cta" target="_blank" rel="noopener">
+        Start MSP Essentials — $199/mo →
+      </a>
+      <p style="text-align:center;color:var(--muted);font-size:0.78rem;margin-top:12px;">No setup fees · Stripe-powered secure checkout · Cancel any time</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-border">
+  <div class="container">
+    <h2 class="section-title">FAQ</h2>
+    <p class="section-sub">Common questions about the MSP plan.</p>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>Can I swap client domains?</h4>
+        <p>Yes — you can add, remove, or swap any of your 10 client domains from your account dashboard at any time. There's no penalty for changing them.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Do I need a separate account per client?</h4>
+        <p>No. All 10 client domains are managed under your single MSP account. One login, one dashboard, one Stripe bill.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What does "Pulse scan" cover?</h4>
+        <p>Each weekly Pulse scan checks SSL certificate validity and expiry, HTTP security headers (CSP, HSTS, X-Frame-Options), subdomain enumeration, DNS records, and open port exposure.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What does "Inbox Shield" check?</h4>
+        <p>Inbox Shield validates SPF, DKIM, and DMARC records for each domain and grades them A–F. It also checks for DMARC policy weaknesses that allow spoofing.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Who receives the weekly digests?</h4>
+        <p>All digests go to the email address on your MSP account. You decide whether to forward them to clients or summarize findings yourself.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Can I use this for my own domain too?</h4>
+        <p>Yes — any of the 10 seats can be used for your own domain. Mix client and internal domains freely.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What if I need more than 10 seats?</h4>
+        <p>Email us at <a href="mailto:hello@edgeiqlabs.com">hello@edgeiqlabs.com</a> and we can discuss a custom volume arrangement for larger MSPs.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How do I cancel?</h4>
+        <p>From your account dashboard, click "Manage Billing" to reach the Stripe portal. Cancel with one click — no emails, no friction. Your seats stay active until the end of the billing period.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<div class="container">
+  <div class="cta-strip">
+    <h2>Start monitoring your clients today</h2>
+    <p>$199/mo. 10 seats. Pulse + Inbox Shield. One dashboard.<br>Up and running in under 5 minutes.</p>
+    <a href="https://buy.stripe.com/4gM14p0Lxatnf2A6sw7wA3w" class="btn-hero" target="_blank" rel="noopener">
+      Get MSP Essentials →
+    </a>
+    <br>
+    <a href="/products/" class="btn-secondary-link" style="margin-top:12px;display:inline-block;">View all plans →</a>
+  </div>
+</div>
+
+<footer>
+  <a href="/">EdgeIQ Labs</a>
+  <a href="/products/">Plans</a>
+  <a href="/pulse/">Pulse</a>
+  <a href="/inbox-shield/">Inbox Shield</a>
+  <a href="/account/">My Account</a>
+  <a href="/privacy.html">Privacy</a>
+  <a href="/terms.html">Terms</a>
+  <p style="margin-top:12px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

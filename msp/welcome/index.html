@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>Welcome to MSP Essentials · EdgeIQ Labs</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <style>
+    :root {
+      --bg: #0b0f14; --card: #121923; --text: #e8eef7;
+      --muted: #9fb0c7; --accent: #c084fc; --accent2: #3dd9ff;
+      --border: #1e2e3e; --ok: #70f0a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+
+    .wrap { max-width: 520px; width: 100%; text-align: center; }
+    .check-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(112,240,168,0.12); border: 2px solid rgba(112,240,168,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 24px;
+    }
+    h1 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+    .subtitle { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; }
+
+    .next-steps {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px; text-align: left; margin-bottom: 24px;
+    }
+    .next-steps h2 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--accent); }
+    .step-row { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+    .step-row:last-child { margin-bottom: 0; }
+    .step-num {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(192,132,252,0.15); border: 1px solid rgba(192,132,252,0.3);
+      color: var(--accent); font-weight: 800; font-size: 0.82rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-text h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; }
+    .step-text p { color: var(--muted); font-size: 0.83rem; line-height: 1.45; }
+
+    .magic-note {
+      background: rgba(192,132,252,0.07); border: 1px solid rgba(192,132,252,0.25);
+      border-radius: 12px; padding: 16px 20px; margin-bottom: 22px;
+      font-size: 0.88rem; color: var(--muted); text-align: left;
+    }
+    .magic-note strong { color: var(--accent); }
+
+    .btn-go {
+      display: block; width: 100%;
+      background: var(--accent); color: #1a0033;
+      font-weight: 800; font-size: 1rem;
+      padding: 14px; border-radius: 11px;
+      text-decoration: none; text-align: center;
+      transition: opacity 0.2s;
+    }
+    .btn-go:hover { opacity: 0.88; }
+    .or-note { color: var(--muted); font-size: 0.82rem; margin-top: 14px; }
+    .or-note a { color: var(--accent2); text-decoration: none; }
+    .or-note a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="check-circle">✅</div>
+  <h1>You're all set!</h1>
+  <p class="subtitle">
+    Your MSP Essentials subscription is active. A confirmation email is on its way from Stripe.<br>
+    Now let's get your client domains monitored.
+  </p>
+
+  <div class="next-steps">
+    <h2>Next steps</h2>
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <h4>Sign in to your account</h4>
+        <p>We'll send a magic link to the email you used at checkout. Click it to open your dashboard — no password needed.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <h4>Add your client domains</h4>
+        <p>From the MSP section of your dashboard, add up to 10 client domains. Each one gets Pulse + Inbox Shield scans.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <h4>Wait for first scan</h4>
+        <p>Scans run weekly (Monday mornings). You'll get a separate email digest for each client domain.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="magic-note">
+    <strong>Check your inbox</strong> — we sent a sign-in link to the email address you used at Stripe checkout.
+    If you don't see it within a few minutes, check your spam folder or
+    <a href="/account/" style="color:var(--accent);">request a new one here</a>.
+  </div>
+
+  <a href="/account/" class="btn-go">Go to My Account →</a>
+  <p class="or-note">Questions? Email <a href="mailto:hello@edgeiqlabs.com">hello@edgeiqlabs.com</a></p>
+</div>
+
+</body>
+</html>
