@@ -260,6 +260,18 @@ export default {
 
       if (!subscriber.active) continue;
 
+      // ── Plan integrity gate ───────────────────────────────────────────────
+      // Cap plan to 'free' for any subscriber without a verified
+      // stripe_session_id, preventing spoofed plan upgrades from affecting
+      // email labels / future feature gates.
+      let plan = subscriber.plan || 'free';
+      if (plan === 'pro' && !subscriber.stripe_session_id) {
+        console.warn(`[integrity] ${subscriber.email} claims plan="pro" but has no stripe_session_id — treating as free`);
+        plan = 'free';
+      }
+      subscriber = { ...subscriber, plan };
+      // ─────────────────────────────────────────────────────────────────────
+
       const result = await runShieldScan(subscriber.domain);
       if (!result) {
         console.error(`Scan failed for ${subscriber.domain}`);

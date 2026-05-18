@@ -316,6 +316,19 @@ export default {
 
       if (!subscriber.active || !subscriber.vendors?.length) continue;
 
+      // ── Plan integrity gate ───────────────────────────────────────────────
+      // A subscriber can only claim "pro" if their KV record includes a
+      // verified stripe_session_id (written by the signup API after Stripe
+      // verification). Legacy / spoofed records without a session ID are
+      // silently capped to free so they don't receive paid all-clear alerts.
+      let plan = subscriber.plan || 'free';
+      if (plan === 'pro' && !subscriber.stripe_session_id) {
+        console.warn(`[integrity] ${subscriber.email} claims plan="pro" but has no stripe_session_id — treating as free`);
+        plan = 'free';
+      }
+      subscriber = { ...subscriber, plan };
+      // ─────────────────────────────────────────────────────────────────────
+
       const { newOutages, recovered } = detectChanges(
         subscriber.vendors,
         subscriber.last_statuses || {},
