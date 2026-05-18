@@ -87,6 +87,28 @@
     .empty-state { text-align: center; padding: 32px 20px; color: var(--muted); font-size: 0.9rem; }
     .empty-state a { color: var(--accent); text-decoration: none; }
 
+    /* MSP section */
+    .msp-accent { color: #c084fc; }
+    .plan-msp { background: rgba(192,132,252,0.12); color: #c084fc; }
+    .msp-seats-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .msp-seats-track { flex: 1; height: 6px; background: rgba(30,46,62,0.9); border-radius: 4px; overflow: hidden; }
+    .msp-seats-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #c084fc, #3dd9ff); transition: width 0.4s; }
+    .msp-seats-label { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+    .msp-client-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .msp-client-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(192,132,252,0.05); border: 1px solid rgba(192,132,252,0.2); border-radius: 8px; padding: 9px 14px; }
+    .msp-client-domain { font-size: 0.88rem; font-weight: 600; color: var(--text); font-family: monospace; }
+    .msp-remove-btn { font-size: 0.75rem; background: transparent; border: 1px solid rgba(255,107,107,0.25); color: #ff6b6b; padding: 3px 10px; border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .msp-remove-btn:hover { background: rgba(255,107,107,0.1); }
+    .msp-add-form { display: flex; gap: 8px; margin-top: 6px; }
+    .msp-add-input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 0.88rem; font-family: inherit; outline: none; transition: border-color 0.2s; }
+    .msp-add-input:focus { border-color: #c084fc; }
+    .msp-add-btn { background: #c084fc; color: #1a0033; font-weight: 700; font-size: 0.82rem; padding: 9px 16px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity 0.2s; }
+    .msp-add-btn:hover { opacity: 0.85; }
+    .msp-add-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .msp-msg { font-size: 0.8rem; margin-top: 8px; padding: 8px 12px; border-radius: 7px; display: none; }
+    .msp-msg.ok  { background: rgba(112,240,168,0.08); border: 1px solid rgba(112,240,168,0.3); color: var(--ok); }
+    .msp-msg.err { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3); color: var(--bad); }
+
     /* Grade badge */
     .grade { display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 6px; font-size: 13px; font-weight: 900; }
     .grade-A { background: #0d1f17; border: 1px solid #3de19e; color: #3de19e; }
@@ -175,6 +197,12 @@
   <div class="section-wrap" id="vendor-section">
     <div class="section-header">📡 Vendor Watch — SaaS Outage Monitoring</div>
     <div id="vendor-list"></div>
+  </div>
+
+  <!-- MSP Essentials -->
+  <div class="section-wrap" id="msp-section" style="display:none;">
+    <div class="section-header" style="color:#c084fc;">🏢 MSP Essentials — Client Domain Management</div>
+    <div id="msp-panel"></div>
   </div>
 
   <div style="border-top:1px solid var(--border);padding-top:20px;text-align:center;font-size:12px;color:#4a6080;">
@@ -339,6 +367,125 @@ function renderVendor(rec, siteUrl) {
     </div>`;
 }
 
+// ── MSP ──────────────────────────────────────────────────────────────────────
+
+let _mspData = null;
+
+function renderMsp(rec, siteUrl) {
+  if (!rec || !rec.active) return;
+
+  document.getElementById('msp-section').style.display = 'block';
+  const el = document.getElementById('msp-panel');
+  _mspData = rec;
+
+  const seatsUsed  = rec.clients.length;
+  const seatsTotal = rec.seats || 10;
+  const seatsPct   = Math.round((seatsUsed / seatsTotal) * 100);
+
+  const clientRows = rec.clients.length
+    ? rec.clients.map(d => `
+        <div class="msp-client-row" id="msp-row-${d.replace(/\./g,'-')}">
+          <span class="msp-client-domain">${d}</span>
+          <button class="msp-remove-btn" onclick="mspRemoveClient('${d}')">Remove</button>
+        </div>`).join('')
+    : `<p style="color:var(--muted);font-size:0.85rem;padding:8px 0;">No client domains added yet. Add your first one below.</p>`;
+
+  el.innerHTML = `
+    <div class="sub-card">
+      <div class="sub-icon">🏢</div>
+      <div class="sub-body">
+        <div class="sub-domain">MSP Essentials <span class="plan-badge plan-msp">MSP</span></div>
+        <div class="sub-meta">
+          <span style="color:#4a6080;">${seatsUsed} / ${seatsTotal} seats used</span>
+        </div>
+
+        <div class="msp-seats-bar">
+          <div class="msp-seats-track">
+            <div class="msp-seats-fill" style="width:${seatsPct}%"></div>
+          </div>
+          <span class="msp-seats-label">${seatsTotal - seatsUsed} available</span>
+        </div>
+
+        <div class="msp-client-list" id="msp-client-list">${clientRows}</div>
+
+        ${seatsUsed < seatsTotal ? `
+        <div class="msp-add-form">
+          <input type="text" class="msp-add-input" id="msp-add-input" placeholder="clientdomain.com" />
+          <button class="msp-add-btn" id="msp-add-btn" onclick="mspAddClient()">+ Add Client</button>
+        </div>
+        <div class="msp-msg" id="msp-msg"></div>
+        ` : `<p style="font-size:0.82rem;color:var(--muted);">All ${seatsTotal} seats filled. Remove a client to add a new one.</p>`}
+
+        <div class="sub-actions" style="margin-top:12px;">
+          <a href="${siteUrl}/msp/" class="btn-sm" style="color:#c084fc;border-color:rgba(192,132,252,0.3);">MSP plan details →</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function mspAddClient() {
+  const input = document.getElementById('msp-add-input');
+  const btn   = document.getElementById('msp-add-btn');
+  const msg   = document.getElementById('msp-msg');
+  const domain = input.value.trim();
+  if (!domain) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Adding…';
+  msg.style.display = 'none';
+
+  try {
+    const resp = await fetch('/api/account/msp/add-client', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain }),
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      msg.className = 'msp-msg ok';
+      msg.textContent = `✓ ${data.domain} added. Pulse + Inbox Shield scans will run next Monday.`;
+      msg.style.display = 'block';
+      input.value = '';
+      // Update local record and re-render
+      _mspData.clients.push(data.domain);
+      renderMsp(_mspData, window.__siteUrl || 'https://edgeiqlabs.com');
+    } else {
+      msg.className = 'msp-msg err';
+      msg.textContent = data.error || 'Failed to add domain.';
+      msg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '+ Add Client';
+    }
+  } catch {
+    msg.className = 'msp-msg err';
+    msg.textContent = 'Network error. Please try again.';
+    msg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '+ Add Client';
+  }
+}
+
+async function mspRemoveClient(domain) {
+  if (!confirm(`Remove ${domain} from your MSP plan? This will stop all scans for this domain.`)) return;
+
+  try {
+    const resp = await fetch('/api/account/msp/add-client', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain }),
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      _mspData.clients = _mspData.clients.filter(c => c !== domain);
+      renderMsp(_mspData, window.__siteUrl || 'https://edgeiqlabs.com');
+    } else {
+      alert(data.error || 'Failed to remove domain.');
+    }
+  } catch {
+    alert('Network error. Please try again.');
+  }
+}
+
 // ── Boot ─────────────────────────────────────────────────────────────────────
 
 async function boot() {
@@ -388,9 +535,11 @@ async function boot() {
   }
 
   const siteUrl = data.site_url || 'https://edgeiqlabs.com';
+  window.__siteUrl = siteUrl;
   renderPulse(data.subscriptions.pulse, siteUrl);
   renderShield(data.subscriptions.inbox_shield, siteUrl);
   renderVendor(data.subscriptions.vendor_watch, siteUrl);
+  renderMsp(data.subscriptions.msp, siteUrl);
 
   document.getElementById('dashboard').style.display = 'block';
 }
