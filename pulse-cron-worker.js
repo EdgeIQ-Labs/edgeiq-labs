@@ -164,12 +164,48 @@ function buildEmailHtml(domain, findings, changes, plan, siteUrl) {
 
   <!-- CTA -->
   <div style="text-align:center;padding:24px 0 16px;">
-    <a href="${siteUrl}/#scanner" style="display:inline-block;background:#3de19e;color:#071018;font-weight:700;font-size:14px;padding:12px 28px;border-radius:9px;text-decoration:none;margin-bottom:14px;">
+    <a href="${siteUrl}/#scanner" style="display:inline-block;background:#3de19e;color:#071018;font-weight:700;font-size:14px;padding:12px 28px;border-radius:9px;text-decoration:none;">
       Run a deeper scan →
     </a>
-    <br>
-    ${plan === 'free' ? `<a href="${siteUrl}/pulse/#pricing" style="color:#3dd9ff;font-size:12px;">Upgrade to Pro for daily scans + all 13 checks →</a>` : ''}
   </div>
+
+  ${plan === 'free' ? `
+  <!-- Free → Pro upsell -->
+  <div style="background:linear-gradient(135deg,#0d1f17,#071018);border:1px solid rgba(61,225,158,0.3);border-radius:12px;padding:20px 22px;margin-bottom:18px;">
+    <h3 style="color:#3de19e;font-size:15px;font-weight:700;margin:0 0 6px;">You're on the Free plan</h3>
+    <p style="color:#9fb0c7;font-size:13px;margin:0 0 14px;">Free gives you <strong style="color:#e8eef7;">6 checks, weekly scans, 1 domain</strong>. Upgrade to Pro to unlock everything:</p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+      <tr style="font-size:12px;color:#9fb0c7;">
+        <th style="text-align:left;padding:6px 10px;border-bottom:1px solid #1e2e3e;font-weight:600;">Feature</th>
+        <th style="text-align:center;padding:6px 10px;border-bottom:1px solid #1e2e3e;font-weight:600;">Free</th>
+        <th style="text-align:center;padding:6px 10px;border-bottom:1px solid #1e2e3e;color:#3de19e;font-weight:700;">Pro $19/mo</th>
+      </tr>
+      <tr style="font-size:13px;">
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;color:#c8d8e8;">Scan frequency</td>
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;text-align:center;color:#9fb0c7;">Weekly</td>
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;text-align:center;color:#3de19e;font-weight:700;">Daily</td>
+      </tr>
+      <tr style="font-size:13px;">
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;color:#c8d8e8;">Checks per scan</td>
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;text-align:center;color:#9fb0c7;">6</td>
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;text-align:center;color:#3de19e;font-weight:700;">13</td>
+      </tr>
+      <tr style="font-size:13px;">
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;color:#c8d8e8;">Domains monitored</td>
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;text-align:center;color:#9fb0c7;">1</td>
+        <td style="padding:8px 10px;border-bottom:1px solid #1a2535;text-align:center;color:#3de19e;font-weight:700;">5</td>
+      </tr>
+      <tr style="font-size:13px;">
+        <td style="padding:8px 10px;color:#c8d8e8;">Slack / webhook alerts</td>
+        <td style="padding:8px 10px;text-align:center;color:#9fb0c7;">✗</td>
+        <td style="padding:8px 10px;text-align:center;color:#3de19e;font-weight:700;">✓</td>
+      </tr>
+    </table>
+    <div style="text-align:center;">
+      <a href="${siteUrl}/pulse/#pricing" style="display:inline-block;background:#3de19e;color:#071018;font-weight:700;font-size:14px;padding:10px 26px;border-radius:8px;text-decoration:none;">Upgrade to Pro — $19/mo →</a>
+      <p style="color:#4a6080;font-size:11px;margin:8px 0 0;">Cancel any time · No setup fee</p>
+    </div>
+  </div>` : ''}
 
   <!-- Footer -->
   <div style="border-top:1px solid #1e2e3e;padding:20px 0;text-align:center;font-size:11px;color:#4a6080;">

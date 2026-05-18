@@ -148,11 +148,19 @@ function buildOutageEmail({ email, plan, affectedVendors, siteUrl }) {
   </div>
 
   ${plan === 'free' ? `
-  <!-- Upsell -->
-  <div style="background:linear-gradient(135deg,#1a1200,#0b0f14);border:1px solid rgba(255,159,67,0.3);border-radius:12px;padding:18px;text-align:center;margin-bottom:18px;">
-    <h3 style="color:#ff9f43;font-size:14px;font-weight:700;margin:0 0 6px;">Get All-Clear Alerts with Pro</h3>
-    <p style="color:#9fb0c7;font-size:13px;margin:0 0 12px;">Free plan alerts on outages only. Upgrade to Pro to also get notified when ${affectedVendors.length === 1 ? affectedVendors[0].name : 'these vendors'} recover — so you know it's safe to resume.</p>
-    <a href="${siteUrl}/vendor-watch/#pricing" style="display:inline-block;background:#ff9f43;color:#1a0a00;font-weight:700;font-size:13px;padding:9px 20px;border-radius:8px;text-decoration:none;">Upgrade to Pro — $9/mo →</a>
+  <!-- Free → Pro upsell (shown on every outage alert) -->
+  <div style="background:linear-gradient(135deg,#1a1200,#0b0f14);border:1px solid rgba(255,159,67,0.3);border-radius:12px;padding:18px 20px;margin-bottom:18px;">
+    <p style="font-size:11px;font-weight:700;color:#ff9f43;text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px;">You're on the Free plan</p>
+    <h3 style="color:#e8eef7;font-size:14px;font-weight:700;margin:0 0 8px;">You won't know when ${affectedVendors.length === 1 ? affectedVendors[0].name : 'these vendors'} recover</h3>
+    <p style="color:#9fb0c7;font-size:13px;margin:0 0 12px;">Free plan sends outage alerts only. <strong style="color:#e8eef7;">Pro adds all-clear notifications</strong> — you'll get an email the moment the vendor is back to operational, so you can confidently resume operations.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:8px;">
+      <div style="font-size:12px;color:#9fb0c7;background:#0b0f14;border:1px solid #1e2e3e;border-radius:6px;padding:6px 12px;">Free: outage alerts only</div>
+      <div style="font-size:12px;color:#ff9f43;background:rgba(255,159,67,0.08);border:1px solid rgba(255,159,67,0.3);border-radius:6px;padding:6px 12px;font-weight:600;">Pro: + all-clear recovery alerts</div>
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="${siteUrl}/vendor-watch/#pricing" style="display:inline-block;background:#ff9f43;color:#1a0a00;font-weight:700;font-size:13px;padding:9px 22px;border-radius:8px;text-decoration:none;">Upgrade to Pro — $9/mo →</a>
+      <p style="color:#4a6080;font-size:11px;margin:6px 0 0;">Cancel any time · No setup fee</p>
+    </div>
   </div>` : ''}
 
   <!-- Footer -->
