@@ -1473,8 +1473,13 @@ async function phishsimCheckout(btn) {
     const resp = await fetch('/api/phishsim/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
     const data = await resp.json();
     if (data.checkoutUrl) { location.href = data.checkoutUrl; return; }
-    alert('Could not start checkout. Please try again.');
-  } catch { alert('Network error. Please try again.'); }
+    const msg = data.error || '';
+    if (msg.includes('pricing not configured') || msg.includes('setup')) {
+      alert('PhishSim checkout is being configured — email support@edgeiqlabs.com to get started and we\'ll send you a direct link.');
+    } else {
+      alert('Could not start checkout. Please try again or contact support@edgeiqlabs.com');
+    }
+  } catch { alert('Network error. Please try again or contact support@edgeiqlabs.com'); }
   btn.disabled = false; btn.textContent = 'Subscribe — $49/mo';
 }
 </script>

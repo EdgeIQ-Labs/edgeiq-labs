@@ -2431,11 +2431,17 @@ async function phishsimCheckout(btn) {
     if (data.checkoutUrl) {
       location.href = data.checkoutUrl;
     } else {
-      alert('Could not start checkout. Please try again or contact support@edgeiqlabs.com');
+      // Friendly error for the "pricing not configured" case
+      const msg = data.error || '';
+      if (msg.includes('pricing not configured') || msg.includes('setup')) {
+        alert('PhishSim checkout is being configured — please email support@edgeiqlabs.com to get started and we\'ll send you a direct link.');
+      } else {
+        alert('Could not start checkout. Please try again or contact support@edgeiqlabs.com');
+      }
       btn.disabled = false; btn.textContent = 'Get Started';
     }
   } catch {
-    alert('Network error. Please try again.');
+    alert('Network error. Please try again or contact support@edgeiqlabs.com');
     btn.disabled = false; btn.textContent = 'Get Started';
   }
 }

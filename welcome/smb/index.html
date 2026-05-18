@@ -134,5 +134,43 @@
       Questions? <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> · <a href="https://edgeiqlabs.com">edgeiqlabs.com</a>
     </div>
   </div>
+
+  <script>
+    // ── Auto-trigger onboarding after Stripe checkout ─────────────────────────
+    // Stripe Payment Links can be configured to redirect here with
+    //   ?session_id={CHECKOUT_SESSION_ID}
+    // When that param is present we call /api/smb-onboard to:
+    //   1. Verify the payment with Stripe
+    //   2. Record the subscriber in KV
+    //   3. Send a personalised onboarding email via Resend
+    (function triggerOnboarding() {
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get('session_id') || '';
+      if (!sessionId) return;
+
+      // Clean the URL immediately so the page can be bookmarked cleanly
+      try {
+        var clean = new URL(window.location.href);
+        clean.searchParams.delete('session_id');
+        window.history.replaceState({}, '', clean.toString());
+      } catch (x) {}
+
+      fetch('/api/smb-onboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stripe_session_id: sessionId }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok && !data.already_processed) {
+          // Update step 1 to confirm the email was sent
+          var step1 = document.querySelector('.step:first-child .step-text');
+          if (step1) step1.innerHTML = '<strong>Check your inbox</strong> — onboarding email sent to ' + (data.email || 'you') + ' ✓';
+        }
+      })
+      .catch(function() {}); // silent fail — page still works
+    })();
+    // ──────────────────────────────────────────────────────────────────────────
+  </script>
 </body>
 </html>

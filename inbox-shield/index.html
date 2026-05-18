@@ -650,15 +650,22 @@ function showCapture() {
   panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
   if (panel.style.display === 'block') {
     document.getElementById('captureEmail').focus();
-    // Pre-wire Stripe with email
     const emailEl = document.getElementById('captureEmail');
     const proBuyBtn = document.getElementById('proBuyBtn');
+    // Pre-wire Stripe link with email
     emailEl.addEventListener('input', () => {
       const e = emailEl.value.trim();
       if (e.includes('@')) {
         proBuyBtn.href = `https://buy.stripe.com/bJeaEZeCn593g6E0487wA3q?prefilled_email=${encodeURIComponent(e)}`;
       }
     });
+    // Save pending signup so welcome page can register after Stripe payment
+    proBuyBtn.addEventListener('click', () => {
+      const e = emailEl.value.trim();
+      if (e && lastDomain) {
+        try { sessionStorage.setItem('shield_pending', JSON.stringify({ email: e, domain: lastDomain })); } catch (x) {}
+      }
+    }, { once: true });
   }
 }
 
