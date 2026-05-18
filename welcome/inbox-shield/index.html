@@ -176,5 +176,50 @@
       <a href="/inbox-shield/">edgeiqlabs.com/inbox-shield</a>
     </div>
   </div>
+
+  <script>
+    // ── Auto-register Pro subscriber after Stripe checkout ────────────────────
+    // The Inbox Shield page stores {email, domain} in sessionStorage (key:
+    // 'shield_pending') before redirecting to Stripe. On return the welcome
+    // page completes the KV registration so the cron picks up the domain.
+    (function registerAfterCheckout() {
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get('session_id') || '';
+      var subscribed = params.get('subscribed') === '1';
+
+      if (!sessionId && !subscribed) return;
+
+      var pending = {};
+      try { pending = JSON.parse(sessionStorage.getItem('shield_pending') || '{}'); } catch (x) {}
+      if (!pending.email || !pending.domain) return;
+
+      fetch('/api/inbox-shield-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: pending.email,
+          domain: pending.domain,
+          plan: 'pro',
+          stripe_session_id: sessionId,
+        }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          sessionStorage.removeItem('shield_pending');
+          try {
+            var clean = new URL(window.location.href);
+            clean.searchParams.delete('session_id');
+            clean.searchParams.delete('subscribed');
+            window.history.replaceState({}, '', clean.toString());
+          } catch (x) {}
+        } else {
+          console.warn('Inbox Shield signup after checkout:', data.error || data);
+        }
+      })
+      .catch(function(err) { console.warn('Shield signup fetch error:', err); });
+    })();
+    // ──────────────────────────────────────────────────────────────────────────
+  </script>
 </body>
 </html>

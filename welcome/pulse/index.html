@@ -184,6 +184,8 @@
   <script>
     var params = new URLSearchParams(window.location.search);
     var plan = params.get('plan') || 'pro';
+    var sessionId = params.get('session_id') || '';
+
     if (plan === 'pulse-business' || plan === 'business') {
       document.getElementById('plan-badge').textContent = '● Pulse Business Active';
       document.getElementById('included-title').textContent = "What's included with Pulse Business:";
@@ -191,6 +193,43 @@
       li.textContent = 'Docker container scanning';
       document.getElementById('included-list').appendChild(li);
     }
+
+    // ── Auto-register Pro/Business subscriber after Stripe checkout ────────────
+    // The Pulse signup page stores {email, domain, plan} in sessionStorage before
+    // redirecting to Stripe. On return here we complete the registration.
+    (function registerAfterCheckout() {
+      if (!sessionId) return;                      // not a Stripe redirect
+      var pending = {};
+      try { pending = JSON.parse(sessionStorage.getItem('pulse_pending') || '{}'); } catch (x) {}
+      if (!pending.email || !pending.domain) return; // nothing to register
+
+      fetch('/api/pulse-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: pending.email,
+          domain: pending.domain,
+          plan: pending.plan || plan,
+          stripe_session_id: sessionId,
+        }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          sessionStorage.removeItem('pulse_pending');
+          // Clean session_id from URL without reload
+          try {
+            var clean = new URL(window.location.href);
+            clean.searchParams.delete('session_id');
+            window.history.replaceState({}, '', clean.toString());
+          } catch (x) {}
+        } else {
+          console.warn('Pulse signup after checkout:', data.error || data);
+        }
+      })
+      .catch(function(err) { console.warn('Pulse signup fetch error:', err); });
+    })();
+    // ──────────────────────────────────────────────────────────────────────────
   </script>
 </body>
 </html>
