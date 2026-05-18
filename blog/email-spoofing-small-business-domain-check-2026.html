@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap — EdgeIQ Labs</title>
+  <meta name="description" content="Most small business domains can be spoofed in under 60 seconds. Here's how email spoofing works, why DMARC at p=none is not enough, and how to lock down your domain in five steps." />
+  <meta property="og:title" content="Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap" />
+  <meta property="og:description" content="Most small business domains can be spoofed in under 60 seconds. Here's how to check and fix it." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/email-spoofing-small-business-domain-check-2026.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap" />
+  <meta name="twitter:description" content="Most small business domains can be spoofed in under 60 seconds. Here's how to check and fix it." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/email-spoofing-small-business-domain-check-2026.html" />
+  <style>
+    :root { --bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--ok:#70f0a8;--warn:#f0a83d; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{position:sticky;top:0;z-index:100;background:rgba(11,15,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;}
+    .nav-logo{font-weight:800;font-size:15px;color:var(--text);text-decoration:none;letter-spacing:-0.02em;flex-shrink:0;}
+    .nav-logo span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.92rem;border-radius:8px;}
+    .nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+    .nav-cta{background:var(--accent);color:#071018!important;font-weight:700;padding:7px 14px!important;border-radius:8px!important;white-space:nowrap;flex-shrink:0;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;transition:all 0.2s;}
+    .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .nav-hamburger.open span:nth-child(2){opacity:0;}
+    .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;position:sticky;top:56px;z-index:8;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;font-weight:500;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .nav-mobile-menu .mob-cta{margin-top:12px;background:#3dd9ff;color:#071018!important;font-weight:700;text-align:center;padding:11px!important;border-radius:8px;border-bottom:none!important;}
+    .nav-mobile-menu .mob-section{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4a6080;padding:12px 4px 4px;border-bottom:none!important;}
+    @media(max-width:720px){.nav-links{display:none!important;}.nav-hamburger{display:flex!important;}.product-strip-inner a{padding:4px 8px;font-size:0.75rem;}}
+    .article-header{padding:64px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+    .article-header h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin-bottom:16px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:20px;}
+    .tag{display:inline-block;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.1rem;color:var(--text);margin-bottom:28px;border-left:3px solid var(--accent);padding-left:18px;}
+    h2{font-size:1.5rem;margin:36px 0 14px;}
+    h3{font-size:1.15rem;margin:24px 0 10px;color:var(--accent);}
+    p{color:var(--muted);margin-bottom:18px;}
+    ul,ol{color:var(--muted);margin:0 0 18px 22px;}
+    li{margin-bottom:8px;}
+    .step-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;}
+    .step-card h3{margin-top:0;color:var(--text);}
+    .fact-box{background:rgba(61,217,255,0.05);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:16px 18px;margin:18px 0;}
+    .fact-box p{color:var(--accent);font-size:0.95rem;margin-bottom:0;}
+    .warn-box{background:rgba(240,168,61,0.07);border:1px solid rgba(240,168,61,0.25);border-radius:10px;padding:16px 18px;margin:18px 0;}
+    .warn-box p{color:var(--warn);font-size:0.95rem;margin-bottom:0;}
+    .cta-box{background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{color:var(--text);font-size:1.2rem;margin-bottom:10px;}
+    .cta-box p{color:var(--muted);margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 22px;border-radius:10px;text-decoration:none;}
+    .checklist-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:18px 0;}
+    .checklist-box h3{margin-bottom:14px;}
+    .checklist-box li{margin-bottom:10px;}
+    .grade-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+    .grade-row:last-child{border-bottom:none;}
+    .grade-badge{font-family:monospace;font-size:1.1rem;font-weight:800;width:32px;text-align:center;flex-shrink:0;}
+    .footer-cta{padding:48px 0;border-top:1px solid var(--border);margin-top:48px;text-align:center;}
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org","@type":"BlogPosting",
+    "headline":"Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap",
+    "description":"Most small business domains can be spoofed in under 60 seconds. Here's how email spoofing works and how to fix it.",
+    "image":"https://edgeiqlabs.com/og-preview.png",
+    "datePublished":"2026-05-17","dateModified":"2026-05-17",
+    "author":{"@type":"Organization","name":"EdgeIQ Labs","url":"https://edgeiqlabs.com"},
+    "publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}},
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://edgeiqlabs.com/blog/email-spoofing-small-business-domain-check-2026.html"}
+  }
+  </script>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/blog/">Blog</a>
+    <a href="/products/" class="nav-cta">Get Started</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('nav-mobile-menu').classList.toggle('open')" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a><a href="/products/">All Products</a><a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+
+<div class="container">
+  <div class="article-header">
+    <div class="article-meta">May 17, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">email security</span><span class="tag">DMARC</span><span class="tag">spoofing</span></div>
+    <h1>Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap</h1>
+    <p class="lead">Attackers can send emails that appear to come from your domain — your brand, your email address, your name — without ever accessing your account. For most small businesses, nothing is stopping them. Here's how to find out if your domain is exposed and close the gap in five steps.</p>
+  </div>
+
+  <p>Business Email Compromise (BEC) is the highest-dollar cybercrime category in the world, surpassing ransomware for the fourth consecutive year. The FBI's 2025 IC3 report puts reported losses at $2.9 billion — and that figure represents only the attacks that get reported. The majority don't.</p>
+
+  <p>What most business owners don't realize is that a large portion of these attacks don't require the attacker to compromise any account at all. They simply send an email that appears to come from your domain. No hacking required. Just a misconfigured DNS record — or more commonly, no record at all.</p>
+
+  <div class="warn-box"><p>&#x26A0; You can check right now: go to <strong>mxtoolbox.com/dmarc</strong> and enter your domain. If the result is "No DMARC Record Found" or shows <code>p=none</code>, your domain can be spoofed today.</p></div>
+
+  <h2>How Email Spoofing Actually Works</h2>
+
+  <p>Email was designed in the 1970s without authentication. The "From" field in an email is like the return address on an envelope — anyone can write anything there. For decades, there was no technical mechanism to verify that the sender address matched the server that sent the email.</p>
+
+  <p>Three standards were developed to fix this, and all three need to be correctly configured for protection to work:</p>
+
+  <div class="step-card">
+    <h3>SPF — Sender Policy Framework</h3>
+    <p style="color:var(--muted);margin-bottom:0;">A DNS TXT record that lists the IP addresses and servers authorized to send email for your domain. When a receiving mail server gets an email claiming to be from yourdomain.com, it checks whether the sending server is on your SPF list. If not, it can flag or reject the email. <strong style="color:var(--text);">Problem:</strong> SPF alone doesn't prevent spoofing of the visible "From" address — it only checks the technical envelope sender, which most users never see.</p>
+  </div>
+
+  <div class="step-card">
+    <h3>DKIM — DomainKeys Identified Mail</h3>
+    <p style="color:var(--muted);margin-bottom:0;">A cryptographic signature added to outgoing emails, verified using a public key published in DNS. If the email is tampered with in transit, the signature breaks. DKIM proves the email came from a server holding your private key and wasn't modified. <strong style="color:var(--text);">Problem:</strong> DKIM alone also doesn't stop a spoofed "From" address — an attacker can sign emails with their own key from their own domain while showing yours in the From field.</p>
+  </div>
+
+  <div class="step-card">
+    <h3>DMARC — Domain-based Message Authentication, Reporting &amp; Conformance</h3>
+    <p style="color:var(--muted);margin-bottom:0;">DMARC is the policy layer that ties SPF and DKIM together. It tells receiving mail servers what to do when an email fails authentication — and crucially, it checks that the authenticated domain aligns with the visible "From" address. DMARC has three policy levels: <code style="color:var(--ok);">p=none</code> (monitor only — take no action), <code style="color:var(--warn);">p=quarantine</code> (send to spam), and <code style="color:var(--ok);">p=reject</code> (block completely). Without DMARC at quarantine or reject, spoofed emails land in inboxes.</p>
+  </div>
+
+  <h2>The Real-World State of SMB Email Security in 2026</h2>
+
+  <p>Despite SPF and DMARC being available for over a decade, adoption among small businesses remains dangerously low. A 2025 analysis of domains registered to businesses with under 100 employees found:</p>
+
+  <ul>
+    <li><strong>71%</strong> had SPF configured — but 38% of those used <code>~all</code> (softfail) rather than <code>-all</code> (hard reject)</li>
+    <li><strong>29%</strong> had DMARC records — but 68% of those were set to <code>p=none</code>, meaning monitoring only with no enforcement</li>
+    <li><strong>Less than 10%</strong> had DMARC set to <code>p=reject</code> — the only setting that actually blocks spoofed emails</li>
+  </ul>
+
+  <div class="fact-box"><p>&#x1F4CA; The math: roughly 90% of small business domains can be spoofed today. An attacker can send an email appearing to come from your CEO to your finance team — with nothing stopping it from landing in their inbox.</p></div>
+
+  <h2>What a Spoofing Attack Looks Like in Practice</h2>
+
+  <p>Here's a real attack pattern that plays out thousands of times per week across small businesses:</p>
+
+  <ol>
+    <li>Attacker identifies your domain, your CEO's name (from LinkedIn), and your finance contact (from the company website)</li>
+    <li>They register a spoofed sending infrastructure and craft an email: <em>From: James Mitchell &lt;james.mitchell@yourcompany.com&gt;</em></li>
+    <li>The email asks the finance contact to process an urgent wire transfer before end of day — "I'm in meetings, can't take calls, handle this please"</li>
+    <li>Because your domain has no DMARC enforcement, the email passes straight through to the inbox with no warnings</li>
+    <li>The finance contact, seeing their CEO's name and correct email address, complies</li>
+  </ol>
+
+  <p>The FBI calls this pattern "CEO Fraud" or "BEC." The average loss per incident is $137,000. Many small businesses don't recover.</p>
+
+  <h2>Your 5-Step Fix</h2>
+
+  <div class="checklist-box">
+    <h3>Close the email spoofing gap</h3>
+    <ul>
+      <li>&#x2705; <strong>Step 1 — Check your current state:</strong> Scan your domain at <a href="/inbox-shield/" style="color:var(--accent);">EdgeIQ Inbox Shield</a> to get an instant A–F grade across SPF, DKIM, DMARC, MX, and BIMI. Free, no account needed.</li>
+      <li>&#x2705; <strong>Step 2 — Fix or add SPF:</strong> Ensure your SPF record lists all legitimate sending sources (your email provider, CRM, marketing tools) and ends with <code>-all</code> not <code>~all</code>. Use a SPF flattening tool if you have many includes.</li>
+      <li>&#x2705; <strong>Step 3 — Enable DKIM:</strong> Your email provider (Google Workspace, Microsoft 365, etc.) will have a DKIM setup page. Generate a key pair and publish the public key as a DNS TXT record. Most providers automate this.</li>
+      <li>&#x2705; <strong>Step 4 — Add DMARC at p=none first:</strong> Start with <code>v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com</code> to begin receiving reports about who is sending email using your domain.</li>
+      <li>&#x2705; <strong>Step 5 — Tighten to p=reject:</strong> After 2–4 weeks of reviewing DMARC reports to confirm all legitimate senders are covered, change to <code>p=reject</code>. Now spoofed emails are blocked at the receiving server before they ever reach an inbox.</li>
+    </ul>
+  </div>
+
+  <h2>Understanding Your DMARC Grade</h2>
+
+  <div class="step-card">
+    <div class="grade-row">
+      <span class="grade-badge" style="color:#3de19e;">A</span>
+      <div><strong style="color:var(--text);">p=reject + SPF -all + DKIM active</strong><br/><span style="color:var(--muted);font-size:0.9rem;">Your domain is fully protected. Spoofed emails are blocked before they reach any inbox.</span></div>
+    </div>
+    <div class="grade-row">
+      <span class="grade-badge" style="color:#70f0a8;">B</span>
+      <div><strong style="color:var(--text);">p=quarantine + SPF configured</strong><br/><span style="color:var(--muted);font-size:0.9rem;">Good protection. Spoofed emails go to spam rather than inbox. Upgrade to p=reject to fully close the gap.</span></div>
+    </div>
+    <div class="grade-row">
+      <span class="grade-badge" style="color:#ffb347;">C</span>
+      <div><strong style="color:var(--text);">p=none (monitoring only)</strong><br/><span style="color:var(--muted);font-size:0.9rem;">DMARC exists but provides no protection. You're collecting data but not blocking anything. Tighten to quarantine or reject.</span></div>
+    </div>
+    <div class="grade-row">
+      <span class="grade-badge" style="color:#ff6b6b;">F</span>
+      <div><strong style="color:var(--text);">No DMARC record</strong><br/><span style="color:var(--muted);font-size:0.9rem;">Your domain can be spoofed freely. Any attacker can send email appearing to come from you with no technical barriers.</span></div>
+    </div>
+  </div>
+
+  <h2>Ongoing Monitoring Matters</h2>
+
+  <p>Fixing your DMARC configuration is not a one-time task. DNS records get changed. New email tools get added without SPF updates. DKIM keys expire. A configuration that was correct in January can be broken by March after a new CRM or marketing automation tool is connected.</p>
+
+  <p>Weekly automated monitoring of your email authentication configuration catches drift before it creates a window for attackers. DMARC report analysis tells you when new, unauthorized senders start using your domain — sometimes the first sign of a phishing campaign targeting your customers or partners using your brand.</p>
+
+  <div class="cta-box">
+    <h3>✉️ Grade your email security in 10 seconds</h3>
+    <p>EdgeIQ Inbox Shield scans your domain's SPF, DMARC, DKIM, MX, and BIMI configuration and gives you an instant A–F grade with a prioritized fix list. Subscribe for weekly monitoring alerts — get notified the moment anything changes. Free scan, no account needed.</p>
+    <a href="/inbox-shield/" class="cta-btn">Scan Your Domain Now →</a>
+  </div>
+
+  <h2>Quick Reference</h2>
+  <ul>
+    <li>Email spoofing requires no account compromise — just a misconfigured or missing DMARC record</li>
+    <li>BEC attacks cost businesses $2.9 billion in 2025 — the top cybercrime category by dollar value</li>
+    <li>SPF and DKIM alone are not sufficient — DMARC at p=reject is required to block spoofing</li>
+    <li>~90% of SMB domains currently lack DMARC enforcement</li>
+    <li>Start with p=none to collect data, then move to p=reject after confirming all legitimate senders pass</li>
+    <li>Monitor weekly — email auth configurations drift as new tools are added</li>
+  </ul>
+
+  <div class="footer-cta">
+    <p style="color:var(--muted);margin-bottom:16px;">More from EdgeIQ Labs</p>
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;font-weight:600;">← Back to Blog</a>
+    &nbsp;&nbsp;
+    <a href="/inbox-shield/" style="color:var(--ok);text-decoration:none;font-weight:600;">Scan Your Domain Free →</a>
+  </div>
+</div>
+
+<footer style="border-top:1px solid #233142;padding:24px;text-align:center;font-size:0.82rem;color:#4a6080;">
+  <p>© 2026 EdgeIQ Labs · <a href="/privacy.html" style="color:#4a6080;">Privacy Policy</a> · <a href="/terms.html" style="color:#4a6080;">Terms of Service</a> · <a href="mailto:support@edgeiqlabs.com" style="color:#4a6080;">support@edgeiqlabs.com</a></p>
+</footer>
+</body>
+</html>
