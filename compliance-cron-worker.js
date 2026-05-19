@@ -1,25 +1,33 @@
 /**
- * EdgeIQ Compliance Monitor — Weekly Cron Worker
+ * EdgeIQ Weekly Cron — Compliance + BrandGuard
  *
  * DEPLOY AS A SEPARATE CLOUDFLARE WORKER (not a Pages Function).
+ * Runs every Monday at 08:00 UTC and handles two products in one trigger:
+ *
+ *   1. Compliance Pro — scan all compliance:{email}:{domain} KV entries,
+ *      run live SOC 2 / HIPAA / PCI checks, email weekly digest, update KV.
+ *
+ *   2. BrandGuard — scan all brandguard:{email}:{domain} KV entries,
+ *      generate typosquatting variants, DNS-check each, content-analyse
+ *      active ones for phishing indicators, email alert/digest, update KV.
  *
  * SETUP (one-time):
  * 1. npx wrangler deploy --config wrangler-compliance.toml
  * 2. Add cron trigger: "0 8 * * 1" (every Monday 08:00 UTC)
- * 3. Bind PULSE_KV (same namespace as Pulse/MSP)
+ * 3. Bind PULSE_KV (same namespace as all other workers)
  * 4. Add secrets: RESEND_API_KEY, FROM_EMAIL, SITE_URL
- *
- * HOW IT WORKS:
- * Lists all KV keys with prefix "compliance:", runs live DNS + HTTP
- * compliance checks for each subscriber, emails a digest, and updates KV
- * with the latest score + change data.
  */
 
-// ── DNS / HTTP scan (mirrors functions/api/compliance.js) ────────────────────
+// ── Shared constants ──────────────────────────────────────────────────────────
 
-const DOH      = 'https://cloudflare-dns.com/dns-query';
-const SCAN_UA  = 'EdgeIQ-Compliance-Cron/1.0';
-const T        = 7000; // timeout ms
+const DOH           = 'https://cloudflare-dns.com/dns-query';
+const COMPLIANCE_UA = 'EdgeIQ-Compliance-Cron/1.0';
+const BRANDGUARD_UA = 'EdgeIQ-BrandGuard/1.0';
+const T             = 7000;  // compliance scan timeout ms
+const BG_DNS_T      = 3000;  // brandguard DNS check timeout ms (tight, many parallel)
+const BG_HTTP_T     = 6000;  // brandguard content check timeout ms
+
+// ── DNS / HTTP scan (mirrors functions/api/compliance.js) ────────────────────
 
 async function dnsQuery(name, type) {
   try {
@@ -40,11 +48,11 @@ async function safeFetch(url, opts = {}) {
   try {
     const r = await fetch(url, {
       ...opts, method: opts.method || 'HEAD',
-      headers: { 'User-Agent': SCAN_UA, ...(opts.headers || {}) },
+      headers: { 'User-Agent': COMPLIANCE_UA, ...(opts.headers || {}) },
       signal: AbortSignal.timeout(T),
     });
     if (r.status === 405 && opts.method === 'HEAD') {
-      return await fetch(url, { ...opts, method: 'GET', headers: { 'User-Agent': SCAN_UA }, signal: AbortSignal.timeout(T) });
+      return await fetch(url, { ...opts, method: 'GET', headers: { 'User-Agent': COMPLIANCE_UA }, signal: AbortSignal.timeout(T) });
     }
     return r;
   } catch { return null; }
@@ -291,14 +299,22 @@ async function sendDigest(env, email, domain, curr, prev) {
 
 export default {
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(runCron(env));
+    ctx.waitUntil(runAllCrons(env));
   },
 };
 
-async function runCron(env) {
+async function runAllCrons(env) {
   if (!env.PULSE_KV) { console.error('PULSE_KV binding missing'); return; }
+  // Run both jobs; don't let one failure block the other
+  await Promise.allSettled([
+    runComplianceCron(env),
+    runBrandGuardCron(env),
+  ]);
+}
 
-  // List all compliance subscribers
+// ── Compliance job ────────────────────────────────────────────────────────────
+
+async function runComplianceCron(env) {
   let cursor, keys = [];
   do {
     const page = await env.PULSE_KV.list({ prefix: 'compliance:', limit: 100, cursor });
@@ -315,14 +331,11 @@ async function runCron(env) {
       const record = JSON.parse(raw);
       if (!record.active || !record.email || !record.domain) continue;
 
-      // Run live compliance scan
       const curr = await runComplianceScan(record.domain);
-      const prev = record.last_score !== null ? { score: record.last_score, grade: record.last_grade } : null;
+      const prev = record.last_score != null ? { score: record.last_score, grade: record.last_grade } : null;
 
-      // Send weekly digest
       await sendDigest(env, record.email, record.domain, curr, prev);
 
-      // Update KV with latest results
       record.last_scan_at   = new Date().toISOString();
       record.last_score     = curr.score;
       record.last_grade     = curr.grade;
@@ -335,9 +348,239 @@ async function runCron(env) {
 
       console.log(`Compliance: ${record.domain} → ${curr.grade} (${curr.score}%)`);
     } catch (err) {
-      console.error(`Error processing ${name}:`, err.message);
+      console.error(`Error processing compliance ${name}:`, err.message);
     }
   }
 
   console.log('Compliance cron complete');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BrandGuard — lookalike domain scanner
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function generateVariations(domain) {
+  const dot = domain.lastIndexOf('.');
+  const sld = domain.slice(0, dot);
+  const tld = domain.slice(dot + 1);
+  const alts = new Set();
+
+  // TLD swaps
+  for (const t of ['com','net','org','io','co','info','biz','app','online','site','us','cc']) {
+    if (t !== tld) alts.add(`${sld}.${t}`);
+  }
+  // One-character deletions
+  for (let i = 0; i < sld.length; i++) {
+    const v = sld.slice(0, i) + sld.slice(i + 1);
+    if (v.length > 2) alts.add(`${v}.${tld}`);
+  }
+  // Adjacent transpositions
+  for (let i = 0; i < sld.length - 1; i++) {
+    const a = sld.split(''); [a[i], a[i+1]] = [a[i+1], a[i]];
+    alts.add(`${a.join('')}.${tld}`);
+  }
+  // Character doublings
+  for (let i = 0; i < sld.length; i++) {
+    alts.add(`${sld.slice(0,i)}${sld[i]}${sld[i]}${sld.slice(i+1)}.${tld}`);
+  }
+  // Homoglyphs
+  const glyphs = { a:'4', e:'3', i:'1', l:'1', o:'0', s:'5', t:'7' };
+  for (const [ch, sub] of Object.entries(glyphs)) {
+    if (sld.includes(ch)) alts.add(`${sld.replace(new RegExp(ch,'g'), sub)}.${tld}`);
+  }
+  // Brand-squatting prefixes
+  for (const pre of ['my','get','the','go','try','use','app']) {
+    alts.add(`${pre}${sld}.${tld}`); alts.add(`${pre}-${sld}.${tld}`);
+  }
+  // Brand-squatting suffixes
+  for (const suf of ['app','login','secure','help','support','verify','official','portal','account','signin']) {
+    alts.add(`${sld}${suf}.${tld}`); alts.add(`${sld}-${suf}.${tld}`);
+  }
+  // Hyphenated splits
+  if (!sld.includes('-')) {
+    for (let i = 1; i < sld.length - 1; i++) {
+      alts.add(`${sld.slice(0,i)}-${sld.slice(i)}.${tld}`);
+    }
+  }
+  alts.delete(domain);
+  return [...alts].slice(0, 100);
+}
+
+async function bgHasARecord(variant) {
+  try {
+    const r = await fetch(`${DOH}?name=${encodeURIComponent(variant)}&type=A`,
+      { headers: { Accept: 'application/dns-json' }, signal: AbortSignal.timeout(BG_DNS_T) });
+    const d = await r.json();
+    return d.Status === 0 && (d.Answer || []).some(a => a.type === 1);
+  } catch { return false; }
+}
+
+async function bgAnalyzeContent(variant, brandName) {
+  try {
+    const r = await fetch(`https://${variant}`, {
+      method: 'GET', redirect: 'follow',
+      headers: { 'User-Agent': BRANDGUARD_UA },
+      signal: AbortSignal.timeout(BG_HTTP_T),
+    });
+    if (!r.ok) return { live: false };
+    const reader = r.body.getReader();
+    let html = '';
+    while (html.length < 50000) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      html += new TextDecoder().decode(value);
+    }
+    reader.cancel().catch(() => {});
+    const low   = html.toLowerCase();
+    const brand = brandName.replace(/\.[a-z]{2,}$/, '').toLowerCase();
+    return {
+      live:          true,
+      mentionsBrand: low.includes(brand),
+      hasLoginForm:  low.includes('type="password"') || low.includes("type='password'"),
+      hasCreditCard: /credit.?card|card.?number|cvv|ccv/i.test(html),
+    };
+  } catch { return { live: false }; }
+}
+
+async function bgCheckBatches(variants, batchSize = 15) {
+  const active = [];
+  for (let i = 0; i < variants.length; i += batchSize) {
+    const batch   = variants.slice(i, i + batchSize);
+    const results = await Promise.all(batch.map(async v => ({ v, ok: await bgHasARecord(v) })));
+    for (const { v, ok } of results) { if (ok) active.push(v); }
+  }
+  return active;
+}
+
+function buildBrandGuardEmail(domain, findings, newDomains, siteUrl) {
+  const date       = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+  const suspicious = findings.filter(f => f.suspicious);
+  const active     = findings.filter(f => f.live && !f.suspicious);
+  const registered = findings.filter(f => !f.live);
+  const isAlert    = newDomains.length > 0 || suspicious.length > 0;
+
+  const suspRow = suspicious.map(f => `
+    <div style="background:#1a0e0e;border:1px solid rgba(255,107,107,0.4);border-radius:8px;padding:12px 14px;margin-bottom:8px;">
+      <strong style="color:#ff6b6b;">🚨 ${f.domain}</strong>
+      <div style="font-size:12px;color:#9fb0c7;margin-top:4px;">${f.mentionsBrand?'⚠️ Mentions your brand · ':''}${f.hasLoginForm?'⚠️ Login form detected':''}${f.hasCreditCard?' · ⚠️ Card capture':''}</div>
+    </div>`).join('');
+  const activeRow = active.map(f => `
+    <div style="background:#121923;border:1px solid #1e2e3e;border-radius:8px;padding:10px 14px;margin-bottom:6px;font-size:12px;color:#9fb0c7;">
+      ⚠️ <strong style="color:#ffb347;">${f.domain}</strong> — live, no brand indicators</div>`).join('');
+  const regRow = registered.slice(0,8).map(f =>
+    `<span style="background:#0e1621;border:1px solid #233142;border-radius:4px;padding:3px 8px;font-size:11px;color:#9fb0c7;margin:2px;display:inline-block;">${f.domain}</span>`).join('');
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BrandGuard — ${domain}</title></head>
+<body style="margin:0;padding:0;background:#0b0f14;font-family:Inter,system-ui,sans-serif;">
+<div style="max-width:620px;margin:0 auto;padding:20px;">
+  <div style="background:#121923;border:1px solid ${isAlert?'rgba(255,107,107,0.4)':'#1e2e3e'};border-radius:16px;padding:28px 24px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+      <div style="font-size:2.5rem;">🛡️</div>
+      <div><p style="margin:0;font-size:12px;color:#4a6080;text-transform:uppercase;letter-spacing:.06em;">EdgeIQ BrandGuard</p>
+        <h1 style="margin:2px 0 0;font-size:1.15rem;color:#e8eef7;">${domain}</h1>
+        <p style="margin:2px 0 0;font-size:12px;color:#9fb0c7;">${date}</p></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:70px;background:#0b0f14;border-radius:8px;padding:12px;text-align:center;border:1px solid ${suspicious.length>0?'rgba(255,107,107,0.4)':'#1e2e3e'};">
+        <div style="font-size:20px;font-weight:800;color:${suspicious.length>0?'#ff6b6b':'#3de19e'};">${suspicious.length}</div><div style="font-size:11px;color:#9fb0c7;">Suspicious</div></div>
+      <div style="flex:1;min-width:70px;background:#0b0f14;border-radius:8px;padding:12px;text-align:center;border:1px solid #1e2e3e;">
+        <div style="font-size:20px;font-weight:800;color:${active.length>0?'#ffb347':'#3de19e'};">${active.length}</div><div style="font-size:11px;color:#9fb0c7;">Active</div></div>
+      <div style="flex:1;min-width:70px;background:#0b0f14;border-radius:8px;padding:12px;text-align:center;border:1px solid #1e2e3e;">
+        <div style="font-size:20px;font-weight:800;color:#9fb0c7;">${registered.length}</div><div style="font-size:11px;color:#9fb0c7;">Registered</div></div>
+      <div style="flex:1;min-width:70px;background:#0b0f14;border-radius:8px;padding:12px;text-align:center;border:1px solid #1e2e3e;">
+        <div style="font-size:20px;font-weight:800;color:#9fb0c7;">${newDomains.length>0?'+'+newDomains.length:'0'}</div><div style="font-size:11px;color:#9fb0c7;">New this week</div></div>
+    </div>
+    ${suspicious.length>0?`<h2 style="font-size:12px;font-weight:700;color:#ff6b6b;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px;">🚨 Suspicious Lookalikes</h2>${suspRow}`:''}
+    ${active.length>0?`<h2 style="font-size:12px;font-weight:700;color:#ffb347;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;">⚠️ Active lookalikes</h2>${activeRow}`:''}
+    ${registered.length>0?`<h2 style="font-size:12px;font-weight:700;color:#4a6080;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;">Registered (parked)</h2><div>${regRow}${registered.length>8?`<span style="font-size:11px;color:#4a6080;"> +${registered.length-8} more</span>`:''}</div>`:''}
+    ${findings.length===0?`<div style="text-align:center;padding:20px;"><div style="font-size:1.8rem;margin-bottom:8px;">✅</div><p style="color:#3de19e;font-size:14px;font-weight:600;margin:0;">All clear</p><p style="color:#9fb0c7;font-size:12px;margin:6px 0 0;">No active lookalike domains detected this week.</p></div>`:''}
+  </div>
+  <div style="text-align:center;padding:12px 0 20px;">
+    <a href="${siteUrl}/account/" style="display:inline-block;background:#f472b6;color:#071018;font-weight:700;font-size:13px;padding:11px 24px;border-radius:8px;text-decoration:none;">View BrandGuard Dashboard →</a>
+    <p style="margin:12px 0 0;font-size:11px;color:#4a6080;"><a href="${siteUrl}/account/" style="color:#f472b6;">Manage subscription</a> · <a href="mailto:support@edgeiqlabs.com" style="color:#4a6080;">support@edgeiqlabs.com</a></p>
+  </div>
+</div></body></html>`;
+}
+
+async function sendBrandGuardReport(env, email, domain, findings, newDomains) {
+  if (!env.RESEND_API_KEY) return;
+  const suspicious = findings.filter(f => f.suspicious).length;
+  const subject = suspicious > 0
+    ? `🚨 BrandGuard Alert — ${suspicious} suspicious lookalike${suspicious>1?'s':''} for ${domain}`
+    : newDomains.length > 0
+      ? `⚠️ BrandGuard — ${newDomains.length} new lookalike${newDomains.length>1?'s':''} for ${domain}`
+      : `✅ BrandGuard Weekly — ${domain} looks clear`;
+  const siteUrl = env.SITE_URL || 'https://edgeiqlabs.com';
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: env.FROM_EMAIL || 'alerts@edgeiqlabs.com',
+      to: email,
+      subject,
+      html: buildBrandGuardEmail(domain, findings, newDomains, siteUrl),
+    }),
+  }).catch(e => console.error('Resend BrandGuard error:', e.message));
+}
+
+// ── BrandGuard job ────────────────────────────────────────────────────────────
+
+async function runBrandGuardCron(env) {
+  let cursor, keys = [];
+  do {
+    const page = await env.PULSE_KV.list({ prefix: 'brandguard:', limit: 100, cursor });
+    keys = keys.concat(page.keys);
+    cursor = page.list_complete ? null : page.cursor;
+  } while (cursor);
+
+  console.log(`BrandGuard cron: processing ${keys.length} subscribers`);
+
+  for (const { name } of keys) {
+    try {
+      const raw = await env.PULSE_KV.get(name);
+      if (!raw) continue;
+      const record = JSON.parse(raw);
+      if (!record.active || !record.email || !record.domain) continue;
+
+      const domain     = record.domain;
+      const prevActive = new Set(record.known_active   || []);
+      const prevSusp   = new Set(record.known_suspicious || []);
+
+      const variants      = generateVariations(domain);
+      const activeDomains = await bgCheckBatches(variants);
+
+      const findings = [];
+      const contentBatch = activeDomains.slice(0, 20);
+      const contentResults = await Promise.all(
+        contentBatch.map(async v => {
+          const c = await bgAnalyzeContent(v, domain);
+          return { domain: v, ...c, suspicious: c.live && (c.mentionsBrand || c.hasCreditCard) };
+        })
+      );
+      findings.push(...contentResults);
+      for (const v of activeDomains.slice(20)) findings.push({ domain: v, live: false });
+
+      const newDomains  = activeDomains.filter(v => !prevActive.has(v));
+      const newSuspicious = findings.filter(f => f.suspicious && !prevSusp.has(f.domain));
+
+      // Always email on Monday (this cron only fires Mondays anyway)
+      await sendBrandGuardReport(env, record.email, domain, findings, newDomains);
+
+      record.last_scan_at      = new Date().toISOString();
+      record.known_active      = activeDomains;
+      record.known_suspicious  = findings.filter(f => f.suspicious).map(f => f.domain);
+      record.scan_count        = (record.scan_count || 0) + 1;
+      record.last_findings_count = findings.length;
+
+      await env.PULSE_KV.put(name, JSON.stringify(record), {
+        metadata: { email: record.email, domain, last_scan_at: record.last_scan_at },
+      });
+
+      console.log(`BrandGuard: ${domain} → ${activeDomains.length} active, ${findings.filter(f=>f.suspicious).length} suspicious`);
+    } catch (err) {
+      console.error(`Error processing brandguard ${name}:`, err.message);
+    }
+  }
+
+  console.log('BrandGuard cron complete');
 }
