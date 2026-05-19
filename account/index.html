@@ -22,7 +22,7 @@
     body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
     /* Nav */
-    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
     .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
     .nav-logo span { color: var(--accent); }
     .nav-links { display: flex; align-items: center; gap: 6px; }
@@ -117,6 +117,25 @@
     .grade-D { background: #1f0e00; border: 1px solid #ff8c42; color: #ff8c42; }
     .grade-F { background: #1f0000; border: 1px solid #ff6b6b; color: #ff6b6b; }
 
+    /* Compliance section */
+    .compliance-grade { display:inline-block;width:32px;height:32px;line-height:32px;text-align:center;border-radius:7px;font-size:14px;font-weight:900; }
+    .cgrade-A { background:#0d1f17;border:1px solid #3de19e;color:#3de19e; }
+    .cgrade-B { background:#0d1f17;border:1px solid #70f0a8;color:#70f0a8; }
+    .cgrade-C { background:#1f1500;border:1px solid #ffb347;color:#ffb347; }
+    .cgrade-D { background:#1f0e00;border:1px solid #ff8c42;color:#ff8c42; }
+    .cgrade-F { background:#1f0000;border:1px solid #ff6b6b;color:#ff6b6b; }
+
+    /* BrandGuard section */
+    .bg-accent { color:#f472b6; }
+    .plan-bg { background:rgba(244,114,182,0.12);color:#f472b6; }
+    .bg-stat { display:inline-flex;flex-direction:column;align-items:center;padding:8px 14px;background:rgba(244,114,182,0.06);border:1px solid rgba(244,114,182,0.2);border-radius:9px;gap:2px; }
+    .bg-stat-num { font-size:1.2rem;font-weight:900;color:#f472b6; }
+    .bg-stat-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted); }
+    .bg-stats { display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px; }
+    .bg-domain-pill { font-size:11px;background:rgba(244,114,182,0.07);border:1px solid rgba(244,114,182,0.2);color:var(--muted);padding:2px 8px;border-radius:6px; }
+    .bg-domain-pill.suspicious { border-color:rgba(255,107,107,0.4);color:var(--bad);background:rgba(255,107,107,0.08); }
+    .bg-pills { display:flex;flex-wrap:wrap;gap:5px;margin-top:6px; }
+
     /* Loading */
     .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(61,217,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -203,6 +222,18 @@
   <div class="section-wrap" id="msp-section" style="display:none;">
     <div class="section-header" style="color:#c084fc;">🏢 MSP Essentials — Client Domain Management</div>
     <div id="msp-panel"></div>
+  </div>
+
+  <!-- Compliance Pro -->
+  <div class="section-wrap" id="compliance-section" style="display:none;">
+    <div class="section-header" style="color:var(--accent);">📋 Compliance Pro — Weekly SOC 2 Monitoring</div>
+    <div id="compliance-list"></div>
+  </div>
+
+  <!-- BrandGuard -->
+  <div class="section-wrap" id="brandguard-section" style="display:none;">
+    <div class="section-header" style="color:#f472b6;">🛡️ BrandGuard — Domain Impostor Monitoring</div>
+    <div id="brandguard-list"></div>
   </div>
 
   <div style="border-top:1px solid var(--border);padding-top:20px;text-align:center;font-size:12px;color:#4a6080;">
@@ -486,6 +517,90 @@ async function mspRemoveClient(domain) {
   }
 }
 
+// ── Compliance ───────────────────────────────────────────────────────────────
+
+function complianceGradeHtml(g) {
+  if (!g) return '<span style="color:#4a6080;font-size:13px;">No scan yet</span>';
+  return `<span class="compliance-grade cgrade-${g}">${g}</span>`;
+}
+
+function renderCompliance(subs, siteUrl) {
+  if (!subs || !subs.length) return;
+  document.getElementById('compliance-section').style.display = 'block';
+  const el = document.getElementById('compliance-list');
+  el.innerHTML = subs.map(s => {
+    const isPro = s.plan === 'pro';
+    return `
+    <div class="sub-card">
+      <div class="sub-icon">📋</div>
+      <div class="sub-body">
+        <div class="sub-domain">${s.domain}
+          <span class="plan-badge ${isPro ? 'plan-pro' : 'plan-free'}">${s.plan}</span>
+          ${s.last_grade ? complianceGradeHtml(s.last_grade) : ''}
+        </div>
+        <div class="sub-meta">
+          ${s.last_score != null ? `<span style="color:var(--accent);">${Math.round(s.last_score)}% score</span>` : ''}
+          <span style="color:#4a6080;">Last scan: ${fmt(s.last_scan_at)}</span>
+          <span style="color:#4a6080;">Added ${fmt(s.created_at)}</span>
+          ${s.scan_count ? `<span style="color:#4a6080;">${s.scan_count} scan${s.scan_count !== 1 ? 's' : ''}</span>` : ''}
+        </div>
+        <div class="sub-actions">
+          <a href="${siteUrl}/compliance/?domain=${encodeURIComponent(s.domain)}" class="btn-sm" target="_blank">Open scanner →</a>
+          ${!isPro ? `<a href="${siteUrl}/compliance/#plans" class="btn-sm" style="color:var(--accent);border-color:rgba(61,217,255,0.3);">Upgrade to Pro →</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── BrandGuard ────────────────────────────────────────────────────────────────
+
+function renderBrandguard(subs, siteUrl) {
+  if (!subs || !subs.length) return;
+  document.getElementById('brandguard-section').style.display = 'block';
+  const el = document.getElementById('brandguard-list');
+  el.innerHTML = subs.map(s => {
+    const activeCount     = s.known_active ? s.known_active.length : 0;
+    const suspiciousCount = s.known_suspicious ? s.known_suspicious.length : 0;
+    const activePills = (s.known_active || []).slice(0, 6).map(d =>
+      `<span class="bg-domain-pill">${d}</span>`).join('');
+    const suspiciousPills = (s.known_suspicious || []).slice(0, 6).map(d =>
+      `<span class="bg-domain-pill suspicious">${d}</span>`).join('');
+    return `
+    <div class="sub-card">
+      <div class="sub-icon">🛡️</div>
+      <div class="sub-body">
+        <div class="sub-domain">${s.domain}
+          <span class="plan-badge plan-bg">${s.plan}</span>
+        </div>
+        <div class="bg-stats">
+          <div class="bg-stat">
+            <span class="bg-stat-num">${activeCount}</span>
+            <span class="bg-stat-label">Active lookalikes</span>
+          </div>
+          <div class="bg-stat">
+            <span class="bg-stat-num" style="color:${suspiciousCount ? 'var(--bad)' : 'var(--ok)'};">${suspiciousCount}</span>
+            <span class="bg-stat-label">Suspicious</span>
+          </div>
+          <div class="bg-stat">
+            <span class="bg-stat-num" style="color:var(--muted);">${s.scan_count || 0}</span>
+            <span class="bg-stat-label">Scans run</span>
+          </div>
+        </div>
+        ${suspiciousCount ? `<div style="font-size:11px;font-weight:700;color:var(--bad);margin-bottom:4px;">⚠ Suspicious domains:</div><div class="bg-pills">${suspiciousPills}</div>` : ''}
+        ${activeCount ? `<div style="font-size:11px;color:var(--muted);margin:8px 0 4px;">Active lookalikes:</div><div class="bg-pills">${activePills}${activeCount > 6 ? `<span class="bg-domain-pill">+${activeCount - 6} more</span>` : ''}</div>` : ''}
+        <div class="sub-meta" style="margin-top:10px;">
+          <span style="color:#4a6080;">Last scan: ${fmt(s.last_scan_at)}</span>
+          <span style="color:#4a6080;">Watching since ${fmt(s.created_at)}</span>
+        </div>
+        <div class="sub-actions">
+          <a href="${siteUrl}/brandguard/" class="btn-sm" style="color:#f472b6;border-color:rgba(244,114,182,0.3);">BrandGuard →</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ── Boot ─────────────────────────────────────────────────────────────────────
 
 async function boot() {
@@ -540,6 +655,8 @@ async function boot() {
   renderShield(data.subscriptions.inbox_shield, siteUrl);
   renderVendor(data.subscriptions.vendor_watch, siteUrl);
   renderMsp(data.subscriptions.msp, siteUrl);
+  renderCompliance(data.subscriptions.compliance, siteUrl);
+  renderBrandguard(data.subscriptions.brandguard, siteUrl);
 
   document.getElementById('dashboard').style.display = 'block';
 }
