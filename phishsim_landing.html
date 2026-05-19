@@ -533,20 +533,23 @@
 </footer>
 
 <script>
-async function startCheckout(btn) {
-  var origText = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Redirecting to checkout…';
-  try {
-    var resp = await fetch('https://edgeiqlabs.com/api/phishsim/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
-    var data = await resp.json();
-    if (data.checkoutUrl) { location.href = data.checkoutUrl; return; }
-    alert('Could not start checkout. Please try again or email support@edgeiqlabs.com');
-  } catch(e) { alert('Network error. Please try again.'); }
-  btn.disabled = false; btn.textContent = origText;
+var PHISHSIM_PAYMENT_LINK = 'https://buy.stripe.com/fZuaEZ79V44Z4nW0487wA3B';
+
+function startCheckout(btn) {
+  // Generate unique provisioning ID passed as client_reference_id so the
+  // backend can map this payment to a specific GoPhish instance.
+  var arr = new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  var cid = 'ps_' + Array.from(arr).map(function(b) {
+    return b.toString(16).padStart(2, '0');
+  }).join('');
+
+  // Persist locally so the welcome page can fall back to it if needed.
+  try { sessionStorage.setItem('phishsim_cid', cid); } catch (x) {}
+  try { localStorage.setItem('phishsim_cid', cid); } catch (x) {}
+
+  window.location.href = PHISHSIM_PAYMENT_LINK +
+    '?client_reference_id=' + encodeURIComponent(cid);
 }
 function toggleMobileMenu() {
   var btn = document.getElementById('nav-hamburger');
