@@ -162,7 +162,8 @@
     <a href="/dashboard/">Dashboard</a>
     <a href="/pulse/">Pulse</a>
     <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="#plans" class="nav-cta" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'});return false;" style="background:#ffb347;color:#071018;">Join Waitlist</a>
+    <a href="/account/">My Account</a>
+    <a href="#" class="nav-cta" onclick="document.getElementById('domainInput').focus();return false;" style="background:var(--green);color:#071018;">Free Scan</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
@@ -190,7 +191,8 @@
   <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
   <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
   <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
-  <a class="mob-cta" href="/">Get Started →</a>
+  <a href="/account/">🔐 My Account</a>
+  <a class="mob-cta" href="/compliance/">Free Compliance Scan →</a>
 </div>
 
 <div class="page">
@@ -201,8 +203,8 @@
     <div style="background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.35);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px;">
       <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
       <div style="font-size:0.82rem;color:var(--muted);line-height:1.55;">
-        <strong style="color:var(--yellow);">Beta — Indicative results only.</strong>
-        Compliance checks run against your domain's publicly observable signals (DNS, HTTP headers, TLS, exposed endpoints). They do <em>not</em> inspect internal systems, access logs, or configuration files. Use these results as a starting-point checklist, not as a formal audit. For a certified SOC 2 / HIPAA / PCI audit engage a qualified auditor.
+        <strong style="color:var(--yellow);">Beta — Public signals only.</strong>
+        Each scan runs live checks against your domain: DNS records (SPF, DMARC, MX), HTTPS/TLS reachability, HTTP→HTTPS redirect, HSTS, CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy, and server header exposure. Results reflect <em>publicly observable</em> signals only — internal systems, access logs, and configuration files are not inspected. Use this as a starting-point checklist, not a formal audit. Engage a qualified auditor for certified SOC 2 / HIPAA / PCI assessments.
       </div>
     </div>
 
@@ -279,11 +281,11 @@
 
     <div class="plans-card" id="plans">
       <div class="sidebar-title">Automated Monitoring</div>
-      <div style="background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.35);border-radius:8px;padding:14px;margin-bottom:14px;">
-        <p style="font-size:11px;font-weight:700;color:#ffb347;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">⚠️ Paid plans paused</p>
-        <p style="font-size:12px;color:var(--muted);line-height:1.55;margin:0;">Automated compliance monitoring is being upgraded to run live per-domain scans. The current scanner returns indicative results only. Paid subscriptions are on hold until live scanning is ready.</p>
+      <div style="background:rgba(61,225,158,0.06);border:1px solid rgba(61,225,158,0.25);border-radius:8px;padding:14px;margin-bottom:14px;">
+        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">✓ Live scans active</p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.55;margin:0;">Every scan runs real-time DNS lookups and HTTP header checks against your domain. Results reflect your domain's actual posture right now — no sample data.</p>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Get notified when automated monitoring launches — we'll email you directly when it's ready.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Get notified when <strong style="color:var(--text);">automated weekly monitoring</strong> launches — we'll email you when it's ready.</p>
       <form id="compliance-waitlist-form" onsubmit="submitComplianceWaitlist(event)">
         <input type="email" id="compliance-waitlist-email" placeholder="you@company.com" required
           style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px;">
@@ -296,15 +298,15 @@
 
     <div class="sidebar-card">
       <div class="sidebar-title">What we check</div>
-      <div id="checksInfo" style="font-size:12px;color:var(--muted);line-height:1.8;">
-        CC6.1 — Access Controls<br>
-        CC6.2 — Logical Access<br>
-        CC6.6 — Remote Security<br>
-        CC7.2 — Vulnerability Mgmt<br>
-        CC8.1 — Change Management<br>
-        A1 — Injection Controls<br>
-        A3 — Data Integrity<br>
-        A5 — Logging & Monitoring
+      <div id="checksInfo" style="font-size:12px;color:var(--muted);line-height:1.9;">
+        <span style="color:var(--text);font-weight:600;">CC6.1</span> — HTTPS + HSTS + HTTP redirect<br>
+        <span style="color:var(--text);font-weight:600;">CC6.2</span> — X-Frame-Options / CSP framing<br>
+        <span style="color:var(--text);font-weight:600;">CC6.6</span> — Referrer-Policy, Permissions, Cookies<br>
+        <span style="color:var(--text);font-weight:600;">CC7.2</span> — Server / X-Powered-By exposure<br>
+        <span style="color:var(--text);font-weight:600;">CC8.1</span> — SPF + DMARC DNS records<br>
+        <span style="color:var(--text);font-weight:600;">A1</span> — Content-Security-Policy<br>
+        <span style="color:var(--text);font-weight:600;">A3</span> — TLS active + HSTS long-lived<br>
+        <span style="color:var(--text);font-weight:600;">A5</span> — SPF, DMARC policy, MX records
       </div>
     </div>
 
@@ -581,9 +583,9 @@ function snack(msg) {
 // ── Init ─────────────────────────────────────────────────────────────────────
 
 const FRAMEWORK_CHECKS = {
-  soc2: 'CC6.1 — Access Controls<br>CC6.2 — Logical Access<br>CC6.6 — Remote Security<br>CC7.2 — Vulnerability Mgmt<br>CC8.1 — Change Management<br>A1 — Injection Controls<br>A3 — Data Integrity<br>A5 — Logging & Monitoring',
-  hipaa: '164.312(a)(1) — Access Control<br>164.312(c)(1) — Integrity<br>164.308(a)(5) — Security Awareness',
-  pci: 'Req 1 — Network Security<br>Req 6 — Secure Systems<br>Req 11 — Testing & Monitoring',
+  soc2:  '<b>CC6.1</b> — HTTPS + HSTS + HTTP redirect<br><b>CC6.2</b> — X-Frame-Options / CSP framing<br><b>CC6.6</b> — Referrer-Policy, Permissions, Cookies<br><b>CC7.2</b> — Server / X-Powered-By exposure<br><b>CC8.1</b> — SPF + DMARC DNS records<br><b>A1</b> — Content-Security-Policy<br><b>A3</b> — TLS active + HSTS long-lived<br><b>A5</b> — SPF, DMARC policy, MX records',
+  hipaa: '<b>164.312(a)(1)</b> — HTTPS + HSTS + redirect<br><b>164.312(c)(1)</b> — TLS + HSTS data integrity<br><b>164.308(a)(5)</b> — Server version exposure',
+  pci:   '<b>Req 1</b> — HTTPS + HSTS + HTTP redirect<br><b>Req 6</b> — Content-Security-Policy<br><b>Req 11</b> — Server / X-Powered-By exposure',
 };
 
 document.getElementById('frameworkSelect').addEventListener('change', function() {
