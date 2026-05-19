@@ -209,6 +209,7 @@ function buildEmailHtml(domain, findings, changes, plan, siteUrl) {
 
   <!-- Footer -->
   <div style="border-top:1px solid #1e2e3e;padding:20px 0;text-align:center;font-size:11px;color:#4a6080;">
+    <p style="margin:0 0 8px;"><a href="${siteUrl}/account/" style="color:#3dd9ff;font-weight:600;">🔐 View my account &amp; manage billing →</a></p>
     <p style="margin:0 0 6px;">EdgeIQ Pulse · <a href="${siteUrl}" style="color:#9fb0c7;">edgeiqlabs.com</a></p>
     <p style="margin:0;">You're receiving this because you registered ${domain} for Pulse monitoring.</p>
     <p style="margin:6px 0 0;"><a href="mailto:support@edgeiqlabs.com?subject=Unsubscribe Pulse ${domain}" style="color:#9fb0c7;">Unsubscribe</a></p>

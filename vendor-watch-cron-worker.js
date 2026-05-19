@@ -165,6 +165,7 @@ function buildOutageEmail({ email, plan, affectedVendors, siteUrl }) {
 
   <!-- Footer -->
   <div style="border-top:1px solid #1e2e3e;padding:18px 0;text-align:center;font-size:11px;color:#4a6080;">
+    <p style="margin:0 0 8px;"><a href="${siteUrl}/account/" style="color:#3dd9ff;font-weight:600;">🔐 View my account &amp; manage billing →</a></p>
     <p style="margin:0 0 4px;">EdgeIQ Vendor Watch · <a href="${siteUrl}" style="color:#9fb0c7;">edgeiqlabs.com</a></p>
     <p style="margin:0;">You're watching: ${vendorNames}</p>
     <p style="margin:6px 0 0;"><a href="mailto:alerts@edgeiqlabs.com?subject=Unsubscribe Vendor Watch ${email}" style="color:#9fb0c7;">Unsubscribe</a></p>
@@ -222,6 +223,7 @@ function buildAllClearEmail({ email, plan, recoveredVendors, siteUrl }) {
 
   <!-- Footer -->
   <div style="border-top:1px solid #1e2e3e;padding:18px 0;text-align:center;font-size:11px;color:#4a6080;">
+    <p style="margin:0 0 8px;"><a href="${siteUrl}/account/" style="color:#3dd9ff;font-weight:600;">🔐 View my account &amp; manage billing →</a></p>
     <p style="margin:0 0 4px;">EdgeIQ Vendor Watch · <a href="${siteUrl}" style="color:#9fb0c7;">edgeiqlabs.com</a></p>
     <p style="margin:0;">You're watching: ${vendorNames}</p>
     <p style="margin:6px 0 0;"><a href="mailto:alerts@edgeiqlabs.com?subject=Unsubscribe Vendor Watch ${email}" style="color:#9fb0c7;">Unsubscribe</a></p>

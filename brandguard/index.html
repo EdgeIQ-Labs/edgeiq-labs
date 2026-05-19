@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="canonical" href="https://edgeiqlabs.com/brandguard/">
+  <title>BrandGuard — Lookalike Domain & Phishing Kit Monitor · EdgeIQ Labs</title>
+  <meta name="description" content="BrandGuard watches for typosquatted clones of your domain around the clock. Get alerted the moment a lookalike goes live — before your customers get phished. $14/mo.">
+  <meta property="og:title" content="BrandGuard — Lookalike Domain Monitor · EdgeIQ Labs">
+  <meta property="og:description" content="Stop domain imposters before they burn your brand. BrandGuard detects typosquatting, phishing kits, and brand-squatting domains daily.">
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0f14; --card: #111820; --border: #1e2e3e;
+      --text: #e8eef7; --muted: #9fb0c7; --dim: #4a6080;
+      --pink: #f472b6; --pink2: #fb7cc3; --green: #3de19e; --red: #ff6b6b;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; }
+    .nav-logo img { height: 60px; width: auto; display: block; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--pink); color: #071018 !important; font-weight: 700; padding: 7px 16px; border-radius: 8px; }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; padding: 10px 4px; font-size: .9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: var(--pink); color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    @media(max-width:720px) { .nav-links{display:none!important;} .nav-hamburger{display:flex!important;} }
+
+    /* Hero */
+    .hero { max-width: 900px; margin: 0 auto; padding: 80px 24px 60px; text-align: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(244,114,182,.1); border: 1px solid rgba(244,114,182,.25); color: var(--pink); font-size: .75rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 24px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1.1; letter-spacing: -.03em; margin-bottom: 20px; }
+    .hero h1 em { font-style: normal; color: var(--pink); }
+    .hero p { font-size: 1.15rem; color: var(--muted); line-height: 1.7; max-width: 600px; margin: 0 auto 36px; }
+    .hero-price { font-size: 1rem; color: var(--muted); margin-bottom: 32px; }
+    .hero-price strong { color: var(--pink); font-size: 2rem; font-weight: 900; }
+
+    /* Signup form */
+    .signup-form { background: var(--card); border: 1px solid rgba(244,114,182,.3); border-radius: 16px; padding: 28px; max-width: 480px; margin: 0 auto 20px; }
+    .form-row { display: flex; flex-direction: column; gap: 10px; }
+    .form-input { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 12px 16px; font-size: 14px; color: var(--text); font-family: inherit; outline: none; transition: border-color .2s; width: 100%; }
+    .form-input:focus { border-color: var(--pink); }
+    .form-input::placeholder { color: var(--dim); }
+    .form-btn { background: var(--pink); color: #071018; font-weight: 700; font-size: 15px; padding: 14px; border-radius: 9px; border: none; cursor: pointer; font-family: inherit; width: 100%; transition: opacity .2s; }
+    .form-btn:hover { opacity: .88; }
+    .form-note { font-size: 11px; color: var(--dim); margin-top: 8px; text-align: center; }
+
+    /* Social proof strip */
+    .trust-strip { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; padding: 0 24px 48px; }
+    .trust-item { font-size: 12px; color: var(--dim); display: flex; align-items: center; gap: 6px; }
+    .trust-item span { color: var(--green); font-weight: 700; }
+
+    /* Features */
+    .section { max-width: 1000px; margin: 0 auto; padding: 60px 24px; }
+    .section-title { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--pink); margin-bottom: 12px; }
+    .section-head { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 16px; }
+    .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 600px; margin-bottom: 40px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; transition: border-color .2s; }
+    .feature-card:hover { border-color: rgba(244,114,182,.35); }
+    .feature-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .feature-name { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+    .feature-desc { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+    /* How it works */
+    .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+    .how-step { text-align: center; }
+    .how-num { width: 44px; height: 44px; background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 800; color: var(--pink); margin: 0 auto 14px; }
+    .how-title { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+    .how-desc { font-size: .83rem; color: var(--muted); line-height: 1.6; }
+
+    /* Alert preview */
+    .alert-preview { background: var(--card); border: 1px solid rgba(255,107,107,.35); border-radius: 12px; padding: 20px 24px; max-width: 520px; margin: 0 auto; }
+    .alert-subject { font-size: .8rem; color: var(--dim); margin-bottom: 8px; }
+    .alert-subject strong { color: #ff6b6b; }
+    .alert-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-badge { font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; }
+    .badge-red { background: rgba(255,107,107,.15); color: #ff6b6b; }
+    .badge-yellow { background: rgba(255,179,71,.15); color: #ffb347; }
+    .badge-gray { background: rgba(74,96,128,.2); color: var(--dim); }
+
+    /* Pricing */
+    .price-card { background: var(--card); border: 2px solid rgba(244,114,182,.35); border-radius: 16px; padding: 32px; max-width: 420px; margin: 0 auto; text-align: center; }
+    .price-name { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--pink); margin-bottom: 8px; }
+    .price-amount { font-size: 3rem; font-weight: 900; color: var(--text); }
+    .price-amount sup { font-size: 1.2rem; vertical-align: top; margin-top: 12px; }
+    .price-amount sub { font-size: .9rem; color: var(--muted); font-weight: 400; }
+    .price-features { list-style: none; text-align: left; margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
+    .price-features li { font-size: .9rem; color: var(--muted); padding-left: 22px; position: relative; }
+    .price-features li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .price-btn { display: block; background: var(--pink); color: #071018; font-weight: 700; font-size: 1rem; padding: 14px; border-radius: 10px; text-decoration: none; transition: opacity .2s; border: none; cursor: pointer; font-family: inherit; width: 100%; }
+    .price-btn:hover { opacity: .88; }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .faq-q { padding: 16px 20px; font-size: .9rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-q:hover { background: rgba(255,255,255,.03); }
+    .faq-arrow { font-size: .75rem; color: var(--dim); transition: transform .2s; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-a { display: none; padding: 0 20px 16px; font-size: .87rem; color: var(--muted); line-height: 1.7; }
+    .faq-item.open .faq-a { display: block; }
+
+    /* CTA strip */
+    .cta-strip { background: linear-gradient(135deg, #0f0a14, #0b0f14); border-top: 1px solid var(--border); padding: 60px 24px; text-align: center; }
+    .cta-strip h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; }
+    .cta-strip p { color: var(--muted); margin-bottom: 28px; }
+
+    footer { text-align: center; padding: 28px 20px; border-top: 1px solid #1e2e3e; font-size: .82rem; color: #4a6080; }
+    footer a { color: #4a6080; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" class="nav-logo-img">
+    EdgeIQ<span> Labs</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/compliance/">Compliance</a>
+    <a href="/account/">My Account</a>
+    <a href="#signup" class="nav-cta" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'});return false;">Get BrandGuard →</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4a6080;padding:12px 4px 4px;">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/pulse/">Pulse</a>
+  <a href="/compliance/">Compliance</a>
+  <a href="/account/">🔐 My Account</a>
+  <a class="mob-cta" href="#signup" onclick="toggleMobileMenu();document.getElementById('signup').scrollIntoView({behavior:'smooth'});return false;">Get BrandGuard →</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">🛡️ New · BrandGuard</div>
+  <h1>Stop domain imposters<br>before they <em>burn your brand</em></h1>
+  <p>Someone could register <strong>yourcompany-login.com</strong> today and start phishing your customers. BrandGuard catches lookalike domains and active phishing kits before the damage is done.</p>
+  <div class="hero-price"><strong>$14</strong>/mo — cancel any time</div>
+  <div class="signup-form" id="signup">
+    <div class="form-row">
+      <input type="email" id="bg-email" class="form-input" placeholder="you@yourcompany.com" autocomplete="email">
+      <input type="text" id="bg-domain" class="form-input" placeholder="yourcompany.com" autocomplete="off" spellcheck="false">
+      <button class="form-btn" onclick="startBrandGuard()">Start protecting my brand →</button>
+    </div>
+    <p class="form-note">$14/mo · cancel anytime · first scan within minutes</p>
+  </div>
+</section>
+
+<div class="trust-strip">
+  <div class="trust-item"><span>100+</span> domain variations monitored per domain</div>
+  <div class="trust-item"><span>Daily</span> DNS checks</div>
+  <div class="trust-item"><span>Instant</span> email alerts</div>
+  <div class="trust-item"><span>Phishing</span> content detection</div>
+</div>
+
+<hr class="divider">
+
+<!-- Features -->
+<section class="section">
+  <div class="section-title">What BrandGuard catches</div>
+  <div class="section-head">Every way bad actors clone your domain</div>
+  <p class="section-sub">Cybercriminals use dozens of techniques to create convincing lookalike domains. BrandGuard watches for all of them.</p>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔤</div>
+      <div class="feature-name">Typosquatting</div>
+      <div class="feature-desc">One-character additions, deletions, and transpositions — the domains your customers accidentally type.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <div class="feature-name">TLD swaps</div>
+      <div class="feature-desc">yourcompany.net, yourcompany.io, yourcompany.app — all 12 major TLD variants monitored.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎣</div>
+      <div class="feature-name">Brand squatting</div>
+      <div class="feature-desc">yourcompany-login.com, secureyourcompany.com, mycompanyapp.net — phishing-optimized names.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👁</div>
+      <div class="feature-name">Homoglyph attacks</div>
+      <div class="feature-desc">Visual character substitutions — 0 for o, 1 for l, 4 for a — that look identical at a glance.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🕷️</div>
+      <div class="feature-name">Phishing kit detection</div>
+      <div class="feature-desc">We fetch active lookalike domains and scan for your brand name, login forms, and payment capture fields.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-name">New registration alerts</div>
+      <div class="feature-desc">Detect when a previously unregistered variation goes live — often the first sign of an attack in preparation.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- How it works -->
+<section class="section">
+  <div class="section-title">How it works</div>
+  <div class="section-head">Set up in 30 seconds</div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <div class="how-title">Enter your domain</div>
+      <div class="how-desc">Type your domain above and complete checkout. No technical setup required.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <div class="how-title">We generate variations</div>
+      <div class="how-desc">BrandGuard creates 100+ typosquatting, TLD-swap, and brand-squatting variations of your domain.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <div class="how-title">Daily DNS checks</div>
+      <div class="how-desc">Every morning we query all variations to check for new registrations using real-time DNS.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">4</div>
+      <div class="how-title">Content scan on hits</div>
+      <div class="how-desc">When a variation is live, we fetch and analyze the page for phishing indicators and brand mentions.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">5</div>
+      <div class="how-title">Instant email alert</div>
+      <div class="how-desc">You get an alert the same day with the domain, what we found, and steps to get it taken down.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Alert preview -->
+<section class="section" style="text-align:center;">
+  <div class="section-title">Sample alert</div>
+  <div class="section-head">Know exactly what we found</div>
+  <p class="section-sub" style="margin:0 auto 32px;">Every alert shows the suspicious domain, what's on it, and what to do next.</p>
+  <div class="alert-preview">
+    <div class="alert-subject">📧 Subject: <strong>🚨 BrandGuard Alert — 1 suspicious lookalike for acmecorp.com</strong></div>
+    <div class="alert-row">
+      <span class="alert-badge badge-red">🚨 Suspicious</span>
+      <span style="color:var(--text);font-weight:600;">acmecorp-login.com</span>
+      <span style="font-size:.75rem;color:var(--dim);margin-left:auto;">serving · mentions brand · login form</span>
+    </div>
+    <div class="alert-row">
+      <span class="alert-badge badge-yellow">⚠️ Active</span>
+      <span style="color:var(--muted);">acmecorpp.com</span>
+      <span style="font-size:.75rem;color:var(--dim);margin-left:auto;">serving content · no brand indicators</span>
+    </div>
+    <div class="alert-row">
+      <span class="alert-badge badge-gray">Registered</span>
+      <span style="color:var(--dim);">acmecorp.net · acmecorp.io · acmecorp.app</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Pricing -->
+<section class="section">
+  <div class="section-title">Pricing</div>
+  <div class="section-head" style="text-align:center;">Simple, flat pricing</div>
+  <div style="margin-top:32px;">
+    <div class="price-card">
+      <div class="price-name">BrandGuard Standard</div>
+      <div class="price-amount"><sup>$</sup>14<sub>/mo</sub></div>
+      <ul class="price-features">
+        <li>100+ lookalike domain variations monitored</li>
+        <li>Daily DNS checks</li>
+        <li>Phishing content analysis on active domains</li>
+        <li>Instant email alerts when threats appear</li>
+        <li>Weekly summary report every Monday</li>
+        <li>New registration detection</li>
+        <li>Covered under EdgeIQ account dashboard</li>
+        <li>Cancel any time — no contracts</li>
+      </ul>
+      <button class="price-btn" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Start protecting my brand →</button>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section class="section">
+  <div class="section-title">FAQ</div>
+  <div class="section-head">Common questions</div>
+  <div class="faq-list" style="margin-top:28px;">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What domains does BrandGuard monitor? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">BrandGuard monitors 100+ automatically generated variations of your domain: typosquatting (one-char adds/deletes/transpositions), TLD swaps (.net, .org, .io, .co, .app, and more), homoglyph substitutions, and brand-squatting combos with common words like login, secure, verify, support, and official.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How quickly will I be alerted? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">BrandGuard runs daily at 7:00 AM UTC. If a new lookalike domain goes live overnight, you'll know by morning. For domains that turn up phishing content, alerts are sent the same day as detection.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What do I do when a suspicious domain is found? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Your alert email includes the registrar information and suggested next steps: take a screenshot → file a UDRP complaint with ICANN → submit an abuse report to the registrar → consider a DMCA takedown if your content is being copied. For active phishing, also report to Google Safe Browsing and Netcraft.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does BrandGuard take domains down for me? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Not automatically — takedowns require legal processes that vary by registrar and jurisdiction. BrandGuard detects the threat and gives you everything you need to act fast. We include the domain, registrar, and step-by-step takedown guidance in every alert.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I monitor multiple domains? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Each BrandGuard subscription covers one domain at $14/mo. For multiple domains, sign up once per domain. MSP customers on the EdgeIQ MSP Essentials plan get BrandGuard bundled for all 10 client seats.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Will I get false positives? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Registered-but-inactive domains (parked pages) are flagged as "Registered" — not as threats. Only domains actively serving content with phishing indicators are flagged "Suspicious." You can always review the full list in your weekly summary to decide what to act on.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do I cancel? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Log in to your <a href="/account/" style="color:var(--pink);">EdgeIQ account</a>, navigate to BrandGuard, and click Cancel Subscription. You can also email <a href="mailto:support@edgeiqlabs.com" style="color:var(--pink);">support@edgeiqlabs.com</a> and we'll cancel within one business day.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA strip -->
+<div class="cta-strip">
+  <h2>Your brand is worth protecting</h2>
+  <p>It takes attackers minutes to register a lookalike. BrandGuard makes sure you know first.</p>
+  <button class="price-btn" style="max-width:320px;margin:0 auto;display:block;" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Start BrandGuard — $14/mo →</button>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/products/">All Tools</a> · <a href="/compliance/">Compliance</a> · <a href="/pulse/">Pulse</a> · <a href="/account/">My Account</a> · <a href="/privacy.html">Privacy</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+
+<script>
+// ── Payment link (set after creating Stripe product) ─────────────────────────
+// TODO: Replace with real Stripe payment link once created
+// Run: node create-stripe-products.js  OR  create manually at dashboard.stripe.com
+var BRANDGUARD_PAYMENT_LINK = 'https://buy.stripe.com/BRANDGUARD_LINK_PLACEHOLDER';
+
+function startBrandGuard() {
+  var email  = document.getElementById('bg-email').value.trim();
+  var domain = document.getElementById('bg-domain').value.trim()
+    .toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('bg-email').style.borderColor = '#ff6b6b';
+    setTimeout(function() { document.getElementById('bg-email').style.borderColor = ''; }, 1600);
+    return;
+  }
+  if (!domain || !/^[a-z0-9][a-z0-9\-\.]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
+    document.getElementById('bg-domain').style.borderColor = '#ff6b6b';
+    setTimeout(function() { document.getElementById('bg-domain').style.borderColor = ''; }, 1600);
+    return;
+  }
+
+  sessionStorage.setItem('brandguard_pending', JSON.stringify({ email: email, domain: domain }));
+  var link = BRANDGUARD_PAYMENT_LINK +
+    '?prefilled_email=' + encodeURIComponent(email) +
+    '&client_reference_id=' + encodeURIComponent(domain);
+  window.location.href = link;
+}
+
+document.getElementById('bg-email').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('bg-domain').focus(); });
+document.getElementById('bg-domain').addEventListener('keydown', function(e) { if (e.key === 'Enter') startBrandGuard(); });
+
+function toggleFaq(el) {
+  var item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+function toggleMobileMenu() {
+  document.getElementById('nav-hamburger').classList.toggle('open');
+  document.getElementById('nav-mobile-menu').classList.toggle('open');
+}
+</script>
+</body>
+</html>

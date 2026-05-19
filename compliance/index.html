@@ -281,19 +281,45 @@
 
     <div class="plans-card" id="plans">
       <div class="sidebar-title">Automated Monitoring</div>
-      <div style="background:rgba(61,225,158,0.06);border:1px solid rgba(61,225,158,0.25);border-radius:8px;padding:14px;margin-bottom:14px;">
-        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">✓ Live scans active</p>
-        <p style="font-size:12px;color:var(--muted);line-height:1.55;margin:0;">Every scan runs real-time DNS lookups and HTTP header checks against your domain. Results reflect your domain's actual posture right now — no sample data.</p>
+      <div style="background:rgba(61,225,158,0.06);border:1px solid rgba(61,225,158,0.25);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">✓ Live scans active</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0;">Real-time DNS + HTTP checks on every scan — no sample data.</p>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Get notified when <strong style="color:var(--text);">automated weekly monitoring</strong> launches — we'll email you when it's ready.</p>
-      <form id="compliance-waitlist-form" onsubmit="submitComplianceWaitlist(event)">
-        <input type="email" id="compliance-waitlist-email" placeholder="you@company.com" required
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px;">
-        <button type="submit" style="width:100%;background:var(--blue);color:#071018;font-weight:700;font-size:13px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;">
-          Notify me when ready →
-        </button>
-      </form>
-      <div id="compliance-waitlist-confirm" style="display:none;font-size:12px;color:var(--green);margin-top:8px;text-align:center;">✓ You're on the list — we'll email you when live monitoring launches.</div>
+      <div class="plan-tier">
+        <div class="plan-tier-name">Free</div>
+        <div class="plan-tier-price">$0 <span>/ forever</span></div>
+        <ul class="plan-tier-features">
+          <li>On-demand scans anytime</li>
+          <li>8 SOC 2 controls</li>
+          <li>HIPAA &amp; PCI views</li>
+          <li class="no">No weekly email digest</li>
+          <li class="no">No score trend tracking</li>
+        </ul>
+        <a href="#scan" class="plan-tier-btn primary" onclick="document.getElementById('domainInput').focus();return false;">Run Free Scan →</a>
+      </div>
+      <div class="plan-tier featured">
+        <div class="plan-tier-name" style="color:var(--green);">Pro <span style="font-size:11px;font-weight:400;color:var(--muted);">— $9/mo</span></div>
+        <div class="plan-tier-price">$9 <span>/ month</span></div>
+        <ul class="plan-tier-features">
+          <li>Everything in Free</li>
+          <li>Weekly scan every Monday</li>
+          <li>Email digest with grade + diff</li>
+          <li>Score trend &amp; drop alerts</li>
+        </ul>
+        <form id="pro-signup-form" onsubmit="startProSignup(event)" style="margin-top:12px;">
+          <input type="email" id="pro-email" placeholder="you@company.com" required
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <input type="text" id="pro-domain" placeholder="yourdomain.com" required
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <button type="submit" id="pro-submit-btn"
+            style="width:100%;background:var(--green);color:#071018;font-weight:700;font-size:12px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;">
+            Start Weekly Monitoring →
+          </button>
+        </form>
+        <div id="pro-signup-msg" style="display:none;font-size:11px;margin-top:8px;text-align:center;line-height:1.4;"></div>
+      </div>
     </div>
 
     <div class="sidebar-card">
@@ -611,22 +637,32 @@ if (urlDomain) {
 }
 </script>
 <script>
-async function submitComplianceWaitlist(e) {
+var COMPLIANCE_PRO_LINK = 'https://buy.stripe.com/COMPLIANCE_PRO_LINK_PLACEHOLDER';
+
+async function startProSignup(e) {
   e.preventDefault();
-  var email = document.getElementById('compliance-waitlist-email').value.trim();
-  if (!email) return;
-  var btn = e.target.querySelector('button');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  var email  = document.getElementById('pro-email').value.trim();
+  var domain = document.getElementById('pro-domain').value.trim()
+                  .toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  var btn = document.getElementById('pro-submit-btn');
+  var msg = document.getElementById('pro-signup-msg');
+  if (!email || !domain) return;
+  btn.disabled = true;
+  btn.textContent = 'Redirecting…';
+  msg.style.display = 'none';
   try {
-    // Store in Pulse KV via the free signup endpoint (reuses existing infrastructure)
-    await fetch('/api/pulse-signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, domain: 'compliance-waitlist', plan: 'free' }),
-    });
-  } catch (x) {}
-  document.getElementById('compliance-waitlist-form').style.display = 'none';
-  document.getElementById('compliance-waitlist-confirm').style.display = 'block';
+    sessionStorage.setItem('compliance_pending', JSON.stringify({ email: email, domain: domain, plan: 'pro' }));
+    var url = COMPLIANCE_PRO_LINK
+      + '?prefilled_email=' + encodeURIComponent(email)
+      + '&client_reference_id=' + encodeURIComponent(domain);
+    window.location.href = url;
+  } catch (err) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Something went wrong — please try again.';
+    msg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Start Weekly Monitoring →';
+  }
 }
 
 function toggleMobileMenu() {

@@ -97,11 +97,13 @@ export async function onRequestGet({ request, env }) {
   const siteUrl = env.SITE_URL || 'https://edgeiqlabs.com';
 
   // Fetch all subscriptions for this email in parallel
-  const [pulseList, shieldList, vendorRaw, mspRaw] = await Promise.all([
+  const [pulseList, shieldList, vendorRaw, mspRaw, complianceList, brandguardList] = await Promise.all([
     env.PULSE_KV.list({ prefix: `sub:${email}:` }),
     env.PULSE_KV.list({ prefix: `shield:${email}:` }),
     fetchKvJson(env, `vendor:${email}`),
     fetchKvJson(env, `msp:${email}`),
+    env.PULSE_KV.list({ prefix: `compliance:${email}:` }),
+    env.PULSE_KV.list({ prefix: `brandguard:${email}:` }),
   ]);
 
   // Fetch full subscriber records for Pulse
@@ -167,6 +169,42 @@ export async function onRequestGet({ request, env }) {
     created_at: mspRaw.created_at,
   } : null;
 
+  // Compliance Pro (one record per domain)
+  const complianceRecords = await Promise.all(
+    complianceList.keys.map(async k => {
+      const rec = await fetchKvJson(env, k.name);
+      if (!rec) return null;
+      return {
+        domain:       rec.domain,
+        plan:         rec.plan || 'free',
+        active:       rec.active !== false,
+        created_at:   rec.created_at,
+        last_scan_at: rec.last_scan_at,
+        last_score:   rec.last_score ?? null,
+        last_grade:   rec.last_grade ?? null,
+        scan_count:   rec.scan_count || 0,
+      };
+    })
+  ).then(r => r.filter(Boolean));
+
+  // BrandGuard (one record per domain)
+  const brandguardRecords = await Promise.all(
+    brandguardList.keys.map(async k => {
+      const rec = await fetchKvJson(env, k.name);
+      if (!rec) return null;
+      return {
+        domain:           rec.domain,
+        plan:             rec.plan || 'standard',
+        active:           rec.active !== false,
+        created_at:       rec.created_at,
+        last_scan_at:     rec.last_scan_at,
+        known_active:     rec.known_active || [],
+        known_suspicious: rec.known_suspicious || [],
+        scan_count:       rec.scan_count || 0,
+      };
+    })
+  ).then(r => r.filter(Boolean));
+
   // Try to create a Stripe billing portal URL (best-effort)
   const portalUrl = await getStripePortalUrl(env, email, `${siteUrl}/account/`);
 
@@ -178,6 +216,8 @@ export async function onRequestGet({ request, env }) {
       inbox_shield: shieldRecords,
       vendor_watch: vendorRecord,
       msp: mspRecord,
+      compliance: complianceRecords,
+      brandguard: brandguardRecords,
     },
     billing_portal_url: portalUrl,
     site_url: siteUrl,
