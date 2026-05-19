@@ -271,6 +271,8 @@
     <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
     <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
     <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;font-weight:700;">🏢 Workspace</a>
   </div>
 </div>
 <div class="nav-mobile-menu" id="nav-mobile-menu">
@@ -286,11 +288,13 @@
   <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
   <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
   <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
-  <a class="mob-cta" href="/">Get Started →</a>
+  <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  <a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a>
+  <a class="mob-cta" href="/workspace-posture/">Start for $19/mo →</a>
 </div>
 
 <div class="hero">
-  <div class="coming-badge"><span class="coming-dot"></span> Coming Soon · Join Waitlist</div>
+  <div class="coming-badge"><span class="coming-dot" style="background:#70f0a8;box-shadow:0 0 6px #70f0a8;"></span> Early Access · 50% Off for Life</div>
   <h1>Your M365 and Google Workspace have<br><em>security gaps you can't see</em></h1>
   <p>A read-only OAuth scan of your tenant reveals misconfigured MFA policies, overprivileged external sharing, stale admin accounts, and more — in minutes, not weeks.</p>
 
@@ -306,12 +310,12 @@
   </div>
 </div>
 
-<!-- WAITLIST -->
+<!-- CHECKOUT -->
 <div class="waitlist-wrap" id="waitlist">
-  <h2>Join the waitlist — first 50 get 50% off</h2>
-  <p>We're building this now. Drop your email and we'll notify you the moment it's ready — and lock in your early adopter rate.</p>
+  <h2>Get started — 50% off for early subscribers</h2>
+  <p>Early access subscribers lock in <strong style="color:var(--accent2);">$19/mo forever</strong> — price goes to $39/mo once we're out of early access. We'll onboard you within 24 hours of signup.</p>
 
-  <form id="waitlist-form" onsubmit="submitWaitlist(event)">
+  <form id="checkout-form" onsubmit="startCheckout(event)">
     <div class="field-row">
       <div class="field">
         <label for="wl-email">Work email</label>
@@ -319,7 +323,7 @@
       </div>
       <div class="field">
         <label for="wl-domain">Your domain</label>
-        <input type="text" id="wl-domain" placeholder="company.com" />
+        <input type="text" id="wl-domain" placeholder="company.com" required />
       </div>
     </div>
     <div class="field">
@@ -330,8 +334,8 @@
         <option value="both">Both M365 and Google Workspace</option>
       </select>
     </div>
-    <button class="submit-btn" type="submit" id="wl-btn">Reserve my spot →</button>
-    <p class="form-note">No credit card. No spam. One email when it launches.</p>
+    <button class="submit-btn" type="submit" id="wl-btn">Start for $19/mo →</button>
+    <p class="form-note">Secure checkout via Stripe · Cancel anytime · No contract</p>
   </form>
   <div id="form-status"></div>
 </div>
@@ -474,9 +478,10 @@
   <div class="pricing-box">
     <div class="price-left">
       <h3>Workspace Posture Pro</h3>
-      <div class="price-big">$39 <span>/mo</span></div>
+      <div class="price-big">$19 <span>/mo</span></div>
+      <p style="font-size:0.8rem;color:#4a6080;margin-top:4px;text-decoration:line-through;">$39/mo after early access</p>
       <p class="price-desc">Monthly automated scans of your M365 or Google Workspace tenant. Cancel any time — no contract, no minimum.</p>
-      <p style="font-size:0.78rem;color:var(--accent2);margin-top:14px;font-weight:600;">🎯 Early adopters get 50% off for life — join the waitlist above.</p>
+      <p style="font-size:0.78rem;color:var(--ok);margin-top:14px;font-weight:600;">✓ Early access rate locked in for life.</p>
     </div>
     <div class="price-right">
       <ul>
@@ -513,12 +518,12 @@
       <div class="faq-a">Yes. Connecting an OAuth app to M365 or Google Workspace requires a Global Admin (M365) or Super Admin (GWS) to authorize it. This is standard for any third-party integration — the same flow as connecting Slack, Zoom, or DocuSign.</div>
     </div>
     <div class="faq-item">
-      <div class="faq-q">When will this be available?</div>
-      <div class="faq-a">We're targeting a beta in Q3 2026. Waitlist signups get first access and a permanent 50% discount for being early. We'll send one email when it's ready — no marketing drip, no upsell sequence.</div>
+      <div class="faq-q">What happens after I subscribe?</div>
+      <div class="faq-a">We'll email you within 24 hours with a secure OAuth connect link for your platform. You authorize read-only access, we run your first scan, and your full report lands in your inbox. No IT ticket needed — the consent flow takes about 2 minutes.</div>
     </div>
     <div class="faq-item">
-      <div class="faq-q">Does $39/mo cover both M365 and Google Workspace?</div>
-      <div class="faq-a">Yes. One subscription covers one tenant. If you run both M365 and Google Workspace, you'd have two subscriptions at $39/mo each — or $78/mo total. Early adopter pricing locks in at 50% off.</div>
+      <div class="faq-q">Does $19/mo cover both M365 and Google Workspace?</div>
+      <div class="faq-a">One subscription covers one tenant. If you run both M365 and Google Workspace, you'd need two subscriptions — $38/mo total at the early access rate, versus $78/mo at standard pricing. The early access rate is locked in for life on each subscription.</div>
     </div>
   </div>
 </section>
@@ -533,39 +538,30 @@
     q.addEventListener('click', function() { q.closest('.faq-item').classList.toggle('open'); });
   });
 
-  window.submitWaitlist = function(e) {
-    e.preventDefault();
-    var email = document.getElementById('wl-email').value.trim();
-    var domain = document.getElementById('wl-domain').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
-    var platform = document.getElementById('wl-platform').value;
-    var btn = document.getElementById('wl-btn');
-    var status = document.getElementById('form-status');
+  var WP_PAYMENT_LINK = 'https://buy.stripe.com/aFa9AVdyj6d7g6EeZ27wA3z';
 
-    btn.disabled = true; btn.textContent = 'Joining…';
+  window.startCheckout = function(e) {
+    e.preventDefault();
+    var email    = document.getElementById('wl-email').value.trim();
+    var domain   = document.getElementById('wl-domain').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+    var platform = document.getElementById('wl-platform').value;
+    var btn      = document.getElementById('wl-btn');
+    var status   = document.getElementById('form-status');
+
+    if (!email || !domain) return;
+    btn.disabled = true; btn.textContent = 'Redirecting to checkout…';
     status.style.display = 'none';
 
-    fetch('/api/workspace-posture-waitlist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, domain: domain, platform: platform }),
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      btn.disabled = false; btn.textContent = 'Reserve my spot →';
-      if (data.ok) {
-        document.getElementById('waitlist-form').style.display = 'none';
-        status.className = 'ok'; status.style.display = 'block';
-        status.textContent = "You're on the list ✓ We'll email you at " + email + " when it's ready.";
-      } else {
-        status.className = 'err'; status.style.display = 'block';
-        status.textContent = data.error || 'Something went wrong — try again.';
-      }
-    })
-    .catch(function() {
-      btn.disabled = false; btn.textContent = 'Reserve my spot →';
+    try {
+      sessionStorage.setItem('wp_pending', JSON.stringify({ email: email, domain: domain, platform: platform }));
+      window.location.href = WP_PAYMENT_LINK
+        + '?prefilled_email=' + encodeURIComponent(email)
+        + '&client_reference_id=' + encodeURIComponent(domain);
+    } catch(err) {
+      btn.disabled = false; btn.textContent = 'Start for $19/mo →';
       status.className = 'err'; status.style.display = 'block';
-      status.textContent = 'Network error — please try again.';
-    });
+      status.textContent = 'Something went wrong — please try again.';
+    }
   };
 </script>
 <script>
