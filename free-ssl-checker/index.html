@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free SSL Certificate Checker — Check HTTPS & Security Headers | EdgeIQ Labs</title>
+  <meta name="description" content="Check if your website's SSL is working, whether HTTPS is enforced, HSTS is configured, and which security headers are missing — free, instant, no sign-up."/>
+  <meta property="og:title" content="Free SSL Certificate Checker — HTTPS & Security Headers"/>
+  <meta property="og:description" content="Check SSL, HTTPS redirect, HSTS, and security headers for any domain — free and instant."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-ssl-checker/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-ssl-checker/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free SSL Certificate Checker","url":"https://edgeiqlabs.com/free-ssl-checker/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What is HSTS?","acceptedAnswer":{"@type":"Answer","text":"HSTS (HTTP Strict Transport Security) is a response header that tells browsers to always use HTTPS for your domain — even if the user types http://. This prevents downgrade attacks and accidental insecure connections."}},
+      {"@type":"Question","name":"What security headers should my website have?","acceptedAnswer":{"@type":"Answer","text":"The most important security headers are: Strict-Transport-Security (HSTS), Content-Security-Policy (CSP), X-Frame-Options (prevents clickjacking), X-Content-Type-Options (prevents MIME sniffing), and Referrer-Policy."}},
+      {"@type":"Question","name":"Why does my SSL certificate checker show a warning?","acceptedAnswer":{"@type":"Answer","text":"Common SSL issues include: expired certificate, HTTP-to-HTTPS redirect not configured, HSTS not set, or mixed content (HTTP resources loaded on an HTTPS page). Each has a different fix."}},
+      {"@type":"Question","name":"How often should I check my SSL certificate?","acceptedAnswer":{"@type":"Answer","text":"Check it at least monthly. SSL certificates expire (typically after 90 days for Let's Encrypt, or 1 year for paid certs). Pulse Pro monitors your SSL weekly and alerts you 30 days before expiry."}}
+    ]}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .container{max-width:820px;margin:0 auto;padding:0 20px;}
+    .hero{padding:56px 0 40px;text-align:center;}
+    .hero-eyebrow{display:inline-block;background:rgba(61,217,255,0.1);border:1px solid rgba(61,217,255,0.25);color:var(--accent);font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:18px;}
+    .hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.15;margin-bottom:14px;color:#fff;}
+    .hero p{font-size:1.05rem;color:var(--muted);max-width:560px;margin:0 auto 32px;}
+    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:620px;margin:0 auto 16px;}
+    .tool-row{display:flex;gap:10px;flex-wrap:wrap;}
+    .tool-input{flex:1;min-width:200px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:13px 16px;font-size:1rem;font-family:inherit;outline:none;transition:border-color 0.2s;}
+    .tool-input:focus{border-color:var(--accent);}
+    .tool-btn{background:var(--accent);color:#071018;font-weight:700;font-size:1rem;padding:13px 24px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;transition:opacity 0.2s;font-family:inherit;}
+    .tool-btn:hover{opacity:0.87;}
+    .tool-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    #results{display:none;padding-bottom:60px;}
+    .grade-hero{text-align:center;padding:28px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;}
+    .grade-circle{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;font-size:2rem;font-weight:900;border:3px solid;}
+    .grade-A{background:rgba(112,240,168,0.1);border-color:#70f0a8;color:#70f0a8;}
+    .grade-B{background:rgba(61,217,255,0.1);border-color:var(--accent);color:var(--accent);}
+    .grade-C{background:rgba(255,179,71,0.1);border-color:#ffb347;color:#ffb347;}
+    .grade-D{background:rgba(255,140,66,0.1);border-color:#ff8c42;color:#ff8c42;}
+    .grade-F{background:rgba(255,107,107,0.1);border-color:#ff6b6b;color:#ff6b6b;}
+    .grade-label{font-size:0.85rem;color:var(--muted);margin-top:10px;}
+    .checks-list{list-style:none;padding:0;margin:0;}
+    .check-row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+    .check-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+    .check-body{flex:1;}
+    .check-name{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:3px;}
+    .check-detail{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+    .check-value{font-family:'Fira Mono',monospace;font-size:0.78rem;background:#0d1620;border:1px solid #1e3347;color:#7dd3fc;padding:3px 8px;border-radius:5px;margin-top:4px;display:inline-block;word-break:break-all;}
+    .section{padding:48px 0 0;}
+    h2{font-size:1.35rem;font-weight:800;margin-bottom:14px;color:#d4e6ff;}
+    p{color:#b8cce0;margin-bottom:14px;font-size:0.96rem;}
+    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.88em;font-family:'Fira Mono',monospace;}
+    .header-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0;}
+    .header-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+    .header-name{font-size:0.78rem;font-weight:700;font-family:monospace;margin-bottom:6px;color:var(--accent);}
+    .header-desc{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+    .faq{padding:48px 0;}
+    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .faq-q{font-size:0.97rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .faq-q::after{content:"＋";color:var(--accent);font-size:1.1rem;flex-shrink:0;}
+    .faq-q.open::after{content:"−";}
+    .faq-a{display:none;padding-top:10px;font-size:0.9rem;color:var(--muted);line-height:1.65;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:0.95rem;}
+    .cta-btn:hover{opacity:0.87;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.83rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(61,217,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/blog/">Blog</a>
+      <a href="/dashboard/" class="nav-cta">Free Full Scan →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool</div>
+    <h1>Free SSL &amp; Security Header Checker</h1>
+    <p>Check if HTTPS is properly configured, HSTS is active, and which security headers are missing from your website — free, no sign-up required.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-row">
+      <input type="text" id="domain-input" class="tool-input" placeholder="yourdomain.com" autocomplete="off" autocapitalize="off" spellcheck="false"/>
+      <button class="tool-btn" id="check-btn" onclick="runCheck()">Check SSL →</button>
+    </div>
+    <p style="font-size:0.78rem;color:#4a6080;margin-top:10px;margin-bottom:0;">Enter just the domain — e.g. <code style="font-size:0.78rem;">company.com</code>, not the full URL.</p>
+  </div>
+
+  <div id="results">
+    <div id="grade-section" class="grade-hero"></div>
+    <ul class="checks-list" id="checks-list"></ul>
+    <div id="leaks-section"></div>
+    <div id="pulse-note" style="display:none;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:14px 18px;margin-top:16px;font-size:0.85rem;color:var(--muted);">
+      💡 <strong style="color:var(--accent);">Want SSL expiry date, cert grade (A/A+/B/F), issuer, and chain validation?</strong> <a href="/pulse/" style="color:var(--accent);">Pulse Pro</a> runs weekly SSL certificate checks and alerts you 30 days before expiry.
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section">
+    <h2>Security headers explained</h2>
+    <p>These HTTP response headers tell browsers how to handle your site's content. Missing headers are one of the most common and easily fixed security gaps.</p>
+    <div class="header-grid">
+      <div class="header-card"><div class="header-name">Strict-Transport-Security</div><div class="header-desc">Forces browsers to always use HTTPS, even if the user types http://. Prevents SSL stripping attacks. Must have max-age ≥ 31536000 (1 year).</div></div>
+      <div class="header-card"><div class="header-name">Content-Security-Policy</div><div class="header-desc">Controls which resources the browser is allowed to load. Prevents XSS and data injection attacks. One of the hardest to configure correctly, but very high value.</div></div>
+      <div class="header-card"><div class="header-name">X-Frame-Options</div><div class="header-desc">Prevents your pages from being embedded in iframes on other sites. Blocks clickjacking attacks. Set to DENY or SAMEORIGIN.</div></div>
+      <div class="header-card"><div class="header-name">X-Content-Type-Options</div><div class="header-desc">Tells browsers not to guess the MIME type of responses. Prevents MIME sniffing attacks. Always set to <code>nosniff</code>.</div></div>
+      <div class="header-card"><div class="header-name">Referrer-Policy</div><div class="header-desc">Controls what URL information is sent in the Referer header. Protects user privacy and prevents leaking sensitive URL parameters to third parties.</div></div>
+      <div class="header-card"><div class="header-name">Permissions-Policy</div><div class="header-desc">Controls which browser features (camera, microphone, geolocation, etc.) the page can use. Limits attack surface if your site is compromised or serves third-party scripts.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Why HTTPS enforcement matters beyond having a certificate</h2>
+    <p>Many sites have an SSL certificate but still have HTTPS misconfiguration issues:</p>
+    <ul style="margin:0 0 16px 20px;color:#b8cce0;font-size:0.95rem;">
+      <li style="margin-bottom:8px;"><strong>No HTTP→HTTPS redirect:</strong> Users who type <code>http://yourdomain.com</code> are served over an unencrypted connection, exposing their traffic to network interception.</li>
+      <li style="margin-bottom:8px;"><strong>No HSTS:</strong> Even with a redirect, an attacker on the same network can intercept the initial HTTP request before the redirect. HSTS caches the HTTPS preference in the browser.</li>
+      <li style="margin-bottom:8px;"><strong>Short HSTS max-age:</strong> <code>max-age=300</code> means the browser forgets HSTS preference after 5 minutes. Standard is 1 year (31536000 seconds) or more.</li>
+      <li style="margin-bottom:8px;"><strong>Server header leaking version info:</strong> A <code>Server: Apache/2.4.41</code> header tells attackers exactly which version to look up for known CVEs.</li>
+    </ul>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is HSTS and why does it matter?</div><div class="faq-a">HSTS (HTTP Strict Transport Security) is a header that tells browsers to always connect to your site over HTTPS — even if the user types http://. Without it, an attacker on the same network can intercept the initial HTTP request before the browser is redirected to HTTPS (an SSL stripping attack). HSTS caches the HTTPS-only preference in the browser for the duration of max-age.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What security headers should every website have?</div><div class="faq-a">At minimum: <strong>Strict-Transport-Security</strong> (with max-age ≥ 31536000), <strong>X-Frame-Options</strong> (DENY or SAMEORIGIN), and <strong>X-Content-Type-Options</strong> (nosniff). Ideally also: Content-Security-Policy, Referrer-Policy, and Permissions-Policy. These add defence-in-depth against XSS, clickjacking, and MIME sniffing.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why doesn't this checker show my certificate expiry date?</div><div class="faq-a">Certificate expiry date and full SSL grade (including cipher suites and protocol versions) require a deeper TLS handshake inspection that can't be done with a simple HTTP check. Pulse Pro performs full SSL certificate checks weekly, including expiry date, issuer chain, and protocol grade, and alerts you 30 days before your cert expires.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">My site shows HTTPS but this checker says HTTP redirect is missing — why?</div><div class="faq-a">Your site may serve HTTPS correctly when accessed directly, but not redirect HTTP traffic to HTTPS. A user typing http://yourdomain.com will be served over plain HTTP. The fix: add a permanent redirect (301) from http:// to https:// at your web server or CDN level.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How often should I check my SSL configuration?</div><div class="faq-a">At minimum after any infrastructure change, and monthly as a routine check. SSL certificates expire (Let's Encrypt certs are 90 days, paid certs typically 1 year). A missed expiry shows a security warning to every visitor. Pulse Pro monitors SSL weekly and alerts you 30 days before expiry.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Get weekly SSL monitoring + certificate expiry alerts</h3>
+    <p>Pulse Pro checks your SSL certificate, HTTP headers, DNS health, and subdomain exposure every Monday — and emails you when anything changes or is about to expire.</p>
+    <a href="/pulse/" class="cta-btn">Start with Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/free-dmarc-checker/">DMARC Checker</a>
+    <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+  </div>
+</footer>
+
+<script>
+function runCheck(){
+  var input=document.getElementById('domain-input');
+  var domain=input.value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(!domain||domain.indexOf('.')<0){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Checking…';
+  document.getElementById('results').style.display='none';
+  history.replaceState(null,'','/free-ssl-checker/?domain='+encodeURIComponent(domain));
+  fetch('/api/ssl-check?domain='+encodeURIComponent(domain))
+    .then(function(r){return r.json();})
+    .then(function(d){renderResults(d);})
+    .catch(function(){btn.disabled=false;btn.textContent='Check SSL →';alert('Check failed — please try again.');});
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderResults(d){
+  var btn=document.getElementById('check-btn');
+  btn.disabled=false;btn.textContent='Check SSL →';
+  var grade=d.grade||'F';
+  document.getElementById('grade-section').innerHTML=
+    '<div class="grade-circle grade-'+grade+'">'+grade+'</div>'+
+    '<div class="grade-label">Security score: '+d.score+'% &nbsp;·&nbsp; '+esc(d.domain)+'</div>';
+
+  var checks=[];
+  if(d.https){
+    checks.push({ok:d.https.accessible,name:'HTTPS accessible',detail:d.https.accessible?'Site is reachable over HTTPS (status '+d.https.status+')':'Site is not reachable over HTTPS — this is a critical issue.'});
+    checks.push({ok:d.https.redirects_to_https,name:'HTTP→HTTPS redirect',detail:d.https.redirects_to_https?'Plain HTTP requests are automatically redirected to HTTPS.':'HTTP requests are not redirected to HTTPS. Users on http:// get an unencrypted connection.'});
+  }
+  if(d.hsts){
+    var hstsDetail=d.hsts.present?('HSTS is active. max-age: '+(d.hsts.max_age?d.hsts.max_age.toLocaleString()+' seconds':'unknown')+(d.hsts.good?'  ✓ (≥1 year)':' — recommend setting to at least 31536000')):'HSTS header is missing. Browsers won\'t cache the HTTPS preference.';
+    checks.push({ok:d.hsts.present&&d.hsts.good,warn:d.hsts.present&&!d.hsts.good,name:'HSTS',detail:hstsDetail,value:d.hsts.header||null});
+  }
+  var headerChecks=[
+    {key:'content-security-policy',name:'Content-Security-Policy'},
+    {key:'x-frame-options',name:'X-Frame-Options (clickjacking)'},
+    {key:'x-content-type-options',name:'X-Content-Type-Options'},
+    {key:'referrer-policy',name:'Referrer-Policy'},
+    {key:'permissions-policy',name:'Permissions-Policy'},
+  ];
+  if(d.headers){
+    headerChecks.forEach(function(h){
+      var hd=d.headers[h.key];
+      checks.push({ok:hd&&hd.present,name:h.name,detail:hd&&hd.present?'Header is present.':'Header is missing.',value:hd&&hd.value?hd.value:null});
+    });
+  }
+  document.getElementById('checks-list').innerHTML=checks.map(function(c){
+    var icon=c.ok?'✅':c.warn?'⚠️':'❌';
+    return'<li class="check-row"><div class="check-icon">'+icon+'</div><div class="check-body"><div class="check-name">'+esc(c.name)+'</div><div class="check-detail">'+esc(c.detail)+'</div>'+(c.value?'<div class="check-value">'+esc(c.value)+'</div>':'')+'</div></li>';
+  }).join('');
+
+  if(d.leaks&&Object.keys(d.leaks).length){
+    var leakItems=Object.entries(d.leaks).map(function(kv){return'<li class="check-row"><div class="check-icon">⚠️</div><div class="check-body"><div class="check-name">'+esc(kv[0])+' header exposed</div><div class="check-detail">Exposes version info to attackers. Remove or sanitize this header.</div><div class="check-value">'+esc(kv[1])+'</div></div></li>';}).join('');
+    document.getElementById('leaks-section').innerHTML='<ul class="checks-list" style="margin-top:8px;">'+leakItems+'</ul>';
+  }
+  document.getElementById('pulse-note').style.display='block';
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+
+(function(){var p=new URLSearchParams(location.search),d=p.get('domain');if(d){document.getElementById('domain-input').value=d;runCheck();}})();
+document.getElementById('domain-input').addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});
+</script>
+</body>
+</html>
