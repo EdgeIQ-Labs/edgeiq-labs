@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Is Attack Surface Management? (And How to Do It for Free) — EdgeIQ Labs</title>
+  <meta name="description" content="Attack surface management explained: what it covers, why it matters for small teams, and how to get continuous visibility into your external attack surface without enterprise tooling." />
+  <meta property="og:title" content="What Is Attack Surface Management? (And How to Do It for Free)" />
+  <meta property="og:description" content="Attack surface management for small teams — what it is, what it covers, and how to do it without enterprise pricing." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/what-is-attack-surface-management.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="What Is Attack Surface Management? (And How to Do It for Free)" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/what-is-attack-surface-management.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is Attack Surface Management? (And How to Do It for Free)","description":"Attack surface management explained for small teams — what it covers and how to get continuous visibility without enterprise pricing.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .mob-cta{background:#3dd9ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
+    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
+    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
+    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
+    p,li{color:var(--muted);}
+    p{margin-bottom:16px;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:6px;}
+    strong{color:var(--text);}
+    .tag{display:inline-block;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
+    .asm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:20px 0;}
+    .asm-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+    .asm-card-icon{font-size:1.4rem;margin-bottom:8px;}
+    .asm-card-title{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+    .asm-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout.ok{border-left-color:#3de19e;}
+    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(61,217,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
+    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
+    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
+    footer a{color:#4a6080;text-decoration:none;}
+    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+      <div class="nav-links">
+        <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+        <a href="/dashboard/" class="nav-cta">Free Scan →</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+  <a href="/dashboard/" class="mob-cta">Free Scan →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Attack Surface</span><span class="tag">Security Monitoring</span><span class="tag">SMB</span></div>
+      <h1>What Is Attack Surface Management? (And How to Do It for Free)</h1>
+      <p class="lead">Enterprise ASM tools cost $30,000+/year and are built for security teams with 10 people. But the underlying concept — continuously knowing what you expose and whether it's secure — is something any small team can implement for close to nothing.</p>
+    </div>
+
+    <h2>What attack surface management actually means</h2>
+    <p>Your attack surface is everything an attacker can see and interact with from the outside: your websites, APIs, subdomains, email configuration, open ports, SSL certificates, and any exposed admin panels or cloud storage. Attack surface management (ASM) is the practice of continuously discovering, monitoring, and reducing this exposure.</p>
+    <p>The key word is <em>continuously</em>. A one-time penetration test is a point-in-time snapshot. Your attack surface changes every time you add a subdomain, renew an SSL certificate, change a DNS record, or deploy a new service. ASM is about staying current — knowing what you have and whether it's configured securely.</p>
+
+    <h2>What your attack surface includes</h2>
+    <div class="asm-grid">
+      <div class="asm-card"><div class="asm-card-icon">🌐</div><div class="asm-card-title">Web properties</div><div class="asm-card-desc">Your main domain, subdomains, staging environments, and any forgotten microsites</div></div>
+      <div class="asm-card"><div class="asm-card-icon">📜</div><div class="asm-card-title">SSL/TLS</div><div class="asm-card-desc">Certificate validity, expiry dates, weak cipher suites, and HSTS configuration</div></div>
+      <div class="asm-card"><div class="asm-card-icon">🔒</div><div class="asm-card-title">HTTP security headers</div><div class="asm-card-desc">CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy — each a defence layer</div></div>
+      <div class="asm-card"><div class="asm-card-icon">📧</div><div class="asm-card-title">Email security</div><div class="asm-card-desc">SPF, DKIM, DMARC configuration and enforcement policy</div></div>
+      <div class="asm-card"><div class="asm-card-icon">🔍</div><div class="asm-card-title">DNS records</div><div class="asm-card-desc">Zone transfers, dangling CNAME records, MX configuration</div></div>
+      <div class="asm-card"><div class="asm-card-icon">🚪</div><div class="asm-card-title">Open ports</div><div class="asm-card-desc">Exposed databases, admin panels, dev tools, or SSH/RDP accessible from the internet</div></div>
+    </div>
+
+    <h2>Why small teams ignore it (and why that's a mistake)</h2>
+    <p>Most small teams do a one-time security audit when something goes wrong, then go months or years without checking. In that time:</p>
+    <ul>
+      <li>SSL certificates expire and browsers show security warnings to customers</li>
+      <li>Staging subdomains get deployed and forgotten — often with weaker security config</li>
+      <li>A developer opens a port for testing and forgets to close it</li>
+      <li>SPF records get corrupted when adding a new marketing platform</li>
+      <li>DMARC policy gets weakened after a misconfigured email tool raises false positives</li>
+    </ul>
+    <p>None of these show up until an attacker finds them — or until a customer complains their browser is showing a certificate error. The cost of monitoring is near zero. The cost of a breach is not.</p>
+
+    <h2>The free ASM stack for small teams</h2>
+
+    <h3>1. External scan: SSL, headers, DNS, ports</h3>
+    <p>The EdgeIQ Dashboard runs a free scan against your domain that checks SSL grade and expiry, all major HTTP security headers, SPF/DMARC/MX records, and exposed ports. It's free and takes 30 seconds. Run it monthly at minimum — or set up automated weekly monitoring with Pulse.</p>
+
+    <h3>2. Subdomain discovery</h3>
+    <p>Most teams don't know all their subdomains. Certificate Transparency logs record every SSL certificate ever issued for your domain — searching them via <code>crt.sh</code> gives you a near-complete list of subdomains that have ever had a certificate. Do this quarterly.</p>
+
+    <h3>3. Email authentication</h3>
+    <p>Check your SPF, DKIM, and DMARC records with Inbox Shield. An A–F grade on each component tells you instantly whether your email domain is spoofable. This is a 2-minute check that most teams have never done.</p>
+
+    <h3>4. Brand monitoring</h3>
+    <p>Your external attack surface also includes what attackers build <em>about</em> you. Lookalike domains — typosquatted or homoglyph registrations of your domain — are used to phish your customers while looking like they come from you. BrandGuard monitors for these daily.</p>
+
+    <h3>5. Compliance posture</h3>
+    <p>If you're targeting SOC 2, HIPAA, or PCI compliance, the Compliance dashboard maps your external scan results to the relevant control framework — so you know which findings are compliance-relevant and which to prioritise.</p>
+
+    <div class="callout ok">
+      <strong>How often should you scan?</strong> Weekly automated scans for anything customer-facing. Monthly manual check of subdomain inventory. Quarterly review of DNS records and third-party integrations.
+    </div>
+
+    <h2>What enterprise ASM tools give you that free tools don't</h2>
+    <p>Enterprise tools like Censys, Runzero, and Axonius give you deeper internal network visibility, asset inventory for thousands of IPs, integration with SIEM/SOAR platforms, and dedicated analysts. If you have a SOC and more than a few hundred externally-facing assets, they're worth it.</p>
+    <p>For a team of under 50 people with a handful of domains and a standard SaaS stack, a free external scan tool + weekly automated monitoring covers 80% of what matters at 2% of the cost.</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">📬 Weekly attack surface digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Security monitoring tips, new threat techniques, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
+    </div>
+
+    <div class="cta-box">
+      <h2>Run a free attack surface scan right now</h2>
+      <p>The EdgeIQ Dashboard scans your domain for SSL issues, security header gaps, DNS misconfigurations, and open ports in under 30 seconds. Free, no account required.</p>
+      <a href="/dashboard/" class="cta-btn">Scan Your Domain Free →</a>
+      <p style="margin-top:10px;font-size:0.78rem;color:#4a6080;">No account required · results in 30 seconds</p>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/dashboard/">Dashboard</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})}).catch(function(){});}
+</script>
+</body>
+</html>

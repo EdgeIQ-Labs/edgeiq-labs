@@ -8,7 +8,7 @@
   </url>
   <url>
     <loc>https://edgeiqlabs.com/blog/</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -370,6 +370,42 @@
   <url>
     <loc>https://edgeiqlabs.com/blog/google-workspace-security-audit-checklist.html</loc>
     <lastmod>2026-05-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/pricing/</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/dmarc-reject-vs-quarantine.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/microsoft-365-account-compromised-signs.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/mfa-fatigue-attack-prevention.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/what-is-attack-surface-management.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/business-email-compromise-bec-prevention-2026.html</loc>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

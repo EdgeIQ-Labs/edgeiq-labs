@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Tell If Your Microsoft 365 Account Has Been Compromised — EdgeIQ Labs</title>
+  <meta name="description" content="7 signs your Microsoft 365 tenant has been compromised and exactly where to look in the admin centre. Plus a step-by-step response checklist." />
+  <meta property="og:title" content="How to Tell If Your Microsoft 365 Account Has Been Compromised" />
+  <meta property="og:description" content="7 signs your M365 tenant has been compromised and exactly where to look. Step-by-step response checklist included." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/microsoft-365-account-compromised-signs.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Tell If Your Microsoft 365 Account Has Been Compromised" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/microsoft-365-account-compromised-signs.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Tell If Your Microsoft 365 Account Has Been Compromised","description":"7 signs your M365 tenant has been compromised, where to look in the admin centre, and a step-by-step response checklist.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#4da6ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .mob-cta{background:#4da6ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
+    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
+    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
+    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
+    p,li{color:var(--muted);}
+    p{margin-bottom:16px;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:6px;}
+    strong{color:var(--text);}
+    .tag{display:inline-block;background:rgba(77,166,255,0.08);border:1px solid rgba(77,166,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.88em;background:rgba(77,166,255,0.08);padding:2px 5px;border-radius:4px;color:var(--accent);}
+    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout.danger{border-left-color:#ff6b7a;}
+    .callout.ok{border-left-color:#3de19e;}
+    .sign-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:16px 0;}
+    .sign-number{display:inline-block;background:rgba(255,107,122,0.15);color:#ff6b7a;font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:5px;margin-bottom:8px;}
+    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(77,166,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
+    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
+    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
+    footer a{color:#4a6080;text-decoration:none;}
+    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+      <div class="nav-links">
+        <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+        <a href="/workspace-posture/" class="nav-cta">Audit Your M365 →</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a>
+    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+  <a href="/workspace-posture/" class="mob-cta">Audit Your M365 →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">May 20, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">M365</span><span class="tag">Incident Response</span><span class="tag">Workspace Security</span></div>
+      <h1>How to Tell If Your Microsoft 365 Account Has Been Compromised</h1>
+      <p class="lead">M365 breaches often go undetected for weeks. Attackers set up quiet email forwarding rules, register OAuth apps, and slowly exfiltrate data while everything looks normal. Here's where to look and what to check right now.</p>
+    </div>
+
+    <h2>Why M365 compromises are easy to miss</h2>
+    <p>Unlike a ransomware attack that announces itself, most M365 account compromises are designed to be invisible. The attacker's goal is usually Business Email Compromise (BEC) — sitting in a mailbox and watching for invoices, payment requests, or sensitive conversations to exploit. They don't lock you out because that would end the access.</p>
+    <p>The most common attack paths are: password spray against accounts without MFA, phishing for session tokens (bypasses MFA entirely), and OAuth consent grant attacks where a malicious app gets read access to email and files.</p>
+
+    <h2>7 signs your M365 tenant has been compromised</h2>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 1</div>
+      <h3>Email forwarding rules you didn't create</h3>
+      <p>This is the most common indicator. Attackers create inbox rules that silently forward copies of all incoming mail — especially anything matching keywords like "invoice", "payment", "wire transfer" — to an external address. Check: <strong>Exchange Admin Center → Mail flow → Rules</strong> and individually check each compromised user's Outlook rules.</p>
+    </div>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 2</div>
+      <h3>Sign-ins from unexpected locations or IPs</h3>
+      <p>Go to <strong>Entra ID (Azure AD) → Sign-in logs</strong>. Filter by the user in question and look for sign-ins from countries you don't operate in, unusual ISPs, or sign-ins via legacy auth protocols (IMAP, POP3, SMTP AUTH). A single successful sign-in from an unusual country after a failed MFA prompt is a major red flag.</p>
+    </div>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 3</div>
+      <h3>OAuth apps with broad permissions</h3>
+      <p>Consent grant attacks are underreported. An attacker sends a link that grants a malicious app read access to mail, contacts, and files — and the user approves it thinking it's a legitimate tool. Check: <strong>Entra ID → Enterprise Applications → All applications</strong>. Look for apps with <code>Mail.Read</code>, <code>Files.Read.All</code>, or <code>Contacts.Read</code> permissions that were consented to recently.</p>
+    </div>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 4</div>
+      <h3>New or changed MFA methods</h3>
+      <p>Once attackers have temporary access (e.g. via session token theft), they often add a new authentication method — a different phone number or authenticator app — to maintain persistent access even after a password reset. Check: <strong>Entra ID → Users → Authentication methods</strong> for any recently added phone numbers or authenticator registrations.</p>
+    </div>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 5</div>
+      <h3>Sent items you don't recognise</h3>
+      <p>If the attacker is running a BEC campaign from the account, they'll be sending emails. They often delete these from Sent Items immediately, but check anyway. Also check <strong>Deleted Items</strong> and <strong>Recoverable Items</strong> — messages deleted by inbox rules often land in Recoverable Items for 14 days before permanent deletion.</p>
+    </div>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 6</div>
+      <h3>Unusual admin role assignments</h3>
+      <p>A compromised admin account may be used to elevate another account to Global Admin before it gets detected and locked. Check: <strong>Entra ID → Roles and administrators → Global Administrator</strong> and compare the list to what you expect. Also check <strong>M365 Admin Center → Audit log</strong> for recent role assignment events.</p>
+    </div>
+
+    <div class="sign-card">
+      <div class="sign-number">SIGN 7</div>
+      <h3>Unified Audit Log events for mass download</h3>
+      <p>Attackers often exfiltrate data before you notice. In <strong>M365 Compliance Center → Audit</strong>, search for <code>FileDownloaded</code>, <code>FileCopied</code>, and <code>MailItemsAccessed</code> events for the suspected account. Hundreds of file downloads in a short window is a clear indicator of data theft.</p>
+    </div>
+
+    <h2>Immediate response checklist</h2>
+    <ol>
+      <li><strong>Revoke all active sessions</strong> — Entra ID → Users → [User] → Revoke sessions. This invalidates all current tokens.</li>
+      <li><strong>Reset the password</strong> — Force a new strong password immediately.</li>
+      <li><strong>Review and remove MFA methods</strong> — Delete any authentication methods you don't recognise.</li>
+      <li><strong>Delete suspicious inbox rules</strong> — Remove all forwarding rules you didn't create.</li>
+      <li><strong>Revoke OAuth app consents</strong> — Remove any apps with suspicious permissions.</li>
+      <li><strong>Check for new admin accounts</strong> — Lock or delete any accounts you don't recognise with elevated roles.</li>
+      <li><strong>Preserve audit logs</strong> — Export relevant sign-in and audit logs before they age out (default retention is 90 days on most plans).</li>
+      <li><strong>Enable legacy auth block</strong> — If not already done, create a Conditional Access policy blocking all legacy authentication protocols.</li>
+    </ol>
+
+    <div class="callout danger">
+      <strong>Important:</strong> Don't just reset the password and call it done. If the attacker added a new MFA method, they regain access as soon as you reset the password. Always revoke sessions, reset password, AND audit authentication methods in that order.
+    </div>
+
+    <h2>How to prevent this from happening again</h2>
+    <p>The misconfiguration that enabled most of the above — MFA not enforced, legacy auth enabled, no Conditional Access policies — are exactly what Workspace Posture Pro audits automatically every week. You get a prioritised list of what needs fixing before the next incident, not after.</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">📬 Weekly M365 security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Get practical M365 security tips, threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#4da6ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
+    </div>
+
+    <div class="cta-box">
+      <h2>Catch these misconfigurations before attackers do</h2>
+      <p>Workspace Posture Pro runs automated weekly audits of your M365 tenant — MFA gaps, legacy auth, stale admins, OAuth apps, forwarding rules — and emails you a prioritised fix list every Monday.</p>
+      <a href="/workspace-posture/" class="cta-btn">Start Workspace Posture Pro — $19/mo →</a>
+      <p style="margin-top:10px;font-size:0.78rem;color:#4a6080;">Early access · rate locked forever · cancel anytime</p>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/workspace-posture/">Workspace Posture</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})}).catch(function(){});}
+</script>
+</body>
+</html>
