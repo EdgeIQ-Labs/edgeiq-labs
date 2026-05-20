@@ -1007,6 +1007,10 @@
           <button class="scan-tab" onclick="showScannerTab('policy')" id="tab-btn-policy">📄 Policy Builder</button>
           <button class="scan-tab" onclick="showScannerTab('asm')" id="tab-btn-asm">🗺️ ASM Dashboard</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
+          <button class="scan-tab" onclick="showScannerTab('domain-score')" id="tab-btn-domain-score">🛡 Security Score</button>
+          <button class="scan-tab" onclick="showScannerTab('dmarc')" id="tab-btn-dmarc">📧 DMARC Check</button>
+          <button class="scan-tab" onclick="showScannerTab('spf')" id="tab-btn-spf">📋 SPF Analyzer</button>
+          <button class="scan-tab" onclick="showScannerTab('blacklist')" id="tab-btn-blacklist">🚫 Blacklist</button>
         </div>
         <div id="ssl-panel" class="scan-panel">
         <form id="ssl-scan-form" class="scan-form" style="display:block;">
@@ -1560,6 +1564,70 @@
       </div>
     </div>
 
+    <!-- Security Score — Free Tool #17 -->
+    <div id="domain-score-panel" class="scan-panel" style="display:none;">
+      <form id="domain-score-form" class="scan-form">
+        <div class="scan-input-row">
+          <input type="text" id="domain-score-input" placeholder="Enter a domain (e.g. example.com)" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.95rem;" autocomplete="off" />
+          <button type="submit" class="btn btn-primary scan-btn" id="domain-score-submit">
+            <span id="domain-score-label">Get Score</span>
+            <span id="domain-score-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — A–F grade across DMARC, SPF, DKIM, SSL &amp; MX · No account needed</p>
+      </form>
+      <div id="domain-score-results" style="display:none;margin-top:24px;text-align:left;"></div>
+      <div id="domain-score-error" class="scan-error" style="display:none;"><p id="domain-score-error-msg">Something went wrong. Please try again.</p></div>
+    </div>
+
+    <!-- DMARC Check — Free Tool #18 -->
+    <div id="dmarc-panel" class="scan-panel" style="display:none;">
+      <form id="dmarc-form" class="scan-form">
+        <div class="scan-input-row">
+          <input type="text" id="dmarc-input" placeholder="Enter a domain (e.g. example.com)" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.95rem;" autocomplete="off" />
+          <button type="submit" class="btn btn-primary scan-btn" id="dmarc-submit">
+            <span id="dmarc-label">Check DMARC</span>
+            <span id="dmarc-loading" style="display:none;">Checking...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — DMARC policy, SPF, DKIM &amp; spoofing risk · No account needed</p>
+      </form>
+      <div id="dmarc-results" style="display:none;margin-top:24px;text-align:left;"></div>
+      <div id="dmarc-error" class="scan-error" style="display:none;"><p id="dmarc-error-msg">Something went wrong. Please try again.</p></div>
+    </div>
+
+    <!-- SPF Analyzer — Free Tool #19 -->
+    <div id="spf-panel" class="scan-panel" style="display:none;">
+      <form id="spf-form" class="scan-form">
+        <div class="scan-input-row">
+          <input type="text" id="spf-input" placeholder="Enter a domain (e.g. example.com)" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.95rem;" autocomplete="off" />
+          <button type="submit" class="btn btn-primary scan-btn" id="spf-submit">
+            <span id="spf-label">Analyze SPF</span>
+            <span id="spf-loading" style="display:none;">Analyzing...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — SPF record, DNS lookup budget &amp; mechanism breakdown · No account needed</p>
+      </form>
+      <div id="spf-results" style="display:none;margin-top:24px;text-align:left;"></div>
+      <div id="spf-error" class="scan-error" style="display:none;"><p id="spf-error-msg">Something went wrong. Please try again.</p></div>
+    </div>
+
+    <!-- Blacklist Check — Free Tool #20 -->
+    <div id="blacklist-panel" class="scan-panel" style="display:none;">
+      <form id="blacklist-form" class="scan-form">
+        <div class="scan-input-row">
+          <input type="text" id="blacklist-input" placeholder="Domain or IP (e.g. example.com or 1.2.3.4)" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.95rem;" autocomplete="off" />
+          <button type="submit" class="btn btn-primary scan-btn" id="blacklist-submit">
+            <span id="blacklist-label">Check Blacklists</span>
+            <span id="blacklist-loading" style="display:none;">Checking...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — 15 DNSBLs checked (Spamhaus, Barracuda, SORBS &amp; more) · No account needed</p>
+      </form>
+      <div id="blacklist-results" style="display:none;margin-top:24px;text-align:left;"></div>
+      <div id="blacklist-error" class="scan-error" style="display:none;"><p id="blacklist-error-msg">Something went wrong. Please try again.</p></div>
+    </div>
+
 
 <section id="live-apps" style="padding:52px 0 40px;">
         <h2>Live EdgeIQ Apps</h2>
@@ -2040,15 +2108,15 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { asm: 'asm-panel', ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel', docker: 'docker-panel', compliance: 'compliance-panel', policy: 'policy-panel' };
-    var formMap  = { asm: 'asm-scan-form', ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form', docker: 'docker-scan-form', compliance: 'compliance-scan-form', policy: 'policy-form' };
-    var tabs = ['asm', 'ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner', 'docker', 'compliance', 'policy'];
+    var panelMap = { asm: 'asm-panel', ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel', docker: 'docker-panel', compliance: 'compliance-panel', policy: 'policy-panel', 'domain-score': 'domain-score-panel', dmarc: 'dmarc-panel', spf: 'spf-panel', blacklist: 'blacklist-panel' };
+    var formMap  = { asm: 'asm-scan-form', ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form', docker: 'docker-scan-form', compliance: 'compliance-scan-form', policy: 'policy-form', 'domain-score': 'domain-score-form', dmarc: 'dmarc-form', spf: 'spf-form', blacklist: 'blacklist-form' };
+    var tabs = ['asm', 'ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner', 'docker', 'compliance', 'policy', 'domain-score', 'dmarc', 'spf', 'blacklist'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : (t === 'compliance' ? 'compliance-results' : (t === 'policy' ? 'policy-results' : (t === 'asm' ? 'asm-results' : 'cve-results'))))))))))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : (t === 'docker' ? 'docker-error' : (t === 'compliance' ? 'compliance-error' : (t === 'policy' ? 'cve-results' : (t === 'asm' ? 'asm-error' : 'cve-error'))))))))))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : (t === 'compliance' ? 'compliance-results' : (t === 'policy' ? 'policy-results' : (t === 'asm' ? 'asm-results' : (t === 'domain-score' ? 'domain-score-results' : (t === 'dmarc' ? 'dmarc-results' : (t === 'spf' ? 'spf-results' : (t === 'blacklist' ? 'blacklist-results' : 'cve-results'))))))))))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : (t === 'docker' ? 'docker-error' : (t === 'compliance' ? 'compliance-error' : (t === 'policy' ? 'cve-results' : (t === 'asm' ? 'asm-error' : (t === 'domain-score' ? 'domain-score-error' : (t === 'dmarc' ? 'dmarc-error' : (t === 'spf' ? 'spf-error' : (t === 'blacklist' ? 'blacklist-error' : 'cve-error'))))))))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
@@ -3631,6 +3699,232 @@ async function phishsimCheckout(btn) {
   } catch { alert('Network error. Please try again.'); }
   btn.disabled = false; btn.textContent = 'Get Started';
 }
+</script>
+
+<script>
+// ── Domain Security Score tab ──────────────────────────────────────────────
+(function() {
+  var form = document.getElementById('domain-score-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var raw = document.getElementById('domain-score-input').value.trim();
+    var domain = raw.replace(/^https?:\/\//,'').split('/')[0].split('?')[0].toLowerCase();
+    if (!domain) return;
+    var btn = document.getElementById('domain-score-submit');
+    document.getElementById('domain-score-label').style.display = 'none';
+    document.getElementById('domain-score-loading').style.display = '';
+    document.getElementById('domain-score-results').style.display = 'none';
+    document.getElementById('domain-score-error').style.display = 'none';
+    btn.disabled = true;
+    try {
+      var res = await fetch('/api/domain-score?domain=' + encodeURIComponent(domain));
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error');
+      var gradeColor = {A:'#22c55e',B:'#84cc16',C:'#eab308',D:'#f97316',F:'#ef4444'}[data.grade] || '#ef4444';
+      var catsHtml = (data.categories || []).map(function(c) {
+        var pct = Math.round((c.score / c.max) * 100);
+        var col = c.score === c.max ? '#22c55e' : c.score === 0 ? '#ef4444' : '#eab308';
+        return '<div style="background:#0d1620;border:1px solid #1e2a38;border-radius:10px;padding:14px 16px;margin-bottom:8px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<span style="font-weight:600;font-size:0.9rem;">' + c.label + '</span>' +
+          '<span style="font-size:0.85rem;color:' + col + ';font-weight:700;">' + c.score + '/' + c.max + '</span></div>' +
+          '<div style="height:5px;background:#1e2a38;border-radius:3px;"><div style="height:5px;background:' + col + ';border-radius:3px;width:' + pct + '%;"></div></div>' +
+          '<p style="font-size:0.78rem;color:#64748b;margin-top:6px;">' + (c.headline || '') + '</p></div>';
+      }).join('');
+      var issuesHtml = (data.issues || []).slice(0,3).map(function(i) {
+        return '<div style="padding:8px 12px;border-left:3px solid #ef4444;background:#0d1620;border-radius:0 8px 8px 0;margin-bottom:6px;font-size:0.82rem;color:#cbd5e1;">' + i + '</div>';
+      }).join('');
+      document.getElementById('domain-score-results').innerHTML =
+        '<div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;flex-wrap:wrap;">' +
+        '<div style="width:80px;height:80px;border-radius:50%;border:4px solid ' + gradeColor + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+        '<span style="font-size:2rem;font-weight:900;color:' + gradeColor + ';">' + data.grade + '</span></div>' +
+        '<div><div style="font-size:1.1rem;font-weight:700;">' + domain + '</div>' +
+        '<div style="color:#94a3b8;font-size:0.88rem;">' + data.score + '/100 — ' + (data.summary || '') + '</div></div></div>' +
+        catsHtml +
+        (issuesHtml ? '<div style="margin:14px 0 6px;font-size:0.78rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;">Top Issues</div>' + issuesHtml : '') +
+        '<div style="margin-top:18px;padding:14px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.15);border-radius:10px;text-align:center;">' +
+        '<p style="font-size:0.85rem;color:#94a3b8;margin-bottom:10px;">Get the full fix guide and step-by-step recommendations</p>' +
+        '<a href="/free-domain-security-score/?domain=' + encodeURIComponent(domain) + '" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;font-size:0.85rem;padding:8px 18px;border-radius:8px;text-decoration:none;">Open Full Report →</a></div>';
+      document.getElementById('domain-score-results').style.display = 'block';
+    } catch(err) {
+      document.getElementById('domain-score-error-msg').textContent = err.message || 'Something went wrong.';
+      document.getElementById('domain-score-error').style.display = 'block';
+    } finally {
+      document.getElementById('domain-score-label').style.display = '';
+      document.getElementById('domain-score-loading').style.display = 'none';
+      btn.disabled = false;
+    }
+  });
+})();
+
+// ── DMARC Check tab ────────────────────────────────────────────────────────
+(function() {
+  var form = document.getElementById('dmarc-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var raw = document.getElementById('dmarc-input').value.trim();
+    var domain = raw.replace(/^https?:\/\//,'').split('/')[0].split('?')[0].toLowerCase();
+    if (!domain) return;
+    var btn = document.getElementById('dmarc-submit');
+    document.getElementById('dmarc-label').style.display = 'none';
+    document.getElementById('dmarc-loading').style.display = '';
+    document.getElementById('dmarc-results').style.display = 'none';
+    document.getElementById('dmarc-error').style.display = 'none';
+    btn.disabled = true;
+    try {
+      var res = await fetch('/api/dmarc-check?domain=' + encodeURIComponent(domain));
+      var d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'Error');
+      var policyColor = d.dmarc.policy === 'reject' ? '#22c55e' : d.dmarc.policy === 'quarantine' ? '#eab308' : d.dmarc.policy === 'none' ? '#f97316' : '#ef4444';
+      var policyLabel = d.dmarc.found ? (d.dmarc.policy || 'unknown').toUpperCase() : 'MISSING';
+      var riskColor = d.risk.level === 'low' ? '#22c55e' : d.risk.level === 'medium' ? '#eab308' : '#ef4444';
+      var rows = [
+        ['DMARC Policy', '<span style="font-weight:700;color:' + policyColor + ';">' + policyLabel + '</span>'],
+        ['Can Be Spoofed', d.risk.can_be_spoofed ? '<span style="color:#ef4444;font-weight:700;">⚠ YES</span>' : '<span style="color:#22c55e;font-weight:700;">✓ NO</span>'],
+        ['SPF Record', d.spf.found ? '<span style="color:#22c55e;">✓ Found</span> (' + (d.spf.all || 'no all') + ')' : '<span style="color:#ef4444;">✗ Missing</span>'],
+        ['DKIM', d.dkim.found ? '<span style="color:#22c55e;">✓ Found</span>' : '<span style="color:#ef4444;">✗ Not detected</span>'],
+        ['MX Records', d.mx.found ? '<span style="color:#22c55e;">✓ Found</span>' : '<span style="color:#ef4444;">✗ Missing</span>'],
+        ['Risk Level', '<span style="color:' + riskColor + ';font-weight:700;">' + d.risk.level.toUpperCase() + '</span>'],
+      ];
+      var tableHtml = '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;">' +
+        rows.map(function(r,i) {
+          return '<tr style="border-bottom:1px solid #1e2a38;"><td style="padding:10px 12px;color:#64748b;width:140px;">' + r[0] + '</td><td style="padding:10px 12px;">' + r[1] + '</td></tr>';
+        }).join('') + '</table>';
+      var recordHtml = d.dmarc.record ? '<div style="margin-top:14px;padding:10px 14px;background:#0d1620;border:1px solid #1e2a38;border-radius:8px;font-family:monospace;font-size:0.78rem;color:#94a3b8;word-break:break-all;">' + d.dmarc.record + '</div>' : '';
+      document.getElementById('dmarc-results').innerHTML =
+        '<div style="background:#0d1620;border:1px solid #1e2a38;border-radius:12px;overflow:hidden;">' + tableHtml + '</div>' +
+        recordHtml +
+        '<div style="margin-top:16px;text-align:center;"><a href="/free-dmarc-checker/?domain=' + encodeURIComponent(domain) + '" style="display:inline-block;background:#3de19e;color:#071018;font-weight:700;font-size:0.85rem;padding:8px 18px;border-radius:8px;text-decoration:none;">Deep Dive DMARC →</a></div>';
+      document.getElementById('dmarc-results').style.display = 'block';
+    } catch(err) {
+      document.getElementById('dmarc-error-msg').textContent = err.message || 'Something went wrong.';
+      document.getElementById('dmarc-error').style.display = 'block';
+    } finally {
+      document.getElementById('dmarc-label').style.display = '';
+      document.getElementById('dmarc-loading').style.display = 'none';
+      btn.disabled = false;
+    }
+  });
+})();
+
+// ── SPF Analyzer tab ───────────────────────────────────────────────────────
+(function() {
+  var form = document.getElementById('spf-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var raw = document.getElementById('spf-input').value.trim();
+    var domain = raw.replace(/^https?:\/\//,'').split('/')[0].split('?')[0].toLowerCase();
+    if (!domain) return;
+    var btn = document.getElementById('spf-submit');
+    document.getElementById('spf-label').style.display = 'none';
+    document.getElementById('spf-loading').style.display = '';
+    document.getElementById('spf-results').style.display = 'none';
+    document.getElementById('spf-error').style.display = 'none';
+    btn.disabled = true;
+    try {
+      var res = await fetch('/api/spf-check?domain=' + encodeURIComponent(domain));
+      var d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'Error');
+      var lookupCount = d.dnsLookups || 0;
+      var lookupColor = lookupCount > 10 ? '#ef4444' : lookupCount >= 8 ? '#eab308' : '#22c55e';
+      var lookupPct = Math.min(100, Math.round((lookupCount / 10) * 100));
+      var allColor = d.allQualifier === '-all' ? '#22c55e' : d.allQualifier === '~all' ? '#eab308' : d.allQualifier === '+all' ? '#ef4444' : '#64748b';
+      var statusColor = !d.found ? '#ef4444' : d.issues && d.issues.some(function(i){return i.severity==='fail';}) ? '#ef4444' : d.issues && d.issues.length ? '#eab308' : '#22c55e';
+      var mechsHtml = '';
+      if (d.mechanisms && d.mechanisms.length) {
+        mechsHtml = '<div style="margin-top:14px;"><div style="font-size:0.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Mechanisms (' + d.mechanisms.length + ')</div>' +
+          '<div style="background:#0d1620;border:1px solid #1e2a38;border-radius:10px;overflow:hidden;">' +
+          d.mechanisms.slice(0,8).map(function(m) {
+            var qCol = m.qualifier==='+' ? '#22c55e' : m.qualifier==='-' ? '#ef4444' : m.qualifier==='~' ? '#eab308' : '#64748b';
+            return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #1e2a38;font-size:0.82rem;">' +
+              '<span style="font-weight:700;color:' + qCol + ';width:14px;">' + (m.qualifier||'+') + '</span>' +
+              '<span style="color:#94a3b8;font-family:monospace;">' + m.type + (m.value?' '+m.value:'') + '</span>' +
+              (m.dnsLookup ? '<span style="background:rgba(180,122,255,0.1);color:#b47aff;font-size:0.72rem;padding:1px 6px;border-radius:4px;margin-left:auto;">DNS</span>' : '') +
+              '</div>';
+          }).join('') +
+          (d.mechanisms.length > 8 ? '<div style="padding:8px 12px;font-size:0.78rem;color:#64748b;">+' + (d.mechanisms.length-8) + ' more…</div>' : '') +
+          '</div></div>';
+      }
+      var issuesHtml = (d.issues || []).map(function(i) {
+        var ic = i.severity === 'fail' ? '#ef4444' : '#eab308';
+        return '<div style="padding:8px 12px;border-left:3px solid ' + ic + ';background:#0d1620;border-radius:0 8px 8px 0;margin-bottom:6px;font-size:0.82rem;color:#cbd5e1;">' + i.message + '</div>';
+      }).join('');
+      document.getElementById('spf-results').innerHTML =
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">' +
+        '<div style="background:#0d1620;border:1px solid #1e2a38;border-radius:10px;padding:12px;text-align:center;">' +
+        '<div style="font-size:0.72rem;color:#64748b;margin-bottom:4px;">STATUS</div>' +
+        '<div style="font-weight:700;font-size:0.9rem;color:' + statusColor + ';">' + (d.found ? 'FOUND' : 'MISSING') + '</div></div>' +
+        '<div style="background:#0d1620;border:1px solid #1e2a38;border-radius:10px;padding:12px;text-align:center;">' +
+        '<div style="font-size:0.72rem;color:#64748b;margin-bottom:4px;">ALL QUALIFIER</div>' +
+        '<div style="font-weight:700;font-size:0.9rem;color:' + allColor + ';">' + (d.allQualifier || 'NONE') + '</div></div>' +
+        '<div style="background:#0d1620;border:1px solid #1e2a38;border-radius:10px;padding:12px;text-align:center;">' +
+        '<div style="font-size:0.72rem;color:#64748b;margin-bottom:4px;">DNS LOOKUPS</div>' +
+        '<div style="font-weight:700;font-size:0.9rem;color:' + lookupColor + ';">' + lookupCount + '/10</div></div></div>' +
+        '<div style="height:6px;background:#1e2a38;border-radius:3px;margin-bottom:14px;"><div style="height:6px;background:' + lookupColor + ';border-radius:3px;width:' + lookupPct + '%;"></div></div>' +
+        mechsHtml +
+        (issuesHtml ? '<div style="margin-top:12px;">' + issuesHtml + '</div>' : '') +
+        '<div style="margin-top:16px;text-align:center;"><a href="/free-spf-checker/?domain=' + encodeURIComponent(domain) + '" style="display:inline-block;background:#b47aff;color:#071018;font-weight:700;font-size:0.85rem;padding:8px 18px;border-radius:8px;text-decoration:none;">Full SPF Analysis →</a></div>';
+      document.getElementById('spf-results').style.display = 'block';
+    } catch(err) {
+      document.getElementById('spf-error-msg').textContent = err.message || 'Something went wrong.';
+      document.getElementById('spf-error').style.display = 'block';
+    } finally {
+      document.getElementById('spf-label').style.display = '';
+      document.getElementById('spf-loading').style.display = 'none';
+      btn.disabled = false;
+    }
+  });
+})();
+
+// ── Blacklist Check tab ────────────────────────────────────────────────────
+(function() {
+  var form = document.getElementById('blacklist-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var raw = document.getElementById('blacklist-input').value.trim();
+    var input = raw.replace(/^https?:\/\//,'').split('/')[0].split('?')[0].toLowerCase();
+    if (!input) return;
+    var isIp = /^\d+\.\d+\.\d+\.\d+$/.test(input);
+    var btn = document.getElementById('blacklist-submit');
+    document.getElementById('blacklist-label').style.display = 'none';
+    document.getElementById('blacklist-loading').style.display = '';
+    document.getElementById('blacklist-results').style.display = 'none';
+    document.getElementById('blacklist-error').style.display = 'none';
+    btn.disabled = true;
+    try {
+      var param = isIp ? 'ip' : 'domain';
+      var res = await fetch('/api/blacklist-check?' + param + '=' + encodeURIComponent(input));
+      var d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'Error');
+      var riskColor = d.risk === 'clean' ? '#22c55e' : d.risk === 'medium' ? '#eab308' : d.risk === 'high' ? '#f97316' : '#ef4444';
+      var listedHtml = (d.listed || []).map(function(l) {
+        return '<div style="padding:8px 12px;border-left:3px solid #ef4444;background:#0d1620;border-radius:0 8px 8px 0;margin-bottom:6px;font-size:0.82rem;">' +
+          '<span style="font-weight:700;color:#ef4444;">' + l.list + '</span>' +
+          (l.removalUrl ? ' — <a href="' + l.removalUrl + '" target="_blank" rel="noopener" style="color:#3dd9ff;font-size:0.78rem;">Request Removal →</a>' : '') +
+          '</div>';
+      }).join('');
+      document.getElementById('blacklist-results').innerHTML =
+        '<div style="padding:14px 18px;border-radius:10px;background:' + (d.listedCount > 0 ? 'rgba(239,68,68,0.08)' : 'rgba(34,197,94,0.08)') + ';border:1px solid ' + riskColor + ';margin-bottom:16px;display:flex;align-items:center;gap:14px;">' +
+        '<div style="font-size:1.8rem;">' + (d.listedCount > 0 ? '⚠' : '✅') + '</div>' +
+        '<div><div style="font-weight:700;color:' + riskColor + ';">' + (d.listedCount > 0 ? 'Listed on ' + d.listedCount + ' of ' + d.checked + ' blocklists' : 'Clean — not listed on any of ' + d.checked + ' blocklists') + '</div>' +
+        '<div style="font-size:0.82rem;color:#64748b;">' + (d.riskMessage || '') + '</div></div></div>' +
+        (listedHtml || '') +
+        '<div style="margin-top:16px;text-align:center;"><a href="/free-blacklist-checker/?domain=' + encodeURIComponent(input) + '" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;font-size:0.85rem;padding:8px 18px;border-radius:8px;text-decoration:none;">Full Blacklist Report →</a></div>';
+      document.getElementById('blacklist-results').style.display = 'block';
+    } catch(err) {
+      document.getElementById('blacklist-error-msg').textContent = err.message || 'Something went wrong.';
+      document.getElementById('blacklist-error').style.display = 'block';
+    } finally {
+      document.getElementById('blacklist-label').style.display = '';
+      document.getElementById('blacklist-loading').style.display = 'none';
+      btn.disabled = false;
+    }
+  });
+})();
 </script>
 </body>
 </html>
