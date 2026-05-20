@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>How to Check If Your Domain Is on an Email Blacklist (and Get Removed) — EdgeIQ Labs</title>
+  <meta name="description" content="If your emails are landing in spam, your domain may be blacklisted. Here's how to check every major blacklist, why it happens, and how to get removed — step by step."/>
+  <meta property="og:title" content="How to Check If Your Domain Is on an Email Blacklist (and Get Removed)"/>
+  <meta property="og:description" content="Check every major email blacklist and learn how to get your domain removed and prevent future listings."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/email-blacklist-check-domain-removal.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/email-blacklist-check-domain-removal.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Check If Your Domain Is on an Email Blacklist (and Get Removed)","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;max-width:980px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .ps-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .ps-inner::-webkit-scrollbar{display:none;}
+    .ps-inner a{padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;}
+    article{padding:48px 0 80px;}
+    .post-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+    .tag{background:#1a2535;color:var(--muted);padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;}
+    .post-meta{color:var(--muted);font-size:0.82rem;}
+    h1{font-size:clamp(1.55rem,3.5vw,2.1rem);font-weight:800;line-height:1.25;margin-bottom:16px;color:#fff;}
+    .post-lead{font-size:1.08rem;color:#b8cce0;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+    h2{font-size:1.28rem;font-weight:700;margin:38px 0 12px;color:#d4e6ff;}
+    h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;color:#c0d4ee;}
+    p{margin-bottom:16px;color:#c8d8ea;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:8px;color:#c8d8ea;}
+    strong{color:#e8f0f8;}
+    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.9em;font-family:'Fira Mono',monospace;}
+    table{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.9rem;}
+    th{background:#1a2535;color:#d4e6ff;padding:10px 14px;text-align:left;border:1px solid #2a3c52;font-weight:700;}
+    td{padding:9px 14px;border:1px solid #1e3347;color:#b8cce0;}
+    tr:nth-child(even) td{background:#0f1820;}
+    .callout{background:#12202e;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;}
+    .callout p{margin:0;color:#b8cce0;}
+    .checklist{list-style:none;padding:0;margin:0 0 18px;}
+    .checklist li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #1a2535;color:#c8d8ea;font-size:0.93rem;}
+    .checklist li:last-child{border-bottom:none;}
+    .checklist li::before{content:"☐";color:var(--accent);flex-shrink:0;margin-top:1px;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:32px 28px;margin:48px 0 24px;text-align:center;}
+    .cta-box h3{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:10px;}
+    .cta-box p{color:#9fb8cc;margin-bottom:20px;font-size:0.93rem;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 26px;border-radius:9px;text-decoration:none;font-size:0.93rem;}
+    .email-signup{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:36px 0;text-align:center;}
+    .email-row{display:flex;gap:8px;max-width:400px;margin:12px auto 0;}
+    .email-row input{flex:1;background:#121923;border:1px solid #2a3c52;border-radius:8px;padding:9px 12px;color:#e8eef7;font-size:0.9rem;outline:none;}
+    .email-row input:focus{border-color:var(--accent);}
+    .email-row button{background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-size:0.88rem;}
+    .sub-ok{display:none;color:var(--accent);font-size:0.88rem;margin-top:8px;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.83rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+  </style>
+</head>
+<body>
+<nav><div class="nav-inner">
+  <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links"><a href="/dashboard/">Dashboard</a><a href="/inbox-shield/">Inbox Shield</a><a href="/blog/">Blog</a><a href="/inbox-shield/" class="nav-cta">Check Your Domain →</a></div>
+</div></nav>
+<div class="product-strip"><div class="ps-inner">
+  <a href="/dashboard/" style="color:#3dd9ff;">🔍 Dashboard</a><a href="/pulse/" style="color:#3dd9ff;">📡 Pulse</a><a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a><a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a><a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a><a href="/compliance/" style="color:#3de19e;">📋 Compliance</a>
+</div></div>
+<div class="container"><article>
+  <div class="post-eyebrow"><span class="tag">Email Deliverability</span><span class="tag">Blacklist</span><span class="tag">Domain Reputation</span><span class="post-meta">May 20, 2026 &nbsp;·&nbsp; 6 min read</span></div>
+  <h1>How to Check If Your Domain Is on an Email Blacklist (and Get Removed)</h1>
+  <p class="post-lead">If your emails are bouncing, landing in spam, or getting blocked outright, your sending domain or IP may be on a DNS-based blacklist (DNSBL). Here's how to check every list that matters, why you ended up there, and how to get removed — with steps for the five most common blacklists.</p>
+
+  <h2>What is an email blacklist?</h2>
+  <p>Email blacklists (also called DNSBLs or RBLs — Realtime Blackhole Lists) are databases of IP addresses and domains known or suspected to send spam, malware, or phishing email. Mail servers check these lists in real time and use the results to decide whether to deliver, reject, or mark your email as spam.</p>
+  <p>There are over 100 public blacklists, but only a handful are widely used by major mail providers. Getting on one of the major lists (Spamhaus, SORBS, Barracuda) can silently kill your email deliverability overnight.</p>
+
+  <h2>The 7 blacklists that actually matter</h2>
+  <table>
+    <thead><tr><th>Blacklist</th><th>What it tracks</th><th>Impact if listed</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Spamhaus SBL</strong></td><td>Known spam sources, hijacked networks</td><td style="color:#ff6b6b;">Critical — blocks at most major providers</td></tr>
+      <tr><td><strong>Spamhaus DBL</strong></td><td>Domains used in spam (links, reply-to)</td><td style="color:#ff6b6b;">Critical — domain reputation hit</td></tr>
+      <tr><td><strong>Spamhaus PBL</strong></td><td>IP addresses not supposed to send email (residential/dynamic)</td><td style="color:#ffb347;">High — if using a non-mail IP</td></tr>
+      <tr><td><strong>Barracuda BRBL</strong></td><td>IP-based spam reputation</td><td style="color:#ffb347;">High — used by Barracuda gateways</td></tr>
+      <tr><td><strong>SORBS SPAM</strong></td><td>IPs that sent spam to SORBS honeypots</td><td style="color:#ffb347;">Medium — used by some mail servers</td></tr>
+      <tr><td><strong>MXToolbox Composite</strong></td><td>Aggregates 100+ lists</td><td style="color:#3dd9ff;">Good for a quick overview</td></tr>
+      <tr><td><strong>Google Postmaster</strong></td><td>Gmail-specific domain reputation</td><td style="color:#ff6b6b;">Critical for Gmail deliverability</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to check if you're blacklisted</h2>
+  <h3>Quick check (3 tools)</h3>
+  <ol>
+    <li><strong>MXToolbox Blacklist Check</strong> (mxtoolbox.com/blacklists.aspx) — checks your IP against 100+ lists in one query. Free.</li>
+    <li><strong>Spamhaus Lookup</strong> (check.spamhaus.org) — check your domain directly against all Spamhaus lists.</li>
+    <li><strong>Google Postmaster Tools</strong> (postmaster.google.com) — requires DNS verification of your domain, but gives you Gmail-specific reputation data (domain reputation, IP reputation, spam rate).</li>
+  </ol>
+  <h3>Finding your sending IP</h3>
+  <p>You need to check the IP your mail server sends from, not your website IP. Find it by:</p>
+  <ul>
+    <li>Looking at the "Received" headers of an email you sent: <code>Received: from mail.yourdomain.com ([203.0.113.42])</code></li>
+    <li>In Google Workspace: Admin Console → Apps → Google Workspace → Gmail → Default routing — your outbound IP is shown</li>
+    <li>In M365: the sending IPs are Microsoft's shared pools (check via Microsoft's IP documentation, or look in your email headers)</li>
+  </ul>
+
+  <h2>Why domains and IPs get blacklisted</h2>
+  <ul>
+    <li><strong>Spam complaints:</strong> Too many recipients marked your email as spam. Even 0.3% complaint rate can trigger a listing.</li>
+    <li><strong>Hitting spam traps:</strong> Sending to old, invalid, or honeypot addresses that blacklist operators seed into leaked lists.</li>
+    <li><strong>No DMARC / SPF misconfiguration:</strong> Your domain was spoofed and used to send spam. The spam filters listed your domain even though you didn't send anything.</li>
+    <li><strong>Compromised account:</strong> A user account was breached and used to send bulk spam from your infrastructure.</li>
+    <li><strong>Shared IP reputation:</strong> You share a sending IP (common on cheap hosting) with a spammer. Their behavior affected your reputation.</li>
+    <li><strong>Sudden volume spike:</strong> Sending a large campaign from a domain with low prior volume triggers spam filters.</li>
+  </ul>
+
+  <div class="callout"><p><strong>Most overlooked cause:</strong> Domains with no DMARC or <code>p=none</code> are frequently spoofed by spammers. The spam recipients then report it, and spam filter providers list your domain — even though you never sent a single spam email. Setting DMARC to <code>p=reject</code> stops spammers from being able to use your domain at all.</p></div>
+
+  <h2>How to get removed from the major blacklists</h2>
+  <h3>Spamhaus (SBL/DBL)</h3>
+  <ol>
+    <li>Go to check.spamhaus.org and look up your IP or domain</li>
+    <li>Click on the listing to see the reason</li>
+    <li>Fix the underlying issue (compromised account, open relay, domain spoofing)</li>
+    <li>Submit a removal request at spamhaus.org/lookup — you'll need to explain what you fixed</li>
+    <li>Spamhaus typically responds within 24–48 hours for legitimate requests</li>
+  </ol>
+  <h3>Barracuda BRBL</h3>
+  <ol>
+    <li>Check at barracudacentral.org/lookups</li>
+    <li>Click "Request removal" — for IPs with low complaint history, removal is usually automatic</li>
+    <li>For repeat listings, you'll need to submit a full removal request with explanation</li>
+  </ol>
+  <h3>Google Postmaster</h3>
+  <p>Google doesn't have a manual removal process. Your domain reputation recovers as you send clean email with proper authentication (SPF, DKIM, DMARC) and low complaint rates. This takes time — typically 2–4 weeks of consistent, clean sending.</p>
+
+  <h2>Prevention checklist</h2>
+  <ul class="checklist">
+    <li>DMARC set to p=reject (prevents spoofing that can get your domain listed without your knowledge)</li>
+    <li>SPF record covers all legitimate sending sources — no <code>+all</code> or missing sources</li>
+    <li>DKIM configured for all sending services (Google, Mailchimp, SendGrid, etc.)</li>
+    <li>Maintain a clean email list — remove bounces and unsubscribers promptly</li>
+    <li>Use a dedicated sending IP or reputable ESP (avoid shared hosting IP pools)</li>
+    <li>Monitor your sending reputation via Google Postmaster Tools and Microsoft SNDS</li>
+    <li>Set up weekly blacklist monitoring — <a href="/pulse/" style="color:var(--accent);">Pulse Pro</a> includes blacklist monitoring in its weekly digest</li>
+  </ul>
+
+  <div class="cta-box">
+    <h3>Monitor your domain's email reputation automatically</h3>
+    <p>Pulse Pro checks your domain against major blacklists weekly and alerts you the moment you're listed — before your email deliverability collapses. Inbox Shield monitors SPF, DMARC, and DKIM so your domain can't be spoofed onto those lists in the first place.</p>
+    <a href="/inbox-shield/" class="cta-btn">Check Your Domain With Inbox Shield — Free →</a>
+  </div>
+  <div class="email-signup">
+    <p style="font-weight:700;color:var(--text);font-size:0.95rem;margin-bottom:4px;">Get security guides like this in your inbox</p>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0;">No spam. Unsubscribe any time.</p>
+    <div class="email-row"><input type="email" id="e" placeholder="you@company.com"/><button onclick="sub()">Subscribe</button></div>
+    <div class="sub-ok" id="ok">✅ Subscribed — check your inbox.</div>
+  </div>
+</article></div>
+<footer><div class="container"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/inbox-shield/">Inbox Shield</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:12px;">© 2026 EdgeIQ Labs</p></div></footer>
+<script>function sub(){var e=(document.getElementById('e').value||'').trim();if(!e||e.indexOf('@')<0)return;document.getElementById('ok').style.display='block';document.getElementById('e').disabled=true;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:location.href})}).catch(function(){});}</script>
+</body></html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>What Is DKIM? How It Works and Why It Matters for Email Security — EdgeIQ Labs</title>
+  <meta name="description" content="DKIM (DomainKeys Identified Mail) explained simply. Learn how it works, how to check if yours is set up, and why it's essential alongside SPF and DMARC."/>
+  <meta property="og:title" content="What Is DKIM? How It Works and Why It Matters"/>
+  <meta property="og:description" content="DKIM explained simply — how it protects your email, how to check if yours is set up, and what to do if it's missing."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/what-is-dkim-email-authentication.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/what-is-dkim-email-authentication.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is DKIM? How It Works and Why It Matters for Email Security","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;max-width:980px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .ps-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .ps-inner::-webkit-scrollbar{display:none;}
+    .ps-inner a{padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;}
+    article{padding:48px 0 80px;}
+    .post-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+    .tag{background:#1a2535;color:var(--muted);padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;}
+    .post-meta{color:var(--muted);font-size:0.82rem;}
+    h1{font-size:clamp(1.55rem,3.5vw,2.1rem);font-weight:800;line-height:1.25;margin-bottom:16px;color:#fff;}
+    .post-lead{font-size:1.08rem;color:#b8cce0;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+    h2{font-size:1.28rem;font-weight:700;margin:38px 0 12px;color:#d4e6ff;}
+    h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;color:#c0d4ee;}
+    p{margin-bottom:16px;color:#c8d8ea;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:7px;color:#c8d8ea;}
+    strong{color:#e8f0f8;}
+    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.9em;font-family:'Fira Mono',monospace;}
+    table{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.9rem;}
+    th{background:#1a2535;color:#d4e6ff;padding:10px 14px;text-align:left;border:1px solid #2a3c52;font-weight:700;}
+    td{padding:9px 14px;border:1px solid #1e3347;color:#b8cce0;}
+    tr:nth-child(even) td{background:#0f1820;}
+    .callout{background:#12202e;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;}
+    .callout p{margin:0;color:#b8cce0;}
+    .step-grid{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+    .step{display:flex;gap:14px;align-items:flex-start;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+    .step-num{background:rgba(180,122,255,0.15);color:var(--accent);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+    .step-body h3{margin:0 0 4px;font-size:0.93rem;}
+    .step-body p{margin:0;font-size:0.87rem;color:var(--muted);}
+    .cta-box{background:linear-gradient(135deg,#100820,#160d2a);border:1px solid rgba(180,122,255,0.3);border-radius:14px;padding:32px 28px;margin:48px 0 24px;text-align:center;}
+    .cta-box h3{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:10px;}
+    .cta-box p{color:#b8aad0;margin-bottom:20px;font-size:0.93rem;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#0a0516;font-weight:700;padding:12px 26px;border-radius:9px;text-decoration:none;font-size:0.93rem;}
+    .email-signup{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:36px 0;text-align:center;}
+    .email-row{display:flex;gap:8px;max-width:400px;margin:12px auto 0;}
+    .email-row input{flex:1;background:#121923;border:1px solid #2a3c52;border-radius:8px;padding:9px 12px;color:#e8eef7;font-size:0.9rem;outline:none;}
+    .email-row input:focus{border-color:var(--accent);}
+    .email-row button{background:var(--accent);color:#0a0516;font-weight:700;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-size:0.88rem;}
+    .sub-ok{display:none;color:var(--accent);font-size:0.88rem;margin-top:8px;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.83rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+  </style>
+</head>
+<body>
+<nav><div class="nav-inner">
+  <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links"><a href="/dashboard/">Dashboard</a><a href="/inbox-shield/">Inbox Shield</a><a href="/blog/">Blog</a><a href="/inbox-shield/" class="nav-cta">Check Your Domain →</a></div>
+</div></nav>
+<div class="product-strip"><div class="ps-inner">
+  <a href="/dashboard/" style="color:#3dd9ff;">🔍 Dashboard</a><a href="/pulse/" style="color:#3dd9ff;">📡 Pulse</a><a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a><a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a><a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a><a href="/compliance/" style="color:#3de19e;">📋 Compliance</a>
+</div></div>
+<div class="container"><article>
+  <div class="post-eyebrow"><span class="tag">Email Security</span><span class="tag">DKIM</span><span class="tag">Authentication</span><span class="post-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read</span></div>
+  <h1>What Is DKIM? How It Works and Why It Matters for Email Security</h1>
+  <p class="post-lead">DKIM (DomainKeys Identified Mail) is a digital signature system that proves an email actually came from the domain it claims to be from and wasn't tampered with in transit. Without it, receiving mail servers have no way to verify your emails are legitimate — and your messages are easier to spoof and more likely to land in spam.</p>
+
+  <h2>The one-sentence explanation</h2>
+  <p>DKIM works by adding a cryptographic signature to every outgoing email. The receiving server looks up your public key in DNS, verifies the signature, and confirms two things: the email came from an authorised source, and the content wasn't modified after it was sent.</p>
+
+  <h2>How DKIM works (step by step)</h2>
+  <div class="step-grid">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><h3>You generate a key pair</h3><p>A private key lives on your mail server. The matching public key is published as a DNS TXT record at a selector subdomain, e.g. <code>google._domainkey.yourdomain.com</code>.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><h3>Your mail server signs outgoing emails</h3><p>For each outgoing email, your server creates a hash of specified headers and the body, then encrypts that hash using your private key. The result is added as a <code>DKIM-Signature</code> header on the email.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><h3>The receiving server verifies the signature</h3><p>When Gmail, Outlook, or any receiving server gets your email, it reads the <code>DKIM-Signature</code> header, fetches your public key from DNS, and verifies the signature. If it matches, DKIM passes.</p></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body"><h3>DMARC acts on the result</h3><p>DKIM is one of two authentication signals DMARC uses (the other is SPF). If both fail and your DMARC policy is <code>p=reject</code>, the email is blocked before reaching the inbox.</p></div></div>
+  </div>
+
+  <h2>DKIM vs SPF vs DMARC — what each one does</h2>
+  <table>
+    <thead><tr><th>Standard</th><th>What it checks</th><th>What it protects against</th></tr></thead>
+    <tbody>
+      <tr><td><strong>SPF</strong></td><td>Is the sending server authorised to send for this domain?</td><td>Forged envelope sender (used by spam filters)</td></tr>
+      <tr><td><strong>DKIM</strong></td><td>Was the email signed by a key matching the domain's DNS record?</td><td>Message tampering, header spoofing</td></tr>
+      <tr><td><strong>DMARC</strong></td><td>Does SPF or DKIM pass, and is the From domain aligned?</td><td>Domain spoofing, phishing, BEC — the full picture</td></tr>
+    </tbody>
+  </table>
+  <p>DKIM and SPF each have blind spots on their own. DMARC combines them and adds the policy (none/quarantine/reject) that determines what actually happens to failing emails.</p>
+
+  <div class="callout"><p><strong>Key point:</strong> SPF can be bypassed by forwarded email (because the forwarding server isn't in your SPF record). DKIM survives forwarding because the signature is in the email headers — not tied to the sending server's IP. This makes DKIM the more reliable signal for DMARC alignment.</p></div>
+
+  <h2>How to check if DKIM is configured for your domain</h2>
+  <p>DKIM records live at <code>[selector]._domainkey.[yourdomain.com]</code>. The selector is set by your email provider — common ones:</p>
+  <ul>
+    <li><strong>Google Workspace:</strong> <code>google._domainkey.yourdomain.com</code></li>
+    <li><strong>Microsoft 365:</strong> <code>selector1._domainkey.yourdomain.com</code> and <code>selector2._domainkey.yourdomain.com</code></li>
+    <li><strong>Mailchimp:</strong> varies — typically listed in your Mailchimp account under Domains</li>
+    <li><strong>SendGrid:</strong> <code>s1._domainkey.yourdomain.com</code></li>
+    <li><strong>Postmark:</strong> <code>20230601._domainkey.yourdomain.com</code> (date-based)</li>
+  </ul>
+  <p>You can verify by running: <code>nslookup -type=TXT google._domainkey.yourdomain.com</code> or using our <a href="/free-dmarc-checker/" style="color:var(--accent);">free DMARC checker</a>, which checks for DKIM alongside DMARC and SPF.</p>
+  <p>A valid DKIM record will look like: <code>v=DKIM1; k=rsa; p=MIGfMA0G...</code></p>
+
+  <h2>What happens if DKIM is missing or broken?</h2>
+  <ul>
+    <li>Emails are more likely to be flagged as spam or phishing by receiving servers</li>
+    <li>DMARC can only rely on SPF for alignment — if the email is forwarded, both SPF and DMARC will fail</li>
+    <li>Attackers can more easily forge emails from your domain without the signature being detectable</li>
+    <li>Marketing and transactional emails from third-party tools (Mailchimp, Sendgrid) will show a "via" tag in Gmail instead of appearing as sent directly from your domain</li>
+  </ul>
+
+  <h2>Setting up DKIM for common email providers</h2>
+  <h3>Google Workspace</h3>
+  <p>In Google Admin Console → Apps → Google Workspace → Gmail → Authenticate email → Generate new record. Copy the TXT record to your DNS, then click Start authentication.</p>
+  <h3>Microsoft 365</h3>
+  <p>In the Microsoft 365 Defender portal → Email &amp; Collaboration → Policies &amp; Rules → Threat Policies → DKIM. Enable DKIM for your domain and add the two CNAME records it provides to your DNS.</p>
+  <h3>Third-party senders (Mailchimp, SendGrid, etc.)</h3>
+  <p>Each service has a domain authentication section in their account settings. They'll give you specific DNS records (usually CNAME records that point to their signing infrastructure) to add at your DNS provider.</p>
+
+  <div class="callout"><p><strong>Important:</strong> You need a separate DKIM setup for every third-party service sending email on behalf of your domain. A single DKIM key pair (from Google Workspace) won't cover emails sent via Mailchimp or SendGrid. Each sender needs its own authentication.</p></div>
+
+  <h2>DKIM key rotation</h2>
+  <p>DKIM private keys should be rotated periodically (at least annually, or immediately if you suspect a compromise). Microsoft 365 supports key rotation natively. For Google Workspace, you generate a new key, add it to DNS with a new selector, update your sending configuration, then remove the old DNS record after a TTL window.</p>
+
+  <div class="cta-box">
+    <h3>Check your domain's DKIM, SPF, and DMARC in 10 seconds</h3>
+    <p>Inbox Shield checks all three email authentication standards, grades your setup, and monitors weekly for any changes or regressions.</p>
+    <a href="/inbox-shield/" class="cta-btn">Check With Inbox Shield — Free →</a>
+  </div>
+  <div class="email-signup">
+    <p style="font-weight:700;color:var(--text);font-size:0.95rem;margin-bottom:4px;">Get security guides like this in your inbox</p>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0;">No spam. Unsubscribe any time.</p>
+    <div class="email-row"><input type="email" id="e" placeholder="you@company.com"/><button onclick="sub()">Subscribe</button></div>
+    <div class="sub-ok" id="ok">✅ Subscribed — check your inbox.</div>
+  </div>
+</article></div>
+<footer><div class="container"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/inbox-shield/">Inbox Shield</a><a href="/free-dmarc-checker/">DMARC Checker</a><a href="/privacy/">Privacy</a><p style="margin-top:12px;">© 2026 EdgeIQ Labs</p></div></footer>
+<script>
+function sub(){var e=(document.getElementById('e').value||'').trim();if(!e||e.indexOf('@')<0)return;document.getElementById('ok').style.display='block';document.getElementById('e').disabled=true;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:location.href})}).catch(function(){});}
+</script>
+</body></html>

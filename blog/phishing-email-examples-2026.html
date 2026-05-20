@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Phishing Email Examples 2026: What to Look For — EdgeIQ Labs</title>
+  <meta name="description" content="Real phishing email examples from 2026 — Microsoft, DocuSign, payroll, and CEO fraud. Learn the red flags, what attackers do differently now, and how to protect your team."/>
+  <meta property="og:title" content="Phishing Email Examples 2026: What to Look For"/>
+  <meta property="og:description" content="Real phishing examples from 2026 — Microsoft, DocuSign, payroll, CEO fraud — and how to spot every one."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/phishing-email-examples-2026.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/phishing-email-examples-2026.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Phishing Email Examples 2026: What to Look For","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;max-width:980px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .ps-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .ps-inner::-webkit-scrollbar{display:none;}
+    .ps-inner a{padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;}
+    .hero{padding:56px 0 36px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.orange{color:#f97316;background:#1f1710;}
+    .tag.pink{color:#f472b6;background:#1f1020;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+    .meta span{margin-right:16px;}
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:16px;color:#d0dce9;}
+    .prose ul,.prose ol{margin:0 0 18px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;}
+    .prose a:hover{text-decoration:underline;}
+    .example-box{background:#0d1925;border:1px solid #1e3046;border-radius:10px;margin:20px 0 24px;overflow:hidden;}
+    .example-header{background:#102035;padding:10px 16px;font-size:0.8rem;color:var(--muted);font-family:monospace;display:flex;gap:12px;border-bottom:1px solid #1e3046;}
+    .example-header strong{color:#f97316;}
+    .example-body{padding:16px 18px;font-family:monospace;font-size:0.88rem;color:#b8cde0;white-space:pre-wrap;line-height:1.6;}
+    .red-flag{background:#1a0d0d;border-left:3px solid #ef4444;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:0.9rem;color:#f8c4c4;}
+    .red-flag strong{color:#ef4444;}
+    .tip-box{background:#0d1c10;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:0.9rem;color:#b9f0c4;}
+    .tip-box strong{color:#22c55e;}
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0;}
+    @media(max-width:560px){.stat-row{grid-template-columns:1fr 1fr;}}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;}
+    .stat-card .num{font-size:1.8rem;font-weight:800;color:var(--accent);line-height:1;}
+    .stat-card .lbl{font-size:0.78rem;color:var(--muted);margin-top:6px;}
+    table{width:100%;border-collapse:collapse;margin:20px 0 28px;font-size:0.88rem;}
+    th{background:#102035;color:var(--accent);text-align:left;padding:10px 12px;font-weight:700;}
+    td{border-bottom:1px solid #1a2a3a;padding:9px 12px;color:#c8daea;vertical-align:top;}
+    tr:last-child td{border-bottom:none;}
+    .checklist{list-style:none;margin-left:0 !important;}
+    .checklist li{padding:6px 0 6px 28px;position:relative;}
+    .checklist li::before{content:"☐";position:absolute;left:0;color:var(--accent);font-size:1rem;}
+    .cta-block{background:linear-gradient(135deg,#0e1a2e 0%,#0b1422 100%);border:1px solid #2a4a6a;border-radius:14px;padding:32px;margin:48px 0;text-align:center;}
+    .cta-block h3{font-size:1.3rem;font-weight:800;margin-bottom:10px;}
+    .cta-block p{color:var(--muted);margin-bottom:22px;font-size:0.95rem;}
+    .btn-cta{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 28px;border-radius:9px;text-decoration:none;font-size:1rem;}
+    .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+    .capture-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:11px 16px;border-radius:8px;font-size:0.95rem;width:240px;}
+    .capture-form input::placeholder{color:var(--muted);}
+    .capture-form button{background:var(--accent);color:#071018;font-weight:700;padding:11px 20px;border-radius:8px;border:none;cursor:pointer;font-size:0.95rem;}
+    .capture-msg{font-size:0.85rem;color:#22c55e;margin-top:8px;text-align:center;display:none;}
+    .faq-section{margin:40px 0;}
+    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .faq-q{font-weight:700;color:var(--text);font-size:1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+    .faq-a{color:var(--muted);font-size:0.92rem;margin-top:10px;line-height:1.65;}
+    footer{border-top:1px solid var(--border);padding:28px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.85rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+    <div class="nav-links">
+      <a href="/pulse/">Pulse</a>
+      <a href="/inbox-shield/">Inbox Shield</a>
+      <a href="/brandguard/">BrandGuard</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="ps-inner">
+    <a href="/pulse/" style="color:#3dd9ff;">Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">Inbox Shield</a>
+    <a href="/brandguard/" style="color:#f472b6;">BrandGuard</a>
+    <a href="/compliance/" style="color:#34d399;">Compliance</a>
+    <a href="/workspace-posture/" style="color:#fb923c;">Workspace Posture</a>
+    <a href="/free-dmarc-checker/" style="color:#facc15;">Free DMARC Checker</a>
+    <a href="/free-ssl-checker/" style="color:#60a5fa;">Free SSL Checker</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag">Email Security</span>
+      <span class="tag orange">Phishing</span>
+      <span class="tag pink">Threat Intelligence</span>
+    </div>
+    <h1>Phishing Email Examples 2026: What to Look For</h1>
+    <div class="meta">
+      <span>By EdgeIQ Labs</span>
+      <span>May 20, 2026</span>
+      <span>7 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+
+    <p>Phishing emails don't look like they used to. The typos are gone. The logos are perfect. The sender domain passes SPF. And increasingly, the email comes from a real account that was already compromised — not a fake one.</p>
+
+    <p>This guide breaks down the most common phishing patterns active in 2026, shows you real-world examples, and explains the signals that still give attackers away — even when everything else looks legitimate.</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num">36%</div><div class="lbl">of breaches start with phishing (Verizon DBIR 2025)</div></div>
+      <div class="stat-card"><div class="num">3.4B</div><div class="lbl">phishing emails sent per day globally</div></div>
+      <div class="stat-card"><div class="num">82%</div><div class="lbl">of orgs experienced phishing in 2025</div></div>
+    </div>
+
+    <h2>Why Phishing Still Works in 2026</h2>
+
+    <p>Security training hasn't kept pace with attacker tooling. AI-generated phishing emails are now grammatically perfect, contextually aware, and personalized at scale. A model trained on your company's public LinkedIn profiles, press releases, and job postings can produce a highly convincing spear-phish in seconds.</p>
+
+    <p>Meanwhile, attackers have shifted from sending email <em>from</em> fake domains to sending email <em>through</em> real services: legitimate Dropbox share links, real DocuSign envelopes, actual Microsoft Form submissions. These pass every technical filter — because they are technically authentic.</p>
+
+    <h2>Example 1: The Microsoft "Unusual Sign-In" Lure</h2>
+
+    <p>This is the most-clicked phishing template in 2026. It impersonates a Microsoft account security alert and drives victims to a credential-harvesting page that mirrors the Microsoft login flow.</p>
+
+    <div class="example-box">
+      <div class="example-header">
+        <span>From: <strong>microsoft-security@microsoft-account-verify.com</strong></span>
+        <span>Subject: Unusual sign-in activity detected</span>
+      </div>
+      <div class="example-body">We detected a sign-in to your Microsoft account from an unfamiliar device.
+
+Location: Kyiv, Ukraine
+Device: Windows 11 / Chrome
+Time: Today at 03:42 AM
+
+If this was you, no action is needed.
+
+If this wasn't you, secure your account immediately:
+
+  [Review Activity]  ←  button links to: microsoft-account-verify.com/secure
+
+If you don't respond within 24 hours, your account may be suspended.</div>
+    </div>
+
+    <div class="red-flag"><strong>Red flags:</strong> Sender domain is <code>microsoft-account-verify.com</code> — not <code>microsoft.com</code>. Urgency + fear tactic ("account may be suspended"). The link domain doesn't match the sender domain. Legitimate Microsoft emails always come from <code>@microsoft.com</code> or <code>@accountprotection.microsoft.com</code>.</div>
+
+    <p>The credential page at the destination often uses <strong>adversary-in-the-middle (AiTM)</strong> toolkits like Evilginx or Modlishka — meaning it proxies the real Microsoft login page in real time and steals session tokens, bypassing MFA entirely.</p>
+
+    <h2>Example 2: The DocuSign Envelope</h2>
+
+    <p>This variant is dangerous because it often uses <em>real</em> DocuSign infrastructure. The attacker creates a free DocuSign account and sends a legitimate envelope. The email passes SPF, DKIM, and DMARC for <code>docusign.com</code>. The document inside requests a signature — and then redirects to a phishing page.</p>
+
+    <div class="example-box">
+      <div class="example-header">
+        <span>From: <strong>dse@docusign.net</strong></span>
+        <span>Subject: Please DocuSign: Q2 Vendor Agreement — Action Required</span>
+      </div>
+      <div class="example-body">David Chen sent you a document to review and sign.
+
+  Document: Q2-Vendor-Agreement-Final.pdf
+  Sender: David Chen (david.chen@partner-corp.com)
+  Message: "Hi — please review and sign by EOD Friday."
+
+  [Review Document]
+
+This email was sent using DocuSign. It's automatically authenticated.
+© DocuSign Inc. | Privacy | Terms</div>
+    </div>
+
+    <div class="red-flag"><strong>Red flags:</strong> The sender name and email don't match anyone you know. The document name is generic. There was no prior communication about a vendor agreement. When you click "Review Document," the DocuSign envelope contains a single page with a link to an external site — not a real document to sign. Urgency: "by EOD Friday."</div>
+
+    <div class="tip-box"><strong>How to verify:</strong> Log in to DocuSign directly (not via the email link) and check your inbox there. Legitimate envelopes will appear. If you don't see it, the email was fraudulent.</div>
+
+    <h2>Example 3: CEO / Executive Fraud (BEC)</h2>
+
+    <p>Business email compromise (BEC) phishing impersonates a senior executive, typically targeting finance or HR. In 2026, attackers often compromise the executive's real email account first — making detection even harder.</p>
+
+    <div class="example-box">
+      <div class="example-header">
+        <span>From: <strong>james.willard@acme-corp.com</strong> (compromised real account)</span>
+        <span>Subject: Urgent — wire transfer needed today</span>
+      </div>
+      <div class="example-body">Hi Sarah,
+
+I'm in a board meeting and can't talk. I need you to process an urgent wire for a vendor payment we need to close today.
+
+Amount: $47,500
+Beneficiary: Meridian Solutions LLC
+Bank: Chase
+Account: 8834-XXXX
+Routing: 021000021
+
+Please confirm once done. I'll explain everything after the meeting.
+
+Thanks,
+James
+
+James Willard
+CEO, Acme Corp</div>
+    </div>
+
+    <div class="red-flag"><strong>Red flags:</strong> Requests a wire transfer by email with no prior process. Claims to be unavailable to verify ("in a board meeting"). New payee with no payment history. Urgency. Even if the email address looks real — call the CEO at their known number before acting.</div>
+
+    <h2>Example 4: Payroll Redirect Phishing</h2>
+
+    <p>This targets HR departments and payroll systems. The attacker impersonates an employee and requests a direct deposit update shortly before payday.</p>
+
+    <div class="example-box">
+      <div class="example-header">
+        <span>From: <strong>mike.johnson.employee@gmail.com</strong></span>
+        <span>Subject: Update my direct deposit info</span>
+      </div>
+      <div class="example-body">Hi,
+
+I recently opened a new bank account and would like to update my direct deposit information before the next pay cycle.
+
+New bank: Wells Fargo
+Routing: 121042882
+Account: 9981XXXX
+
+Please let me know what I need to do to update this.
+
+Thanks,
+Mike Johnson
+Software Engineer</div>
+    </div>
+
+    <div class="red-flag"><strong>Red flags:</strong> Email is from a personal Gmail, not the company domain. No prior interaction about a bank change. Timing is close to payday. Legitimate payroll changes require employee portal verification — not email.</div>
+
+    <p>Once the redirect is processed, the attacker collects the next payroll deposit. Victims often don't notice until weeks later when they don't receive their paycheck.</p>
+
+    <h2>Example 5: The Shared File Lure</h2>
+
+    <p>In 2026, this attack uses real Google Drive or SharePoint links. The attacker shares a document with you through Google's real sharing infrastructure — so the email comes from <code>drive-shares-noreply@google.com</code> and passes all authentication checks.</p>
+
+    <div class="example-box">
+      <div class="example-header">
+        <span>From: <strong>drive-shares-noreply@google.com</strong></span>
+        <span>Subject: john.doe@vendor.com shared a document with you</span>
+      </div>
+      <div class="example-body">john.doe@vendor.com has shared the following document:
+
+  📄  Q1-Security-Audit-Results-Confidential.pdf
+
+  [Open in Google Docs]
+
+You can view this document at: https://docs.google.com/document/d/1BxYzABC...</div>
+    </div>
+
+    <div class="red-flag"><strong>Red flags:</strong> The document name implies urgency or curiosity (security audit results). The file, when opened, contains only an image of a document with a "Click to view full report" button — which redirects to a credential phishing page. Or it contains a macro-enabled Office file embedded as a Google Doc export.</div>
+
+    <h2>The New Red Flags to Train Your Team On</h2>
+
+    <p>Classic red flags (typos, generic greetings, mismatched logos) are largely obsolete. Here's what to watch for now:</p>
+
+    <table>
+      <thead><tr><th>Signal</th><th>What it means</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>Urgency + financial/credential action</td><td>Classic social engineering pressure</td><td>Slow down. Verify out-of-band.</td></tr>
+        <tr><td>Request initiated via email (not normal process)</td><td>Bypassing established controls</td><td>Follow your process — not the email.</td></tr>
+        <tr><td>Link domain ≠ sender domain</td><td>Redirecting to attacker infrastructure</td><td>Hover before clicking. Check the URL.</td></tr>
+        <tr><td>New payee / first contact</td><td>No relationship to verify against</td><td>Call to verify using a known number.</td></tr>
+        <tr><td>Legitimate service (DocuSign, Drive, Dropbox)</td><td>Abusing trusted infrastructure</td><td>Log in directly — don't trust the email.</td></tr>
+        <tr><td>Sender email ≠ display name</td><td>Display name spoofing</td><td>Check the full From header, not just the name.</td></tr>
+        <tr><td>Content from a "compromised" account</td><td>ATO-enabled phishing</td><td>Verify high-stakes requests by phone.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>What Technical Controls Actually Stop Phishing</h2>
+
+    <p>User training alone is not enough. Attackers send thousands of emails; you only need to miss one. Layered technical controls stop phishing attempts before they reach inboxes:</p>
+
+    <h3>DMARC, SPF, and DKIM on your own domain</h3>
+    <p>These don't stop attackers from impersonating you — but they stop your domain from being used to send phishing to others. A <code>p=reject</code> DMARC policy blocks unauthenticated email from your domain being delivered anywhere. Without it, attackers can send email "from" you@yourdomain.com that passes through many mail servers.</p>
+
+    <h3>Email filtering with sandbox detonation</h3>
+    <p>Microsoft Defender for Office 365 and Google Workspace's Advanced Protection detonate suspicious links and attachments in a sandbox before delivery. This catches AiTM phishing kits and macro-embedded files.</p>
+
+    <h3>Phishing-resistant MFA</h3>
+    <p>TOTP/SMS MFA can be bypassed by AiTM proxies. FIDO2 hardware keys (YubiKey, Passkeys) cannot — they cryptographically bind to the legitimate domain. If you're at high risk, make the switch.</p>
+
+    <h3>Domain monitoring for lookalike domains</h3>
+    <p>Attackers register <code>acme-corp.com</code> or <code>acmecorpo.com</code> before they send phishing campaigns. Monitoring new domain registrations and certificate transparency logs for variations of your brand name gives you early warning.</p>
+
+    <h2>Phishing Red Flags Checklist</h2>
+
+    <ul class="checklist">
+      <li>Verify the From email address (not just the display name)</li>
+      <li>Hover over links before clicking — check the destination domain</li>
+      <li>Be suspicious of any email that creates urgency</li>
+      <li>Never process wire transfers, payroll changes, or credential resets based on email alone</li>
+      <li>If an email uses a legitimate service (DocuSign, Drive), log in directly</li>
+      <li>Call executives at known numbers to verify financial requests</li>
+      <li>Report suspicious emails — don't just delete them</li>
+      <li>Check that your own domain has a DMARC p=reject policy</li>
+      <li>Monitor for lookalike domains impersonating your brand</li>
+    </ul>
+
+    <h2>Check Your Domain's Defenses Right Now</h2>
+
+    <p>If your domain doesn't have a <code>p=reject</code> DMARC policy, attackers can use your domain name to send phishing emails. Use the free checker to see your current email authentication posture in seconds.</p>
+
+  </div>
+
+  <div class="cta-block">
+    <h3>Is your domain protected against phishing?</h3>
+    <p>Inbox Shield monitors your DMARC, SPF, and DKIM records 24/7 and alerts you when anything changes — before attackers exploit the gap.</p>
+    <a href="/inbox-shield/" class="btn-cta">Protect Your Domain →</a>
+    <div class="capture-form">
+      <input type="email" id="captureEmail" placeholder="you@company.com" autocomplete="email"/>
+      <button onclick="submitCapture()">Get the security checklist</button>
+    </div>
+    <div class="capture-msg" id="captureMsg">✓ Check your inbox — checklist on its way.</div>
+  </div>
+
+  <div class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">How can I tell if a phishing email is from a real compromised account?</div>
+      <div class="faq-a">It's very difficult by email alone. The key is process: any high-stakes request (wire transfer, credential reset, payroll change) should require out-of-band verification — a phone call to a known number, or an in-person confirmation. Never trust the contact details in the suspicious email itself.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Do phishing emails always contain links?</div>
+      <div class="faq-a">No. Some BEC phishing emails contain no links at all — they're pure social engineering to get a response. Others direct you to reply with credentials or wire instructions. The absence of a link doesn't make an email safe.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does DMARC have to do with phishing?</div>
+      <div class="faq-a">DMARC protects your domain from being spoofed outbound — if you have <code>p=reject</code>, email claiming to be from your domain that doesn't pass SPF or DKIM will be rejected by recipient mail servers. It doesn't protect you from receiving phishing, but it stops attackers from using your brand to target others.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can AI-generated phishing be detected?</div>
+      <div class="faq-a">Generally not by content filters alone — AI-generated text is indistinguishable from human-written text at the email level. Detection has to rely on behavioral signals (unusual sender, new domain, process deviations) rather than grammar or spelling.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What's the difference between phishing and spear phishing?</div>
+      <div class="faq-a">Phishing is mass-targeted — same email sent to thousands. Spear phishing is personalized to the specific victim: uses their name, role, company, and context to appear more legitimate. CEO fraud and payroll redirect attacks are forms of spear phishing.</div>
+    </div>
+  </div>
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"How can I tell if a phishing email is from a real compromised account?","acceptedAnswer":{"@type":"Answer","text":"It's very difficult by email alone. Any high-stakes request should require out-of-band verification — a phone call to a known number, or an in-person confirmation. Never trust the contact details in the suspicious email itself."}},
+    {"@type":"Question","name":"Do phishing emails always contain links?","acceptedAnswer":{"@type":"Answer","text":"No. Some BEC phishing emails contain no links at all — they're pure social engineering. Others direct you to reply with credentials or wire instructions. The absence of a link doesn't make an email safe."}},
+    {"@type":"Question","name":"What does DMARC have to do with phishing?","acceptedAnswer":{"@type":"Answer","text":"DMARC protects your domain from being spoofed outbound. With p=reject, email claiming to be from your domain that doesn't pass SPF or DKIM will be rejected by recipient mail servers."}},
+    {"@type":"Question","name":"Can AI-generated phishing be detected?","acceptedAnswer":{"@type":"Answer","text":"Generally not by content filters alone. Detection has to rely on behavioral signals — unusual sender, new domain, process deviations — rather than grammar or spelling."}},
+    {"@type":"Question","name":"What's the difference between phishing and spear phishing?","acceptedAnswer":{"@type":"Answer","text":"Phishing is mass-targeted. Spear phishing is personalized to the specific victim using their name, role, and context. CEO fraud and payroll redirect attacks are forms of spear phishing."}}
+  ]}
+  </script>
+
+  <footer>
+    <div>© 2026 EdgeIQ Labs · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/blog/">Blog</a> · <a href="/pricing/">Pricing</a></div>
+  </footer>
+</div>
+
+<script>
+async function submitCapture() {
+  const email = document.getElementById('captureEmail').value.trim();
+  if (!email) return;
+  try {
+    await fetch('/api/capture-email', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, source: 'blog-phishing-examples-2026' })
+    });
+  } catch(e) {}
+  document.getElementById('captureMsg').style.display = 'block';
+  document.getElementById('captureEmail').value = '';
+}
+document.getElementById('captureEmail').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitCapture();
+});
+</script>
+</body>
+</html>
