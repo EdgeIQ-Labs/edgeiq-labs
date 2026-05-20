@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Zero Trust Security for Small Businesses: A Practical Guide — EdgeIQ Labs</title>
+  <meta name="description" content="Zero trust isn't just for enterprises. This practical guide shows small businesses how to implement zero trust principles without a dedicated security team or six-figure budget."/>
+  <meta property="og:title" content="Zero Trust Security for Small Businesses: A Practical Guide"/>
+  <meta property="og:description" content="How small businesses can implement zero trust security without an enterprise budget — step by step."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/zero-trust-security-small-business-guide.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/zero-trust-security-small-business-guide.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Zero Trust Security for Small Businesses: A Practical Guide","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;max-width:980px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .ps-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .ps-inner::-webkit-scrollbar{display:none;}
+    .ps-inner a{padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;}
+    .hero{padding:56px 0 36px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.green{color:#34d399;background:#0d1f18;}
+    .tag.orange{color:#f97316;background:#1f1710;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+    .meta span{margin-right:16px;}
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:16px;color:#d0dce9;}
+    .prose ul,.prose ol{margin:0 0 18px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;}
+    .prose a:hover{text-decoration:underline;}
+    .phase-box{background:#0d1925;border:1px solid #1e3046;border-radius:12px;padding:20px 24px;margin:20px 0 28px;}
+    .phase-box .phase-label{font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+    .phase-box h3{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:10px;}
+    .phase-box p{color:#b8cde0;font-size:0.92rem;margin-bottom:0;}
+    .phase-box ul{color:#b8cde0;font-size:0.92rem;margin:8px 0 0 20px;}
+    .tip-box{background:#0d1c10;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:0.9rem;color:#b9f0c4;}
+    .tip-box strong{color:#22c55e;}
+    .warn-box{background:#1a1207;border-left:3px solid #f97316;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:0.9rem;color:#fed7aa;}
+    .warn-box strong{color:#f97316;}
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0;}
+    @media(max-width:560px){.stat-row{grid-template-columns:1fr 1fr;}}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;}
+    .stat-card .num{font-size:1.8rem;font-weight:800;color:var(--accent);line-height:1;}
+    .stat-card .lbl{font-size:0.78rem;color:var(--muted);margin-top:6px;}
+    table{width:100%;border-collapse:collapse;margin:20px 0 28px;font-size:0.88rem;}
+    th{background:#102035;color:var(--accent);text-align:left;padding:10px 12px;font-weight:700;}
+    td{border-bottom:1px solid #1a2a3a;padding:9px 12px;color:#c8daea;vertical-align:top;}
+    tr:last-child td{border-bottom:none;}
+    .checklist{list-style:none;margin-left:0 !important;}
+    .checklist li{padding:6px 0 6px 28px;position:relative;}
+    .checklist li::before{content:"☐";position:absolute;left:0;color:var(--accent);font-size:1rem;}
+    .pillar-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0 28px;}
+    @media(max-width:560px){.pillar-grid{grid-template-columns:1fr;}}
+    .pillar-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+    .pillar-card .icon{font-size:1.4rem;margin-bottom:8px;}
+    .pillar-card h4{font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .pillar-card p{font-size:0.85rem;color:var(--muted);margin:0;}
+    .cta-block{background:linear-gradient(135deg,#0e1a2e 0%,#0b1422 100%);border:1px solid #2a4a6a;border-radius:14px;padding:32px;margin:48px 0;text-align:center;}
+    .cta-block h3{font-size:1.3rem;font-weight:800;margin-bottom:10px;}
+    .cta-block p{color:var(--muted);margin-bottom:22px;font-size:0.95rem;}
+    .btn-cta{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 28px;border-radius:9px;text-decoration:none;font-size:1rem;}
+    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:11px 22px;border-radius:9px;text-decoration:none;font-size:0.95rem;border:1px solid var(--accent);margin-left:10px;}
+    .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+    .capture-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:11px 16px;border-radius:8px;font-size:0.95rem;width:240px;}
+    .capture-form input::placeholder{color:var(--muted);}
+    .capture-form button{background:var(--accent);color:#071018;font-weight:700;padding:11px 20px;border-radius:8px;border:none;cursor:pointer;font-size:0.95rem;}
+    .capture-msg{font-size:0.85rem;color:#22c55e;margin-top:8px;text-align:center;display:none;}
+    .faq-section{margin:40px 0;}
+    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .faq-q{font-weight:700;color:var(--text);font-size:1rem;}
+    .faq-a{color:var(--muted);font-size:0.92rem;margin-top:10px;line-height:1.65;}
+    footer{border-top:1px solid var(--border);padding:28px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.85rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+    <div class="nav-links">
+      <a href="/pulse/">Pulse</a>
+      <a href="/inbox-shield/">Inbox Shield</a>
+      <a href="/brandguard/">BrandGuard</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="ps-inner">
+    <a href="/pulse/" style="color:#3dd9ff;">Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">Inbox Shield</a>
+    <a href="/brandguard/" style="color:#f472b6;">BrandGuard</a>
+    <a href="/compliance/" style="color:#34d399;">Compliance</a>
+    <a href="/workspace-posture/" style="color:#fb923c;">Workspace Posture</a>
+    <a href="/free-dmarc-checker/" style="color:#facc15;">Free DMARC Checker</a>
+    <a href="/free-ssl-checker/" style="color:#60a5fa;">Free SSL Checker</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag">Security Strategy</span>
+      <span class="tag green">Zero Trust</span>
+      <span class="tag orange">SMB</span>
+    </div>
+    <h1>Zero Trust Security for Small Businesses: A Practical Guide</h1>
+    <div class="meta">
+      <span>By EdgeIQ Labs</span>
+      <span>May 20, 2026</span>
+      <span>8 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+
+    <p>"Never trust, always verify." That's the core of zero trust — and despite the enterprise marketing around it, the principles apply just as powerfully to a 15-person SaaS startup as they do to a Fortune 500. In fact, small businesses often benefit <em>more</em> from zero trust thinking, because they can implement it cleanly without legacy infrastructure getting in the way.</p>
+
+    <p>This guide skips the NIST frameworks and vendor acronyms. It tells you what zero trust actually means in practice, which controls give the most protection per hour of effort, and how to build a zero-trust posture incrementally — without a dedicated security team.</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num">43%</div><div class="lbl">of cyberattacks target small businesses</div></div>
+      <div class="stat-card"><div class="num">60%</div><div class="lbl">of SMBs close within 6 months of a breach</div></div>
+      <div class="stat-card"><div class="num">$200K</div><div class="lbl">average cost of a breach for an SMB</div></div>
+    </div>
+
+    <h2>What Zero Trust Actually Means</h2>
+
+    <p>Traditional security assumed a hard perimeter: inside the network was trusted, outside was not. Zero trust throws out that assumption. In a world where employees work from home, use SaaS apps, and access everything through a browser, there is no perimeter. Every request must be authenticated, authorized, and validated — regardless of where it comes from.</p>
+
+    <p>Zero trust has three core ideas:</p>
+
+    <ul>
+      <li><strong>Verify explicitly</strong> — always authenticate and authorize using all available signals (identity, device health, location, behavior)</li>
+      <li><strong>Use least privilege access</strong> — give people access to only what they need, when they need it</li>
+      <li><strong>Assume breach</strong> — design systems as if attackers are already inside; limit blast radius and lateral movement</li>
+    </ul>
+
+    <p>For a small business, this translates to a set of practical controls you can implement over a few weeks — not a multi-year transformation program.</p>
+
+    <h2>The Four Pillars for Small Businesses</h2>
+
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <div class="icon">🔐</div>
+        <h4>Identity is the new perimeter</h4>
+        <p>Strong authentication (MFA, ideally phishing-resistant) on every account is the single highest-leverage control.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="icon">📱</div>
+        <h4>Device health matters</h4>
+        <p>Managed devices with up-to-date OS and EDR have a very different trust level than personal or unmanaged ones.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="icon">🔒</div>
+        <h4>Least privilege, always</h4>
+        <p>Nobody should have admin access they don't need daily. Scope every SaaS permission to the minimum required.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="icon">👁️</div>
+        <h4>Continuous monitoring</h4>
+        <p>Verify posture continuously — alert on unusual access, new OAuth apps, exposed ports, and config drift.</p>
+      </div>
+    </div>
+
+    <h2>Phase 1: Identity and Authentication (Week 1–2)</h2>
+
+    <div class="phase-box">
+      <div class="phase-label">Phase 1 · Highest impact · Start here</div>
+      <h3>Lock down every account with strong MFA</h3>
+      <p>More than 80% of account takeovers are stopped by MFA. This is the single most important zero trust control you can implement.</p>
+      <ul>
+        <li>Enable MFA on Google Workspace or Microsoft 365 for every user — make it mandatory, not optional</li>
+        <li>Enable MFA on every critical SaaS app: Slack, GitHub, AWS, Stripe, Notion, etc.</li>
+        <li>Prefer authenticator apps (Google Authenticator, Authy, Microsoft Authenticator) over SMS — SMS can be SIM-swapped</li>
+        <li>For highest-value accounts (billing, admin, GitHub), use FIDO2 hardware keys (YubiKey, Apple Passkeys) — these are phishing-resistant</li>
+        <li>Create a break-glass admin account with MFA stored separately from daily-use accounts</li>
+      </ul>
+    </div>
+
+    <h3>Centralize identity with SSO</h3>
+    <p>If you're on Google Workspace or Microsoft 365, you already have an identity provider. Use it. Enable Google or Microsoft SSO for every SaaS app that supports it — this means one MFA event controls access to dozens of apps, and when someone leaves, one deprovisioning action removes access everywhere.</p>
+
+    <div class="tip-box"><strong>Quick win:</strong> Go to your Google Admin console or Microsoft Entra today and require MFA for all users. It takes under 15 minutes and immediately raises your protection against credential-based attacks.</div>
+
+    <h2>Phase 2: Least Privilege Access (Week 2–3)</h2>
+
+    <div class="phase-box">
+      <div class="phase-label">Phase 2 · High impact · Principle of least privilege</div>
+      <h3>Audit and reduce permissions across every app</h3>
+      <p>Most breaches that cause real damage do so because the compromised account had far more access than needed. Reducing permissions limits the blast radius.</p>
+      <ul>
+        <li>Audit admin accounts: who has admin rights in Google/M365? Who <em>needs</em> them day-to-day?</li>
+        <li>Remove admin rights from daily-use accounts — use a separate admin account for admin tasks only</li>
+        <li>Audit OAuth app connections: which third-party apps have access to Google Drive, Gmail, or Microsoft 365?</li>
+        <li>Revoke any OAuth apps that have <code>Mail.ReadWrite</code>, <code>Files.ReadWrite.All</code>, or <code>Directory.ReadWrite.All</code> that don't need those scopes</li>
+        <li>Review GitHub repository access: who has write access to production repos?</li>
+        <li>Review AWS/GCP/Azure IAM: no user should have wildcard <code>*</code> permissions in production</li>
+      </ul>
+    </div>
+
+    <table>
+      <thead><tr><th>Access area</th><th>What to audit</th><th>What to trim</th></tr></thead>
+      <tbody>
+        <tr><td>Google / M365 admin</td><td>Who has Global Admin / Super Admin</td><td>Move to role-based admin; daily accounts should not be admins</td></tr>
+        <tr><td>OAuth apps</td><td>All connected third-party apps</td><td>Revoke anything unused or with excessive scopes</td></tr>
+        <tr><td>GitHub / GitLab</td><td>Repository write access</td><td>Read-only for anyone who doesn't push code</td></tr>
+        <tr><td>Cloud IAM</td><td>User and service account policies</td><td>Replace wildcard policies with scoped role policies</td></tr>
+        <tr><td>SaaS admin roles</td><td>Who is admin in Stripe, Notion, Slack, etc.</td><td>One admin + one backup per tool; everyone else standard user</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Phase 3: Device Security (Week 3–4)</h2>
+
+    <div class="phase-box">
+      <div class="phase-label">Phase 3 · Medium-high impact · Managed vs. unmanaged</div>
+      <h3>Know what devices are accessing your systems</h3>
+      <p>Zero trust treats device health as a trust signal. An up-to-date, managed laptop is a very different risk from a personal phone running an old OS.</p>
+      <ul>
+        <li>Enable Google Endpoint Management or Microsoft Intune — both are included in your Workspace/M365 subscription</li>
+        <li>Require managed/compliant devices for access to sensitive apps and data</li>
+        <li>Enable full-disk encryption on all company devices (FileVault on Mac, BitLocker on Windows)</li>
+        <li>Enable automatic OS updates — unpatched systems are the primary vector for malware</li>
+        <li>Deploy endpoint detection and response (EDR) — Microsoft Defender is included in M365 Business Premium; CrowdFalcon Go is low-cost for Google shops</li>
+        <li>Block or restrict access from personal devices to sensitive data where possible</li>
+      </ul>
+    </div>
+
+    <div class="warn-box"><strong>Watch out:</strong> BYOD (bring your own device) policies significantly complicate zero trust. If you allow personal devices, at minimum require them to enroll in MDM and meet basic compliance policies (PIN, encryption, up-to-date OS) before accessing company resources.</div>
+
+    <h2>Phase 4: Network and Application Controls (Week 4–5)</h2>
+
+    <h3>Segment your network</h3>
+    <p>If you run a physical or virtual office network, network segmentation limits lateral movement. A compromised laptop shouldn't be able to reach your NAS, your cloud admin panel, and your production database — all from the same network segment.</p>
+
+    <ul>
+      <li>Separate IoT devices (printers, cameras, smart TVs) onto a guest VLAN</li>
+      <li>Separate developer workstations from admin workstations</li>
+      <li>Don't put production servers on the same network as end-user devices</li>
+    </ul>
+
+    <h3>Use a Zero Trust Network Access (ZTNA) solution instead of VPN</h3>
+    <p>Traditional VPNs grant broad network access once connected. ZTNA solutions (Cloudflare Access, Tailscale, Twingate) grant access to specific applications per user, with continuous verification. They're also faster, easier to manage, and often cheaper for small teams.</p>
+
+    <div class="tip-box"><strong>Recommendation:</strong> Tailscale is free for small teams (up to 3 users), trivial to set up, and replaces VPN for internal service access. Cloudflare Access (part of Zero Trust free tier) secures web apps and SSH with identity-based access.</div>
+
+    <h3>Secure your DNS</h3>
+    <p>DNS-layer filtering blocks connections to known malicious domains before the browser even makes a request. Cloudflare Gateway and Cisco Umbrella both offer DNS filtering — Cloudflare's basic tier is free. Enable it on all company devices and your office router.</p>
+
+    <h2>Phase 5: Monitoring and Visibility (Ongoing)</h2>
+
+    <p>Zero trust is not a one-time project — it requires continuous monitoring. Posture drifts. New OAuth apps get connected. Subdomains get exposed. MFA gets disabled on a service account. You need to know about these changes quickly.</p>
+
+    <h3>What to monitor</h3>
+
+    <table>
+      <thead><tr><th>What</th><th>Why it matters</th><th>Tool</th></tr></thead>
+      <tbody>
+        <tr><td>MFA disabled / new admin account created</td><td>Identity control bypass</td><td>Google Admin audit log, Microsoft Entra audit log</td></tr>
+        <tr><td>New OAuth app authorized</td><td>Supply chain / insider risk</td><td>Workspace Posture (EdgeIQ), Entra app governance</td></tr>
+        <tr><td>Open ports on public-facing assets</td><td>Unintended attack surface</td><td>Pulse (EdgeIQ), Shodan alerts</td></tr>
+        <tr><td>SSL certificate expiry</td><td>Outages + downtime trust signals</td><td>Pulse (EdgeIQ)</td></tr>
+        <tr><td>DMARC/SPF/DKIM changes</td><td>Email authentication drift</td><td>Inbox Shield (EdgeIQ)</td></tr>
+        <tr><td>New lookalike domains registered</td><td>Phishing campaign preparation</td><td>BrandGuard (EdgeIQ)</td></tr>
+        <tr><td>New subdomains appearing</td><td>Shadow IT, forgotten assets</td><td>Pulse (EdgeIQ), free subdomain scanner</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Zero Trust Implementation Checklist for SMBs</h2>
+
+    <p>Use this as your action list — work through it over 4–6 weeks:</p>
+
+    <ul class="checklist">
+      <li><strong>Identity:</strong> Enable mandatory MFA for all users in Google Workspace or M365</li>
+      <li><strong>Identity:</strong> Enable MFA on Slack, GitHub, AWS, Stripe, and every critical SaaS app</li>
+      <li><strong>Identity:</strong> Use hardware keys or passkeys for admin and billing accounts</li>
+      <li><strong>Identity:</strong> Configure SSO for all apps that support it</li>
+      <li><strong>Access:</strong> Remove admin rights from daily-use accounts</li>
+      <li><strong>Access:</strong> Audit and revoke over-permissioned OAuth apps in Google and M365</li>
+      <li><strong>Access:</strong> Review GitHub repository write access</li>
+      <li><strong>Access:</strong> Review cloud IAM policies — remove wildcard permissions</li>
+      <li><strong>Devices:</strong> Enroll all company devices in endpoint management</li>
+      <li><strong>Devices:</strong> Enable full-disk encryption on all laptops</li>
+      <li><strong>Devices:</strong> Enable automatic OS updates everywhere</li>
+      <li><strong>Network:</strong> Separate IoT onto a guest VLAN</li>
+      <li><strong>Network:</strong> Evaluate ZTNA (Tailscale or Cloudflare Access) to replace VPN</li>
+      <li><strong>Network:</strong> Enable DNS filtering on company devices and router</li>
+      <li><strong>Email:</strong> Set DMARC to p=reject on your domain</li>
+      <li><strong>Monitoring:</strong> Set up alerts for MFA changes and new admin accounts</li>
+      <li><strong>Monitoring:</strong> Monitor external attack surface (open ports, certificates, subdomains)</li>
+      <li><strong>Monitoring:</strong> Monitor for lookalike domains targeting your brand</li>
+    </ul>
+
+    <h2>Where EdgeIQ Labs Fits In</h2>
+
+    <p>EdgeIQ Labs products are built specifically for the monitoring layer — the continuous visibility that makes zero trust an ongoing practice rather than a one-time audit.</p>
+
+    <ul>
+      <li><strong><a href="/pulse/">Pulse</a></strong> — monitors your external attack surface: open ports, subdomains, SSL certificates, DNS changes</li>
+      <li><strong><a href="/inbox-shield/">Inbox Shield</a></strong> — monitors DMARC, SPF, and DKIM records and alerts on policy drift</li>
+      <li><strong><a href="/brandguard/">BrandGuard</a></strong> — monitors for new lookalike domains being registered against your brand</li>
+      <li><strong><a href="/workspace-posture/">Workspace Posture</a></strong> — monitors OAuth app permissions in Google Workspace and M365, surfaces risky app grants</li>
+      <li><strong><a href="/compliance/">Compliance</a></strong> — maps your controls to SOC 2, ISO 27001, and NIST CSF frameworks</li>
+    </ul>
+
+  </div>
+
+  <div class="cta-block">
+    <h3>Start your zero trust posture today</h3>
+    <p>Pulse monitors your external attack surface around the clock — open ports, expired certificates, new subdomains — and sends you a weekly digest. Free for one domain.</p>
+    <a href="/pulse/" class="btn-cta">Try Pulse Free →</a>
+    <a href="/pricing/" class="btn-secondary">See all plans</a>
+    <div class="capture-form">
+      <input type="email" id="captureEmail" placeholder="you@company.com" autocomplete="email"/>
+      <button onclick="submitCapture()">Get the zero trust checklist</button>
+    </div>
+    <div class="capture-msg" id="captureMsg">✓ Check your inbox — checklist on its way.</div>
+  </div>
+
+  <div class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">Is zero trust just for large enterprises?</div>
+      <div class="faq-a">No — and small businesses often benefit more from zero trust principles because they can implement them without legacy infrastructure getting in the way. The core controls (strong MFA, least privilege, device management, continuous monitoring) are accessible to any organization regardless of size.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How long does it take to implement zero trust for a small business?</div>
+      <div class="faq-a">The highest-impact controls (mandatory MFA, OAuth app audit, least-privilege admin access) can be completed in 1–2 weeks. A full implementation covering identity, device management, network access, and continuous monitoring typically takes 4–8 weeks for a team of 5–50 people.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What's the single most important zero trust control?</div>
+      <div class="faq-a">Strong MFA — especially phishing-resistant MFA (FIDO2/hardware keys/passkeys) on admin and billing accounts. More than 80% of account takeovers are stopped by MFA. If you do nothing else, make MFA mandatory for every user across all your critical systems.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does zero trust replace a VPN?</div>
+      <div class="faq-a">Zero Trust Network Access (ZTNA) tools like Tailscale and Cloudflare Access are generally a better fit than traditional VPNs for modern teams. VPNs grant broad network access once connected; ZTNA grants access to specific applications per user with continuous verification. That said, for simple use cases (remote access to a single internal server), a VPN can still be appropriate.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does zero trust handle contractors and third parties?</div>
+      <div class="faq-a">Contractors should get access to exactly what they need for their engagement — nothing more. Use SSO with temporary accounts, scope OAuth permissions tightly, and revoke access immediately when the engagement ends. Tools like Google Workspace Visitor Sessions or Microsoft Entra B2B allow you to grant time-limited external access without creating full internal accounts.</div>
+    </div>
+  </div>
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"Is zero trust just for large enterprises?","acceptedAnswer":{"@type":"Answer","text":"No. Small businesses often benefit more from zero trust principles because they can implement them without legacy infrastructure. The core controls — strong MFA, least privilege, device management, continuous monitoring — are accessible to any organization regardless of size."}},
+    {"@type":"Question","name":"How long does it take to implement zero trust for a small business?","acceptedAnswer":{"@type":"Answer","text":"The highest-impact controls can be completed in 1–2 weeks. A full implementation covering identity, device management, network access, and continuous monitoring typically takes 4–8 weeks for a team of 5–50 people."}},
+    {"@type":"Question","name":"What's the single most important zero trust control?","acceptedAnswer":{"@type":"Answer","text":"Strong MFA — especially phishing-resistant MFA (FIDO2/hardware keys/passkeys) on admin and billing accounts. More than 80% of account takeovers are stopped by MFA."}},
+    {"@type":"Question","name":"Does zero trust replace a VPN?","acceptedAnswer":{"@type":"Answer","text":"Zero Trust Network Access (ZTNA) tools like Tailscale and Cloudflare Access are generally a better fit than traditional VPNs. ZTNA grants access to specific applications per user with continuous verification; VPNs grant broad network access once connected."}},
+    {"@type":"Question","name":"How does zero trust handle contractors and third parties?","acceptedAnswer":{"@type":"Answer","text":"Contractors should get access to exactly what they need — nothing more. Use SSO with temporary accounts, scope OAuth permissions tightly, and revoke access immediately when the engagement ends."}}
+  ]}
+  </script>
+
+  <footer>
+    <div>© 2026 EdgeIQ Labs · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/blog/">Blog</a> · <a href="/pricing/">Pricing</a></div>
+  </footer>
+</div>
+
+<script>
+async function submitCapture() {
+  const email = document.getElementById('captureEmail').value.trim();
+  if (!email) return;
+  try {
+    await fetch('/api/capture-email', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, source: 'blog-zero-trust-smb-guide' })
+    });
+  } catch(e) {}
+  document.getElementById('captureMsg').style.display = 'block';
+  document.getElementById('captureEmail').value = '';
+}
+document.getElementById('captureEmail').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitCapture();
+});
+</script>
+</body>
+</html>

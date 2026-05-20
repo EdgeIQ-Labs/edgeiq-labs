@@ -404,6 +404,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://edgeiqlabs.com/blog/zero-trust-security-small-business-guide.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/phishing-email-examples-2026.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/email-blacklist-check-domain-removal.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/saas-app-permission-audit-guide.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/what-is-dkim-email-authentication.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://edgeiqlabs.com/blog/business-email-compromise-bec-prevention-2026.html</loc>
     <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>

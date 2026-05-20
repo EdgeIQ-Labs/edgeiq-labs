@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>How to Audit Your SaaS App Permissions (OAuth Security Guide 2026) — EdgeIQ Labs</title>
+  <meta name="description" content="Most M365 and Google Workspace tenants have dozens of OAuth apps with broad permissions that no one remembers authorising. Here's how to audit them and what to revoke."/>
+  <meta property="og:title" content="How to Audit Your SaaS App Permissions (OAuth Security Guide 2026)"/>
+  <meta property="og:description" content="Step-by-step guide to auditing OAuth app access in Microsoft 365 and Google Workspace — what to look for, what to revoke, and how to prevent it happening again."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/saas-app-permission-audit-guide.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/saas-app-permission-audit-guide.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Audit Your SaaS App Permissions (OAuth Security Guide 2026)","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#4da6ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;max-width:980px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .ps-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .ps-inner::-webkit-scrollbar{display:none;}
+    .ps-inner a{padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;}
+    article{padding:48px 0 80px;}
+    .post-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+    .tag{background:#1a2535;color:var(--muted);padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;}
+    .post-meta{color:var(--muted);font-size:0.82rem;}
+    h1{font-size:clamp(1.55rem,3.5vw,2.1rem);font-weight:800;line-height:1.25;margin-bottom:16px;color:#fff;}
+    .post-lead{font-size:1.08rem;color:#b8cce0;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+    h2{font-size:1.28rem;font-weight:700;margin:38px 0 12px;color:#d4e6ff;}
+    h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;color:#c0d4ee;}
+    p{margin-bottom:16px;color:#c8d8ea;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:8px;color:#c8d8ea;}
+    strong{color:#e8f0f8;}
+    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.9em;font-family:'Fira Mono',monospace;}
+    table{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.9rem;}
+    th{background:#1a2535;color:#d4e6ff;padding:10px 14px;text-align:left;border:1px solid #2a3c52;font-weight:700;}
+    td{padding:9px 14px;border:1px solid #1e3347;color:#b8cce0;}
+    tr:nth-child(even) td{background:#0f1820;}
+    .callout{background:#12202e;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;}
+    .callout p{margin:0;color:#b8cce0;}
+    .risk-list{list-style:none;padding:0;margin:0 0 20px;}
+    .risk-list li{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:#130e0e;border:1px solid #3a1a1a;border-radius:8px;margin-bottom:8px;color:#e8d5d5;}
+    .risk-list li::before{content:"🚩";flex-shrink:0;}
+    .checklist{list-style:none;padding:0;margin:0 0 18px;}
+    .checklist li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #1a2535;color:#c8d8ea;font-size:0.93rem;}
+    .checklist li:last-child{border-bottom:none;}
+    .checklist li::before{content:"☐";color:var(--accent);flex-shrink:0;margin-top:1px;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(77,166,255,0.28);border-radius:14px;padding:32px 28px;margin:48px 0 24px;text-align:center;}
+    .cta-box h3{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:10px;}
+    .cta-box p{color:#9fb8cc;margin-bottom:20px;font-size:0.93rem;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 26px;border-radius:9px;text-decoration:none;font-size:0.93rem;}
+    .email-signup{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:36px 0;text-align:center;}
+    .email-row{display:flex;gap:8px;max-width:400px;margin:12px auto 0;}
+    .email-row input{flex:1;background:#121923;border:1px solid #2a3c52;border-radius:8px;padding:9px 12px;color:#e8eef7;font-size:0.9rem;outline:none;}
+    .email-row input:focus{border-color:var(--accent);}
+    .email-row button{background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-size:0.88rem;}
+    .sub-ok{display:none;color:var(--accent);font-size:0.88rem;margin-top:8px;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.83rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+  </style>
+</head>
+<body>
+<nav><div class="nav-inner">
+  <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links"><a href="/dashboard/">Dashboard</a><a href="/workspace-posture/">Workspace Posture</a><a href="/blog/">Blog</a><a href="/workspace-posture/" class="nav-cta">Audit Your Workspace →</a></div>
+</div></nav>
+<div class="product-strip"><div class="ps-inner">
+  <a href="/dashboard/" style="color:#3dd9ff;">🔍 Dashboard</a><a href="/pulse/" style="color:#3dd9ff;">📡 Pulse</a><a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a><a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a><a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a><a href="/compliance/" style="color:#3de19e;">📋 Compliance</a>
+</div></div>
+<div class="container"><article>
+  <div class="post-eyebrow"><span class="tag">Google Workspace</span><span class="tag">Microsoft 365</span><span class="tag">OAuth Security</span><span class="post-meta">May 20, 2026 &nbsp;·&nbsp; 8 min read</span></div>
+  <h1>How to Audit Your SaaS App Permissions in M365 and Google Workspace</h1>
+  <p class="post-lead">The average M365 tenant has 40+ third-party apps with OAuth access. Most were authorised by individual employees during free trials, product evaluations, or one-off integrations — and never reviewed again. Some have read access to all email. Some have write access to all files. A few have admin-level permissions that most IT teams don't know about. Here's how to find them and what to do.</p>
+
+  <h2>Why OAuth app sprawl is a real security risk</h2>
+  <p>OAuth lets users grant third-party applications access to their Google or Microsoft account without sharing their password. The problem: the access granted is often far broader than necessary and persists indefinitely — even after the user has stopped using the app, left the company, or the trial has expired.</p>
+  <ul class="risk-list">
+    <li><strong>Compromised vendor:</strong> If a third-party app with read access to your M365 mailboxes is breached, the attacker inherits that access to all connected accounts.</li>
+    <li><strong>Malicious OAuth app:</strong> Attackers distribute fake "productivity tools" that request broad permissions. Once authorised, they have persistent access without needing credentials.</li>
+    <li><strong>Stale access after offboarding:</strong> An employee leaves but their authorised apps retain access. The user's OAuth tokens often outlive the deactivated account.</li>
+    <li><strong>Privilege escalation:</strong> An app with admin consent can be used to create new admin users or exfiltrate directory data.</li>
+  </ul>
+
+  <h2>Audit OAuth apps in Microsoft 365</h2>
+  <h3>Via the Microsoft Entra admin center</h3>
+  <ol>
+    <li>Go to <strong>Microsoft Entra admin center</strong> → Identity → Applications → Enterprise Applications</li>
+    <li>Filter by "Application type: All Applications" and review the list</li>
+    <li>For each app, check: Permissions granted, Users assigned, Last sign-in activity</li>
+    <li>Sort by "Last activity" — apps with no activity in 90+ days are strong candidates for removal</li>
+  </ol>
+  <h3>Via Microsoft Defender for Cloud Apps</h3>
+  <p>If you have M365 E5 or Defender for Cloud Apps, go to Cloud Apps → OAuth Apps. This gives you a risk score per app, permission scope breakdown, and which users have authorised it.</p>
+  <h3>High-risk permission scopes to flag immediately</h3>
+  <table>
+    <thead><tr><th>Scope</th><th>What it grants</th><th>Risk</th></tr></thead>
+    <tbody>
+      <tr><td><code>Mail.ReadWrite</code></td><td>Read and modify all emails in all user mailboxes</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>Directory.ReadWrite.All</code></td><td>Read and write all directory data including users and groups</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>Files.ReadWrite.All</code></td><td>Read and write all files in SharePoint and OneDrive</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>User.ReadWrite.All</code></td><td>Create, update, and delete all users in the directory</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>Mail.Read</code></td><td>Read all emails in all mailboxes</td><td style="color:#ffb347;">High</td></tr>
+      <tr><td><code>Calendars.ReadWrite</code></td><td>Read and modify all calendar events</td><td style="color:#ffb347;">Medium</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Audit OAuth apps in Google Workspace</h2>
+  <h3>Via the Google Admin Console</h3>
+  <ol>
+    <li>Go to <strong>admin.google.com</strong> → Security → Access and data control → API controls</li>
+    <li>Click "Manage Third-Party App Access" to see all connected apps</li>
+    <li>Filter by "Access type: Has access to Google data"</li>
+    <li>Review the OAuth scopes column — look for apps with access to Gmail, Drive, or Admin SDK</li>
+    <li>Click any app to see which users have it connected and what data it can access</li>
+  </ol>
+  <h3>High-risk Google OAuth scopes</h3>
+  <table>
+    <thead><tr><th>Scope</th><th>What it grants</th><th>Risk</th></tr></thead>
+    <tbody>
+      <tr><td><code>https://mail.google.com/</code></td><td>Full Gmail access — read, send, delete all emails</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>https://www.googleapis.com/auth/drive</code></td><td>Full Drive access — read, write, delete all files</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>https://www.googleapis.com/auth/admin.directory.user</code></td><td>Manage users, read user info across the org</td><td style="color:#ff6b6b;">Critical</td></tr>
+      <tr><td><code>https://www.googleapis.com/auth/gmail.readonly</code></td><td>Read all Gmail messages</td><td style="color:#ffb347;">High</td></tr>
+      <tr><td><code>https://www.googleapis.com/auth/contacts</code></td><td>Read and write all Google Contacts</td><td style="color:#ffb347;">Medium</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout"><p><strong>Google's verdict system:</strong> Google labels each third-party app as "Verified", "Unverified", or "Google-owned". Unverified apps have not passed Google's security review — treat any unverified app with broad scopes as high-risk until proven otherwise.</p></div>
+
+  <h2>What to revoke, block, or restrict</h2>
+  <ul>
+    <li><strong>Revoke immediately:</strong> Apps with critical-scope permissions that no one recognises or actively uses; apps from vendors no longer in your stack; any app authorised by accounts that have been deactivated</li>
+    <li><strong>Review with the team:</strong> Apps authorised by more than 5 users with Mail.Read or Files.ReadWrite permissions; apps with no activity in the last 30 days</li>
+    <li><strong>Restrict to admin consent:</strong> Any future app requiring high-risk scopes must go through IT approval before any user can authorise it (enabled in Entra ID and Google Admin Console)</li>
+  </ul>
+
+  <h2>OAuth app audit checklist</h2>
+  <ul class="checklist">
+    <li>Log in to Entra admin center and review all enterprise applications</li>
+    <li>Flag any app with <code>Mail.ReadWrite</code>, <code>Directory.ReadWrite.All</code>, or <code>Files.ReadWrite.All</code> permissions</li>
+    <li>Check Google Admin → API controls → Third-party app access</li>
+    <li>Flag any app with full Gmail or Drive scope</li>
+    <li>Sort by last activity — revoke all apps unused for 90+ days</li>
+    <li>Remove OAuth access for any app associated with a deactivated user account</li>
+    <li>Enable "Require admin approval" for new apps requesting high-risk scopes (both M365 and GWS)</li>
+    <li>Schedule this audit quarterly (or enable automated weekly monitoring)</li>
+  </ul>
+
+  <div class="cta-box">
+    <h3>Automate your OAuth app audit — weekly</h3>
+    <p>Workspace Posture Pro audits your M365 or Google Workspace OAuth apps every Monday and alerts you to new high-risk app authorisations, broad permission scopes, and stale app access before they become incidents.</p>
+    <a href="/workspace-posture/" class="cta-btn">Set Up Workspace Posture Pro — $19/mo →</a>
+  </div>
+  <div class="email-signup">
+    <p style="font-weight:700;color:var(--text);font-size:0.95rem;margin-bottom:4px;">Get security guides like this in your inbox</p>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0;">No spam. Unsubscribe any time.</p>
+    <div class="email-row"><input type="email" id="e" placeholder="you@company.com"/><button onclick="sub()">Subscribe</button></div>
+    <div class="sub-ok" id="ok">✅ Subscribed — check your inbox.</div>
+  </div>
+</article></div>
+<footer><div class="container"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/workspace-posture/">Workspace Posture</a><a href="/m365-security-audit-checklist-2026.html" style="color:var(--muted);">M365 Audit Checklist</a><a href="/privacy/">Privacy</a><p style="margin-top:12px;">© 2026 EdgeIQ Labs</p></div></footer>
+<script>function sub(){var e=(document.getElementById('e').value||'').trim();if(!e||e.indexOf('@')<0)return;document.getElementById('ok').style.display='block';document.getElementById('e').disabled=true;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:location.href})}).catch(function(){});}</script>
+</body></html>
