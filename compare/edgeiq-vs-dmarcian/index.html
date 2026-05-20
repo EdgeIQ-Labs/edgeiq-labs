@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>EdgeIQ Labs vs dmarcian: DMARC Monitoring Comparison (2026)</title>
+  <meta name="description" content="EdgeIQ Labs vs dmarcian — which DMARC monitoring tool is right for your business? Detailed feature, pricing, and use-case comparison for 2026."/>
+  <meta property="og:title" content="EdgeIQ Labs vs dmarcian (2026 Comparison)"/>
+  <meta property="og:description" content="EdgeIQ Labs vs dmarcian — features, pricing, and which DMARC tool is right for your team in 2026."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/compare/edgeiq-vs-dmarcian/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/compare/edgeiq-vs-dmarcian/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"EdgeIQ Labs vs dmarcian","description":"Detailed comparison of EdgeIQ Labs and dmarcian for DMARC monitoring.","url":"https://edgeiqlabs.com/compare/edgeiq-vs-dmarcian/"}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--border:#233142;--green:#34d399;--red:#f87171;--blue:#3dd9ff;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:860px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--blue);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--blue);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:620px){.nav-links a:not(.nav-cta){display:none;}}
+    .hero{padding:60px 0 40px;text-align:center;}
+    .breadcrumb{font-size:0.8rem;color:var(--muted);margin-bottom:20px;}
+    .breadcrumb a{color:var(--muted);text-decoration:none;}
+    .breadcrumb a:hover{color:var(--accent);}
+    .verdict-badge{display:inline-block;background:#1a0e2a;border:1px solid var(--accent);color:var(--accent);font-size:0.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .hero-sub{color:var(--muted);font-size:1.05rem;max-width:620px;margin:0 auto 32px;}
+    .vs-logos{display:flex;align-items:center;justify-content:center;gap:28px;margin:32px 0;}
+    .vs-logo-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 28px;text-align:center;min-width:160px;}
+    .vs-logo-box .name{font-weight:800;font-size:1.15rem;}
+    .vs-logo-box .tagline{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+    .vs-logo-box.winner{border-color:var(--accent);background:#150e22;}
+    .vs-logo-box.winner .name{color:var(--accent);}
+    .vs-sep{font-size:1.4rem;font-weight:800;color:var(--muted);}
+    .toc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:32px 0;}
+    .toc h3{font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;}
+    .toc ol{margin-left:18px;color:var(--accent);font-size:0.92rem;}
+    .toc ol li{margin-bottom:6px;}
+    .toc ol li a{color:var(--accent);text-decoration:none;}
+    .toc ol li a:hover{text-decoration:underline;}
+    .prose h2{font-size:1.4rem;font-weight:800;margin:48px 0 16px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:16px;color:#d0dce9;}
+    .prose ul,.prose ol{margin:0 0 18px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;}
+    .prose a:hover{text-decoration:underline;}
+    .comp-table{width:100%;border-collapse:collapse;margin:24px 0 32px;font-size:0.9rem;}
+    .comp-table th{padding:12px 14px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);}
+    .comp-table th:first-child{color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:.05em;}
+    .comp-table th.edgeiq{color:var(--accent);background:#150e22;}
+    .comp-table th.competitor{color:#9fb0c7;background:#0e1621;}
+    .comp-table td{padding:11px 14px;border-bottom:1px solid #1a2535;vertical-align:top;}
+    .comp-table td:first-child{color:var(--muted);font-size:0.85rem;font-weight:600;}
+    .comp-table td.edgeiq{background:#150e22;}
+    .comp-table td.competitor{background:#0e1621;}
+    .comp-table tr:last-child td{border-bottom:none;}
+    .yes{color:var(--green);font-weight:700;}
+    .no{color:var(--red);font-weight:700;}
+    .partial{color:#fbbf24;font-weight:700;}
+    .score-row{display:flex;gap:16px;margin:28px 0;flex-wrap:wrap;}
+    .score-card{flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
+    .score-card.winner{border-color:var(--accent);background:#150e22;}
+    .score-card .score-num{font-size:2.4rem;font-weight:800;line-height:1;}
+    .score-card.winner .score-num{color:var(--accent);}
+    .score-card .score-label{font-size:0.78rem;color:var(--muted);margin-top:6px;font-weight:600;}
+    .score-card .score-for{font-size:0.72rem;color:var(--muted);margin-top:8px;}
+    .callout{background:#150e22;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
+    .callout strong{color:var(--accent);}
+    .warn{background:#1a1207;border-left:3px solid #f97316;border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#fed7aa;}
+    .warn strong{color:#f97316;}
+    .note{background:#0d1925;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
+    .note strong{color:var(--blue);}
+    .use-case-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0 32px;}
+    @media(max-width:560px){.use-case-grid{grid-template-columns:1fr;}}
+    .use-case-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+    .use-case-card h4{font-size:0.95rem;font-weight:700;margin-bottom:8px;}
+    .use-case-card p{font-size:0.85rem;color:var(--muted);margin:0;}
+    .use-case-card.for-edgeiq{border-color:rgba(180,122,255,0.3);}
+    .use-case-card.for-edgeiq h4{color:var(--accent);}
+    .use-case-card.for-other{border-color:rgba(159,176,199,0.2);}
+    .use-case-card.for-other h4{color:var(--muted);}
+    .cta-block{background:linear-gradient(135deg,#150e22 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:16px;padding:36px;margin:48px 0;text-align:center;}
+    .cta-block h3{font-size:1.4rem;font-weight:800;margin-bottom:10px;}
+    .cta-block p{color:var(--muted);margin-bottom:24px;font-size:0.95rem;}
+    .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:1rem;}
+    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:12px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;border:1px solid var(--accent);}
+    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .faq-q{font-weight:700;font-size:0.98rem;margin-bottom:8px;}
+    .faq-a{color:var(--muted);font-size:0.9rem;}
+    footer{border-top:1px solid var(--border);padding:28px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.85rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+  <div class="nav-links">
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="nav-cta">Start Free →</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="breadcrumb"><a href="/">Home</a> › <a href="/compare/">Compare</a> › EdgeIQ vs dmarcian</div>
+    <div class="verdict-badge">2026 Comparison · Updated May 2026</div>
+    <h1>EdgeIQ Labs vs dmarcian</h1>
+    <p class="hero-sub">Both tools monitor DMARC. But they're aimed at very different customers. dmarcian is built for enterprise senders who need forensic XML report analysis. EdgeIQ Inbox Shield is built for small and mid-size businesses who want continuous monitoring without complexity.</p>
+    <div class="vs-logos">
+      <div class="vs-logo-box winner">
+        <div class="name">EdgeIQ Inbox Shield</div>
+        <div class="tagline">Simple DMARC monitoring for SMBs</div>
+      </div>
+      <div class="vs-sep">vs</div>
+      <div class="vs-logo-box">
+        <div class="name">dmarcian</div>
+        <div class="tagline">Enterprise DMARC management</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h3>In this comparison</h3>
+    <ol>
+      <li><a href="#tldr">TL;DR — The quick verdict</a></li>
+      <li><a href="#what-each-does">What each product actually does</a></li>
+      <li><a href="#features">Feature-by-feature comparison</a></li>
+      <li><a href="#pricing">Pricing comparison</a></li>
+      <li><a href="#use-cases">Which one is right for you?</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ol>
+  </div>
+
+  <div class="prose">
+
+    <h2 id="tldr">TL;DR — The Quick Verdict</h2>
+
+    <p><strong>dmarcian</strong> is the specialist. It was purpose-built for DMARC and is the gold standard for organizations that need deep forensic analysis of DMARC aggregate reports (rua), failure reports (ruf), source breakdowns, and compliance visualization. It's enterprise software with enterprise-level depth — and enterprise pricing to match.</p>
+
+    <p><strong>EdgeIQ Inbox Shield</strong> is built for the opposite end of the market. A small business or startup that wants to know <em>"is my DMARC, SPF, and DKIM still configured correctly, and will someone tell me if it breaks?"</em> doesn't need forensic XML analysis — they need a tool that monitors their email authentication records, alerts them on policy changes, and guides them toward <code>p=reject</code>. Inbox Shield does exactly that for $9/mo, with a free tier for basic monitoring.</p>
+
+    <p>The question is really about complexity vs simplicity, and scale vs price. If you're running a large email program with tens of millions of sends per month and need to understand exactly which sending sources are failing DMARC alignment, dmarcian earns its cost. If you're a business with 1–50 domains who just wants DMARC monitoring to stay on top of, EdgeIQ Inbox Shield is the right tool at a fraction of the price.</p>
+
+    <div class="callout"><strong>Bottom line:</strong> dmarcian is for email engineers managing large DMARC deployments. EdgeIQ Inbox Shield is for the rest of us — businesses that want their DMARC to work without becoming DMARC experts.</div>
+
+    <h2 id="what-each-does">What Each Product Actually Does</h2>
+
+    <h3>dmarcian</h3>
+    <p>dmarcian processes your DMARC aggregate reports (rua) and forensic reports (ruf), giving you a detailed picture of which mail sources are sending on behalf of your domain and which are passing or failing DMARC alignment. It offers a domain management interface, source tagging, detailed compliance charts, and tools for managing the transition from <code>p=none</code> to <code>p=reject</code>.</p>
+    <p>dmarcian is particularly strong for organizations with complex email ecosystems — many sending sources (ESPs, CRMs, support tools), large send volumes, and dedicated email deliverability teams who need forensic data to identify rogue senders or misconfigured services.</p>
+
+    <h3>EdgeIQ Inbox Shield</h3>
+    <p>Inbox Shield monitors your DMARC, SPF, and DKIM records continuously and alerts you when anything changes — policy weakened, record removed, new DKIM selector, SPF includes changed. It gives you a real-time A–F grade for your email authentication posture, a plain-English explanation of what each check means, and a guided path toward <code>p=reject</code>.</p>
+    <p>Inbox Shield is part of the broader EdgeIQ platform — meaning your email authentication monitoring lives alongside SSL monitoring, subdomain discovery, open port scanning, and brand protection. It's the right fit for organizations that want comprehensive security monitoring without running a separate tool for each concern.</p>
+
+    <h2 id="features">Feature-by-Feature Comparison</h2>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="edgeiq">EdgeIQ Inbox Shield</th>
+          <th class="competitor">dmarcian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DMARC policy monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Continuous monitoring + alerts on change</td>
+          <td class="competitor"><span class="yes">✓</span> Policy monitoring + enforcement guidance</td>
+        </tr>
+        <tr>
+          <td>SPF record monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> SPF record + include chain monitoring</td>
+          <td class="competitor"><span class="partial">~</span> SPF analysis within DMARC context</td>
+        </tr>
+        <tr>
+          <td>DKIM monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Selector monitoring + key rotation alerts</td>
+          <td class="competitor"><span class="partial">~</span> DKIM within aggregate report context</td>
+        </tr>
+        <tr>
+          <td>DMARC aggregate report (rua) analysis</td>
+          <td class="edgeiq"><span class="partial">~</span> Summary-level insights</td>
+          <td class="competitor"><span class="yes">✓</span> Full forensic source breakdown, charts, tagging</td>
+        </tr>
+        <tr>
+          <td>DMARC failure report (ruf) analysis</td>
+          <td class="edgeiq"><span class="no">✗</span> Not available</td>
+          <td class="competitor"><span class="yes">✓</span> Full forensic failure reports</td>
+        </tr>
+        <tr>
+          <td>Sending source identification</td>
+          <td class="edgeiq"><span class="no">✗</span> Not available</td>
+          <td class="competitor"><span class="yes">✓</span> Tag and identify all sending sources</td>
+        </tr>
+        <tr>
+          <td>p=none → p=reject migration guide</td>
+          <td class="edgeiq"><span class="yes">✓</span> Built-in guided path in Inbox Shield</td>
+          <td class="competitor"><span class="yes">✓</span> Detailed enforcement roadmap</td>
+        </tr>
+        <tr>
+          <td>Email alert on config change</td>
+          <td class="edgeiq"><span class="yes">✓</span> Immediate + weekly digest</td>
+          <td class="competitor"><span class="partial">~</span> Weekly digest and reports</td>
+        </tr>
+        <tr>
+          <td>A–F security grade</td>
+          <td class="edgeiq"><span class="yes">✓</span> Real-time grade for SPF + DMARC + DKIM</td>
+          <td class="competitor"><span class="no">✗</span> Not available</td>
+        </tr>
+        <tr>
+          <td>SSL certificate monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Via Pulse (included in EdgeIQ platform)</td>
+          <td class="competitor"><span class="no">✗</span> Email-only focus</td>
+        </tr>
+        <tr>
+          <td>Subdomain monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Via Pulse</td>
+          <td class="competitor"><span class="no">✗</span> Email-only focus</td>
+        </tr>
+        <tr>
+          <td>Lookalike domain alerts</td>
+          <td class="edgeiq"><span class="yes">✓</span> Via BrandGuard</td>
+          <td class="competitor"><span class="no">✗</span> Not available</td>
+        </tr>
+        <tr>
+          <td>BIMI support</td>
+          <td class="edgeiq"><span class="partial">~</span> BIMI readiness check</td>
+          <td class="competitor"><span class="yes">✓</span> Full BIMI management</td>
+        </tr>
+        <tr>
+          <td>Multi-domain management</td>
+          <td class="edgeiq"><span class="yes">✓</span> Up to 20 domains on Business plan</td>
+          <td class="competitor"><span class="yes">✓</span> Scales to hundreds of domains</td>
+        </tr>
+        <tr>
+          <td>Free tier</td>
+          <td class="edgeiq"><span class="yes">✓</span> 1 domain, weekly scan, no card needed</td>
+          <td class="competitor"><span class="yes">✓</span> 30-day trial; free for very low volume</td>
+        </tr>
+        <tr>
+          <td>No-code setup</td>
+          <td class="edgeiq"><span class="yes">✓</span> Enter domain + email, done</td>
+          <td class="competitor"><span class="partial">~</span> Requires DMARC rua= setup to get full value</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="pricing">Pricing Comparison</h2>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Plan</th>
+          <th class="edgeiq">EdgeIQ Inbox Shield</th>
+          <th class="competitor">dmarcian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Free</td>
+          <td class="edgeiq">1 domain · weekly scan · A–F grade · no card</td>
+          <td class="competitor">30-day trial / limited free tier (very low volume)</td>
+        </tr>
+        <tr>
+          <td>Entry paid</td>
+          <td class="edgeiq"><strong>$9/mo</strong> — daily monitoring, DKIM key alerts, SPF flattening analysis</td>
+          <td class="competitor"><strong>~$19–$39/mo</strong> — personal/startup tiers (varies)</td>
+        </tr>
+        <tr>
+          <td>Business</td>
+          <td class="edgeiq"><strong>$19/mo</strong> — via Pulse Pro (+ attack surface monitoring)</td>
+          <td class="competitor"><strong>$100–$300+/mo</strong> — mid-market plans</td>
+        </tr>
+        <tr>
+          <td>Enterprise / large senders</td>
+          <td class="edgeiq">Contact for MSP pricing</td>
+          <td class="competitor"><strong>$500+/mo</strong> — custom enterprise tiers</td>
+        </tr>
+        <tr>
+          <td>Per-domain pricing</td>
+          <td class="edgeiq">Flat per-plan pricing; up to 20 domains</td>
+          <td class="competitor">Scales with domain count and send volume</td>
+        </tr>
+        <tr>
+          <td>Contract</td>
+          <td class="edgeiq">Month-to-month, cancel anytime</td>
+          <td class="competitor">Monthly or annual options</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="score-row">
+      <div class="score-card winner">
+        <div class="score-num">$9</div>
+        <div class="score-label">EdgeIQ entry paid tier</div>
+        <div class="score-for">Daily DMARC + SPF + DKIM monitoring</div>
+      </div>
+      <div class="score-card">
+        <div class="score-num">~$19+</div>
+        <div class="score-label">dmarcian entry paid tier</div>
+        <div class="score-for">DMARC report analysis + source management</div>
+      </div>
+    </div>
+
+    <div class="note"><strong>Note on dmarcian pricing:</strong> dmarcian's pricing scales significantly with the number of domains and DMARC message volume. For large enterprises processing millions of DMARC records, the cost reflects the infrastructure required. For a business with 1–5 domains and modest send volumes, EdgeIQ Inbox Shield delivers the core monitoring value at a fraction of the price.</div>
+
+    <h2 id="use-cases">Which One Is Right for You?</h2>
+
+    <div class="use-case-grid">
+      <div class="use-case-card for-edgeiq">
+        <h4>Choose EdgeIQ Inbox Shield if…</h4>
+        <p>You're a small or mid-size business with 1–20 domains who wants DMARC, SPF, and DKIM monitoring — alerts when records change — without becoming a DMARC specialist.</p>
+      </div>
+      <div class="use-case-card for-other">
+        <h4>Choose dmarcian if…</h4>
+        <p>You're managing a large email program and need deep forensic DMARC report analysis — which sending sources are passing and failing DMARC alignment, source tagging, compliance charts.</p>
+      </div>
+      <div class="use-case-card for-edgeiq">
+        <h4>Choose EdgeIQ Inbox Shield if…</h4>
+        <p>You want email security monitoring as part of a broader platform — SSL, ports, subdomains, brand protection — all in one place, all in the same weekly digest.</p>
+      </div>
+      <div class="use-case-card for-other">
+        <h4>Choose dmarcian if…</h4>
+        <p>You have a dedicated email deliverability team and need BIMI management, detailed ruf forensics, and tools to onboard many sending sources to DMARC compliance.</p>
+      </div>
+      <div class="use-case-card for-edgeiq">
+        <h4>Choose EdgeIQ Inbox Shield if…</h4>
+        <p>Budget is a real constraint. $9/mo vs $100+/mo is a significant difference for a startup or small business getting their email authentication posture right.</p>
+      </div>
+      <div class="use-case-card for-other">
+        <h4>Choose dmarcian if…</h4>
+        <p>You're an MSP managing DMARC for dozens of client domains and need a robust multi-tenant management interface with client-facing reporting.</p>
+      </div>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">Does EdgeIQ Inbox Shield process DMARC aggregate reports (rua)?</div>
+      <div class="faq-a">Inbox Shield monitors your DMARC record and alerts on policy changes, but doesn't process inbound DMARC aggregate XML reports the way dmarcian does. If you need full rua/ruf forensic analysis — source identification, volume breakdowns, compliance charts — dmarcian is the more specialized tool for that use case.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I use both EdgeIQ and dmarcian together?</div>
+      <div class="faq-a">Yes — they serve complementary functions. dmarcian for deep DMARC aggregate analysis; EdgeIQ for continuous monitoring of your full external attack surface (SSL, subdomains, ports, DNS, brand) alongside email authentication checks.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does EdgeIQ Inbox Shield help me reach p=reject?</div>
+      <div class="faq-a">Yes. Inbox Shield includes a guided path to <code>p=reject</code> — it explains your current policy, why it matters to move to enforcement, and what to check before tightening policy. For organizations with complex multi-source email environments, dmarcian's source-tagging tools make the rua analysis step easier.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is EdgeIQ free to try?</div>
+      <div class="faq-a">Yes — the free plan covers one domain with a weekly scan and A–F grade, no credit card required. You can also use the <a href="/free-dmarc-checker/">free DMARC checker</a> for an instant one-off check without even creating an account.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What's BIMI and does EdgeIQ support it?</div>
+      <div class="faq-a">BIMI (Brand Indicators for Message Identification) lets you display your brand logo in email clients that support it, requires a <code>p=quarantine</code> or <code>p=reject</code> DMARC policy plus a Verified Mark Certificate. EdgeIQ Inbox Shield includes a BIMI readiness check. dmarcian has deeper BIMI management tooling for organizations actively implementing it.</div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h3>Start monitoring your DMARC posture — free</h3>
+    <p>Inbox Shield gives you an instant A–F grade for SPF, DMARC, and DKIM — then monitors continuously and alerts you when anything changes. Free for one domain, no setup required.</p>
+    <div class="cta-row">
+      <a href="/inbox-shield/" class="btn-primary">Try Inbox Shield Free →</a>
+      <a href="/free-dmarc-checker/" class="btn-secondary">Free DMARC Check</a>
+    </div>
+  </div>
+
+  <footer>
+    <div>© 2026 EdgeIQ Labs · <a href="/compare/">Compare</a> · <a href="/pricing/">Pricing</a> · <a href="/blog/">Blog</a> · <a href="/privacy.html">Privacy</a></div>
+  </footer>
+</div>
+</body>
+</html>
