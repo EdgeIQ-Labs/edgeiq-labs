@@ -97,13 +97,14 @@ export async function onRequestGet({ request, env }) {
   const siteUrl = env.SITE_URL || 'https://edgeiqlabs.com';
 
   // Fetch all subscriptions for this email in parallel
-  const [pulseList, shieldList, vendorRaw, mspRaw, complianceList, brandguardList] = await Promise.all([
+  const [pulseList, shieldList, vendorRaw, mspRaw, complianceList, brandguardList, wpList] = await Promise.all([
     env.PULSE_KV.list({ prefix: `sub:${email}:` }),
     env.PULSE_KV.list({ prefix: `shield:${email}:` }),
     fetchKvJson(env, `vendor:${email}`),
     fetchKvJson(env, `msp:${email}`),
     env.PULSE_KV.list({ prefix: `compliance:${email}:` }),
     env.PULSE_KV.list({ prefix: `brandguard:${email}:` }),
+    env.PULSE_KV.list({ prefix: `wp:${email}:` }),
   ]);
 
   // Fetch full subscriber records for Pulse
@@ -205,6 +206,24 @@ export async function onRequestGet({ request, env }) {
     })
   ).then(r => r.filter(Boolean));
 
+  // Workspace Posture (one record per domain)
+  const wpRecords = await Promise.all(
+    wpList.keys.map(async k => {
+      const rec = await fetchKvJson(env, k.name);
+      if (!rec) return null;
+      return {
+        domain:       rec.domain,
+        platform:     rec.platform || 'm365',
+        plan:         rec.plan || 'pro_early_access',
+        active:       rec.active !== false,
+        created_at:   rec.created_at,
+        last_scan_at: rec.last_scan_at,
+        last_report_at: rec.last_report_at,
+        scan_count:   rec.scan_count || 0,
+      };
+    })
+  ).then(r => r.filter(Boolean));
+
   // Try to create a Stripe billing portal URL (best-effort)
   const portalUrl = await getStripePortalUrl(env, email, `${siteUrl}/account/`);
 
@@ -218,6 +237,7 @@ export async function onRequestGet({ request, env }) {
       msp: mspRecord,
       compliance: complianceRecords,
       brandguard: brandguardRecords,
+      workspace_posture: wpRecords,
     },
     billing_portal_url: portalUrl,
     site_url: siteUrl,

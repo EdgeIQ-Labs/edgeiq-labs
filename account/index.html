@@ -236,6 +236,12 @@
     <div id="brandguard-list"></div>
   </div>
 
+  <!-- Workspace Posture -->
+  <div class="section-wrap" id="wp-section" style="display:none;">
+    <div class="section-header" style="color:#4da6ff;">🏢 Workspace Posture — M365 &amp; Google Workspace Auditing</div>
+    <div id="wp-list"></div>
+  </div>
+
   <div style="border-top:1px solid var(--border);padding-top:20px;text-align:center;font-size:12px;color:#4a6080;">
     Questions? <a href="mailto:support@edgeiqlabs.com" style="color:var(--accent);">support@edgeiqlabs.com</a>
     · <a href="/products/" style="color:var(--muted);">All products</a>
@@ -601,6 +607,38 @@ function renderBrandguard(subs, siteUrl) {
   }).join('');
 }
 
+// ── Workspace Posture ────────────────────────────────────────────────────────
+
+function renderWorkspacePosture(subs, siteUrl) {
+  if (!subs || !subs.length) return;
+  document.getElementById('wp-section').style.display = 'block';
+  const el = document.getElementById('wp-list');
+  const platformLabel = { m365: 'Microsoft 365', google: 'Google Workspace' };
+  el.innerHTML = subs.map(s => {
+    const platform = platformLabel[s.platform] || s.platform;
+    const isPro = s.plan && s.plan.includes('pro');
+    return `
+    <div class="sub-card">
+      <div class="sub-icon">🏢</div>
+      <div class="sub-body">
+        <div class="sub-domain">${s.domain}
+          <span class="plan-badge" style="background:rgba(77,166,255,0.12);color:#4da6ff;">${isPro ? 'Pro – Early Access' : s.plan}</span>
+          <span style="font-size:11px;color:#4a6080;margin-left:4px;">${platform}</span>
+        </div>
+        <div class="sub-meta">
+          <span style="color:#4a6080;">Last audit: ${fmt(s.last_scan_at)}</span>
+          <span style="color:#4a6080;">Last report: ${fmt(s.last_report_at)}</span>
+          <span style="color:#4a6080;">Added ${fmt(s.created_at)}</span>
+          ${s.scan_count ? `<span style="color:#4a6080;">${s.scan_count} audit${s.scan_count !== 1 ? 's' : ''} run</span>` : ''}
+        </div>
+        <div class="sub-actions">
+          <a href="${siteUrl}/workspace-posture/" class="btn-sm" style="color:#4da6ff;border-color:rgba(77,166,255,0.3);">Workspace Posture →</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ── Boot ─────────────────────────────────────────────────────────────────────
 
 async function boot() {
@@ -657,6 +695,7 @@ async function boot() {
   renderMsp(data.subscriptions.msp, siteUrl);
   renderCompliance(data.subscriptions.compliance, siteUrl);
   renderBrandguard(data.subscriptions.brandguard, siteUrl);
+  renderWorkspacePosture(data.subscriptions.workspace_posture, siteUrl);
 
   document.getElementById('dashboard').style.display = 'block';
 }
