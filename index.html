@@ -819,6 +819,21 @@
       margin-top: 4px;
     }
 
+    /* Hero scanner step animation */
+    .hero-step { font-size:0.85rem; color:var(--muted); padding:5px 0; display:flex; align-items:center; gap:8px; transition:color 0.3s; }
+    .hero-step.active { color:var(--accent); font-weight:600; }
+    .hero-step.done { color:var(--accent2); }
+    .hero-step.done::after { content:'✓'; margin-left:auto; font-weight:700; }
+
+    /* Hero results tool cards */
+    .hero-tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; margin:20px 0; }
+    .hero-tool-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:6px; transition:border-color 0.2s; }
+    .hero-tool-card:hover { border-color:var(--accent); }
+    .hero-tool-card a { color:var(--accent); font-size:0.8rem; font-weight:600; text-decoration:none; margin-top:auto; }
+
+    /* Advanced tools toggle button hover */
+    #advanced-tools-btn:hover { color:var(--text); border-color:var(--accent); }
+
 </style>
   <!-- Cloudflare Web Analytics — privacy-first, no cookie consent needed -->
   <script defer src="https://static.cloudflareinsights.com/static/cf-uar.js"></script>
@@ -986,10 +1001,59 @@
       </div>
     </section>
 
-    <section id="scanner">
+    <!-- ═══ HERO SECURITY SCANNER ═══ -->
+    <section id="scanner" style="padding:60px 0 50px;">
+      <div class="container" style="max-width:700px;text-align:center;">
+
+        <!-- Idle state -->
+        <div id="hero-idle">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:22px;">🛡 Free Security Check</div>
+          <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:12px;">How secure is your domain?</h2>
+          <p style="color:var(--muted);font-size:1rem;margin-bottom:30px;">Get an A–F grade across email authentication, SSL, and DNS in under 10 seconds.</p>
+          <form id="hero-form" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+            <input type="text" id="hero-domain-input" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false"
+              style="flex:1;min-width:200px;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:14px 18px;font-size:1rem;" />
+            <button type="submit" id="hero-btn" class="btn btn-primary" style="padding:14px 24px;font-size:1rem;font-weight:700;white-space:nowrap;">
+              <span id="hero-btn-label">Get My Score →</span>
+              <span id="hero-btn-loading" style="display:none;">Scanning…</span>
+            </button>
+          </form>
+          <p style="color:var(--muted);font-size:0.78rem;margin-top:10px;">Free · No account · No credit card</p>
+        </div>
+
+        <!-- Scanning state -->
+        <div id="hero-scanning" style="display:none;padding:20px 0;">
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:18px;">Scanning <strong id="hero-scanning-domain" style="color:var(--text);"></strong>…</p>
+          <div style="max-width:400px;margin:0 auto;">
+            <div id="hero-steps" style="text-align:left;margin-bottom:16px;">
+              <div class="hero-step" id="hstep-dmarc">📧 Checking DMARC…</div>
+              <div class="hero-step" id="hstep-spf">📋 Checking SPF…</div>
+              <div class="hero-step" id="hstep-dkim">🔑 Checking DKIM…</div>
+              <div class="hero-step" id="hstep-ssl">🔒 Checking SSL…</div>
+              <div class="hero-step" id="hstep-mx">📬 Checking MX…</div>
+            </div>
+            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+              <div id="hero-progress-bar" style="height:6px;background:var(--accent);border-radius:3px;width:0%;transition:width 0.4s ease;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results state -->
+        <div id="hero-results" style="display:none;text-align:left;"></div>
+
+      </div>
+    </section>
+
+    <!-- ═══ ADVANCED TOOLS (collapsible) ═══ -->
+    <div id="advanced-tools-wrap" style="padding:0 0 10px;">
+      <div class="container" style="text-align:center;margin-bottom:0;">
+        <button id="advanced-tools-btn" onclick="toggleAdvancedTools()"
+          style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:9px 20px;border-radius:8px;font-size:0.82rem;cursor:pointer;transition:all 0.2s;">
+          ⚙️ Advanced Tools &amp; Scanners <span id="advanced-arrow">▼</span>
+        </button>
+      </div>
+      <div id="advanced-tools-content" style="display:none;margin-top:16px;">
       <div class="scanner-container">
-        <h2>🔒 Free SSL Security Scanner</h2>
-        <p class="section-sub">Instantly check any site's SSL certificate, TLS version, and security headers. See exactly what an attacker sees.</p>
         <div class="scanner-tabs">
           <button class="scan-tab active" onclick="showScannerTab('ssl')" id="tab-btn-ssl">🔒 SSL Checker</button>
           <button class="scan-tab" onclick="showScannerTab('headers')" id="tab-btn-headers">📡 Headers Analyzer</button>
@@ -1628,6 +1692,9 @@
       <div id="blacklist-error" class="scan-error" style="display:none;"><p id="blacklist-error-msg">Something went wrong. Please try again.</p></div>
     </div>
 
+      </div><!-- /scanner-container -->
+      </div><!-- /advanced-tools-content -->
+    </div><!-- /advanced-tools-wrap -->
 
 <section id="live-apps" style="padding:52px 0 40px;">
         <h2>Live EdgeIQ Apps</h2>
@@ -3702,6 +3769,144 @@ async function phishsimCheckout(btn) {
 </script>
 
 <script>
+// ── Toggle Advanced Tools ──────────────────────────────────────────────────
+function toggleAdvancedTools() {
+  var content = document.getElementById('advanced-tools-content');
+  var arrow = document.getElementById('advanced-arrow');
+  var open = content.style.display !== 'none';
+  content.style.display = open ? 'none' : 'block';
+  arrow.textContent = open ? '▼' : '▲';
+}
+
+// ── Hero Domain Security Scanner ───────────────────────────────────────────
+(function() {
+  var form = document.getElementById('hero-form');
+  if (!form) return;
+
+  var STEPS = [
+    { id: 'hstep-dmarc', label: '📧 Checking DMARC…', pct: 20 },
+    { id: 'hstep-spf',   label: '📋 Checking SPF…',   pct: 40 },
+    { id: 'hstep-dkim',  label: '🔑 Checking DKIM…',   pct: 60 },
+    { id: 'hstep-ssl',   label: '🔒 Checking SSL…',    pct: 80 },
+    { id: 'hstep-mx',    label: '📬 Checking MX…',     pct: 95 },
+  ];
+
+  var TOOL_CARDS = [
+    { icon:'📧', label:'DMARC Checker',       sub:'Policy & alignment',        href:'/free-dmarc-checker/' },
+    { icon:'📋', label:'SPF Analyzer',        sub:'Lookup budget & mechanisms', href:'/free-spf-checker/' },
+    { icon:'🔒', label:'SSL Checker',         sub:'Cert expiry & headers',     href:'/free-ssl-checker/' },
+    { icon:'🔍', label:'Subdomain Scanner',   sub:'Exposed subdomains',         href:'/free-subdomain-scanner/' },
+    { icon:'🚫', label:'Blacklist Checker',   sub:'15 DNSBLs in parallel',     href:'/free-blacklist-checker/' },
+    { icon:'🛡',  label:'Full Security Score', sub:'Share your grade',          href:'/free-domain-security-score/' },
+  ];
+
+  function setStep(idx) {
+    STEPS.forEach(function(s, i) {
+      var el = document.getElementById(s.id);
+      if (!el) return;
+      el.className = 'hero-step' + (i < idx ? ' done' : i === idx ? ' active' : '');
+    });
+    var pct = idx < STEPS.length ? STEPS[idx].pct : 100;
+    document.getElementById('hero-progress-bar').style.width = pct + '%';
+  }
+
+  function gradeColor(g) {
+    return {A:'#22c55e', B:'#84cc16', C:'#eab308', D:'#f97316', F:'#ef4444'}[g] || '#ef4444';
+  }
+
+  function renderResults(data, domain) {
+    var gc = gradeColor(data.grade);
+    var catsHtml = (data.categories || []).map(function(c) {
+      var pct = Math.round((c.score / c.max) * 100);
+      var col = c.score === c.max ? '#22c55e' : c.score === 0 ? '#ef4444' : '#eab308';
+      return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin-bottom:8px;">' +
+        '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">' +
+        '<span style="font-weight:600;font-size:0.88rem;">' + c.label + '</span>' +
+        '<span style="font-size:0.85rem;color:' + col + ';font-weight:700;">' + c.score + '/' + c.max + '</span></div>' +
+        '<div style="height:5px;background:var(--border);border-radius:3px;"><div style="height:5px;background:' + col + ';border-radius:3px;width:' + pct + '%;"></div></div>' +
+        '<p style="font-size:0.76rem;color:var(--muted);margin-top:5px;">' + (c.headline || '') + '</p></div>';
+    }).join('');
+
+    var toolsHtml = '<div class="hero-tool-grid">' +
+      TOOL_CARDS.map(function(t) {
+        return '<div class="hero-tool-card">' +
+          '<div style="font-size:1.4rem;">' + t.icon + '</div>' +
+          '<div style="font-weight:700;font-size:0.85rem;">' + t.label + '</div>' +
+          '<div style="font-size:0.76rem;color:var(--muted);">' + t.sub + '</div>' +
+          '<a href="' + t.href + '?domain=' + encodeURIComponent(domain) + '">Run check →</a></div>';
+      }).join('') + '</div>';
+
+    document.getElementById('hero-results').innerHTML =
+      '<div style="display:flex;align-items:center;gap:20px;margin-bottom:22px;flex-wrap:wrap;">' +
+      '<div style="width:90px;height:90px;border-radius:50%;border:5px solid ' + gc + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+      '<span style="font-size:2.2rem;font-weight:900;color:' + gc + ';">' + data.grade + '</span></div>' +
+      '<div><div style="font-size:1.1rem;font-weight:700;">' + domain + '</div>' +
+      '<div style="color:var(--muted);font-size:0.88rem;margin-top:4px;">' + data.score + '/100 — ' + (data.summary || '') + '</div>' +
+      '<button onclick="document.getElementById(\'hero-idle\').style.display=\'\';document.getElementById(\'hero-results\').style.display=\'none\';" ' +
+      'style="margin-top:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;">← Scan another domain</button>' +
+      '</div></div>' +
+      catsHtml +
+      '<div style="margin:20px 0 8px;font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Specific checks</div>' +
+      toolsHtml +
+      '<div style="margin-top:20px;padding:16px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.15);border-radius:12px;text-align:center;">' +
+      '<p style="font-size:0.88rem;color:var(--muted);margin-bottom:12px;">Get the step-by-step fix guide + share your grade</p>' +
+      '<a href="/free-domain-security-score/?domain=' + encodeURIComponent(domain) + '" ' +
+      'style="display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:10px 22px;border-radius:9px;text-decoration:none;font-size:0.9rem;">Open Full Report →</a></div>';
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var raw = (document.getElementById('hero-domain-input').value || '').trim();
+    var domain = raw.replace(/^https?:\/\//,'').split('/')[0].split('?')[0].toLowerCase();
+    if (!domain || !domain.includes('.')) return;
+
+    // Switch states
+    document.getElementById('hero-idle').style.display = 'none';
+    document.getElementById('hero-results').style.display = 'none';
+    document.getElementById('hero-scanning').style.display = 'block';
+    document.getElementById('hero-scanning-domain').textContent = domain;
+    document.getElementById('hero-progress-bar').style.width = '0%';
+
+    // Animate steps while fetch runs
+    var stepIdx = 0;
+    setStep(0);
+    var stepTimer = setInterval(function() {
+      stepIdx = Math.min(stepIdx + 1, STEPS.length - 1);
+      setStep(stepIdx);
+    }, 1400);
+
+    try {
+      var res = await fetch('/api/domain-score?domain=' + encodeURIComponent(domain));
+      var data = await res.json();
+      clearInterval(stepTimer);
+      // Complete all steps
+      STEPS.forEach(function(s) { var el=document.getElementById(s.id); if(el) el.className='hero-step done'; });
+      document.getElementById('hero-progress-bar').style.width = '100%';
+      await new Promise(function(r){setTimeout(r,400);});
+      document.getElementById('hero-scanning').style.display = 'none';
+      if (!res.ok) throw new Error(data.error || 'Error');
+      renderResults(data, domain);
+      document.getElementById('hero-results').style.display = 'block';
+    } catch(err) {
+      clearInterval(stepTimer);
+      document.getElementById('hero-scanning').style.display = 'none';
+      document.getElementById('hero-idle').style.display = 'block';
+      alert('Could not scan ' + domain + '. Please check the domain and try again.');
+    }
+  });
+
+  // Auto-run from ?domain= param
+  (function() {
+    var p = new URLSearchParams(window.location.search).get('domain');
+    if (p) {
+      document.getElementById('hero-domain-input').value = p;
+      setTimeout(function(){
+        document.getElementById('hero-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+      }, 300);
+    }
+  })();
+})();
+
 // ── Domain Security Score tab ──────────────────────────────────────────────
 (function() {
   var form = document.getElementById('domain-score-form');
