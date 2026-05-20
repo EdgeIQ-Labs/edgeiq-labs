@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free SPF Record Checker — Validate & Analyze Your SPF Instantly</title>
+  <meta name="description" content="Check your SPF record for free. See the full mechanism breakdown, DNS lookup count, all-qualifier status, and exactly what to fix — in seconds."/>
+  <meta property="og:title" content="Free SPF Record Checker — Validate & Analyze Your SPF"/>
+  <meta property="og:description" content="Instantly validate any domain's SPF record. See mechanism breakdown, DNS lookup count, and fix recommendations."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-spf-checker/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-spf-checker/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Free SPF Record Checker","url":"https://edgeiqlabs.com/free-spf-checker/","description":"Free SPF record validator and analyzer. Check mechanism breakdown, DNS lookups, and get fix recommendations.","applicationCategory":"SecurityApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--blue:#3dd9ff;--border:#233142;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:800px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--blue);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links a:not(.nav-cta){display:none;}}
+
+    .hero{padding:56px 0 36px;text-align:center;}
+    .hero-tag{display:inline-block;background:#1a0e2a;border:1px solid var(--accent);color:var(--accent);font-size:0.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:14px;letter-spacing:-.02em;}
+    h1 span{color:var(--accent);}
+    .hero-sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 32px;}
+
+    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;}
+    .domain-form{display:flex;gap:10px;margin-bottom:8px;}
+    .domain-form input{flex:1;background:#0b1422;border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:10px;font-size:1rem;outline:none;font-family:inherit;transition:border-color .2s;min-width:0;}
+    .domain-form input:focus{border-color:var(--accent);}
+    .domain-form input::placeholder{color:var(--muted);}
+    .domain-form button{background:var(--accent);color:#071018;font-weight:800;border:none;cursor:pointer;padding:13px 24px;border-radius:10px;font-size:0.95rem;white-space:nowrap;font-family:inherit;transition:opacity .15s;}
+    .domain-form button:hover{opacity:.88;}
+    .domain-form button:disabled{opacity:.5;cursor:not-allowed;}
+    .form-hint{font-size:0.8rem;color:var(--muted);}
+
+    /* Loading */
+    .loading{display:none;text-align:center;padding:32px 0;}
+    .spin{animation:spin 1s linear infinite;display:inline-block;font-size:1.4rem;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading p{color:var(--muted);margin-top:10px;font-size:0.9rem;}
+
+    /* Error */
+    .result-error{display:none;background:#1a0808;border:1px solid var(--red);border-radius:12px;padding:18px 20px;color:var(--red);font-size:0.92rem;}
+
+    /* Results */
+    #results{display:none;}
+
+    /* Status banner */
+    .status-banner{border-radius:12px;padding:18px 22px;margin-bottom:22px;display:flex;align-items:flex-start;gap:14px;}
+    .status-banner.pass{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);}
+    .status-banner.warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);}
+    .status-banner.fail{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);}
+    .status-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
+    .status-title{font-weight:800;font-size:1rem;margin-bottom:4px;}
+    .status-banner.pass .status-title{color:var(--green);}
+    .status-banner.warn .status-title{color:var(--yellow);}
+    .status-banner.fail .status-title{color:var(--red);}
+    .status-sub{font-size:0.88rem;color:var(--muted);}
+
+    /* Metrics row */
+    .metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+    @media(max-width:520px){.metrics-row{grid-template-columns:1fr 1fr;}}
+    .metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center;}
+    .metric .val{font-size:1.6rem;font-weight:800;line-height:1;}
+    .metric .lbl{font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+    .metric.ok .val{color:var(--green);}
+    .metric.warn .val{color:var(--yellow);}
+    .metric.bad .val{color:var(--red);}
+
+    /* Record display */
+    .record-section{margin-bottom:22px;}
+    .section-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;}
+    .record-raw{background:#071018;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:monospace;font-size:0.88rem;color:#b8d4f0;word-break:break-all;line-height:1.7;}
+
+    /* Mechanism table */
+    .mech-table{width:100%;border-collapse:collapse;font-size:0.88rem;margin-bottom:22px;}
+    .mech-table th{background:#102035;color:var(--blue);text-align:left;padding:8px 12px;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:.04em;}
+    .mech-table td{border-bottom:1px solid #1a2535;padding:9px 12px;color:#c8daea;vertical-align:top;}
+    .mech-table tr:last-child td{border-bottom:none;}
+    .mech-type{font-family:monospace;font-weight:700;}
+    .mech-val{font-family:monospace;color:var(--muted);}
+    .qual-pass{color:var(--green);font-weight:700;}
+    .qual-fail{color:var(--red);font-weight:700;}
+    .qual-soft{color:var(--yellow);font-weight:700;}
+    .qual-neutral{color:var(--muted);font-weight:700;}
+    .qual-all-good{background:rgba(52,211,153,.1);border-radius:4px;padding:1px 6px;}
+    .qual-all-warn{background:rgba(251,191,36,.1);border-radius:4px;padding:1px 6px;}
+    .qual-all-bad{background:rgba(248,113,113,.1);border-radius:4px;padding:1px 6px;}
+    .dns-badge{display:inline-block;background:#0d1c2e;border:1px solid #1e3a5a;color:var(--blue);font-size:0.7rem;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+
+    /* Lookup bar */
+    .lookup-bar-wrap{background:#0d1421;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:22px;}
+    .lookup-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .lookup-label{font-size:0.85rem;font-weight:700;}
+    .lookup-count{font-size:0.85rem;font-weight:800;}
+    .lookup-track{background:#1a2535;border-radius:999px;height:8px;overflow:hidden;}
+    .lookup-fill{height:100%;border-radius:999px;transition:width .6s ease;}
+    .lookup-note{font-size:0.78rem;color:var(--muted);margin-top:8px;}
+
+    /* Issues */
+    .issues-section{margin-bottom:22px;}
+    .issue{border-radius:10px;padding:14px 18px;margin-bottom:10px;}
+    .issue.fail{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);}
+    .issue.warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);}
+    .issue-title{font-weight:700;font-size:0.92rem;margin-bottom:6px;}
+    .issue.fail .issue-title{color:var(--red);}
+    .issue.warn .issue-title{color:var(--yellow);}
+    .issue-detail{font-size:0.85rem;color:var(--muted);margin-bottom:8px;}
+    .issue-fix{font-size:0.85rem;color:#c8daea;}
+    .issue-fix strong{color:var(--text);}
+
+    /* CTA */
+    .cta-block{background:linear-gradient(135deg,#1a0e2a 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:28px 0;text-align:center;}
+    .cta-block h3{font-size:1.15rem;font-weight:800;margin-bottom:8px;}
+    .cta-block p{color:var(--muted);margin-bottom:18px;font-size:0.9rem;}
+    .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;}
+    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:10px 20px;border-radius:9px;text-decoration:none;font-size:0.9rem;border:1px solid var(--accent);}
+    .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+    .capture-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:0.9rem;width:230px;font-family:inherit;}
+    .capture-form input::placeholder{color:var(--muted);}
+    .capture-form button{background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:0.9rem;font-family:inherit;}
+    .capture-msg{font-size:0.82rem;color:var(--green);margin-top:8px;text-align:center;display:none;}
+
+    /* FAQ */
+    .faq-section{margin:40px 0 60px;}
+    .faq-section h2{font-size:1.3rem;font-weight:800;margin-bottom:22px;}
+    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-q{font-weight:700;font-size:0.95rem;margin-bottom:6px;}
+    .faq-a{color:var(--muted);font-size:0.88rem;line-height:1.65;}
+    .faq-a a{color:var(--accent);text-decoration:none;}
+    .faq-a code{background:#102035;padding:1px 6px;border-radius:4px;font-size:0.85em;}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+  <div class="nav-links">
+    <a href="/free-dmarc-checker/">DMARC</a>
+    <a href="/free-domain-security-score/">Security Score</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/inbox-shield/" class="nav-cta">Monitor Free →</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-tag">Free · Instant · No account needed</div>
+    <h1>Free <span>SPF Record</span> Checker</h1>
+    <p class="hero-sub">Validate your SPF record, see the full mechanism breakdown, check the DNS lookup count, and get specific fix recommendations — in seconds.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="domain-form">
+      <input type="text" id="domainInput" placeholder="yourdomain.com" autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off"/>
+      <button id="checkBtn" onclick="runCheck()">Check SPF →</button>
+    </div>
+    <div class="form-hint">Enter a domain name — we'll look up and analyze the SPF record</div>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="spin">⟳</span>
+    <p>Looking up SPF record for <strong id="loadingDomain"></strong>…</p>
+  </div>
+
+  <div class="result-error" id="resultError"></div>
+
+  <div id="results">
+    <div id="statusBanner"></div>
+    <div class="metrics-row" id="metricsRow"></div>
+    <div class="record-section">
+      <div class="section-label">Raw SPF record</div>
+      <div class="record-raw" id="recordRaw"></div>
+    </div>
+    <div class="section-label">Lookup budget</div>
+    <div class="lookup-bar-wrap" id="lookupBar"></div>
+    <div class="section-label" style="margin-bottom:10px;">Mechanism breakdown</div>
+    <table class="mech-table" id="mechTable">
+      <thead><tr><th>Mechanism</th><th>Qualifier</th><th>Value</th><th>Notes</th></tr></thead>
+      <tbody id="mechBody"></tbody>
+    </table>
+    <div id="issuesSection"></div>
+    <div class="cta-block">
+      <h3>Monitor your SPF — and everything else — automatically</h3>
+      <p>Inbox Shield watches your SPF, DMARC, and DKIM records 24/7 and alerts you the moment anything changes. Free for one domain.</p>
+      <div class="cta-row">
+        <a href="/inbox-shield/" class="btn-primary">Start Monitoring Free →</a>
+        <a href="/free-dmarc-checker/" class="btn-secondary">Check DMARC</a>
+      </div>
+      <div class="capture-form">
+        <input type="email" id="captureEmail" placeholder="you@company.com" autocomplete="email"/>
+        <button onclick="submitCapture()">Get SPF fix guide</button>
+      </div>
+      <div class="capture-msg" id="captureMsg">✓ Check your inbox.</div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2>About SPF records</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is an SPF record?</div>
+      <div class="faq-a">SPF (Sender Policy Framework) is a DNS TXT record that lists which mail servers are authorized to send email for your domain. Receiving mail servers check SPF to verify that inbound email claiming to be from your domain was sent by an authorized server. Without SPF, anyone can send email that appears to come from your domain.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the SPF DNS lookup limit?</div>
+      <div class="faq-a">RFC 7208 limits SPF evaluation to 10 DNS lookups. Each <code>include:</code>, <code>a</code>, <code>mx</code>, <code>ptr</code>, and <code>exists</code> mechanism consumes one lookup. Nested <code>include:</code> directives count toward the same limit. If the limit is exceeded, SPF returns a permanent error (PermError) — meaning SPF <em>fails</em> for every sender, including legitimate ones.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does -all vs ~all mean?</div>
+      <div class="faq-a"><code>-all</code> (hard fail) tells receiving servers to <strong>reject</strong> any sender not listed in your SPF record. <code>~all</code> (soft fail) tells them to <strong>mark as suspicious</strong> but still deliver. <code>+all</code> (pass all) tells them to accept everyone — which defeats SPF entirely. For maximum protection, use <code>-all</code>.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I have multiple SPF records?</div>
+      <div class="faq-a">No. RFC 7208 requires exactly one SPF TXT record per domain. If you have more than one, SPF evaluation will return a PermError and fail permanently. Merge all mechanisms into a single record.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I add a new email service without breaking SPF?</div>
+      <div class="faq-a">Add the new service's <code>include:</code> directive to your existing SPF record before using them to send email. Make sure your DNS lookup count stays under 10 — check it with this tool after adding. If you're already near the limit, use SPF flattening (replacing <code>include:</code> directives with explicit <code>ip4:</code> ranges) to free up headroom. Check out <a href="/inbox-shield/">Inbox Shield</a> to get alerted when your SPF record changes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is SPF enough on its own?</div>
+      <div class="faq-a">No. SPF only verifies the envelope sender (the return-path), not the visible From address. Attackers can spoof the From address even when SPF passes. You need DMARC (which enforces alignment between SPF/DKIM and the From header) and DKIM together for full protection. Use the <a href="/free-dmarc-checker/">free DMARC checker</a> to check all three.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/">Home</a>
+  <a href="/free-domain-security-score/">Security Score</a>
+  <a href="/free-dmarc-checker/">DMARC Checker</a>
+  <a href="/free-ssl-checker/">SSL Checker</a>
+  <a href="/free-blacklist-checker/">Blacklist Checker</a>
+  <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
+  <a href="/inbox-shield/">Inbox Shield</a>
+  <a href="/blog/">Blog</a>
+  <a href="/privacy.html">Privacy</a>
+</footer>
+
+<script>
+document.getElementById('domainInput').addEventListener('keydown', e => { if (e.key === 'Enter') runCheck(); });
+
+function normalizeDomain(raw) {
+  return raw.trim().toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split('?')[0];
+}
+
+async function runCheck() {
+  const raw = document.getElementById('domainInput').value;
+  const domain = normalizeDomain(raw);
+  if (!domain || !domain.includes('.')) {
+    document.getElementById('domainInput').focus();
+    return;
+  }
+
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('resultError').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('loadingDomain').textContent = domain;
+  document.getElementById('checkBtn').disabled = true;
+
+  const newUrl = new URL(window.location);
+  newUrl.searchParams.set('domain', domain);
+  history.replaceState({}, '', newUrl);
+
+  try {
+    const resp = await fetch(`/api/spf-check?domain=${encodeURIComponent(domain)}`);
+    const data = await resp.json();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('checkBtn').disabled = false;
+    renderResults(data, domain);
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('checkBtn').disabled = false;
+    const err = document.getElementById('resultError');
+    err.textContent = 'Could not complete the check. Please try again.';
+    err.style.display = 'block';
+  }
+}
+
+function renderResults(data, domain) {
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+  window.scrollTo({ top: document.getElementById('results').offsetTop - 80, behavior: 'smooth' });
+
+  // Status banner
+  let bannerClass, bannerIcon, bannerTitle, bannerSub;
+  if (!data.found) {
+    bannerClass = 'fail'; bannerIcon = '✗';
+    bannerTitle = 'No SPF record found';
+    bannerSub = `${domain} has no SPF TXT record. Any mail server can claim to send email from this domain.`;
+  } else if (data.error_type === 'multiple_records') {
+    bannerClass = 'fail'; bannerIcon = '✗';
+    bannerTitle = `${data.records.length} SPF records found — misconfiguration`;
+    bannerSub = 'RFC 7208 requires exactly one SPF record. Multiple records cause SPF to permanently fail.';
+  } else if (data.issues && data.issues.some(i => i.level === 'fail')) {
+    bannerClass = 'fail'; bannerIcon = '✗';
+    bannerTitle = 'SPF issues found';
+    bannerSub = data.summary || '';
+  } else if (data.issues && data.issues.length > 0) {
+    bannerClass = 'warn'; bannerIcon = '⚠';
+    bannerTitle = 'SPF configured with warnings';
+    bannerSub = data.summary || '';
+  } else {
+    bannerClass = 'pass'; bannerIcon = '✓';
+    bannerTitle = 'SPF record looks good';
+    bannerSub = data.summary || 'Your SPF record is well-configured.';
+  }
+
+  document.getElementById('statusBanner').innerHTML = `
+    <div class="status-banner ${bannerClass}">
+      <div class="status-icon">${bannerIcon}</div>
+      <div><div class="status-title">${bannerTitle}</div><div class="status-sub">${bannerSub}</div></div>
+    </div>`;
+
+  // Early exit for no record / multiple records
+  if (!data.found || data.error_type === 'multiple_records') {
+    document.getElementById('metricsRow').innerHTML = '';
+    document.getElementById('recordRaw').textContent = data.records ? data.records.join('\n') : '(no record found)';
+    document.getElementById('lookupBar').innerHTML = '';
+    document.getElementById('mechBody').innerHTML = '';
+    renderIssues(data.issues || []);
+    return;
+  }
+
+  // Metrics
+  const allQ = data.allQualifier;
+  const allLabel = allQ === '-' ? 'Hard fail (-all)' : allQ === '~' ? 'Soft fail (~all)' : allQ === '+' ? 'Pass (+all) ⚠' : allQ === '?' ? 'Neutral (?all)' : 'Missing ⚠';
+  const allClass = allQ === '-' ? 'ok' : (allQ === '~' || !allQ) ? 'warn' : 'bad';
+  const lookupClass = data.dnsLookups > 10 ? 'bad' : data.dnsLookups >= 8 ? 'warn' : 'ok';
+  const mechCount = (data.mechanisms || []).filter(m => m.type !== 'version' && m.type !== 'all').length;
+
+  document.getElementById('metricsRow').innerHTML = `
+    <div class="metric ${allClass}"><div class="val">${allQ || '?'}</div><div class="lbl">All qualifier</div></div>
+    <div class="metric ${lookupClass}"><div class="val">${data.dnsLookups}</div><div class="lbl">DNS lookups</div></div>
+    <div class="metric ok"><div class="val">${mechCount}</div><div class="lbl">Mechanisms</div></div>`;
+
+  // Record raw
+  document.getElementById('recordRaw').textContent = data.record || '';
+
+  // Lookup bar
+  const pct = Math.min(100, Math.round((data.dnsLookups / 10) * 100));
+  const barColor = data.dnsLookups > 10 ? 'var(--red)' : data.dnsLookups >= 8 ? 'var(--yellow)' : 'var(--green)';
+  const note = data.dnsLookups > 10
+    ? `⚠ Over limit! ${data.dnsLookups}/10 lookups — SPF will return PermError`
+    : data.dnsLookups >= 8
+      ? `⚠ Approaching limit — ${data.dnsLookups}/10 lookups used. Adding more senders may break SPF.`
+      : `${data.dnsLookups}/10 lookups used — within limit`;
+  document.getElementById('lookupBar').innerHTML = `
+    <div class="lookup-header">
+      <span class="lookup-label">DNS lookups</span>
+      <span class="lookup-count" style="color:${barColor}">${data.dnsLookups} / 10</span>
+    </div>
+    <div class="lookup-track"><div class="lookup-fill" style="width:${pct}%;background:${barColor}"></div></div>
+    <div class="lookup-note">${note}</div>`;
+
+  // Mechanism table
+  const qualColors = { '+': 'qual-pass', '-': 'qual-fail', '~': 'qual-soft', '?': 'qual-neutral' };
+  const qualLabels = { '+': '+pass', '-': '-fail', '~': '~softfail', '?': '?neutral' };
+  const tbody = document.getElementById('mechBody');
+  tbody.innerHTML = '';
+
+  (data.mechanisms || []).forEach(m => {
+    if (m.type === 'version') return;
+    const tr = document.createElement('tr');
+    const isAll = m.type === 'all';
+    const allClass2 = isAll ? (m.qualifier === '-' ? 'qual-all-good' : m.qualifier === '+' ? 'qual-all-bad' : 'qual-all-warn') : '';
+    const dnsTag = m.dnsLookup ? '<span class="dns-badge">DNS</span>' : '';
+    const qualHtml = m.qualifier
+      ? `<span class="${qualColors[m.qualifier] || ''} ${allClass2}">${qualLabels[m.qualifier] || m.qualifier}</span>`
+      : '<span class="qual-neutral">default</span>';
+    const notes = [];
+    if (m.type === 'all' && m.qualifier === '+') notes.push('⚠ Allows every sender');
+    if (m.type === 'all' && m.qualifier === '-') notes.push('✓ Rejects unauthorized');
+    if (m.type === 'all' && m.qualifier === '~') notes.push('Marks but doesn\'t reject');
+    if (m.type === 'ptr') notes.push('⚠ Deprecated — avoid');
+    if (m.type === 'include') notes.push('Expands nested SPF');
+    if (m.type === 'ip4' || m.type === 'ip6') notes.push('Direct IP authorization');
+    tr.innerHTML = `
+      <td><span class="mech-type">${m.type}</span>${dnsTag}</td>
+      <td>${qualHtml}</td>
+      <td><span class="mech-val">${m.value || ''}</span></td>
+      <td style="color:var(--muted);font-size:0.82rem;">${notes.join(' · ')}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  renderIssues(data.issues || []);
+}
+
+function renderIssues(issues) {
+  const section = document.getElementById('issuesSection');
+  if (!issues.length) { section.innerHTML = ''; return; }
+  section.innerHTML = '<div class="section-label" style="margin-bottom:10px;">Issues found</div>' +
+    issues.map(i => `
+      <div class="issue ${i.level}">
+        <div class="issue-title">${i.message}</div>
+        <div class="issue-detail">${i.detail}</div>
+        <div class="issue-fix"><strong>Fix:</strong> ${i.fix}</div>
+      </div>`).join('');
+}
+
+async function submitCapture() {
+  const email = document.getElementById('captureEmail').value.trim();
+  if (!email) return;
+  try {
+    await fetch('/api/capture-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'free-spf-checker' }),
+    });
+  } catch(e) {}
+  document.getElementById('captureMsg').style.display = 'block';
+  document.getElementById('captureEmail').value = '';
+}
+document.getElementById('captureEmail').addEventListener('keydown', e => { if (e.key === 'Enter') submitCapture(); });
+
+// Auto-run from URL
+(function() {
+  const d = new URLSearchParams(window.location.search).get('domain');
+  if (d) { document.getElementById('domainInput').value = d; runCheck(); }
+})();
+</script>
+</body>
+</html>

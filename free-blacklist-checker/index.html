@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free Email Blacklist Checker — Check Domain &amp; IP Against 15 DNSBLs</title>
+  <meta name="description" content="Check if your domain or IP is on an email blacklist. We check 15 major DNSBLs including Spamhaus, Barracuda, SpamCop, and SORBS — free, instant, no account needed."/>
+  <meta property="og:title" content="Free Email Blacklist Checker — Domain &amp; IP vs 15 DNSBLs"/>
+  <meta property="og:description" content="Is your domain or IP blacklisted? Check 15 major DNSBLs including Spamhaus, Barracuda, and SpamCop — free and instant."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-blacklist-checker/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-blacklist-checker/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Free Email Blacklist Checker","url":"https://edgeiqlabs.com/free-blacklist-checker/","description":"Check domain or IP against 15 major email blacklists (DNSBLs) including Spamhaus, Barracuda, and SpamCop.","applicationCategory":"SecurityApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;--purple:#b47aff;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:800px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links a:not(.nav-cta){display:none;}}
+
+    .hero{padding:56px 0 36px;text-align:center;}
+    .hero-tag{display:inline-block;background:#0d1c2e;border:1px solid var(--accent);color:var(--accent);font-size:0.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:14px;letter-spacing:-.02em;}
+    h1 span{color:var(--accent);}
+    .hero-sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 32px;}
+    .dnsbl-count{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 16px;font-size:0.85rem;color:var(--muted);margin-bottom:32px;}
+    .dnsbl-count strong{color:var(--text);}
+
+    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;}
+    .input-tabs{display:flex;gap:2px;background:#071018;border-radius:8px;padding:3px;margin-bottom:16px;width:fit-content;}
+    .input-tab{padding:6px 14px;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:inherit;}
+    .input-tab.active{background:var(--card);color:var(--text);}
+    .domain-form{display:flex;gap:10px;}
+    .domain-form input{flex:1;background:#0b1422;border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:10px;font-size:1rem;outline:none;font-family:inherit;transition:border-color .2s;min-width:0;}
+    .domain-form input:focus{border-color:var(--accent);}
+    .domain-form input::placeholder{color:var(--muted);}
+    .domain-form button{background:var(--accent);color:#071018;font-weight:800;border:none;cursor:pointer;padding:13px 24px;border-radius:10px;font-size:0.95rem;white-space:nowrap;font-family:inherit;transition:opacity .15s;}
+    .domain-form button:hover{opacity:.88;}
+    .domain-form button:disabled{opacity:.5;cursor:not-allowed;}
+    .form-hint{font-size:0.8rem;color:var(--muted);margin-top:8px;}
+
+    .loading{display:none;text-align:center;padding:28px 0;}
+    .spin{animation:spin 1s linear infinite;display:inline-block;font-size:1.4rem;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading p{color:var(--muted);margin-top:8px;font-size:0.9rem;}
+    .loading .checking-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;max-width:500px;margin-left:auto;margin-right:auto;}
+    .checking-pill{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:0.75rem;color:var(--muted);}
+
+    .result-error{display:none;background:#1a0808;border:1px solid var(--red);border-radius:12px;padding:18px 20px;color:var(--red);font-size:0.92rem;}
+
+    #results{display:none;}
+
+    /* Risk banner */
+    .risk-banner{border-radius:14px;padding:22px 24px;margin-bottom:24px;display:flex;gap:16px;align-items:flex-start;}
+    .risk-banner.clean{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.3);}
+    .risk-banner.medium{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.3);}
+    .risk-banner.high{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.3);}
+    .risk-banner.critical{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.3);}
+    .risk-icon{font-size:2rem;flex-shrink:0;}
+    .risk-title{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+    .risk-banner.clean .risk-title{color:var(--green);}
+    .risk-banner.medium .risk-title{color:var(--yellow);}
+    .risk-banner.high .risk-title{color:var(--orange);}
+    .risk-banner.critical .risk-title{color:var(--red);}
+    .risk-sub{font-size:0.9rem;color:var(--muted);}
+    .risk-meta{font-size:0.8rem;color:var(--muted);margin-top:8px;}
+    .risk-meta strong{color:var(--text);}
+
+    /* Score row */
+    .score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+    @media(max-width:480px){.score-row{grid-template-columns:1fr 1fr;}}
+    .score-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+    .score-num{font-size:1.8rem;font-weight:800;line-height:1;}
+    .score-lbl{font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;}
+    .clean-num{color:var(--green);}
+    .listed-num{color:var(--red);}
+
+    /* Listed section */
+    .section-header{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+    .listed-card{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:16px 20px;margin-bottom:10px;}
+    .listed-name{font-weight:800;font-size:0.95rem;color:var(--red);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .tier-badge{display:inline-block;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;}
+    .tier-critical{background:rgba(248,113,113,.15);color:var(--red);}
+    .tier-high{background:rgba(249,115,22,.15);color:var(--orange);}
+    .tier-medium{background:rgba(251,191,36,.15);color:var(--yellow);}
+    .listed-detail{font-size:0.82rem;color:var(--muted);}
+    .removal-link{display:inline-block;margin-top:8px;font-size:0.82rem;font-weight:700;color:var(--accent);text-decoration:none;background:#0d1c2e;padding:5px 12px;border-radius:6px;}
+    .removal-link:hover{text-decoration:underline;}
+
+    /* Clean grid */
+    .clean-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;}
+    @media(max-width:480px){.clean-grid{grid-template-columns:1fr;}}
+    .clean-item{background:var(--card);border:1px solid rgba(52,211,153,.15);border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted);}
+    .clean-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+    /* CTA */
+    .cta-block{background:linear-gradient(135deg,#0d1c2e 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:24px 0;text-align:center;}
+    .cta-block h3{font-size:1.15rem;font-weight:800;margin-bottom:8px;}
+    .cta-block p{color:var(--muted);margin-bottom:18px;font-size:0.9rem;}
+    .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;}
+    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:10px 20px;border-radius:9px;text-decoration:none;font-size:0.9rem;border:1px solid var(--accent);}
+    .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+    .capture-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:0.9rem;width:230px;font-family:inherit;}
+    .capture-form input::placeholder{color:var(--muted);}
+    .capture-form button{background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:0.9rem;font-family:inherit;}
+    .capture-msg{font-size:0.82rem;color:var(--green);margin-top:8px;text-align:center;display:none;}
+
+    /* FAQ */
+    .faq-section{margin:40px 0 60px;}
+    .faq-section h2{font-size:1.3rem;font-weight:800;margin-bottom:22px;}
+    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-q{font-weight:700;font-size:0.95rem;margin-bottom:6px;}
+    .faq-a{color:var(--muted);font-size:0.88rem;line-height:1.65;}
+    .faq-a a{color:var(--accent);text-decoration:none;}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+  <div class="nav-links">
+    <a href="/free-dmarc-checker/">DMARC</a>
+    <a href="/free-domain-security-score/">Security Score</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/inbox-shield/" class="nav-cta">Monitor Free →</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-tag">Free · 15 blacklists · No account needed</div>
+    <h1>Free <span>Email Blacklist</span> Checker</h1>
+    <p class="hero-sub">Check if your domain or IP is listed on major email blacklists. We check 15 DNSBLs in seconds — including Spamhaus, Barracuda, SpamCop, and SORBS.</p>
+    <div class="dnsbl-count"><strong>15 blacklists checked</strong> — including Spamhaus SBL, XBL, PBL, DBL · Barracuda BRBL · SpamCop · SORBS · SURBL · URIBL</div>
+  </div>
+
+  <div class="tool-card">
+    <div class="input-tabs">
+      <button class="input-tab active" id="tabDomain" onclick="setTab('domain')">Domain</button>
+      <button class="input-tab" id="tabIp" onclick="setTab('ip')">IP Address</button>
+    </div>
+    <div class="domain-form">
+      <input type="text" id="domainInput" placeholder="yourdomain.com" autocomplete="off" spellcheck="false" autocapitalize="off" autocorrect="off"/>
+      <button id="checkBtn" onclick="runCheck()">Check →</button>
+    </div>
+    <div class="form-hint" id="formHint">Enter your domain — we'll resolve the sending IP and check both domain and IP blacklists</div>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="spin">⟳</span>
+    <p>Checking <strong id="loadingTarget"></strong> against 15 blacklists…</p>
+    <div class="checking-list">
+      <span class="checking-pill">Spamhaus SBL</span><span class="checking-pill">Spamhaus XBL</span>
+      <span class="checking-pill">Spamhaus PBL</span><span class="checking-pill">Spamhaus DBL</span>
+      <span class="checking-pill">Barracuda BRBL</span><span class="checking-pill">SpamCop</span>
+      <span class="checking-pill">SORBS SPAM</span><span class="checking-pill">SURBL</span>
+      <span class="checking-pill">URIBL</span><span class="checking-pill">UCEPROTECT</span>
+      <span class="checking-pill">Mailspike</span><span class="checking-pill">NordSpam</span>
+      <span class="checking-pill">Truncate</span>
+    </div>
+  </div>
+
+  <div class="result-error" id="resultError"></div>
+  <div id="results"></div>
+
+  <div class="faq-section">
+    <h2>About email blacklists</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is an email blacklist (DNSBL)?</div>
+      <div class="faq-a">A DNS-based Blackhole List (DNSBL) is a database of IP addresses or domain names known to send spam. Mail servers query these lists before accepting email — if the sender's IP or domain is listed, the email may be rejected or marked as spam. Being listed on a major DNSBL like Spamhaus can cause significant deliverability problems.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why is my domain or IP blacklisted?</div>
+      <div class="faq-a">The most common causes: your server sent spam (directly or via malware), your IP is in a range reserved for residential or dynamic use (Spamhaus PBL), you were reported by spam trap hits, or a previous owner of the IP had a bad sending history. Some listings are automated; others require human review. See our full guide: <a href="/blog/email-blacklist-check-domain-removal.html">How to get your domain removed from email blacklists →</a></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I get removed from Spamhaus?</div>
+      <div class="faq-a">For SBL (spam source) listings: identify and stop the spam source, then submit a removal request at spamhaus.org/lookup. For PBL (policy block) listings: if your IP shouldn't be on PBL, request removal directly — PBL typically lists dynamic/residential IPs that should use their ISP's smarthost. Fix the root cause before requesting removal or you'll be re-listed.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I get removed from Barracuda BRBL?</div>
+      <div class="faq-a">Visit barracudacentral.org/lookups, enter your IP, and submit a removal request. Barracuda requires you to confirm the issue is resolved and that you have proper email authentication (SPF, DKIM, DMARC) in place. Removal is usually processed within 12 hours if the request is legitimate.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does being listed on one blacklist affect all email?</div>
+      <div class="faq-a">It depends on which blacklist and which receiving servers. Major enterprise mail platforms (Microsoft, Google, Proofpoint) use Spamhaus heavily. A Spamhaus SBL or CSS listing will cause rejections at a large percentage of recipients. Smaller DNSBLs have less coverage but still affect some recipients. Multiple listings compound the problem significantly.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I prevent getting blacklisted?</div>
+      <div class="faq-a">Maintain proper email authentication (SPF -all, DMARC p=reject, DKIM), monitor your sending reputation, use confirmed opt-in for mailing lists, process unsubscribes immediately, monitor bounce rates and spam complaints, and never send to purchased lists. Use <a href="/inbox-shield/">Inbox Shield</a> to get alerted if your DMARC or SPF configuration changes.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/">Home</a>
+  <a href="/free-domain-security-score/">Security Score</a>
+  <a href="/free-dmarc-checker/">DMARC Checker</a>
+  <a href="/free-spf-checker/">SPF Checker</a>
+  <a href="/free-ssl-checker/">SSL Checker</a>
+  <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
+  <a href="/inbox-shield/">Inbox Shield</a>
+  <a href="/blog/email-blacklist-check-domain-removal.html">Blacklist removal guide</a>
+  <a href="/privacy.html">Privacy</a>
+</footer>
+
+<script>
+let activeTab = 'domain';
+
+function setTab(tab) {
+  activeTab = tab;
+  document.getElementById('tabDomain').classList.toggle('active', tab === 'domain');
+  document.getElementById('tabIp').classList.toggle('active', tab === 'ip');
+  const input = document.getElementById('domainInput');
+  input.placeholder = tab === 'domain' ? 'yourdomain.com' : '203.0.113.42';
+  input.value = '';
+  document.getElementById('formHint').textContent = tab === 'domain'
+    ? "Enter your domain — we'll resolve the sending IP and check both domain and IP blacklists"
+    : 'Enter an IPv4 address to check against IP-based blacklists';
+  input.focus();
+}
+
+document.getElementById('domainInput').addEventListener('keydown', e => { if (e.key === 'Enter') runCheck(); });
+
+function normalizeDomain(raw) {
+  return raw.trim().toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split('?')[0];
+}
+
+async function runCheck() {
+  const raw = document.getElementById('domainInput').value.trim();
+  if (!raw) { document.getElementById('domainInput').focus(); return; }
+  const input = activeTab === 'ip' ? raw : normalizeDomain(raw);
+  if (!input) return;
+
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('resultError').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('loadingTarget').textContent = input;
+  document.getElementById('checkBtn').disabled = true;
+
+  const param = activeTab === 'ip' ? 'ip' : 'domain';
+  const url = `/api/blacklist-check?${param}=${encodeURIComponent(input)}`;
+
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('checkBtn').disabled = false;
+    renderResults(data);
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('checkBtn').disabled = false;
+    const err = document.getElementById('resultError');
+    err.textContent = 'Check failed — please try again.';
+    err.style.display = 'block';
+  }
+}
+
+function renderResults(data) {
+  if (data.error) {
+    const err = document.getElementById('resultError');
+    err.textContent = data.error;
+    err.style.display = 'block';
+    return;
+  }
+
+  const riskIcons = { clean: '✅', medium: '⚠️', high: '🔴', critical: '🚨' };
+  const riskTitles = {
+    clean: `Clean — not listed on any of ${data.checked} blacklists checked`,
+    medium: `Listed on ${data.listedCount} blacklist${data.listedCount > 1 ? 's' : ''}`,
+    high: `Listed on ${data.listedCount} blacklists — deliverability affected`,
+    critical: `Critical — listed on ${data.listedCount} major blacklist${data.listedCount > 1 ? 's' : ''}`,
+  };
+
+  const ipInfo = data.resolvedIp
+    ? `<div class="risk-meta">Domain: <strong>${data.domain}</strong> · Resolved IP: <strong>${data.resolvedIp}</strong> · ${data.ipListsChecked} IP lists + ${data.domainListsChecked} domain lists checked</div>`
+    : `<div class="risk-meta">IP: <strong>${data.input}</strong> · ${data.checked} lists checked</div>`;
+
+  let html = `
+    <div class="risk-banner ${data.risk}">
+      <div class="risk-icon">${riskIcons[data.risk]}</div>
+      <div>
+        <div class="risk-title">${riskTitles[data.risk]}</div>
+        <div class="risk-sub">${data.riskMessage}</div>
+        ${ipInfo}
+      </div>
+    </div>
+    <div class="score-row">
+      <div class="score-card"><div class="score-num clean-num">${data.cleanCount}</div><div class="score-lbl">Clean</div></div>
+      <div class="score-card"><div class="score-num listed-num">${data.listedCount}</div><div class="score-lbl">Listed</div></div>
+      <div class="score-card"><div class="score-num" style="color:var(--muted)">${data.checked}</div><div class="score-lbl">Total checked</div></div>
+    </div>`;
+
+  // Listed entries
+  if (data.listed && data.listed.length > 0) {
+    html += '<div class="section-header"><span>Listed on</span></div>';
+    data.listed.forEach(l => {
+      html += `
+        <div class="listed-card">
+          <div class="listed-name">${l.name} <span class="tier-badge tier-${l.tier}">${l.tier}</span></div>
+          <div class="listed-detail">Return code: <code style="background:#102035;padding:1px 6px;border-radius:4px;font-family:monospace;">${l.returnCode || 'listed'}</code></div>
+          <a href="${l.removal}" target="_blank" rel="noopener noreferrer" class="removal-link">Request removal →</a>
+        </div>`;
+    });
+  }
+
+  // Clean entries
+  if (data.clean && data.clean.length > 0) {
+    html += `<div class="section-header" style="margin-top:20px;"><span>Clean on (${data.clean.length})</span></div>
+      <div class="clean-grid">`;
+    data.clean.forEach(c => {
+      html += `<div class="clean-item"><div class="clean-dot"></div>${c.name}</div>`;
+    });
+    html += '</div>';
+  }
+
+  // CTA
+  html += `
+    <div class="cta-block">
+      <h3>${data.listedCount > 0 ? 'Fix your email authentication to prevent re-listing' : 'Keep your domain off blacklists'}</h3>
+      <p>${data.listedCount > 0
+        ? 'Blacklisting often follows weak email authentication. Inbox Shield monitors your DMARC, SPF, and DKIM 24/7 and alerts you when anything changes.'
+        : 'Inbox Shield monitors your email authentication records continuously — alerting you before misconfiguration leads to blacklisting.'}</p>
+      <div class="cta-row">
+        <a href="/inbox-shield/" class="btn-primary">Start Monitoring Free →</a>
+        <a href="/blog/email-blacklist-check-domain-removal.html" class="btn-secondary">Removal guide</a>
+      </div>
+      <div class="capture-form">
+        <input type="email" id="captureEmail" placeholder="you@company.com" autocomplete="email"/>
+        <button onclick="submitCapture()">Get the deliverability guide</button>
+      </div>
+      <div class="capture-msg" id="captureMsg">✓ Check your inbox.</div>
+    </div>`;
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = html;
+  resultsEl.style.display = 'block';
+  document.getElementById('captureEmail').addEventListener('keydown', e => { if (e.key === 'Enter') submitCapture(); });
+  window.scrollTo({ top: resultsEl.offsetTop - 80, behavior: 'smooth' });
+}
+
+async function submitCapture() {
+  const emailEl = document.getElementById('captureEmail');
+  if (!emailEl) return;
+  const email = emailEl.value.trim();
+  if (!email) return;
+  try {
+    await fetch('/api/capture-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'free-blacklist-checker' }),
+    });
+  } catch(e) {}
+  const msg = document.getElementById('captureMsg');
+  if (msg) msg.style.display = 'block';
+  emailEl.value = '';
+}
+
+// Auto-run from URL
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get('domain') || params.get('ip');
+  if (d) {
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(d)) setTab('ip');
+    document.getElementById('domainInput').value = d;
+    runCheck();
+  }
+})();
+</script>
+</body>
+</html>
