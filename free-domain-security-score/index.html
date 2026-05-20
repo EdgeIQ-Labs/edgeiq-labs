@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free Domain Security Score — Grade Your Domain A–F Instantly</title>
+  <meta name="description" content="Get a free A-F security grade for your domain in 15 seconds. Checks DMARC, SPF, DKIM, SSL, and security headers. See exactly what's exposed and how to fix it."/>
+  <meta property="og:title" content="Free Domain Security Score — Grade Your Domain A–F"/>
+  <meta property="og:description" content="Check your domain's security posture in 15 seconds. DMARC, SPF, DKIM, SSL, security headers — one unified A-F grade."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-domain-security-score/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-domain-security-score/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Free Domain Security Score","url":"https://edgeiqlabs.com/free-domain-security-score/","description":"Free A-F security grade for any domain — DMARC, SPF, DKIM, SSL, security headers checked instantly.","applicationCategory":"SecurityApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
+  <style>
+    :root{
+      --bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;
+      --accent:#3dd9ff;--border:#233142;
+      --grade-a:#22c55e;--grade-b:#3dd9ff;--grade-c:#fbbf24;--grade-d:#f97316;--grade-f:#ef4444;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh;}
+    .container{max-width:860px;margin:0 auto;padding:0 20px;}
+
+    /* Nav */
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links a:not(.nav-cta){display:none;}}
+
+    /* Hero */
+    .hero{padding:64px 0 40px;text-align:center;}
+    .hero-tag{display:inline-block;background:#0d1c2e;border:1px solid var(--accent);color:var(--accent);font-size:0.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:20px;}
+    .hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.15;margin-bottom:16px;letter-spacing:-.02em;}
+    .hero h1 span{color:var(--accent);}
+    .hero-sub{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto 36px;}
+    .check-count{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:40px;flex-wrap:wrap;}
+    .check-pill{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:0.82rem;color:var(--muted);}
+    .check-pill strong{color:var(--text);}
+
+    /* Input */
+    .input-wrap{max-width:560px;margin:0 auto;}
+    .domain-form{display:flex;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 8px 8px 18px;transition:border-color .2s;}
+    .domain-form:focus-within{border-color:var(--accent);}
+    .domain-form input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:1.05rem;min-width:0;font-family:inherit;}
+    .domain-form input::placeholder{color:var(--muted);}
+    .domain-form button{background:var(--accent);color:#071018;font-weight:800;border:none;cursor:pointer;padding:12px 24px;border-radius:9px;font-size:1rem;white-space:nowrap;font-family:inherit;transition:opacity .15s;}
+    .domain-form button:hover{opacity:.88;}
+    .domain-form button:disabled{opacity:.5;cursor:not-allowed;}
+    .input-hint{font-size:0.8rem;color:var(--muted);margin-top:10px;text-align:center;}
+
+    /* States */
+    #stateIdle{display:block;}
+    #stateScanning{display:none;}
+    #stateResults{display:none;}
+
+    /* Scanning */
+    .scanning-wrap{padding:60px 0;text-align:center;}
+    .scanning-domain{font-size:1.3rem;font-weight:700;margin-bottom:32px;}
+    .scanning-domain span{color:var(--accent);}
+    .scan-steps{display:flex;flex-direction:column;gap:10px;max-width:380px;margin:0 auto 32px;}
+    .scan-step{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:0.92rem;color:var(--muted);transition:all .3s;}
+    .scan-step.active{border-color:var(--accent);color:var(--text);}
+    .scan-step.done{border-color:#22c55e;color:#22c55e;}
+    .scan-step .step-icon{width:20px;text-align:center;flex-shrink:0;}
+    .spin{animation:spin 1s linear infinite;display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .scan-bar-wrap{max-width:380px;margin:0 auto;background:var(--card);border-radius:999px;height:6px;overflow:hidden;}
+    .scan-bar{height:100%;background:var(--accent);border-radius:999px;width:0;transition:width .4s ease;}
+
+    /* Results: Grade circle */
+    .results-wrap{padding:48px 0 20px;}
+    .grade-section{text-align:center;margin-bottom:48px;}
+    .grade-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;border:4px solid;position:relative;}
+    .grade-circle .grade-letter{font-size:4rem;font-weight:900;line-height:1;}
+    .grade-circle .grade-score{font-size:0.85rem;font-weight:600;opacity:.8;margin-top:2px;}
+    .grade-a{border-color:var(--grade-a);background:rgba(34,197,94,.08);}
+    .grade-a .grade-letter{color:var(--grade-a);}
+    .grade-b{border-color:var(--grade-b);background:rgba(61,217,255,.08);}
+    .grade-b .grade-letter{color:var(--grade-b);}
+    .grade-c{border-color:var(--grade-c);background:rgba(251,191,36,.08);}
+    .grade-c .grade-letter{color:var(--grade-c);}
+    .grade-d{border-color:var(--grade-d);background:rgba(249,115,22,.08);}
+    .grade-d .grade-letter{color:var(--grade-d);}
+    .grade-f{border-color:var(--grade-f);background:rgba(239,68,68,.08);}
+    .grade-f .grade-letter{color:var(--grade-f);}
+    .grade-domain{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+    .grade-summary{color:var(--muted);font-size:0.95rem;max-width:480px;margin:0 auto;}
+
+    /* Share */
+    .share-row{display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+    .share-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;}
+    .share-copy{background:var(--card);border:1px solid var(--border);color:var(--text);}
+    .share-copy:hover{border-color:var(--accent);}
+    .share-tweet{background:#0f1923;border:1px solid #1a3a5c;color:var(--accent);}
+    .share-tweet:hover{background:#1a2a3a;}
+
+    /* Category grid */
+    .section-title{font-size:1.1rem;font-weight:800;margin-bottom:16px;}
+    .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:36px;}
+    @media(max-width:560px){.category-grid{grid-template-columns:1fr;}}
+    .cat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+    .cat-card.pass{border-left:3px solid var(--grade-a);}
+    .cat-card.warn{border-left:3px solid var(--grade-c);}
+    .cat-card.fail{border-left:3px solid var(--grade-f);}
+    .cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .cat-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+    .cat-status{font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+    .status-pass{background:rgba(34,197,94,.12);color:var(--grade-a);}
+    .status-warn{background:rgba(251,191,36,.12);color:var(--grade-c);}
+    .status-fail{background:rgba(239,68,68,.12);color:var(--grade-f);}
+    .cat-headline{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:4px;}
+    .cat-score-bar{height:4px;background:#1a2535;border-radius:4px;margin-top:10px;overflow:hidden;}
+    .cat-score-fill{height:100%;border-radius:4px;transition:width .6s ease .2s;}
+
+    /* Email gate */
+    .gate-section{background:linear-gradient(135deg,#0d1c2e 0%,#0a1520 100%);border:1px solid var(--accent);border-radius:16px;padding:32px;margin:8px 0 36px;text-align:center;}
+    .gate-section.unlocked{border-color:#22c55e;background:linear-gradient(135deg,#0a1c0e 0%,#0a1520 100%);}
+    .gate-icon{font-size:2rem;margin-bottom:12px;}
+    .gate-section h3{font-size:1.25rem;font-weight:800;margin-bottom:8px;}
+    .gate-section p{color:var(--muted);font-size:0.92rem;margin-bottom:20px;max-width:460px;margin-left:auto;margin-right:auto;}
+    .gate-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+    .gate-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:11px 16px;border-radius:8px;font-size:0.95rem;width:260px;font-family:inherit;}
+    .gate-form input::placeholder{color:var(--muted);}
+    .gate-form button{background:var(--accent);color:#071018;font-weight:700;padding:11px 22px;border-radius:8px;border:none;cursor:pointer;font-size:0.95rem;font-family:inherit;}
+    .gate-form button:disabled{opacity:.5;}
+
+    /* Issues (unlocked) */
+    .issues-section{margin-bottom:36px;}
+    .issue-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;}
+    .issue-card .issue-cat{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
+    .issue-card .issue-headline{font-size:0.95rem;font-weight:700;color:var(--grade-f);margin-bottom:8px;}
+    .issue-card .issue-headline.warn{color:var(--grade-c);}
+    .issue-card .issue-fix{font-size:0.88rem;color:#c8daea;}
+    .issue-card .issue-fix strong{color:var(--text);}
+    .issue-card .issue-learn{display:inline-block;margin-top:10px;font-size:0.82rem;font-weight:700;color:var(--accent);text-decoration:none;}
+
+    /* Recs */
+    .recs-section{margin-bottom:36px;}
+    .rec-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;text-decoration:none;color:inherit;transition:border-color .2s;margin-bottom:10px;}
+    .rec-card:hover{border-color:var(--accent);}
+    .rec-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .rec-text .rec-name{font-weight:700;font-size:0.95rem;}
+    .rec-text .rec-desc{font-size:0.82rem;color:var(--muted);}
+    .rec-arrow{margin-left:auto;color:var(--muted);}
+
+    /* Try another */
+    .try-another{text-align:center;margin:32px 0;}
+    .try-another button{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 22px;border-radius:8px;cursor:pointer;font-size:0.9rem;font-family:inherit;}
+    .try-another button:hover{border-color:var(--accent);color:var(--text);}
+
+    /* FAQ */
+    .faq-section{margin:48px 0 60px;}
+    .faq-section h2{font-size:1.4rem;font-weight:800;margin-bottom:24px;}
+    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-q{font-weight:700;font-size:0.95rem;margin-bottom:7px;}
+    .faq-a{color:var(--muted);font-size:0.88rem;}
+    .faq-a a{color:var(--accent);text-decoration:none;}
+
+    /* Footer */
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.85rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+  <div class="nav-links">
+    <a href="/free-dmarc-checker/">DMARC Checker</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/pricing/" class="nav-cta">Start Monitoring →</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ── IDLE STATE ───────────────────────────────────────────────── -->
+  <div id="stateIdle">
+    <div class="hero">
+      <div class="hero-tag">Free · No account needed · 15 seconds</div>
+      <h1>What's your domain's<br/><span>security score?</span></h1>
+      <p class="hero-sub">Enter any domain. We run 5 security checks and give it an A–F grade — then show you exactly what to fix.</p>
+      <div class="check-count">
+        <div class="check-pill"><strong>DMARC</strong> policy</div>
+        <div class="check-pill"><strong>SPF</strong> record</div>
+        <div class="check-pill"><strong>DKIM</strong> signing</div>
+        <div class="check-pill"><strong>SSL / HTTPS</strong></div>
+        <div class="check-pill"><strong>Security headers</strong></div>
+      </div>
+      <div class="input-wrap">
+        <div class="domain-form" id="idleForm">
+          <input type="text" id="domainInput" placeholder="yourdomain.com" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off"/>
+          <button onclick="startScan()">Check my domain →</button>
+        </div>
+        <div class="input-hint">Free forever · No signup required to see your grade</div>
+      </div>
+    </div>
+
+    <!-- Recent grade examples -->
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:60px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;text-align:center;">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--grade-f);">F</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">No DMARC · No SPF</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;text-align:center;">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--grade-c);">C</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">p=none · Missing HSTS</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;text-align:center;">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--grade-b);">B</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">p=quarantine · Good SSL</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;text-align:center;">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--grade-a);">A</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">p=reject · Full headers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCANNING STATE ───────────────────────────────────────────── -->
+  <div id="stateScanning">
+    <div class="scanning-wrap">
+      <div class="scanning-domain">Scanning <span id="scanDomainLabel"></span></div>
+      <div class="scan-steps" id="scanSteps">
+        <div class="scan-step" id="step0"><span class="step-icon">·</span> Checking DMARC policy…</div>
+        <div class="scan-step" id="step1"><span class="step-icon">·</span> Checking SPF record…</div>
+        <div class="scan-step" id="step2"><span class="step-icon">·</span> Checking DKIM selectors…</div>
+        <div class="scan-step" id="step3"><span class="step-icon">·</span> Checking SSL / HTTPS…</div>
+        <div class="scan-step" id="step4"><span class="step-icon">·</span> Checking security headers…</div>
+      </div>
+      <div class="scan-bar-wrap"><div class="scan-bar" id="scanBar"></div></div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS STATE ────────────────────────────────────────────── -->
+  <div id="stateResults">
+    <div class="results-wrap">
+
+      <!-- Grade circle -->
+      <div class="grade-section">
+        <div class="grade-circle" id="gradeCircle">
+          <div class="grade-letter" id="gradeLetter"></div>
+          <div class="grade-score" id="gradeScore"></div>
+        </div>
+        <div class="grade-domain" id="gradeDomain"></div>
+        <div class="grade-summary" id="gradeSummary"></div>
+        <div class="share-row">
+          <button class="share-btn share-copy" onclick="copyLink()">📋 Copy link</button>
+          <button class="share-btn share-tweet" onclick="tweetResult()">𝕏 Share score</button>
+        </div>
+      </div>
+
+      <!-- Category breakdown -->
+      <div class="section-title">Check-by-check breakdown</div>
+      <div class="category-grid" id="categoryGrid"></div>
+
+      <!-- Email gate -->
+      <div class="gate-section" id="gateSection">
+        <div class="gate-icon">🔒</div>
+        <h3>Unlock your full security report</h3>
+        <p>See exactly what's misconfigured, the specific DNS records to change, and a step-by-step fix guide for every issue we found.</p>
+        <div class="gate-form">
+          <input type="email" id="gateEmail" placeholder="you@company.com" autocomplete="email"/>
+          <button id="gateBtn" onclick="unlockReport()">Unlock free report →</button>
+        </div>
+        <div id="gateMsg" style="font-size:0.82rem;color:#22c55e;margin-top:10px;display:none;">✓ Unlocking your report…</div>
+      </div>
+
+      <!-- Issues (revealed after gate) -->
+      <div id="issuesSection" style="display:none;">
+        <div class="section-title">What to fix</div>
+        <div id="issuesList"></div>
+      </div>
+
+      <!-- Recommendations -->
+      <div id="recsSection" style="display:none;">
+        <div class="section-title" style="margin-top:28px;">Keep it this way — automatically</div>
+        <div id="recsList"></div>
+      </div>
+
+      <!-- Try another -->
+      <div class="try-another">
+        <button onclick="resetTool()">← Check another domain</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FAQ (always visible below fold) ─────────────────────────── -->
+  <div class="faq-section" id="faqSection">
+    <h2>About this tool</h2>
+    <div class="faq-item">
+      <div class="faq-q">What does the security score actually measure?</div>
+      <div class="faq-a">Five checks across email authentication and web security: DMARC policy (max 30 pts), SPF record (max 20 pts), DKIM signing (max 15 pts), SSL/HTTPS configuration (max 30 pts), and MX records (max 5 pts). The grade reflects your overall posture — A is 90+, B is 75–89, C is 55–74, D is 35–54, F is below 35.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How is this different from the free DMARC checker?</div>
+      <div class="faq-a">The <a href="/free-dmarc-checker/">DMARC checker</a> focuses specifically on DMARC, SPF, and DKIM in depth. This tool gives you a unified A-F grade across all security dimensions — email authentication plus SSL, HTTPS headers, and MX — in a single score. Use this for a quick overall picture; use the DMARC checker for detailed email authentication diagnostics.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does a DMARC score of p=none mean for my grade?</div>
+      <div class="faq-a">A DMARC record with <code>p=none</code> earns 6/30 points for the DMARC check — monitoring only, no enforcement. Attackers can still send phishing emails that appear to come from your domain. Moving to <code>p=quarantine</code> earns 18/30; <code>p=reject</code> earns the full 30/30.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I improve my score without technical knowledge?</div>
+      <div class="faq-a">Many improvements are straightforward DNS record additions. Your email provider (Google Workspace, Microsoft 365, etc.) usually provides the exact records to add. The full report we send includes specific DNS records to copy and paste, not just general advice.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does this tool store my domain or email?</div>
+      <div class="faq-a">Domain scans are not stored. If you provide your email to unlock the full report, it's used to send the report and to subscribe you to our security newsletter — you can unsubscribe any time. See our <a href="/privacy.html">privacy policy</a>.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How often should I check my domain's security score?</div>
+      <div class="faq-a">Security configurations change — a deployment updates a header, a DNS change weakens SPF, an SSL certificate expires. We recommend checking at least monthly. Better yet, <a href="/pulse/">Pulse</a> and <a href="/inbox-shield/">Inbox Shield</a> monitor these checks automatically and alert you when anything changes.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 EdgeIQ Labs · <a href="/free-dmarc-checker/">DMARC Checker</a> · <a href="/free-ssl-checker/">SSL Checker</a> · <a href="/free-subdomain-scanner/">Subdomain Scanner</a> · <a href="/pricing/">Pricing</a> · <a href="/privacy.html">Privacy</a></div>
+</footer>
+
+<script>
+// ── State ───────────────────────────────────────────────────────────────────
+let currentDomain = '';
+let currentData = null;
+
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+// ── Input ───────────────────────────────────────────────────────────────────
+document.getElementById('domainInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') startScan();
+});
+
+function normalizeDomain(raw) {
+  return raw.trim().toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+}
+
+async function startScan() {
+  const raw = document.getElementById('domainInput').value;
+  const domain = normalizeDomain(raw);
+  if (!domain || !domain.includes('.')) {
+    document.getElementById('domainInput').focus();
+    document.getElementById('domainInput').style.borderColor = 'var(--grade-f)';
+    setTimeout(() => document.getElementById('domainInput').style.borderColor = '', 1200);
+    return;
+  }
+
+  currentDomain = domain;
+
+  // Switch to scanning state
+  hide('stateIdle');
+  hide('stateResults');
+  show('stateScanning');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.getElementById('scanDomainLabel').textContent = domain;
+
+  // Animate scan steps
+  const steps = [0, 1, 2, 3, 4];
+  const delays = [0, 600, 1200, 1900, 2700];
+  const durations = [800, 700, 900, 1000, 600];
+  const bar = document.getElementById('scanBar');
+  const pcts = [18, 34, 52, 72, 90];
+
+  steps.forEach((i, idx) => {
+    setTimeout(() => {
+      const el = document.getElementById(`step${i}`);
+      el.classList.add('active');
+      el.querySelector('.step-icon').innerHTML = '<span class="spin">⟳</span>';
+      bar.style.width = pcts[idx] + '%';
+    }, delays[idx]);
+    setTimeout(() => {
+      const el = document.getElementById(`step${i}`);
+      el.classList.remove('active');
+      el.classList.add('done');
+      el.querySelector('.step-icon').textContent = '✓';
+    }, delays[idx] + durations[idx]);
+  });
+
+  // Update URL
+  const newUrl = new URL(window.location);
+  newUrl.searchParams.set('domain', domain);
+  history.replaceState({}, '', newUrl);
+
+  // Fetch result (real API)
+  let data;
+  try {
+    const resp = await fetch(`/api/domain-score?domain=${encodeURIComponent(domain)}`);
+    data = await resp.json();
+  } catch(e) {
+    data = null;
+  }
+
+  // Finish animation, then show results
+  setTimeout(() => {
+    bar.style.width = '100%';
+    setTimeout(() => renderResults(data), 400);
+  }, 3600);
+}
+
+// ── Render results ──────────────────────────────────────────────────────────
+function renderResults(data) {
+  currentData = data;
+  hide('stateScanning');
+  show('stateResults');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (!data || data.error) {
+    document.getElementById('gradeCircle').className = 'grade-circle grade-f';
+    document.getElementById('gradeLetter').textContent = '?';
+    document.getElementById('gradeScore').textContent = 'Error';
+    document.getElementById('gradeDomain').textContent = currentDomain;
+    document.getElementById('gradeSummary').textContent = 'Could not complete the scan. Please check the domain and try again.';
+    document.getElementById('categoryGrid').innerHTML = '';
+    return;
+  }
+
+  // Grade circle
+  const gradeClass = 'grade-' + data.grade.toLowerCase();
+  const circle = document.getElementById('gradeCircle');
+  circle.className = 'grade-circle ' + gradeClass;
+  document.getElementById('gradeLetter').textContent = data.grade;
+  document.getElementById('gradeScore').textContent = data.score + '/100';
+  document.getElementById('gradeDomain').textContent = data.domain;
+  document.getElementById('gradeSummary').textContent = data.summary;
+
+  // Category grid
+  const gradeColors = { pass: 'var(--grade-a)', warn: 'var(--grade-c)', fail: 'var(--grade-f)', error: 'var(--muted)' };
+  const statusLabels = { pass: 'Pass', warn: 'Warning', fail: 'Fail', error: 'Error' };
+  const statusClasses = { pass: 'status-pass', warn: 'status-warn', fail: 'status-fail', error: 'status-warn' };
+  const grid = document.getElementById('categoryGrid');
+  grid.innerHTML = '';
+
+  data.categories.forEach(cat => {
+    const pct = Math.round((cat.score / cat.max) * 100);
+    const card = document.createElement('div');
+    card.className = `cat-card ${cat.status}`;
+    card.innerHTML = `
+      <div class="cat-header">
+        <div class="cat-label">${cat.label}</div>
+        <div class="cat-status ${statusClasses[cat.status]}">${statusLabels[cat.status]}</div>
+      </div>
+      <div class="cat-headline">${cat.headline}</div>
+      <div class="cat-score-bar">
+        <div class="cat-score-fill" style="width:0%;background:${gradeColors[cat.status]}" data-pct="${pct}"></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // Animate score bars
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      grid.querySelectorAll('.cat-score-fill').forEach(el => {
+        el.style.width = el.dataset.pct + '%';
+      });
+    });
+  });
+
+  // If no issues, skip gate
+  if (!data.issues || data.issues.length === 0) {
+    hide('gateSection');
+    show('issuesSection');
+    document.getElementById('issuesList').innerHTML = '<div style="color:var(--grade-a);font-size:0.95rem;padding:16px;background:rgba(34,197,94,.08);border-radius:10px;border:1px solid rgba(34,197,94,.2);">✓ No critical issues found. Keep monitoring to stay this way.</div>';
+    show('issuesSection');
+  }
+
+  // Recs (shown immediately — no gate needed)
+  if (data.recommendations && data.recommendations.length > 0) {
+    const recsList = document.getElementById('recsList');
+    recsList.innerHTML = '';
+    data.recommendations.forEach(rec => {
+      const a = document.createElement('a');
+      a.href = rec.href;
+      a.className = 'rec-card';
+      a.innerHTML = `<div class="rec-dot" style="background:${rec.color}"></div><div class="rec-text"><div class="rec-name">${rec.name}</div><div class="rec-desc">${rec.desc}</div></div><div class="rec-arrow">→</div>`;
+      recsList.appendChild(a);
+    });
+    show('recsSection');
+  }
+}
+
+// ── Gate unlock ─────────────────────────────────────────────────────────────
+async function unlockReport() {
+  const email = document.getElementById('gateEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('gateEmail').focus();
+    return;
+  }
+
+  const btn = document.getElementById('gateBtn');
+  btn.disabled = true;
+  document.getElementById('gateMsg').style.display = 'block';
+
+  try {
+    await fetch('/api/capture-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        source: 'domain-security-score',
+        domain: currentDomain,
+        grade: currentData?.grade,
+      }),
+    });
+  } catch(e) {}
+
+  // Reveal issues
+  if (currentData?.issues && currentData.issues.length > 0) {
+    const list = document.getElementById('issuesList');
+    list.innerHTML = '';
+    currentData.issues.forEach(issue => {
+      const card = document.createElement('div');
+      card.className = 'issue-card';
+      const headlineClass = (issue.headline || '').toLowerCase().includes('warn') ? 'warn' : '';
+      card.innerHTML = `
+        <div class="issue-cat">${issue.category}</div>
+        <div class="issue-headline ${headlineClass}">${issue.headline}</div>
+        <div class="issue-fix"><strong>How to fix:</strong> ${issue.fix}</div>
+        <a href="${issue.learn}" class="issue-learn">Learn more about ${issue.category} monitoring →</a>`;
+      list.appendChild(card);
+    });
+    show('issuesSection');
+  } else {
+    document.getElementById('issuesList').innerHTML = '<div style="color:var(--grade-a);padding:14px;background:rgba(34,197,94,.08);border-radius:10px;border:1px solid rgba(34,197,94,.2);">✓ No critical issues found.</div>';
+    show('issuesSection');
+  }
+
+  // Update gate section
+  const gate = document.getElementById('gateSection');
+  gate.classList.add('unlocked');
+  gate.innerHTML = `<div class="gate-icon">✅</div><h3>Report unlocked</h3><p style="color:var(--muted);font-size:0.9rem;">We've also sent a copy to <strong style="color:var(--text);">${email}</strong> with a monitoring checklist. Check your inbox.</p>`;
+}
+
+// ── Share ────────────────────────────────────────────────────────────────────
+function copyLink() {
+  const url = `https://edgeiqlabs.com/free-domain-security-score/?domain=${encodeURIComponent(currentDomain)}`;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = event.target.closest('button');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+function tweetResult() {
+  if (!currentData) return;
+  const grade = currentData.grade;
+  const score = currentData.score;
+  const text = `My domain ${currentDomain} scored ${grade} (${score}/100) on @EdgeIQlabs' free domain security checker. Is yours protected? Check it free:`;
+  const url = `https://edgeiqlabs.com/free-domain-security-score/?domain=${encodeURIComponent(currentDomain)}`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+}
+
+// ── Reset ────────────────────────────────────────────────────────────────────
+function resetTool() {
+  // Reset scan steps
+  for (let i = 0; i < 5; i++) {
+    const el = document.getElementById(`step${i}`);
+    el.className = 'scan-step';
+    el.querySelector('.step-icon').textContent = '·';
+  }
+  document.getElementById('scanBar').style.width = '0';
+
+  // Reset results
+  hide('issuesSection');
+  hide('recsSection');
+
+  const gate = document.getElementById('gateSection');
+  gate.classList.remove('unlocked');
+  gate.innerHTML = `
+    <div class="gate-icon">🔒</div>
+    <h3>Unlock your full security report</h3>
+    <p>See exactly what's misconfigured, the specific DNS records to change, and a step-by-step fix guide for every issue we found.</p>
+    <div class="gate-form">
+      <input type="email" id="gateEmail" placeholder="you@company.com" autocomplete="email"/>
+      <button id="gateBtn" onclick="unlockReport()">Unlock free report →</button>
+    </div>
+    <div id="gateMsg" style="font-size:0.82rem;color:#22c55e;margin-top:10px;display:none;">✓ Unlocking your report…</div>`;
+  show('gateSection');
+
+  hide('stateResults');
+  hide('stateScanning');
+  show('stateIdle');
+
+  const url = new URL(window.location);
+  url.searchParams.delete('domain');
+  history.replaceState({}, '', url);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    document.getElementById('domainInput').focus();
+    document.getElementById('domainInput').value = '';
+  }, 300);
+}
+
+// ── Auto-run from URL param ──────────────────────────────────────────────────
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get('domain');
+  if (d) {
+    document.getElementById('domainInput').value = d;
+    startScan();
+  }
+})();
+</script>
+</body>
+</html>
