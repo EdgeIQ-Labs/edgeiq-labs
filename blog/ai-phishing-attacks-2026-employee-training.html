@@ -208,7 +208,18 @@
   <p>Phishing simulation addresses the human layer — which is the layer most attacks now target. But it works best alongside technical controls. A complete defence includes email authentication (SPF, DKIM, DMARC at p=reject) to prevent your own domain from being spoofed, advanced email filtering that can flag lookalike domains and suspicious links, and endpoint detection that catches credential-harvesting pages.</p>
   <p>None of those technical controls, however, prevent an attacker who has compromised a legitimate email account. When the attack arrives from a real, trusted address — from your actual CFO's email, or from a real supplier's compromised account — technical filters won't catch it. At that point, the only thing standing between your organisation and a successful breach is an employee who has been trained to pause, question the request, and verify through a separate channel. That's what simulation builds.</p>
 
-  <div class="cta-box">
+  
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+    <div class="cta-box">
     <h3>Start Running Phishing Simulations in 60 Seconds</h3>
     <p>PhishSim by EdgeIQ Labs includes 20+ AI-grade phishing templates covering executive impersonation, vendor fraud, HR scams, and IT alerts. Your instance is provisioned instantly — no setup calls, no long onboarding. Send your first simulation today and see your baseline click rate.</p>
     <a href="https://phishsim.edgeiqlabs.com/" class="cta-btn">Launch PhishSim Free →</a>
@@ -219,5 +230,21 @@
 <footer>
   <p>© 2026 EdgeIQ Labs · <a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Service</a> · <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
 </footer>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
 </body>
 </html>

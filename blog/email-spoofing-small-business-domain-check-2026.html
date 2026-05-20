@@ -229,7 +229,18 @@
 
   <p>Weekly automated monitoring of your email authentication configuration catches drift before it creates a window for attackers. DMARC report analysis tells you when new, unauthorized senders start using your domain — sometimes the first sign of a phishing campaign targeting your customers or partners using your brand.</p>
 
-  <div class="cta-box">
+  
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+    <div class="cta-box">
     <h3>✉️ Grade your email security in 10 seconds</h3>
     <p>EdgeIQ Inbox Shield scans your domain's SPF, DMARC, DKIM, MX, and BIMI configuration and gives you an instant A–F grade with a prioritized fix list. Subscribe for weekly monitoring alerts — get notified the moment anything changes. Free scan, no account needed.</p>
     <a href="/inbox-shield/" class="cta-btn">Scan Your Domain Now →</a>
@@ -256,5 +267,21 @@
 <footer style="border-top:1px solid #233142;padding:24px;text-align:center;font-size:0.82rem;color:#4a6080;">
   <p>© 2026 EdgeIQ Labs · <a href="/privacy.html" style="color:#4a6080;">Privacy Policy</a> · <a href="/terms.html" style="color:#4a6080;">Terms of Service</a> · <a href="mailto:support@edgeiqlabs.com" style="color:#4a6080;">support@edgeiqlabs.com</a></p>
 </footer>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
 </body>
 </html>

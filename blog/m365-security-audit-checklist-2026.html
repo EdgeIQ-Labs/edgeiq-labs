@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run — EdgeIQ Labs</title>
+  <meta name="description" content="A practical Microsoft 365 security audit checklist for 2026. Covers MFA gaps, legacy auth, stale admins, email forwarding rules, OAuth apps, and conditional access." />
+  <meta property="og:title" content="M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run" />
+  <meta property="og:description" content="Step-by-step M365 security audit covering MFA, legacy auth, stale admins, email forwarding, OAuth apps, and conditional access policies." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/m365-security-audit-checklist-2026.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run" />
+  <meta name="twitter:description" content="Step-by-step M365 security audit covering MFA, legacy auth, stale admins, email forwarding, OAuth apps, and conditional access." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/m365-security-audit-checklist-2026.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run",
+    "description": "A practical Microsoft 365 security audit checklist covering MFA, legacy auth, stale admins, email forwarding rules, OAuth apps, and conditional access.",
+    "datePublished": "2026-05-19",
+    "dateModified": "2026-05-19",
+    "author": { "@type": "Organization", "name": "EdgeIQ Labs" },
+    "publisher": { "@type": "Organization", "name": "EdgeIQ Labs", "logo": { "@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/m365-security-audit-checklist-2026.html" }
+  }
+  </script>
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); z-index:100; }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; font-size:1rem; color:var(--text); }
+    .nav-brand span { color:var(--accent); }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; font-size:0.88rem; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:7px 14px !important; border-radius:8px !important; }
+    .nav-hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px; }
+    .nav-hamburger span { display:block; width:22px; height:2px; background:#9fb0c7; border-radius:2px; }
+    .product-strip { background:#0e1621; border-bottom:1px solid #233142; position:sticky; top:56px; z-index:9; }
+    .product-strip-inner { display:flex; align-items:center; gap:2px; padding:5px 0 5px 24px; overflow-x:auto; scrollbar-width:none; max-width:980px; margin:0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display:none; }
+    .product-strip-inner::after { content:""; flex:0 0 28px; }
+    .product-strip-inner a { display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap; transition:background 0.15s; }
+    .product-strip-inner a:hover { background:rgba(255,255,255,0.06); }
+    .nav-mobile-menu { display:none; flex-direction:column; background:#121923; border-top:1px solid #233142; padding:12px 20px 16px; }
+    .nav-mobile-menu.open { display:flex; }
+    .nav-mobile-menu a { color:#9fb0c7; text-decoration:none; padding:10px 4px; font-size:0.9rem; border-bottom:1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom:none; }
+    .mob-section { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4a6080; padding:12px 4px 4px; }
+    .mob-cta { background:#3dd9ff; color:#071018 !important; font-weight:700; text-align:center; padding:11px !important; border-radius:8px; margin-top:12px; border-bottom:none !important; }
+    @media(max-width:720px) { .nav-links{display:none;} .nav-hamburger{display:flex;} }
+    .article-header { padding:56px 0 36px; border-bottom:1px solid var(--border); margin-bottom:36px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:18px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.5rem); line-height:1.2; margin-bottom:16px; }
+    h2 { font-size:1.35rem; margin:32px 0 12px; color:var(--text); }
+    h3 { font-size:1.05rem; margin:22px 0 8px; color:var(--text); }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul, ol { margin:0 0 18px 22px; }
+    li { margin-bottom:6px; }
+    .tag { display:inline-block; background:rgba(61,217,255,0.08); border:1px solid rgba(61,217,255,0.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.05rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; color:var(--muted); line-height:1.7; }
+    pre { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; overflow:auto; margin:16px 0; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.88em; background:rgba(61,217,255,0.08); padding:2px 5px; border-radius:4px; }
+    pre code { background:none; padding:0; }
+    .checklist { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 24px; margin:20px 0; }
+    .checklist-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid rgba(35,49,66,0.6); }
+    .checklist-item:last-child { border-bottom:none; }
+    .check-num { background:rgba(61,217,255,0.1); color:var(--accent); font-size:0.72rem; font-weight:700; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; border:1px solid rgba(61,217,255,0.25); }
+    .check-body { flex:1; }
+    .check-title { font-weight:700; color:var(--text); font-size:0.92rem; margin-bottom:4px; }
+    .check-desc { font-size:0.84rem; color:var(--muted); line-height:1.55; }
+    .severity { display:inline-block; font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:8px; vertical-align:middle; }
+    .sev-critical { background:rgba(255,77,77,0.15); color:#ff6b6b; border:1px solid rgba(255,77,77,0.3); }
+    .sev-high { background:rgba(255,179,71,0.15); color:#ffb347; border:1px solid rgba(255,179,71,0.3); }
+    .sev-medium { background:rgba(61,217,255,0.1); color:#3dd9ff; border:1px solid rgba(61,217,255,0.25); }
+    .cta-box { background:linear-gradient(135deg,#071018 0%,#0d1a2e 100%); border:1px solid rgba(77,166,255,0.3); border-radius:14px; padding:28px; margin:36px 0; text-align:center; }
+    .cta-box h2 { margin-top:0; margin-bottom:10px; font-size:1.2rem; color:var(--text); }
+    .cta-box p { color:var(--muted); font-size:0.9rem; margin-bottom:18px; }
+    .cta-btn { display:inline-block; background:#4da6ff; color:#071018; font-weight:700; padding:11px 24px; border-radius:9px; text-decoration:none; font-size:0.92rem; }
+    .cta-btn:hover { opacity:0.88; }
+    .info-box { background:rgba(61,217,255,0.05); border:1px solid rgba(61,217,255,0.2); border-radius:10px; padding:16px 20px; margin:18px 0; }
+    .info-box p { margin:0; font-size:0.88rem; }
+    @media(max-width:600px) { .article-header{padding:36px 0 24px;} }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/"><span>Edge</span>IQ Labs</a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/blog/">Blog</a>
+        <a href="/products/" class="nav-cta">Get Started</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <a class="mob-cta" href="/products/">Get Started →</a>
+</div>
+
+<div class="container">
+  <div class="article-header">
+    <div class="article-meta">May 19, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">M365</span><span class="tag">Security Audit</span><span class="tag">Microsoft 365</span></div>
+    <h1>M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run</h1>
+    <p class="lead">Most Microsoft 365 breaches aren't sophisticated. They exploit the same misconfigurations: MFA disabled for a few accounts, legacy auth left open, an admin who left six months ago still has Global Admin rights. This checklist closes those gaps in under an hour.</p>
+  </div>
+
+  <p>Microsoft 365 manages email, files, identity, and device access for hundreds of millions of users — which makes it the single highest-value target in most small and mid-sized businesses. The problem isn't that M365 is insecure by default. It's that the default settings prioritise compatibility over security, and most tenants never change them.</p>
+
+  <p>What follows is the exact audit checklist we run against every M365 tenant enrolled in <a href="/workspace-posture/" style="color:#4da6ff;">Workspace Posture Pro</a>. Each check takes minutes, and every finding maps to a concrete remediation step.</p>
+
+  <h2>The 9-Point M365 Security Audit Checklist</h2>
+
+  <div class="checklist">
+    <div class="checklist-item">
+      <div class="check-num">1</div>
+      <div class="check-body">
+        <div class="check-title">MFA enforcement across all users <span class="severity sev-critical">Critical</span></div>
+        <div class="check-desc">Navigate to <strong>Azure AD → Users → Per-user MFA</strong> or check Conditional Access policies. Every account — including service accounts and shared mailboxes — should have MFA enforced. Accounts with MFA disabled are the #1 entry point for business email compromise. Look for accounts where MFA status shows "Disabled" or "Not registered".</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">2</div>
+      <div class="check-body">
+        <div class="check-title">Legacy authentication protocols blocked <span class="severity sev-critical">Critical</span></div>
+        <div class="check-desc">Legacy auth (SMTP AUTH, POP3, IMAP, Basic Auth) bypasses MFA entirely. Check <strong>Azure AD → Security → Authentication methods → Legacy authentication</strong>. Create a Conditional Access policy to block legacy auth for all users, then verify no line-of-business apps depend on it before enforcing. Microsoft has been disabling this by default since 2023 but many tenants opted out.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">3</div>
+      <div class="check-body">
+        <div class="check-title">Stale admin accounts (inactive 30+ days) <span class="severity sev-critical">Critical</span></div>
+        <div class="check-desc">In <strong>Azure AD → Users</strong>, filter by admin roles and sort by last sign-in. Any Global Admin, Exchange Admin, or SharePoint Admin who hasn't signed in for 30+ days is a liability — especially former employees. Revoke roles immediately, disable the account, then delete after 30-day soft-delete window. Attackers specifically target dormant privileged accounts.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">4</div>
+      <div class="check-body">
+        <div class="check-title">Email forwarding rules to external domains <span class="severity sev-high">High</span></div>
+        <div class="check-desc">Go to <strong>Exchange Admin Center → Mail flow → Rules</strong> and also check individual mailboxes under <strong>Outlook → Settings → Mail → Forwarding</strong>. Auto-forwarding to external addresses is a primary data exfiltration technique — attackers who compromise a mailbox immediately set up forwarding to their own address. Any external forwarding rule you didn't deliberately set should be treated as an indicator of compromise.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">5</div>
+      <div class="check-body">
+        <div class="check-title">OAuth app consent grants <span class="severity sev-high">High</span></div>
+        <div class="check-desc">In <strong>Azure AD → Enterprise applications → All applications</strong>, filter by "User assigned required: No" — these apps have tenant-wide access granted by any user who clicked "Allow". Review every third-party app with <code>Mail.Read</code>, <code>Files.ReadWrite</code>, or <code>User.ReadAll</code> permissions. Illicit consent grant attacks are rising sharply because they bypass password and MFA controls entirely.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">6</div>
+      <div class="check-body">
+        <div class="check-title">External sharing settings (SharePoint &amp; OneDrive) <span class="severity sev-high">High</span></div>
+        <div class="check-desc">Check <strong>SharePoint Admin Center → Policies → Sharing</strong>. The setting should be "New and existing guests" at most — never "Anyone with the link". Files shared with "Anyone" links are effectively public. Audit existing shares: <strong>SharePoint Admin Center → Active sites → Sharing column</strong>. Also check whether guests can share items they don't own.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">7</div>
+      <div class="check-body">
+        <div class="check-title">Conditional Access policy coverage <span class="severity sev-high">High</span></div>
+        <div class="check-desc">In <strong>Azure AD → Security → Conditional Access</strong>, check that your CA policies cover all users, not just "All users minus break-glass". Common gap: CA policy excludes service accounts and shared mailboxes. Also verify you have policies for: sign-in risk &gt; medium → require MFA, unmanaged devices → block or limit access, and risky users → require password change.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">8</div>
+      <div class="check-body">
+        <div class="check-title">Audit log retention enabled <span class="severity sev-medium">Medium</span></div>
+        <div class="check-desc">Go to <strong>Microsoft Purview compliance portal → Audit → Audit log search</strong> and verify logging is enabled. Default retention is 90 days on E3, 365 days on E5. Without audit logs you cannot detect or investigate incidents. Enable unified audit logging if it's off (<strong>Security &amp; Compliance → Search → Audit log search → Turn on auditing</strong>).</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">9</div>
+      <div class="check-body">
+        <div class="check-title">Mobile device management (MDM) enrollment <span class="severity sev-medium">Medium</span></div>
+        <div class="check-desc">Check <strong>Intune → Devices → All devices</strong>. Any device accessing corporate email or files that isn't enrolled in MDM (Intune or a third-party MDM) can't be wiped if lost or stolen. At minimum, enforce a Conditional Access policy that requires compliant or Azure AD-joined devices for access to sensitive data.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>How often should you run this audit?</h2>
+
+  <p>Most teams do this annually — which means they're running 11 months blind. The configuration drift problem is real: new employees get onboarded without MFA enforced, OAuth apps get consented by someone clicking through a phishing page, external sharing policies get loosened to solve a short-term business problem and never tightened again.</p>
+
+  <p>Our recommendation: run this checklist monthly or, better, automate it. The items that change most frequently are forwarding rules (immediate indicator of compromise if unexpected), OAuth app grants, and stale admin accounts.</p>
+
+  <h2>What attackers look for first</h2>
+
+  <p>When a threat actor gains any foothold in an M365 tenant — usually through a phished credential or a consented OAuth app — the first three things they check are:</p>
+
+  <ol>
+    <li><strong>Is MFA enforced?</strong> If not, they can use the credential directly from anywhere.</li>
+    <li><strong>Are there forwarding rules?</strong> Setting one up gives persistent email access even after a password reset.</li>
+    <li><strong>What Global Admin accounts exist?</strong> Lateral movement to a GA account gives complete tenant control.</li>
+  </ol>
+
+  <p>All three of these are in the checklist above. Closing them doesn't require E5 licences or a security team — just an hour with the admin portal.</p>
+
+  <div class="info-box">
+    <p>💡 <strong>Pro tip:</strong> Use Microsoft's free <a href="https://www.microsoft.com/en-us/security/blog/2022/08/10/secure-score-in-microsoft-365-defender/" target="_blank" rel="noopener" style="color:var(--accent);">Secure Score</a> tool to track your posture over time. A score below 40% means you have critical issues to address immediately.</p>
+  </div>
+
+  <h2>The automation problem</h2>
+
+  <p>Manually running this checklist is better than nothing, but it requires remembering to do it, having time to do it, and knowing what "normal" looks like so you can spot anomalies. A forwarding rule that appeared last Tuesday is only suspicious if you know it wasn't there last Monday.</p>
+
+  <p>This is why automated monthly posture monitoring exists. You set it up once and get a digest every month showing what changed, what the current score is, and exactly what to fix — prioritised by severity.</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+
+  <div class="cta-box">
+    <h2>Run this audit automatically every month</h2>
+    <p>Workspace Posture Pro connects read-only to your M365 or Google Workspace tenant and runs all 9 checks on a monthly schedule. You get a plain-English digest with your posture score, what changed, and prioritised remediation steps. No IT ticket required — setup takes 2 minutes.</p>
+    <a href="/workspace-posture/" class="cta-btn">Start Workspace Posture Pro — $19/mo →</a>
+  </div>
+</div>
+
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+function toggleMobileMenu(){
+  document.getElementById('nav-hamburger').classList.toggle('open');
+  document.getElementById('nav-mobile-menu').classList.toggle('open');
+}
+</script>
+</body>
+</html>

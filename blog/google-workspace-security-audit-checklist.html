@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026 — EdgeIQ Labs</title>
+  <meta name="description" content="A practical Google Workspace security audit checklist for 2026. Covers 2-step verification, external sharing, third-party app access, forwarding rules, and admin account hygiene." />
+  <meta property="og:title" content="Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026" />
+  <meta property="og:description" content="Step-by-step Google Workspace security checklist covering 2SV enforcement, external sharing, OAuth apps, forwarding rules, and audit log retention." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/google-workspace-security-audit-checklist.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026" />
+  <meta name="twitter:description" content="Step-by-step Google Workspace security checklist — 2SV, external sharing, OAuth apps, forwarding rules." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/google-workspace-security-audit-checklist.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026",
+    "description": "A practical Google Workspace security audit checklist covering 2-step verification enforcement, external sharing, third-party app access, forwarding rules, and admin account hygiene.",
+    "datePublished": "2026-05-19",
+    "dateModified": "2026-05-19",
+    "author": { "@type": "Organization", "name": "EdgeIQ Labs" },
+    "publisher": { "@type": "Organization", "name": "EdgeIQ Labs", "logo": { "@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/google-workspace-security-audit-checklist.html" }
+  }
+  </script>
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); z-index:100; }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; font-size:1rem; color:var(--text); }
+    .nav-brand span { color:var(--accent); }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; font-size:0.88rem; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:7px 14px !important; border-radius:8px !important; }
+    .nav-hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px; }
+    .nav-hamburger span { display:block; width:22px; height:2px; background:#9fb0c7; border-radius:2px; }
+    .product-strip { background:#0e1621; border-bottom:1px solid #233142; position:sticky; top:56px; z-index:9; }
+    .product-strip-inner { display:flex; align-items:center; gap:2px; padding:5px 0 5px 24px; overflow-x:auto; scrollbar-width:none; max-width:980px; margin:0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display:none; }
+    .product-strip-inner::after { content:""; flex:0 0 28px; }
+    .product-strip-inner a { display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap; transition:background 0.15s; }
+    .product-strip-inner a:hover { background:rgba(255,255,255,0.06); }
+    .nav-mobile-menu { display:none; flex-direction:column; background:#121923; border-top:1px solid #233142; padding:12px 20px 16px; }
+    .nav-mobile-menu.open { display:flex; }
+    .nav-mobile-menu a { color:#9fb0c7; text-decoration:none; padding:10px 4px; font-size:0.9rem; border-bottom:1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom:none; }
+    .mob-section { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4a6080; padding:12px 4px 4px; }
+    .mob-cta { background:#3dd9ff; color:#071018 !important; font-weight:700; text-align:center; padding:11px !important; border-radius:8px; margin-top:12px; border-bottom:none !important; }
+    @media(max-width:720px) { .nav-links{display:none;} .nav-hamburger{display:flex;} }
+    .article-header { padding:56px 0 36px; border-bottom:1px solid var(--border); margin-bottom:36px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:18px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.5rem); line-height:1.2; margin-bottom:16px; }
+    h2 { font-size:1.35rem; margin:32px 0 12px; color:var(--text); }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul, ol { margin:0 0 18px 22px; }
+    li { margin-bottom:6px; }
+    .tag { display:inline-block; background:rgba(61,217,255,0.08); border:1px solid rgba(61,217,255,0.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.05rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; color:var(--muted); line-height:1.7; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.88em; background:rgba(61,217,255,0.08); padding:2px 5px; border-radius:4px; }
+    .checklist { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 24px; margin:20px 0; }
+    .checklist-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid rgba(35,49,66,0.6); }
+    .checklist-item:last-child { border-bottom:none; }
+    .check-num { background:rgba(61,217,255,0.1); color:var(--accent); font-size:0.72rem; font-weight:700; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; border:1px solid rgba(61,217,255,0.25); }
+    .check-body { flex:1; }
+    .check-title { font-weight:700; color:var(--text); font-size:0.92rem; margin-bottom:4px; }
+    .check-desc { font-size:0.84rem; color:var(--muted); line-height:1.55; }
+    .severity { display:inline-block; font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:8px; vertical-align:middle; }
+    .sev-critical { background:rgba(255,77,77,0.15); color:#ff6b6b; border:1px solid rgba(255,77,77,0.3); }
+    .sev-high { background:rgba(255,179,71,0.15); color:#ffb347; border:1px solid rgba(255,179,71,0.3); }
+    .sev-medium { background:rgba(61,217,255,0.1); color:#3dd9ff; border:1px solid rgba(61,217,255,0.25); }
+    .cta-box { background:linear-gradient(135deg,#071018 0%,#0d1a2e 100%); border:1px solid rgba(77,166,255,0.3); border-radius:14px; padding:28px; margin:36px 0; text-align:center; }
+    .cta-box h2 { margin-top:0; margin-bottom:10px; font-size:1.2rem; color:var(--text); }
+    .cta-box p { color:var(--muted); font-size:0.9rem; margin-bottom:18px; }
+    .cta-btn { display:inline-block; background:#4da6ff; color:#071018; font-weight:700; padding:11px 24px; border-radius:9px; text-decoration:none; font-size:0.92rem; }
+    .cta-btn:hover { opacity:0.88; }
+    .info-box { background:rgba(61,217,255,0.05); border:1px solid rgba(61,217,255,0.2); border-radius:10px; padding:16px 20px; margin:18px 0; }
+    .info-box p { margin:0; font-size:0.88rem; }
+    @media(max-width:600px) { .article-header{padding:36px 0 24px;} }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/"><span>Edge</span>IQ Labs</a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/blog/">Blog</a>
+        <a href="/products/" class="nav-cta">Get Started</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <a class="mob-cta" href="/products/">Get Started →</a>
+</div>
+
+<div class="container">
+  <div class="article-header">
+    <div class="article-meta">May 19, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Google Workspace</span><span class="tag">Security Audit</span><span class="tag">GWS</span></div>
+    <h1>Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026</h1>
+    <p class="lead">Google Workspace's default settings optimise for ease of collaboration — which means they often leave security gaps wide open. These eight checks take under an hour and cover the misconfigurations most commonly exploited in Google Workspace breaches.</p>
+  </div>
+
+  <p>Google Workspace is used by millions of small businesses, and the Google Admin console has powerful security controls — most of which are either off by default or buried three levels deep in settings. The result is that most tenants are running with significant gaps they don't know about.</p>
+
+  <p>This checklist is based on the controls we scan automatically for every Google Workspace tenant enrolled in <a href="/workspace-posture/" style="color:#4da6ff;">Workspace Posture Pro</a>. Each item includes exactly where to find the setting and what to change.</p>
+
+  <h2>The 8-Point Google Workspace Security Checklist</h2>
+
+  <div class="checklist">
+    <div class="checklist-item">
+      <div class="check-num">1</div>
+      <div class="check-body">
+        <div class="check-title">2-Step Verification enforced for all users <span class="severity sev-critical">Critical</span></div>
+        <div class="check-desc">Go to <strong>Admin console → Security → Authentication → 2-step verification</strong>. Set "Allow users to turn on 2-step verification" to <em>Enforcement on</em>, not just "Allow". This forces all users to enrol in 2SV — a setting that's available by default but almost never turned on in small business tenants. Pay special attention to admin accounts: these should also be enrolled in hardware security keys, not just TOTP apps.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">2</div>
+      <div class="check-body">
+        <div class="check-title">Third-party app access to Google account data <span class="severity sev-critical">Critical</span></div>
+        <div class="check-desc">Navigate to <strong>Admin console → Security → Access and data control → API controls → Manage third-party app access</strong>. Review every connected app. Any app with access to Gmail, Drive, Calendar, or Contacts data that you don't actively use should be revoked. OAuth phishing campaigns specifically trick users into granting these permissions — the attacker then has persistent access even after a password change.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">3</div>
+      <div class="check-body">
+        <div class="check-title">External Drive sharing settings <span class="severity sev-high">High</span></div>
+        <div class="check-desc">Check <strong>Admin console → Apps → Google Workspace → Drive and Docs → Sharing settings</strong>. The "Sharing outside of [domain]" option should be set to "Allowed with warning" at most — ideally "Only people in [domain] can access". The most dangerous setting is "Anyone with the link can view/edit" applied as the default sharing behaviour. Also check whether users can share items with people outside the organisation without approval.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">4</div>
+      <div class="check-body">
+        <div class="check-title">Email forwarding to external addresses <span class="severity sev-high">High</span></div>
+        <div class="check-desc">In the <strong>Admin console → Apps → Google Workspace → Gmail → End User Access</strong>, check whether "Allow per-user outbound gateways" is enabled (it usually shouldn't be). Also audit individual accounts: in the <strong>Admin console → Users → [user] → Email → Gmail settings</strong>, check for forwarding addresses that send to external domains. Unexpected external forwarding is a primary indicator of account compromise.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">5</div>
+      <div class="check-body">
+        <div class="check-title">Stale super admin accounts <span class="severity sev-high">High</span></div>
+        <div class="check-desc">Go to <strong>Admin console → Account → Admin roles → Super Admin → Admins</strong>. Any account with Super Admin that hasn't been active in 30+ days — especially from former employees or contractors — should have admin rights revoked immediately. Super Admin gives full tenant control including the ability to reset other passwords, access all data, and modify all security settings. Former employees with super admin access is one of the most common and most serious findings in Workspace tenants.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">6</div>
+      <div class="check-body">
+        <div class="check-title">Less secure app access blocked <span class="severity sev-high">High</span></div>
+        <div class="check-desc">In <strong>Admin console → Security → Less secure apps</strong>, ensure "Disable access to less secure apps for all users" is selected. Less secure apps use basic auth (username + password only) to access Gmail and Google Calendar — this bypasses 2SV entirely. Google has been phasing this out since 2021, but many tenants still have it enabled for legacy applications. Audit which apps depend on it before enforcing.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">7</div>
+      <div class="check-body">
+        <div class="check-title">Alert centre monitoring active <span class="severity sev-medium">Medium</span></div>
+        <div class="check-desc">Check <strong>Admin console → Security → Alert centre</strong>. Google's built-in alert centre notifies you of suspicious activity — account hijacking attempts, malware in Drive, government-backed attacks, and data exfiltration warnings. Ensure critical alerts are configured to send email notifications to admin accounts. Many Google Workspace tenants have never opened the alert centre.</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-num">8</div>
+      <div class="check-body">
+        <div class="check-title">Login audit logs and data export enabled <span class="severity sev-medium">Medium</span></div>
+        <div class="check-desc">In <strong>Admin console → Reporting → Audit and investigation → Login audit</strong>, verify that login events are being recorded. Also check <strong>Account → Account settings → Legal and compliance → Data export</strong> — this controls whether you can export data in case of incident response or legal requirements. Audit log retention depends on your Google Workspace edition (Business Starter: 180 days, Business Standard/Plus: 6 months, Enterprise: up to 10 years).</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Google-specific risks to know about</h2>
+
+  <p>Unlike M365, Google Workspace has a few security quirks that catch admins off guard:</p>
+
+  <ul>
+    <li><strong>Drive link sharing defaults to "Anyone with the link"</strong> when users create new files. Unless you've changed the organisational default, every file created could be publicly accessible.</li>
+    <li><strong>OAuth app consent doesn't require admin approval by default</strong> in Business Starter. Any user can grant any third-party app access to their Google account data, including Gmail and Drive, without IT knowing.</li>
+    <li><strong>Google Groups can be public</strong>. Check that internal mailing lists and groups aren't configured as "Public on the internet" — anyone in the world can post to or read public groups.</li>
+    <li><strong>Service account keys expire silently</strong>. If you use Google Cloud or Apps Script with service accounts, audit for expired or unused keys that could be rotated or revoked.</li>
+  </ul>
+
+  <div class="info-box">
+    <p>💡 <strong>Quick win:</strong> Google's Security Health page (<strong>Admin console → Security → Security health</strong>) gives you an instant overview of the most critical settings and flags anything that's at risk. Check it first — it takes 30 seconds.</p>
+  </div>
+
+  <h2>How often should you audit?</h2>
+
+  <p>Configuration drift is the enemy. A setting that was correct last quarter can change when:</p>
+  <ul>
+    <li>A new admin unfamiliar with your security baseline makes a change</li>
+    <li>A user grants OAuth access to a new app</li>
+    <li>An employee leaves but their admin role isn't revoked</li>
+    <li>A migration project temporarily loosens sharing settings and they're never tightened back</li>
+  </ul>
+
+  <p>Running this checklist monthly is better than quarterly. Automating it is better than monthly. The value isn't in the initial audit — it's in catching the change that happened two Tuesdays ago before it becomes a breach.</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+
+  <div class="cta-box">
+    <h2>Run this audit automatically every month</h2>
+    <p>Workspace Posture Pro connects read-only to your Google Workspace tenant and runs all 8 checks monthly. You get a plain-English digest with your posture score, what changed since last month, and prioritised remediation steps. Setup takes 2 minutes — no IT ticket needed.</p>
+    <a href="/workspace-posture/" class="cta-btn">Start Workspace Posture Pro — $19/mo →</a>
+  </div>
+</div>
+
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+function toggleMobileMenu(){
+  document.getElementById('nav-hamburger').classList.toggle('open');
+  document.getElementById('nav-mobile-menu').classList.toggle('open');
+}
+</script>
+</body>
+</html>
