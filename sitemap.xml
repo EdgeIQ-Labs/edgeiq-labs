@@ -404,6 +404,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://edgeiqlabs.com/compare/</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/compare/edgeiq-vs-mxtoolbox/</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/compare/edgeiq-vs-dmarcian/</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/best-dmarc-monitoring-tools-2026.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/mxtoolbox-alternatives.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://edgeiqlabs.com/blog/zero-trust-security-small-business-guide.html</loc>
     <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
