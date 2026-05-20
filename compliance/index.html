@@ -256,6 +256,22 @@
       <div class="controls-list" id="controlsList"></div>
     </div>
 
+    <!-- Pro upsell (shown after first scan) -->
+    <div id="proUpsell" style="display:none;background:linear-gradient(135deg,#071810,#0b1f14);border:1px solid rgba(61,225,158,0.35);border-radius:12px;padding:20px 22px;margin-bottom:20px;position:relative;">
+      <button onclick="dismissProUpsell()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#4a6080;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;" title="Dismiss">×</button>
+      <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div style="font-size:1.6rem;line-height:1;flex-shrink:0;">📬</div>
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Get this emailed every week</div>
+          <p style="font-size:0.9rem;color:#c8d8ea;margin-bottom:12px;line-height:1.6;">You just ran a manual scan. <strong style="color:#e8eef7;">Compliance Pro ($9/mo)</strong> runs this automatically every Monday — sends your grade, score diff, and a prioritised fix list straight to your inbox so you catch regressions before they matter.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <button onclick="scrollToProSignup()" style="background:var(--green);color:#071018;font-weight:700;font-size:0.85rem;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">Start Weekly Monitoring — $9/mo →</button>
+            <span style="font-size:0.78rem;color:#4a6080;">No setup · cancel anytime</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Empty state -->
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">📋</div>
@@ -582,6 +598,14 @@ async function runScan() {
 
     setTimeout(() => { bar.style.display = 'none'; barInner.style.width = '0'; }, 600);
     snack('Scan complete — snapshot saved');
+
+    // Show Pro upsell 1.5s after scan (unless already dismissed or signed up)
+    if (!localStorage.getItem('compliance_pro_upsell_dismissed') && !localStorage.getItem('compliance_pro_active')) {
+      setTimeout(() => {
+        const el = document.getElementById('proUpsell');
+        if (el) el.style.display = 'block';
+      }, 1500);
+    }
   } catch (err) {
     clearInterval(ticker);
     bar.style.display = 'none';
@@ -591,6 +615,23 @@ async function runScan() {
 
   btn.disabled = false;
   btn.textContent = 'Run Scan';
+}
+
+function dismissProUpsell() {
+  const el = document.getElementById('proUpsell');
+  if (el) el.style.display = 'none';
+  try { localStorage.setItem('compliance_pro_upsell_dismissed', '1'); } catch(x) {}
+}
+
+function scrollToProSignup() {
+  const form = document.getElementById('pro-signup-form');
+  if (form) {
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      const emailInput = document.getElementById('pro-email');
+      if (emailInput) emailInput.focus();
+    }, 600);
+  }
 }
 
 function snack(msg) {
@@ -646,6 +687,7 @@ async function startProSignup(e) {
   msg.style.display = 'none';
   try {
     sessionStorage.setItem('compliance_pending', JSON.stringify({ email: email, domain: domain, plan: 'pro' }));
+    try { localStorage.setItem('compliance_pro_active', '1'); } catch(x) {}
     var url = COMPLIANCE_PRO_LINK
       + '?prefilled_email=' + encodeURIComponent(email)
       + '&client_reference_id=' + encodeURIComponent(domain);
