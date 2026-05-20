@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Detect Domain Impersonation Before Your Customers Get Scammed — EdgeIQ Labs</title>
+  <meta name="description" content="Domain impersonation attacks are rising fast. Learn how typosquatting, lookalike domains, and brand impersonation work — and how to detect them before damage is done." />
+  <meta property="og:title" content="How to Detect Domain Impersonation Before Your Customers Get Scammed" />
+  <meta property="og:description" content="Typosquatting and lookalike domains explained — how to find them, what attackers do with them, and how to monitor for new impostors automatically." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/domain-impersonation-detection-guide.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Detect Domain Impersonation Before Your Customers Get Scammed" />
+  <meta name="twitter:description" content="Typosquatting and lookalike domains explained — find them and monitor for new impostors." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/domain-impersonation-detection-guide.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Detect Domain Impersonation Before Your Customers Get Scammed",
+    "description": "Domain impersonation attacks explained. How to find typosquatting and lookalike domains targeting your brand, and how to monitor for them continuously.",
+    "datePublished": "2026-05-19",
+    "dateModified": "2026-05-19",
+    "author": { "@type": "Organization", "name": "EdgeIQ Labs" },
+    "publisher": { "@type": "Organization", "name": "EdgeIQ Labs", "logo": { "@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/domain-impersonation-detection-guide.html" }
+  }
+  </script>
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; --pink:#f472b6; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); z-index:100; }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; font-size:1rem; color:var(--text); }
+    .nav-brand span { color:var(--accent); }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; font-size:0.88rem; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:7px 14px !important; border-radius:8px !important; }
+    .nav-hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px; }
+    .nav-hamburger span { display:block; width:22px; height:2px; background:#9fb0c7; border-radius:2px; }
+    .product-strip { background:#0e1621; border-bottom:1px solid #233142; position:sticky; top:56px; z-index:9; }
+    .product-strip-inner { display:flex; align-items:center; gap:2px; padding:5px 0 5px 24px; overflow-x:auto; scrollbar-width:none; max-width:980px; margin:0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display:none; }
+    .product-strip-inner::after { content:""; flex:0 0 28px; }
+    .product-strip-inner a { display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap; transition:background 0.15s; }
+    .product-strip-inner a:hover { background:rgba(255,255,255,0.06); }
+    .nav-mobile-menu { display:none; flex-direction:column; background:#121923; border-top:1px solid #233142; padding:12px 20px 16px; }
+    .nav-mobile-menu.open { display:flex; }
+    .nav-mobile-menu a { color:#9fb0c7; text-decoration:none; padding:10px 4px; font-size:0.9rem; border-bottom:1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom:none; }
+    .mob-section { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4a6080; padding:12px 4px 4px; }
+    .mob-cta { background:#3dd9ff; color:#071018 !important; font-weight:700; text-align:center; padding:11px !important; border-radius:8px; margin-top:12px; border-bottom:none !important; }
+    @media(max-width:720px) { .nav-links{display:none;} .nav-hamburger{display:flex;} }
+    .article-header { padding:56px 0 36px; border-bottom:1px solid var(--border); margin-bottom:36px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:18px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.5rem); line-height:1.2; margin-bottom:16px; }
+    h2 { font-size:1.35rem; margin:32px 0 12px; color:var(--text); }
+    h3 { font-size:1.05rem; margin:22px 0 8px; color:var(--text); }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul, ol { margin:0 0 18px 22px; }
+    li { margin-bottom:6px; }
+    .tag { display:inline-block; background:rgba(244,114,182,0.1); border:1px solid rgba(244,114,182,0.25); color:var(--pink); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.05rem; border-left:3px solid var(--pink); padding-left:18px; margin-bottom:24px; color:var(--muted); line-height:1.7; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.88em; background:rgba(61,217,255,0.08); padding:2px 5px; border-radius:4px; }
+    .example-table { width:100%; border-collapse:collapse; margin:20px 0; }
+    .example-table th { text-align:left; font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; padding:8px 12px; border-bottom:1px solid var(--border); }
+    .example-table td { padding:10px 12px; font-size:0.84rem; border-bottom:1px solid rgba(35,49,66,0.5); color:var(--muted); font-family:ui-monospace,monospace; }
+    .example-table tr:last-child td { border-bottom:none; }
+    .example-table .suspicious { color:#ff6b6b; }
+    .example-table .technique { color:var(--accent); font-family:inherit; font-size:0.82rem; }
+    .attack-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:16px 0; }
+    .attack-card h3 { margin-top:0; font-size:0.95rem; color:var(--text); }
+    .attack-card p { margin:6px 0 0; font-size:0.86rem; }
+    .cta-box { background:linear-gradient(135deg,#1a0a20 0%,#0f0618 100%); border:1px solid rgba(244,114,182,0.3); border-radius:14px; padding:28px; margin:36px 0; text-align:center; }
+    .cta-box h2 { margin-top:0; margin-bottom:10px; font-size:1.2rem; color:var(--text); }
+    .cta-box p { color:var(--muted); font-size:0.9rem; margin-bottom:18px; }
+    .cta-btn { display:inline-block; background:var(--pink); color:#fff; font-weight:700; padding:11px 24px; border-radius:9px; text-decoration:none; font-size:0.92rem; }
+    .cta-btn:hover { opacity:0.88; }
+    .info-box { background:rgba(244,114,182,0.05); border:1px solid rgba(244,114,182,0.2); border-radius:10px; padding:16px 20px; margin:18px 0; }
+    .info-box p { margin:0; font-size:0.88rem; }
+    @media(max-width:600px) { .article-header{padding:36px 0 24px;} .example-table{font-size:0.78rem;} }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/"><span>Edge</span>IQ Labs</a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products/">Products</a>
+        <a href="/blog/">Blog</a>
+        <a href="/products/" class="nav-cta">Get Started</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <a class="mob-cta" href="/products/">Get Started →</a>
+</div>
+
+<div class="container">
+  <div class="article-header">
+    <div class="article-meta">May 19, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Brand Protection</span><span class="tag">Typosquatting</span><span class="tag">Phishing</span></div>
+    <h1>How to Detect Domain Impersonation Before Your Customers Get Scammed</h1>
+    <p class="lead">Right now, someone may have registered a domain that looks almost exactly like yours. They're waiting for the right moment — or already using it. Here's how to find them, what to watch for, and how to catch new impostors before they cause damage.</p>
+  </div>
+
+  <p>Domain impersonation is one of the most effective attack techniques targeting small and mid-sized businesses, precisely because it doesn't require hacking anything. An attacker registers <code>acmecorp-support.com</code> or <code>acmec0rp.com</code>, spins up a convincing copy of your website or contact page, and starts sending emails or running ads.</p>
+
+  <p>Your customers get scammed. Your brand takes the hit. And you often don't find out until someone calls to complain about a refund they're owed for a purchase they never made with you.</p>
+
+  <h2>How attackers build lookalike domains</h2>
+
+  <p>The techniques are well-documented and almost entirely automated. Attackers use tools that generate hundreds of domain variations in seconds:</p>
+
+  <table class="example-table">
+    <thead>
+      <tr><th>Technique</th><th>Example (original: acmecorp.com)</th><th>Method</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="technique">Typosquatting</td><td class="suspicious">acmecrop.com</td><td>Transposed letters</td></tr>
+      <tr><td class="technique">Homoglyph</td><td class="suspicious">acmec0rp.com</td><td>0 for o, l for I</td></tr>
+      <tr><td class="technique">Subdomain spoof</td><td class="suspicious">acmecorp.support-login.com</td><td>Legit brand as subdomain</td></tr>
+      <tr><td class="technique">TLD swap</td><td class="suspicious">acmecorp.net / acmecorp.co</td><td>Different extension</td></tr>
+      <tr><td class="technique">Hyphen insertion</td><td class="suspicious">acme-corp.com</td><td>Hyphen added</td></tr>
+      <tr><td class="technique">Keyword append</td><td class="suspicious">acmecorp-support.com</td><td>Support/login/help added</td></tr>
+      <tr><td class="technique">Combosquatting</td><td class="suspicious">acmecorpinc.com</td><td>Inc/group/official appended</td></tr>
+    </tbody>
+  </table>
+
+  <p>A typical brand generates 100–200 plausible lookalike variations. Most are already registered. Some are parked. A handful are actively used for attacks.</p>
+
+  <h2>What attackers do with lookalike domains</h2>
+
+  <div class="attack-card">
+    <h3>🎣 Phishing campaigns</h3>
+    <p>Emails sent from <code>billing@acmecorp-support.com</code> look legitimate in email clients that only show the display name. The goal is credential theft or payment diversion.</p>
+  </div>
+  <div class="attack-card">
+    <h3>🛒 Fake storefronts</h3>
+    <p>A copy of your product page accepts payment via Stripe or PayPal. Customers think they're buying from you. They get nothing, you get the chargeback complaint.</p>
+  </div>
+  <div class="attack-card">
+    <h3>📞 Vishing support scams</h3>
+    <p>The lookalike domain hosts a "customer support" page with a phone number. Customers who search for support find it in Google Ads and call a scammer instead.</p>
+  </div>
+  <div class="attack-card">
+    <h3>💼 Business email compromise</h3>
+    <p>The attacker emails your suppliers or employees from the lookalike domain asking for wire transfers or invoice changes. Internal staff assume it's from your company.</p>
+  </div>
+
+  <h2>Manual detection: what to check right now</h2>
+
+  <p>You can do a manual sweep in about 20 minutes. It won't catch everything, but it'll surface active threats:</p>
+
+  <ol>
+    <li><strong>Search your brand name on Google</strong> — look for ads, sponsored results, or pages you don't recognise. Fraudulent Google Ads campaigns using lookalike domains are surprisingly common.</li>
+    <li><strong>Check Certificate Transparency logs</strong> — <a href="https://crt.sh" target="_blank" rel="noopener" style="color:var(--accent);">crt.sh</a> shows every SSL certificate ever issued. Search your brand name. Any certificate issued to a domain you don't recognise is worth investigating.</li>
+    <li><strong>Run a WHOIS sweep</strong> on the most obvious variations (your domain with common TLDs: .net, .co, .org, .io, -support.com, -login.com). Check if they resolve to an active site and what's on them.</li>
+    <li><strong>Set up a Google Alert</strong> for your brand name + common fraud keywords ("scam", "refund", "fake"). Customers who get burned often post about it.</li>
+    <li><strong>Check URLscan.io and VirusTotal</strong> for your domain — these services track phishing infrastructure and may have already flagged impostors.</li>
+  </ol>
+
+  <h2>Why manual checks aren't enough</h2>
+
+  <p>The core problem with manual detection is timing. A lookalike domain registered today won't appear in your weekly manual check until next week — and a well-executed phishing campaign can do serious damage in 48 hours.</p>
+
+  <p>The other problem is scale. There are typically 100–200 plausible variations of any domain. Manually checking each one weekly isn't sustainable for a small team.</p>
+
+  <div class="info-box">
+    <p>🔍 <strong>What to look for when you find a lookalike:</strong> Check if it has a DNS A record (is it live?), whether it has an MX record (is it sending email?), and what content it serves. A parked domain with just a registrar page is low risk today — but worth watching in case it activates.</p>
+  </div>
+
+  <h2>What automated monitoring watches for</h2>
+
+  <p>Continuous domain monitoring generates hundreds of variations of your domain, then checks each one weekly for:</p>
+
+  <ul>
+    <li>DNS A record appearance (domain just went live)</li>
+    <li>MX records (domain configured to send email — high risk)</li>
+    <li>SSL certificate issuance via CT logs</li>
+    <li>HTTP response content — is it copying your site?</li>
+    <li>Phishing kit signatures in page content</li>
+    <li>Suspicious keywords (login, support, account, verify)</li>
+  </ul>
+
+  <p>When any of these signals appear on a domain that wasn't active last week, you get an alert with the domain, what was found, and recommended action (report to registrar, submit takedown, block at email gateway).</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+
+  <div class="cta-box">
+    <h2>Monitor 100+ lookalike domains automatically</h2>
+    <p>BrandGuard checks over 100 typosquatting and homoglyph variations of your domain every week. When one goes live or shows suspicious content, you get an alert — with what was found and what to do. $14/mo, no setup required.</p>
+    <a href="/brandguard/" class="cta-btn">Start BrandGuard Monitoring →</a>
+  </div>
+</div>
+
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+function toggleMobileMenu(){
+  document.getElementById('nav-hamburger').classList.toggle('open');
+  document.getElementById('nav-mobile-menu').classList.toggle('open');
+}
+</script>
+</body>
+</html>
