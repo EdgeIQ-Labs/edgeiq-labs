@@ -1171,14 +1171,37 @@
 <div id="scan-upsell-banner" class="scan-upsell-banner" style="display:none;" role="alert">
   <div class="sub-icon">🟢</div>
   <div class="sub-body">
-    <strong>You've run a few scans — want these to run automatically?</strong>
-    <p>EdgeIQ Pulse monitors your domain every week and emails you when anything changes — SSL, headers, subdomains, and more. Free to start.</p>
-    <div class="sub-actions">
-      <a href="/pulse/" class="sub-btn-primary sub-pulse-link">Start Free Monitoring →</a>
+    <strong>Get these results emailed to you every week</strong>
+    <p>EdgeIQ Pulse monitors your domain every Monday and emails you when anything changes — SSL, headers, subdomains, and more. Free to start.</p>
+    <div id="scan-email-form" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <input type="email" id="scan-email-input" placeholder="you@company.com"
+        style="flex:1;min-width:180px;background:#0d1420;border:1px solid #233142;border-radius:7px;color:#e8eef7;padding:8px 12px;font-size:0.85rem;outline:none;font-family:inherit;"
+        onfocus="this.style.borderColor='#3dd9ff'" onblur="this.style.borderColor='#233142'">
+      <button onclick="dashboardEmailCapture()" style="background:#3dd9ff;color:#071018;font-weight:700;font-size:0.85rem;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;white-space:nowrap;">Get Weekly Updates →</button>
+    </div>
+    <div id="scan-email-ok" style="display:none;color:#70f0a8;font-size:0.85rem;margin-top:8px;">✅ You're in — check your inbox to confirm. <a class="sub-pulse-link" href="/pulse/" style="color:#3dd9ff;margin-left:6px;">Set up full monitoring →</a></div>
+    <div class="sub-actions" style="margin-top:8px;">
       <a href="/inbox-shield/" class="sub-btn-ghost">+ Email Security</a>
+      <a href="/pricing/" class="sub-btn-ghost">See all plans</a>
     </div>
   </div>
   <button class="sub-dismiss" onclick="dismissUpsell()" title="Dismiss">✕</button>
 </div>
+<script>
+function dashboardEmailCapture() {
+  var input = document.getElementById('scan-email-input');
+  var email = (input ? input.value : '').trim();
+  if (!email || email.indexOf('@') < 0) { if (input) { input.style.borderColor='#ff6b7a'; setTimeout(function(){input.style.borderColor='#233142';},1200); } return; }
+  document.getElementById('scan-email-form').style.display = 'none';
+  document.getElementById('scan-email-ok').style.display = 'block';
+  var link = document.querySelector('#scan-email-ok .sub-pulse-link');
+  if (link) link.href = '/pulse/?email=' + encodeURIComponent(email);
+  try { localStorage.setItem('edgeiq_lead_magnet_captured', '1'); localStorage.setItem('edgeiq_captured_email', email); } catch(x) {}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free', {
+    method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({email: email, first_url: location.href, source: 'dashboard-banner'})
+  }).catch(function(){});
+}
+</script>
 </body>
 </html>

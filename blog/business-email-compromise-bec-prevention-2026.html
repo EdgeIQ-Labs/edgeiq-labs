@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026 — EdgeIQ Labs</title>
+  <meta name="description" content="BEC attacks cost businesses $2.9 billion last year. Learn how attackers impersonate executives, suppliers, and HR — and the 9 controls that stop them." />
+  <meta property="og:title" content="Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026" />
+  <meta property="og:description" content="BEC attacks cost businesses $2.9 billion last year. Learn how attackers impersonate executives, suppliers, and HR — and the 9 controls that stop them." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/business-email-compromise-bec-prevention-2026.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/business-email-compromise-bec-prevention-2026.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026","description":"BEC attacks cost businesses $2.9 billion last year. Learn how attackers impersonate executives and the 9 controls that stop them.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu a{color:var(--muted);text-decoration:none;padding:9px 0;font-size:0.95rem;border-bottom:1px solid #1a2535;}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    @media(max-width:700px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    article{padding:48px 0 80px;}
+    .post-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+    .post-eyebrow .tag{background:#1a2535;color:var(--muted);padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:0.04em;}
+    .post-meta-line{color:var(--muted);font-size:0.82rem;}
+    h1{font-size:clamp(1.55rem,3.5vw,2.1rem);font-weight:800;line-height:1.25;margin-bottom:16px;color:#fff;}
+    .post-lead{font-size:1.08rem;color:#b8cce0;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--border);}
+    h2{font-size:1.28rem;font-weight:700;margin:38px 0 12px;color:#d4e6ff;}
+    h3{font-size:1.05rem;font-weight:700;margin:26px 0 8px;color:#c0d4ee;}
+    p{margin-bottom:16px;color:#c8d8ea;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:7px;color:#c8d8ea;}
+    strong{color:#e8f0f8;}
+    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.9em;font-family:'Fira Mono',monospace;}
+    table{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.9rem;}
+    th{background:#1a2535;color:#d4e6ff;padding:10px 14px;text-align:left;border:1px solid #2a3c52;font-weight:700;}
+    td{padding:9px 14px;border:1px solid #1e3347;color:#b8cce0;}
+    tr:nth-child(even) td{background:#0f1820;}
+    .callout{background:#12202e;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;}
+    .callout p{margin:0;color:#b8cce0;}
+    .bec-type{background:#0e1621;border:1px solid #233142;border-radius:10px;padding:20px;margin-bottom:14px;}
+    .bec-type-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+    .bec-type-icon{font-size:1.4rem;}
+    .bec-type-title{font-weight:700;color:#d4e6ff;font-size:1rem;}
+    .bec-type-subtitle{color:var(--muted);font-size:0.82rem;margin-top:2px;}
+    .warning-badge{display:inline-block;background:#2d1a0e;color:#ff9f43;border:1px solid #5c3010;padding:2px 9px;border-radius:4px;font-size:0.75rem;font-weight:700;margin-left:8px;}
+    .control-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:20px 0;}
+    .control-card{background:#0e1621;border:1px solid #233142;border-radius:10px;padding:18px 20px;}
+    .control-num{font-size:0.78rem;font-weight:700;color:var(--accent);letter-spacing:0.06em;margin-bottom:6px;}
+    .control-card h3{font-size:0.97rem;margin:0 0 6px;color:#d4e6ff;}
+    .control-card p{font-size:0.87rem;margin:0;color:var(--muted);}
+    .red-flag-list{list-style:none;margin:0 0 18px;padding:0;}
+    .red-flag-list li{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:#150f0f;border:1px solid #3a1a1a;border-radius:8px;margin-bottom:8px;color:#e8d5d5;}
+    .red-flag-list li::before{content:"🚩";flex-shrink:0;}
+    .checklist{list-style:none;padding:0;margin:0 0 18px;}
+    .checklist li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #1a2535;color:#c8d8ea;font-size:0.93rem;}
+    .checklist li:last-child{border-bottom:none;}
+    .checklist li::before{content:"☐";color:var(--accent);flex-shrink:0;margin-top:1px;}
+    .cta-box{background:linear-gradient(135deg,#100820,#160d2a);border:1px solid rgba(180,122,255,0.35);border-radius:14px;padding:32px 28px;margin:48px 0 24px;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:10px;}
+    .cta-box p{color:#b8aad0;margin-bottom:20px;font-size:0.95rem;}
+    .cta-btn{display:inline-block;background:#b47aff;color:#0a0516;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:0.95rem;transition:opacity 0.2s;}
+    .cta-btn:hover{opacity:0.88;}
+    .email-signup{background:#0e1621;border:1px solid #233142;border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .email-signup h3{font-size:1rem;font-weight:700;margin-bottom:6px;}
+    .email-signup p{color:var(--muted);font-size:0.88rem;margin-bottom:16px;}
+    .email-row{display:flex;gap:8px;max-width:420px;margin:0 auto;}
+    .email-row input{flex:1;background:#121923;border:1px solid #2a3c52;border-radius:8px;padding:10px 14px;color:#e8eef7;font-size:0.92rem;outline:none;}
+    .email-row input:focus{border-color:var(--accent);}
+    .email-row button{background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-size:0.9rem;}
+    .sub-ok{display:none;color:#b47aff;font-size:0.9rem;margin-top:8px;}
+    footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--muted);font-size:0.85rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+      <div class="nav-links">
+        <a href="/dashboard/">Dashboard</a>
+        <a href="/pulse/">Pulse</a>
+        <a href="/inbox-shield/">Inbox Shield</a>
+        <a href="/blog/">Blog</a>
+        <a href="/dashboard/" class="nav-cta">Free Scan →</a>
+      </div>
+      <button class="nav-hamburger" onclick="document.querySelector('.nav-mobile-menu').style.display=document.querySelector('.nav-mobile-menu').style.display==='flex'?'none':'flex'" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/brandguard/">BrandGuard</a>
+    <a href="/workspace-posture/">Workspace Posture</a>
+    <a href="/compliance/">Compliance</a>
+    <a href="/blog/">Blog</a>
+    <a href="/dashboard/">Free Scan →</a>
+  </div>
+</nav>
+
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">🔍 Dashboard</a>
+    <a href="/pulse/" style="color:#3dd9ff;">📡 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/compliance/" style="color:#3de19e;">📋 Compliance</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/msp/" style="color:#a78bfa;">🔧 MSP Plan</a>
+  </div>
+</div>
+
+<div class="container">
+<article>
+
+  <div class="post-eyebrow">
+    <span class="tag">Email Security</span>
+    <span class="tag">BEC</span>
+    <span class="tag">Social Engineering</span>
+    <span class="post-meta-line">May 20, 2026 &nbsp;·&nbsp; 9 min read</span>
+  </div>
+
+  <h1>Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026</h1>
+
+  <p class="post-lead">The FBI's 2025 IC3 report recorded $2.9 billion in BEC losses — more than ransomware, more than any other cybercrime category. Unlike most attacks, BEC doesn't need malware. It just needs a convincing email and someone who wires money, changes a bank account, or hands over credentials without double-checking. Here's how these attacks work, the red flags to catch them, and the nine controls that prevent them.</p>
+
+  <h2>What Is Business Email Compromise?</h2>
+  <p>Business email compromise is a fraud scheme where attackers impersonate a trusted party — your CEO, a supplier, your HR department, or a legal team — to trick employees into taking a harmful action. That action is usually one of:</p>
+  <ul>
+    <li>Wiring money to an attacker-controlled account</li>
+    <li>Paying a fake invoice with updated banking details</li>
+    <li>Handing over W-2s or employee PII (tax fraud)</li>
+    <li>Forwarding credentials or granting access</li>
+    <li>Purchasing gift cards and sending redemption codes</li>
+  </ul>
+  <p>The defining feature: <strong>there is no malicious link, no attachment, no malware</strong>. It's pure social engineering delivered via email. That's why traditional spam filters and antivirus software catch almost none of it.</p>
+
+  <h2>The 5 BEC Attack Types</h2>
+
+  <div class="bec-type">
+    <div class="bec-type-header">
+      <span class="bec-type-icon">👔</span>
+      <div>
+        <div class="bec-type-title">CEO Fraud / Executive Impersonation <span class="warning-badge">Most Common</span></div>
+        <div class="bec-type-subtitle">Attacker impersonates the CEO or CFO, urgently requesting a wire transfer</div>
+      </div>
+    </div>
+    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">A finance employee receives an email appearing to come from the CEO: <em>"I'm in a board meeting. Need you to process an urgent wire to our new vendor — $47,500. I'll explain the details later, keep this quiet for now."</em> The from address is either a lookalike domain (<code>ceo@company-corp.com</code>) or a compromised real account.</p>
+  </div>
+
+  <div class="bec-type">
+    <div class="bec-type-header">
+      <span class="bec-type-icon">📦</span>
+      <div>
+        <div class="bec-type-title">Vendor / Supplier Invoice Fraud</div>
+        <div class="bec-type-subtitle">Attacker intercepts or spoofs supplier emails to redirect payments</div>
+      </div>
+    </div>
+    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">An email arrives that looks like your regular supplier's invoice, but the bank account details have changed. "Please use our new account effective immediately — reply to confirm." Attackers either compromise the supplier's email or spoof their domain.</p>
+  </div>
+
+  <div class="bec-type">
+    <div class="bec-type-header">
+      <span class="bec-type-icon">👩‍💼</span>
+      <div>
+        <div class="bec-type-title">HR / Payroll Diversion</div>
+        <div class="bec-type-subtitle">Attacker impersonates an employee to redirect their salary</div>
+      </div>
+    </div>
+    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">Before payroll runs, an attacker posing as an employee emails HR: "Hi, I recently changed banks. Can you update my direct deposit to [new account] before the next pay run?" The employee doesn't know until they check their bank statement.</p>
+  </div>
+
+  <div class="bec-type">
+    <div class="bec-type-header">
+      <span class="bec-type-icon">⚖️</span>
+      <div>
+        <div class="bec-type-title">Attorney / Legal Impersonation</div>
+        <div class="bec-type-subtitle">Attacker poses as legal counsel to create urgency and secrecy</div>
+      </div>
+    </div>
+    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">A recipient gets an email purportedly from the company's law firm: "We're handling a confidential acquisition. The CEO has authorized a $130,000 escrow transfer. Due to the sensitive nature, do not discuss with colleagues." The urgency and confidentiality both serve to bypass normal approval processes.</p>
+  </div>
+
+  <div class="bec-type">
+    <div class="bec-type-header">
+      <span class="bec-type-icon">🎁</span>
+      <div>
+        <div class="bec-type-title">Gift Card Scam</div>
+        <div class="bec-type-subtitle">Attacker requests gift card purchases with codes sent via email</div>
+      </div>
+    </div>
+    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">Often targeting small businesses, the "CEO" requests an employee buy $500–$2,000 in Amazon or iTunes gift cards for "client gifts" or an "employee appreciation event," then asks for photos of the codes. Quick, irreversible, and surprisingly common.</p>
+  </div>
+
+  <h2>How Attackers Prepare a BEC Attack</h2>
+  <p>BEC is not random. Attackers spend days or weeks on reconnaissance before sending a single email:</p>
+
+  <ol>
+    <li><strong>LinkedIn research:</strong> Identify the CFO, accounts payable staff, and HR contacts. Map reporting structures.</li>
+    <li><strong>Domain reconnaissance:</strong> Find your domain, check DMARC records (if <code>p=none</code> or missing, your domain can be spoofed freely). Register lookalike domains.</li>
+    <li><strong>Email pattern enumeration:</strong> Confirm email format (firstname.lastname@, f.lastname@, etc.) using tools like Hunter.io or leaked breach data.</li>
+    <li><strong>Calendar and OOO timing:</strong> Attackers send wire fraud emails when the CFO is traveling, in a conference, or on holiday — reducing the chance the target will call to verify.</li>
+    <li><strong>Account compromise (advanced):</strong> In some cases, attackers compromise a real email account first and read months of threads before inserting themselves into an active supplier conversation.</li>
+  </ol>
+
+  <div class="callout">
+    <p><strong>Key insight:</strong> Over 60% of BEC attacks involve a domain that either spoofs your exact domain (no DMARC) or uses a registered lookalike. If your DMARC policy is <code>p=none</code>, attackers can send email that appears to come from your CEO's exact address — with zero account compromise required.</p>
+  </div>
+
+  <h2>Red Flags in BEC Emails</h2>
+
+  <ul class="red-flag-list">
+    <li><strong>Unusual urgency + secrecy:</strong> "Process this immediately" combined with "don't mention this to anyone" — the two most reliable BEC markers.</li>
+    <li><strong>Request for a new or changed bank account:</strong> Legitimate vendors rarely change banking details mid-relationship. Any bank change should trigger a phone verification.</li>
+    <li><strong>Email from a lookalike domain:</strong> <code>ceo@company-corp.com</code> instead of <code>ceo@company.com</code>. The display name looks right; the actual sending address doesn't.</li>
+    <li><strong>Reply-to address differs from the from address:</strong> Classic indicator of spoofing. Check both in your email client.</li>
+    <li><strong>Request to bypass normal process:</strong> "Skip the normal PO process for this one." The process exists specifically to catch BEC.</li>
+    <li><strong>Gift card requests:</strong> No legitimate executive asks employees to purchase and forward gift card codes. Ever.</li>
+    <li><strong>Unusual send time:</strong> A "CEO email" sent at 2 a.m. from their personal device while traveling — when they're unavailable to verify — is a common pattern.</li>
+  </ul>
+
+  <h2>9 Controls That Stop BEC</h2>
+
+  <div class="control-grid">
+    <div class="control-card">
+      <div class="control-num">CONTROL 01</div>
+      <h3>Enforce DMARC p=reject</h3>
+      <p>Prevents attackers from spoofing your domain. Without it, anyone can send email appearing to come from ceo@yourdomain.com. Check your record at <a href="/inbox-shield/" style="color:var(--accent);">Inbox Shield</a>.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 02</div>
+      <h3>Out-of-band verification for wire transfers</h3>
+      <p>Require a phone call or in-person confirmation — using a pre-stored number, never one provided in the request — before processing any wire transfer over a set threshold.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 03</div>
+      <h3>Dual-approval for payroll changes</h3>
+      <p>Direct deposit changes should require approval from two people, with a mandatory waiting period before the change takes effect.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 04</div>
+      <h3>Email banner for external senders</h3>
+      <p>Configure your email system to prepend a visible "[EXTERNAL]" banner on any email originating outside your domain. Attackers relying on lookalike domains are instantly exposed.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 05</div>
+      <h3>Monitor lookalike domain registrations</h3>
+      <p>Attackers register typosquatted domains weeks before the attack. Real-time monitoring catches <code>company-corp.com</code>, <code>cornpany.com</code>, and homoglyph variants before they're used. <a href="/brandguard/" style="color:var(--accent);">BrandGuard</a> does this automatically.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 06</div>
+      <h3>Audit email forwarding rules</h3>
+      <p>When attackers do compromise an account, their first move is to create a forwarding rule to silently copy all emails to an external address. Audit these monthly in M365 and Google Workspace.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 07</div>
+      <h3>Enable anti-impersonation in M365 / Google</h3>
+      <p>Defender for Office 365 and Google Workspace both have impersonation protection for specific users (executives) and trusted domains. Enable and tune it with your executives' names.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 08</div>
+      <h3>BEC-specific employee training</h3>
+      <p>Run tabletop BEC simulations — not just generic phishing drills. Finance and HR teams need specific scenarios around wire fraud, payroll diversion, and W-2 requests. <a href="https://phishsim.edgeiqlabs.com/" style="color:var(--accent);">PhishSim</a> covers BEC scenarios.</p>
+    </div>
+    <div class="control-card">
+      <div class="control-num">CONTROL 09</div>
+      <h3>Limit public org chart exposure</h3>
+      <p>Review what LinkedIn, your website, and press releases reveal about your finance org structure. Attackers use this to identify the right targets. Job listings that say "reports to CFO" are especially useful to them.</p>
+    </div>
+  </div>
+
+  <h2>The DMARC–BEC Connection</h2>
+  <p>Of all nine controls, DMARC enforcement is the single highest-leverage technical change. Here's why it matters so much:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>DMARC Policy</th>
+        <th>Attacker can spoof your domain?</th>
+        <th>Where spoofed emails go</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>p=none</code> or no record</td>
+        <td style="color:#ff6b7a;font-weight:600;">Yes — freely</td>
+        <td>Delivered to inbox, no warning</td>
+      </tr>
+      <tr>
+        <td><code>p=quarantine</code></td>
+        <td style="color:#ff9f43;font-weight:600;">Yes, but limited</td>
+        <td>Junk/spam folder (often checked)</td>
+      </tr>
+      <tr>
+        <td><code>p=reject</code></td>
+        <td style="color:#3de19e;font-weight:600;">No — rejected at server</td>
+        <td>Never delivered</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The transition from <code>p=none</code> → <code>p=quarantine</code> → <code>p=reject</code> should be gradual, monitoring reports at each stage to ensure legitimate senders aren't accidentally blocked. See our full guide: <a href="/blog/dmarc-reject-vs-quarantine.html" style="color:var(--accent);">DMARC p=reject vs p=quarantine — which policy should you set?</a></p>
+
+  <h2>What to Do If You Receive a Suspicious Email</h2>
+
+  <ul class="checklist">
+    <li>Do NOT reply to the email — even to ask if it's legitimate (you're replying to the attacker)</li>
+    <li>Do NOT call any phone number provided in the email</li>
+    <li>Use a pre-stored contact number to call the apparent sender directly</li>
+    <li>Forward the suspicious email to your IT or security team as an attachment (not forwarded normally)</li>
+    <li>Check the actual sending address — not just the display name</li>
+    <li>Check the reply-to address if it differs from the from address</li>
+    <li>If a payment was already sent, call your bank immediately — recovery is only possible within hours</li>
+    <li>File a complaint with the FBI's IC3 (ic3.gov) if money was transferred</li>
+  </ul>
+
+  <div class="callout">
+    <p><strong>Time is critical for recovery:</strong> The FBI's Recovery Asset Team (RAT) has a &gt;70% success rate recovering BEC wire transfers — but only when notified within 24 hours. If you've been hit, call your bank and file with IC3 at ic3.gov immediately.</p>
+  </div>
+
+  <h2>BEC in M365 and Google Workspace Environments</h2>
+  <p>Most BEC attacks in 2026 involve a fully compromised Microsoft 365 or Google Workspace account — not just a spoofed address. Once an attacker has access to a real inbox, they can:</p>
+  <ul>
+    <li>Read existing email threads and inject themselves naturally into ongoing supplier conversations</li>
+    <li>Set up silent forwarding rules to monitor communications indefinitely</li>
+    <li>Send from the legitimate address (bypassing all DMARC and anti-spoofing controls)</li>
+    <li>Create inbox rules that hide their own sent emails and delete replies</li>
+    <li>Access calendar invites to time wire fraud requests when key approvers are unavailable</li>
+  </ul>
+  <p>This is why account security in M365 and Google Workspace is inseparable from BEC prevention. Weekly audits of forwarding rules, OAuth app access, and unusual sign-in locations catch compromised accounts before attackers can do damage. <a href="/workspace-posture/" style="color:#4da6ff;">Workspace Posture Pro</a> runs these checks automatically every Monday and alerts you to anything suspicious.</p>
+
+  <h2>BEC Prevention Checklist</h2>
+
+  <ul class="checklist">
+    <li>DMARC record set to <code>p=reject</code> (or actively transitioning from quarantine)</li>
+    <li>SPF record published and all legitimate sending sources included</li>
+    <li>DKIM configured for your primary domain and all email-sending services</li>
+    <li>Out-of-band verification required for all wire transfers above your threshold</li>
+    <li>Dual-approval process in place for direct deposit / payroll changes</li>
+    <li>External email banners enabled in M365 / Google Workspace</li>
+    <li>Impersonation protection enabled and executives' names configured</li>
+    <li>Lookalike domain monitoring active (alerts on new registrations)</li>
+    <li>Monthly audit of email forwarding rules across all user accounts</li>
+    <li>Finance and HR teams trained on BEC-specific scenarios (not just generic phishing)</li>
+  </ul>
+
+  <div class="cta-box">
+    <h3>Check Your Domain's BEC Exposure in 60 Seconds</h3>
+    <p>See if your domain can be spoofed right now, whether lookalike domains have been registered against you, and what email security gaps attackers are likely to exploit.</p>
+    <a href="/inbox-shield/" class="cta-btn">Check With Inbox Shield — Free →</a>
+  </div>
+
+  <div class="email-signup">
+    <h3>Get new security guides in your inbox</h3>
+    <p>Practical, no-fluff posts on email security, BEC, and protecting your business. No spam.</p>
+    <div class="email-row">
+      <input type="email" id="blog-email" placeholder="you@company.com" />
+      <button onclick="blogEmailSignup()">Subscribe</button>
+    </div>
+    <div class="sub-ok" id="sub-ok">✅ You're subscribed — check your inbox.</div>
+  </div>
+
+</article>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/blog/">Blog</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/brandguard/">BrandGuard</a>
+    <a href="/workspace-posture/">Workspace Posture</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:16px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+function blogEmailSignup(){
+  var email=(document.getElementById('blog-email').value||'').trim();
+  if(!email||email.indexOf('@')<0){document.getElementById('blog-email').style.borderColor='#ff6b7a';return;}
+  document.getElementById('sub-ok').style.display='block';
+  document.getElementById('blog-email').disabled=true;
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-bec-prevention'})
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>

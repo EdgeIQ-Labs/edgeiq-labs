@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMARC p=reject vs p=quarantine: Which Policy Should You Set? — EdgeIQ Labs</title>
+  <meta name="description" content="DMARC p=reject vs p=quarantine explained. Learn the difference, when to use each, and how to safely move from quarantine to reject without breaking your email." />
+  <meta property="og:title" content="DMARC p=reject vs p=quarantine: Which Policy Should You Set?" />
+  <meta property="og:description" content="DMARC p=reject vs p=quarantine explained. Learn the difference, when to use each, and how to move safely to reject." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/dmarc-reject-vs-quarantine.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DMARC p=reject vs p=quarantine: Which Policy Should You Set?" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/dmarc-reject-vs-quarantine.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"DMARC p=reject vs p=quarantine: Which Policy Should You Set?","description":"DMARC p=reject vs p=quarantine explained with a step-by-step guide to safely moving to reject.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .mob-cta{background:#3dd9ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
+    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
+    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
+    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
+    p,li{color:var(--muted);}
+    p{margin-bottom:16px;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:6px;}
+    strong{color:var(--text);}
+    .tag{display:inline-block;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.88em;background:rgba(61,217,255,0.08);padding:2px 5px;border-radius:4px;color:var(--accent);}
+    pre{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;overflow:auto;margin:16px 0;}
+    pre code{background:none;padding:0;color:var(--text);}
+    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.88rem;}
+    th{background:var(--card);color:var(--accent);font-weight:700;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);}
+    td{padding:10px 14px;border-bottom:1px solid rgba(35,49,66,0.5);color:var(--muted);}
+    tr:last-child td{border-bottom:none;}
+    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout.warn{border-left-color:#ff9f43;}
+    .callout.ok{border-left-color:#3de19e;}
+    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(61,217,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
+    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
+    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
+    footer a{color:#4a6080;text-decoration:none;}
+    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+      <div class="nav-links">
+        <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+        <a href="/inbox-shield/" class="nav-cta">Check Your DMARC →</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+  <a href="/inbox-shield/" class="mob-cta">Check Your DMARC →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">DMARC</span><span class="tag">Email Security</span><span class="tag">SPF</span></div>
+      <h1>DMARC p=reject vs p=quarantine: Which Policy Should You Set?</h1>
+      <p class="lead">Most domains sit at p=none forever because admins are scared of breaking email. Here's what each policy actually does, when each is appropriate, and how to safely move to p=reject without dropping legitimate mail.</p>
+    </div>
+
+    <h2>What DMARC policies actually do</h2>
+    <p>DMARC tells receiving mail servers what to do when an email fails authentication — when an inbound message claims to be from your domain but can't pass SPF or DKIM alignment. There are three policy values:</p>
+
+    <table>
+      <thead><tr><th>Policy</th><th>What receiving servers do</th><th>Your visibility</th></tr></thead>
+      <tbody>
+        <tr><td><code>p=none</code></td><td>Nothing — deliver the message normally</td><td>Aggregate reports only (rua=)</td></tr>
+        <tr><td><code>p=quarantine</code></td><td>Route to spam/junk folder</td><td>Reports + forensic (ruf=)</td></tr>
+        <tr><td><code>p=reject</code></td><td>Reject the message outright at SMTP</td><td>Reports + forensic (ruf=)</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>p=none is not protection.</strong> It's monitoring mode. Attackers sending phishing from your domain can still land in inboxes while you're on p=none — the policy literally tells receiving servers to do nothing.</p>
+
+    <h2>When to use p=quarantine</h2>
+    <p>Quarantine is the right intermediate step when you've identified most of your sending sources in SPF but aren't fully confident you've covered everything. Legitimate mail that fails DMARC goes to spam instead of being silently dropped, which gives you a safety net while you tighten things up.</p>
+
+    <div class="callout warn">
+      <strong>Watch out:</strong> quarantine doesn't stop targeted attacks. A sophisticated attacker sending a spear-phishing message "from" your domain will end up in the target's spam folder — still visible, still clickable, especially on mobile where spam folders aren't labeled as prominently.
+    </div>
+
+    <p>Use quarantine when:</p>
+    <ul>
+      <li>You've just added DMARC for the first time and are still auditing sending sources</li>
+      <li>You have third-party senders (marketing platforms, HR tools, ticketing systems) that you're still configuring DKIM on</li>
+      <li>You want a buffer period before full rejection to review forensic reports</li>
+    </ul>
+
+    <h2>When to use p=reject</h2>
+    <p>Reject is the goal. It's the only policy that actually stops spoofing — messages that fail DMARC are rejected at the SMTP level and never reach any folder. This is what Google, Microsoft, and financial institutions use for their primary domains.</p>
+
+    <p>You're ready for p=reject when:</p>
+    <ul>
+      <li>Your DMARC aggregate reports (rua=) show 95%+ of mail passing alignment consistently for 2–4 weeks</li>
+      <li>All your legitimate sending sources are either in SPF or signing with DKIM</li>
+      <li>You've identified and handled any forwarding scenarios (mailing lists, auto-forwarders)</li>
+      <li>You're monitoring reports and have an alert if pass rates drop</li>
+    </ul>
+
+    <h2>The safe migration path: none → quarantine → reject</h2>
+
+    <h3>Step 1: Start with p=none and collect reports</h3>
+    <pre><code>v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com; ruf=mailto:dmarc@yourdomain.com; fo=1</code></pre>
+    <p>Run this for 2 weeks minimum. Use a DMARC reporting tool (or check the raw XML yourself) to identify every sending source: your email provider, marketing platform, CRM, ticketing system, calendar invites, etc.</p>
+
+    <h3>Step 2: Fix all sending sources</h3>
+    <p>For each legitimate sender you find in the reports:</p>
+    <ul>
+      <li>Add their sending IPs/includes to your SPF record</li>
+      <li>Or enable DKIM signing in their platform and add their DKIM public key to your DNS</li>
+      <li>Verify alignment — the From: domain must match either SPF or DKIM domain</li>
+    </ul>
+
+    <h3>Step 3: Move to p=quarantine at pct=10</h3>
+    <pre><code>v=DMARC1; p=quarantine; pct=10; rua=mailto:dmarc@yourdomain.com</code></pre>
+    <p>The <code>pct=</code> tag applies the policy to only that percentage of failing messages. Starting at 10% and ramping up weekly (25 → 50 → 75 → 100) limits blast radius if you've missed a sending source.</p>
+
+    <h3>Step 4: Move to p=reject</h3>
+    <pre><code>v=DMARC1; p=reject; rua=mailto:dmarc@yourdomain.com; ruf=mailto:dmarc@yourdomain.com; fo=1</code></pre>
+    <p>Once you've been at <code>p=quarantine; pct=100</code> for a week with no legitimate mail dropping, flip to reject. Keep monitoring reports — especially after adding new sending tools.</p>
+
+    <div class="callout ok">
+      <strong>Tip:</strong> Set a calendar reminder to review DMARC reports quarterly. Adding a new marketing platform or switching email providers are common causes of DMARC pass rate drops that go unnoticed for months.
+    </div>
+
+    <h2>Common mistakes</h2>
+
+    <h3>SPF record with too many DNS lookups</h3>
+    <p>SPF is limited to 10 DNS lookups. If you include too many third-party senders, SPF evaluation fails with a "permerror" — which counts as an SPF fail for DMARC. Use a service that flattens your SPF record or audit it with <code>dig TXT yourdomain.com</code> and count the includes.</p>
+
+    <h3>Relaxed vs strict alignment</h3>
+    <p>DMARC default alignment is "relaxed" — the SPF/DKIM domain just needs to share an organizational domain with the From: header. Strict alignment (<code>aspf=s; adkim=s</code>) requires an exact match. Most domains should stay on relaxed; strict alignment breaks legitimate subdomains unless they're all explicitly configured.</p>
+
+    <h3>Forgetting subdomain policy</h3>
+    <p>Your DMARC policy covers your exact domain and its subdomains by default. But you can set a separate policy for subdomains with the <code>sp=</code> tag. If you only send mail from the root domain, consider <code>sp=reject</code> even if you're still ramping up the main policy.</p>
+
+    <h2>How to check your current DMARC status</h2>
+    <p>Run this in your terminal to see your current record:</p>
+    <pre><code>dig TXT _dmarc.yourdomain.com</code></pre>
+    <p>Or use EdgeIQ Inbox Shield — it grades your SPF, DKIM, and DMARC configuration, shows your policy strength, and alerts you if your configuration weakens after a DNS change.</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">📬 Get weekly email security alerts</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">EdgeIQ monitors your SPF, DKIM, and DMARC every week and alerts you if anything degrades. Catch policy regressions before attackers exploit them.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
+    </div>
+
+    <div class="cta-box">
+      <h2>Monitor your DMARC policy automatically</h2>
+      <p>Inbox Shield grades your SPF, DKIM, and DMARC every week and emails you an alert if your policy weakens or a misconfiguration appears. Catch regressions before attackers exploit them.</p>
+      <a href="/inbox-shield/" class="cta-btn">Check Your Email Security →</a>
+      <p style="margin-top:10px;font-size:0.78rem;color:#4a6080;">Free to start · no credit card</p>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/inbox-shield/">Inbox Shield</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})}).catch(function(){});}
+</script>
+</body>
+</html>

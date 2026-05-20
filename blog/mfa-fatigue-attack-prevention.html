@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MFA Fatigue Attacks: What They Are and How to Stop Them — EdgeIQ Labs</title>
+  <meta name="description" content="MFA fatigue (MFA bombing) explained — how attackers flood users with push notifications until they accidentally approve. How to detect it and switch to phishing-resistant MFA." />
+  <meta property="og:title" content="MFA Fatigue Attacks: What They Are and How to Stop Them" />
+  <meta property="og:description" content="How MFA fatigue attacks work, real-world examples, and how to configure number matching and phishing-resistant MFA in M365 and Google Workspace." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/mfa-fatigue-attack-prevention.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MFA Fatigue Attacks: What They Are and How to Stop Them" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/mfa-fatigue-attack-prevention.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"MFA Fatigue Attacks: What They Are and How to Stop Them","description":"MFA fatigue attacks explained with practical steps to enable number matching and phishing-resistant MFA in M365 and Google Workspace.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#4da6ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .mob-cta{background:#4da6ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
+    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
+    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
+    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
+    p,li{color:var(--muted);}
+    p{margin-bottom:16px;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:6px;}
+    strong{color:var(--text);}
+    .tag{display:inline-block;background:rgba(77,166,255,0.08);border:1px solid rgba(77,166,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.88em;background:rgba(77,166,255,0.08);padding:2px 5px;border-radius:4px;color:var(--accent);}
+    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.88rem;}
+    th{background:var(--card);color:var(--accent);font-weight:700;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);}
+    td{padding:10px 14px;border-bottom:1px solid rgba(35,49,66,0.5);color:var(--muted);}
+    tr:last-child td{border-bottom:none;}
+    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout.danger{border-left-color:#ff6b7a;}
+    .callout.ok{border-left-color:#3de19e;}
+    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(77,166,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
+    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
+    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
+    footer a{color:#4a6080;text-decoration:none;}
+    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+      <div class="nav-links">
+        <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+        <a href="/workspace-posture/" class="nav-cta">Audit Your Workspace →</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a>
+    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+  <a href="/workspace-posture/" class="mob-cta">Audit Your Workspace →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">MFA</span><span class="tag">M365</span><span class="tag">Identity Security</span></div>
+      <h1>MFA Fatigue Attacks: What They Are and How to Stop Them</h1>
+      <p class="lead">MFA fatigue (also called MFA bombing or push harassment) bypasses multi-factor authentication without any phishing link or malware. Attackers just keep sending push notifications until a tired or confused user taps "Approve". Here's how to stop it.</p>
+    </div>
+
+    <h2>How MFA fatigue works</h2>
+    <p>Standard push-based MFA (like Microsoft Authenticator or Duo with simple approve/deny prompts) has a fundamental weakness: it relies on the user knowing that they initiated a login. Attackers exploit this by:</p>
+    <ol>
+      <li>Obtaining valid credentials (via phishing, password spray, or credential dump)</li>
+      <li>Repeatedly attempting to sign in, triggering push notification after push notification</li>
+      <li>Sending the target messages claiming to be IT support: "We're updating your account, please approve the login request"</li>
+      <li>Waiting until the user approves — from fatigue, confusion, or social engineering</li>
+    </ol>
+
+    <div class="callout danger">
+      <strong>Real-world example:</strong> The 2022 Uber breach started with MFA fatigue. The attacker obtained contractor credentials, spammed them with Authenticator push requests for over an hour, then sent a WhatsApp message posing as Uber IT asking them to approve. The contractor approved. The attacker had internal access within minutes.
+    </div>
+
+    <h2>Why standard push MFA is vulnerable</h2>
+    <p>The approve/deny prompt gives users no context about what they're approving. A user who receives 20 push notifications in 10 minutes at 11pm has no way to distinguish between "someone is attacking my account" and "something is broken with our SSO". Many just tap approve to make it stop.</p>
+
+    <table>
+      <thead><tr><th>MFA type</th><th>Fatigue resistant?</th><th>Phishing resistant?</th></tr></thead>
+      <tbody>
+        <tr><td>SMS OTP</td><td>No</td><td>No (SIM swap)</td></tr>
+        <tr><td>Push approve/deny</td><td>No</td><td>No</td></tr>
+        <tr><td>Push with number matching</td><td><strong style="color:#3de19e;">Yes</strong></td><td>Partial</td></tr>
+        <tr><td>TOTP authenticator app (6-digit code)</td><td><strong style="color:#3de19e;">Yes</strong></td><td>No (AiTM)</td></tr>
+        <tr><td>FIDO2 / passkey / hardware key</td><td><strong style="color:#3de19e;">Yes</strong></td><td><strong style="color:#3de19e;">Yes</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h2>The fix: enable number matching</h2>
+    <p>Number matching is the fastest, no-cost mitigation for push-based MFA fatigue. Instead of a simple approve/deny prompt, the authenticator app shows a 2-digit number that the user must type — and the sign-in page shows a matching number. An attacker triggering requests can no longer be accidentally approved because the user has to actively read and type a number they can only see if they initiated the login.</p>
+
+    <h3>Enable number matching in Microsoft 365</h3>
+    <ol>
+      <li>Go to <strong>Entra ID → Authentication methods → Microsoft Authenticator</strong></li>
+      <li>Click <strong>Configure</strong></li>
+      <li>Under "Require number matching", set to <strong>Enabled</strong> for all users</li>
+      <li>Also enable <strong>Show application name in push and passwordless notifications</strong> and <strong>Show geographic location in push notifications</strong></li>
+    </ol>
+    <p>As of 2025, Microsoft has enabled number matching by default for new tenants, but many existing tenants still have it off. Check yours.</p>
+
+    <h3>Enable number matching in Google Workspace</h3>
+    <p>Google Workspace doesn't use push-based MFA in the same way — Google Prompt requires user interaction that already includes contextual information. However, upgrading to <strong>Security Keys (FIDO2)</strong> or <strong>Google Passkeys</strong> is the phishing-resistant step up:</p>
+    <ol>
+      <li>Admin console → <strong>Security → Authentication → 2-Step Verification</strong></li>
+      <li>Under "Allowed second factors", enable <strong>Security Key</strong></li>
+      <li>Optionally enforce for high-risk users (admins, finance, executives)</li>
+    </ol>
+
+    <h2>Going further: phishing-resistant MFA</h2>
+    <p>Number matching stops fatigue attacks but not adversary-in-the-middle (AiTM) phishing — where attackers proxy authentication in real time and steal session tokens even when MFA is passed. The only way to stop AiTM is phishing-resistant MFA:</p>
+    <ul>
+      <li><strong>FIDO2 hardware keys</strong> (YubiKey, Google Titan) — bound to the site origin, can't be proxied</li>
+      <li><strong>Passkeys</strong> — same cryptographic binding, built into modern devices</li>
+      <li><strong>Windows Hello for Business</strong> — device-bound, phishing-resistant, no additional hardware needed</li>
+      <li><strong>Certificate-based authentication (CBA)</strong> — enterprise environments with PKI</li>
+    </ul>
+
+    <div class="callout ok">
+      <strong>Recommendation:</strong> Roll out number matching immediately for all users — it's free, takes 5 minutes, and eliminates the most common MFA bypass vector. Then plan a FIDO2 or passkey rollout for admins and high-risk roles over the next quarter.
+    </div>
+
+    <h2>How to detect MFA fatigue attempts in your logs</h2>
+    <p>In <strong>Entra ID → Sign-in logs</strong>, filter for:</p>
+    <ul>
+      <li>Authentication result: <strong>MFA denied, user declined the request</strong></li>
+      <li>Multiple failed MFA attempts from the same IP in a short window</li>
+      <li>Sign-in attempts at unusual hours (middle of night for the user's timezone)</li>
+      <li>MFA fraud alerts — users can report suspicious push requests in the Authenticator app</li>
+    </ul>
+    <p>A pattern of dozens of MFA denials followed by a single approval is a strong indicator of a successful fatigue attack.</p>
+
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">📬 Weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Identity attack techniques, workspace security tips, and product updates. No spam.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#4da6ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
+    </div>
+
+    <div class="cta-box">
+      <h2>Check if number matching is enabled in your tenant</h2>
+      <p>Workspace Posture Pro audits your M365 or Google Workspace every week — including MFA configuration gaps, number matching status, and legacy auth settings — and emails you a prioritised fix list every Monday.</p>
+      <a href="/workspace-posture/" class="cta-btn">Start Workspace Posture Pro — $19/mo →</a>
+      <p style="margin-top:10px;font-size:0.78rem;color:#4a6080;">Early access · rate locked forever · cancel anytime</p>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/workspace-posture/">Workspace Posture</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})}).catch(function(){});}
+</script>
+</body>
+</html>

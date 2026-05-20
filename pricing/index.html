@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — EdgeIQ Labs</title>
+  <meta name="description" content="Simple, flat pricing for every EdgeIQ Labs product. No per-seat fees, no enterprise contracts. Start free, upgrade when you need it." />
+  <meta property="og:title" content="Pricing — EdgeIQ Labs" />
+  <meta property="og:description" content="Simple, flat pricing for every EdgeIQ Labs product. No per-seat fees, no enterprise contracts." />
+  <meta property="og:url" content="https://edgeiqlabs.com/pricing/" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/pricing/" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    :root {
+      --bg: #0b0f14; --card: #121923; --text: #e8eef7; --muted: #9fb0c7;
+      --border: #233142; --accent: #3dd9ff; --green: #3de19e; --ok: #70f0a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    @media (max-width: 720px) { .nav-links { display: none; } .product-strip-inner a { font-size: 0.75rem; padding: 4px 8px; } }
+
+    .hero { text-align: center; padding: 72px 24px 56px; }
+    .hero h1 { font-size: 2.8rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; }
+    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 520px; margin: 0 auto; }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+    .price-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; }
+    .price-card.featured { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(61,217,255,0.15), 0 8px 32px rgba(61,217,255,0.08); }
+    .price-card-icon { font-size: 1.8rem; margin-bottom: 12px; }
+    .price-card-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+    .price-card-tagline { font-size: 0.83rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+    .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px; }
+    .price-amount { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.03em; }
+    .price-period { font-size: 0.85rem; color: var(--muted); }
+    .price-was { font-size: 0.82rem; color: #4a6080; text-decoration: line-through; margin-bottom: 4px; }
+    .price-badge { display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 6px; margin-bottom: 20px; }
+    .badge-free { background: rgba(159,176,199,0.1); color: var(--muted); }
+    .badge-early { background: rgba(61,217,255,0.1); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); }
+    .badge-hot { background: rgba(61,225,158,0.1); border: 1px solid rgba(61,225,158,0.25); color: var(--green); }
+    .price-features { list-style: none; margin-bottom: 24px; flex: 1; }
+    .price-features li { font-size: 0.88rem; color: var(--muted); padding: 6px 0; border-bottom: 1px solid rgba(35,49,66,0.5); display: flex; align-items: flex-start; gap: 8px; }
+    .price-features li:last-child { border-bottom: none; }
+    .price-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .price-features li.no { color: #4a6080; }
+    .price-features li.no::before { content: "–"; color: #4a6080; }
+    .price-btn { display: block; text-align: center; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: opacity .2s; }
+    .price-btn:hover { opacity: .88; }
+    .price-btn.primary { background: var(--accent); color: #071018; }
+    .price-btn.secondary { background: rgba(61,217,255,0.08); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); }
+    .price-btn.green { background: var(--green); color: #071018; }
+    .price-btn.pink { background: #f472b6; color: #071018; }
+    .price-btn.blue { background: #4da6ff; color: #071018; }
+    .price-btn.purple { background: #a78bfa; color: #071018; }
+    .price-btn.orange { background: #ff9f43; color: #071018; }
+
+    .section-label { text-align: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); padding: 48px 24px 20px; }
+
+    .faq-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 80px; }
+    .faq-wrap h2 { font-size: 1.6rem; font-weight: 800; text-align: center; margin-bottom: 32px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q { font-size: 0.95rem; font-weight: 600; padding: 18px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
+    .faq-q::after { content: "+"; font-size: 1.2rem; color: var(--muted); flex-shrink: 0; }
+    .faq-item.open .faq-q::after { content: "−"; }
+    .faq-a { font-size: 0.88rem; color: var(--muted); line-height: 1.7; padding-bottom: 18px; display: none; }
+    .faq-item.open .faq-a { display: block; }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 0.82rem; color: #4a6080; }
+    footer a { color: #4a6080; text-decoration: none; }
+    footer a:hover { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" style="color:var(--accent);">Pricing</a>
+    <a href="/products/" class="nav-cta">Get Started</a>
+  </div>
+</nav>
+
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;">🏢 Workspace Posture</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/msp/" style="color:#a78bfa;">🏢 MSP</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Simple, flat pricing</h1>
+  <p>No per-seat fees. No enterprise contracts. One price covers your entire domain or tenant.</p>
+</div>
+
+<!-- Core products -->
+<div class="section-label">Security monitoring</div>
+<div class="pricing-grid">
+
+  <!-- Pulse -->
+  <div class="price-card">
+    <div class="price-card-icon">🟢</div>
+    <div class="price-card-name">Pulse</div>
+    <div class="price-card-tagline">Weekly domain security monitoring — SSL, headers, DNS, subdomains, open ports.</div>
+    <div class="price-row"><span class="price-amount">$0</span><span class="price-period">/ forever</span></div>
+    <span class="price-badge badge-free">Free tier available</span>
+    <ul class="price-features">
+      <li>On-demand scans from the dashboard</li>
+      <li>SSL, HTTP headers, DNS health checks</li>
+      <li>Subdomain discovery & takeover detection</li>
+      <li class="no">Weekly automated scans</li>
+      <li class="no">Email digest on changes</li>
+    </ul>
+    <a href="/pulse/" class="price-btn secondary">Start Free →</a>
+  </div>
+
+  <!-- Pulse Pro -->
+  <div class="price-card featured">
+    <div class="price-card-icon">🟢</div>
+    <div class="price-card-name" style="color:var(--accent);">Pulse Pro</div>
+    <div class="price-card-tagline">Everything in Free plus automated weekly monitoring and email alerts.</div>
+    <div class="price-row"><span class="price-amount" style="color:var(--accent);">$19</span><span class="price-period">/ month</span></div>
+    <span class="price-badge badge-early">Most popular</span>
+    <ul class="price-features">
+      <li>Everything in Free</li>
+      <li>Automated scan every Monday</li>
+      <li>Email digest when something changes</li>
+      <li>Score trend history</li>
+      <li>Priority support</li>
+    </ul>
+    <a href="/pulse/" class="price-btn primary">Start Pulse Pro →</a>
+  </div>
+
+  <!-- Inbox Shield -->
+  <div class="price-card">
+    <div class="price-card-icon">✉️</div>
+    <div class="price-card-name">Inbox Shield</div>
+    <div class="price-card-tagline">Email authentication monitoring — SPF, DKIM, DMARC graded weekly.</div>
+    <div class="price-row"><span class="price-amount">$0</span><span class="price-period">/ forever</span></div>
+    <span class="price-badge badge-free">Free tier available</span>
+    <ul class="price-features">
+      <li>On-demand SPF / DKIM / DMARC grading</li>
+      <li>A–F grade with actionable fix list</li>
+      <li>DMARC policy strength check</li>
+      <li class="no">Weekly automated monitoring</li>
+      <li class="no">Alert on policy degradation</li>
+    </ul>
+    <a href="/inbox-shield/" class="price-btn secondary">Start Free →</a>
+  </div>
+
+</div>
+
+<!-- Compliance & Brand -->
+<div class="section-label">Compliance & brand protection</div>
+<div class="pricing-grid">
+
+  <!-- Compliance -->
+  <div class="price-card">
+    <div class="price-card-icon">📋</div>
+    <div class="price-card-name">Compliance</div>
+    <div class="price-card-tagline">SOC 2, HIPAA, and PCI-DSS posture tracking with control-by-control scoring.</div>
+    <div class="price-row"><span class="price-amount">$0</span><span class="price-period">/ forever</span></div>
+    <span class="price-badge badge-free">Free tier available</span>
+    <ul class="price-features">
+      <li>On-demand scans — SOC 2, HIPAA, PCI-DSS</li>
+      <li>8 controls with pass/fail/warning</li>
+      <li>Score saved locally in browser</li>
+      <li class="no">Weekly automated scans</li>
+      <li class="no">Email digest with grade diff</li>
+    </ul>
+    <a href="/compliance/" class="price-btn secondary">Start Free →</a>
+  </div>
+
+  <!-- Compliance Pro -->
+  <div class="price-card">
+    <div class="price-card-icon">📋</div>
+    <div class="price-card-name" style="color:var(--green);">Compliance Pro</div>
+    <div class="price-card-tagline">Automated weekly scans with email grade + diff every Monday.</div>
+    <div class="price-row"><span class="price-amount" style="color:var(--green);">$9</span><span class="price-period">/ month</span></div>
+    <span class="price-badge badge-hot">Best value</span>
+    <ul class="price-features">
+      <li>Everything in Free</li>
+      <li>Automated scan every Monday</li>
+      <li>Email digest: grade, score, diff</li>
+      <li>Score drop alerts</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="/compliance/" class="price-btn green">Start Compliance Pro →</a>
+  </div>
+
+  <!-- BrandGuard -->
+  <div class="price-card">
+    <div class="price-card-icon">🛡️</div>
+    <div class="price-card-name" style="color:#f472b6;">BrandGuard</div>
+    <div class="price-card-tagline">Daily monitoring for lookalike and typosquatted domains targeting your brand.</div>
+    <div class="price-row"><span class="price-amount" style="color:#f472b6;">$14</span><span class="price-period">/ month</span></div>
+    <span class="price-badge" style="background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.25);color:#f472b6;">Paid only</span>
+    <ul class="price-features">
+      <li>Daily scan for impostor domains</li>
+      <li>Typosquatting, homoglyph, TLD swaps</li>
+      <li>Instant alert on new lookalike found</li>
+      <li>Covers 50+ TLD variations</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="/brandguard/" class="price-btn pink">Start BrandGuard →</a>
+  </div>
+
+</div>
+
+<!-- Workspace & Vendor -->
+<div class="section-label">Workspace & vendor security</div>
+<div class="pricing-grid">
+
+  <!-- Workspace Posture -->
+  <div class="price-card">
+    <div class="price-card-icon">🏢</div>
+    <div class="price-card-name" style="color:#4da6ff;">Workspace Posture Pro</div>
+    <div class="price-card-tagline">Weekly M365 and Google Workspace audits — MFA gaps, stale admins, OAuth abuse, and more.</div>
+    <div class="price-row">
+      <span class="price-amount" style="color:#4da6ff;">$19</span>
+      <span class="price-period">/ month</span>
+    </div>
+    <div class="price-was">Standard price $39/mo</div>
+    <span class="price-badge badge-early">Early Access — rate locked forever</span>
+    <ul class="price-features">
+      <li>Weekly M365 or Google Workspace audit</li>
+      <li>MFA enforcement gaps</li>
+      <li>Stale admin accounts & legacy auth</li>
+      <li>Email forwarding & OAuth app review</li>
+      <li>Prioritised fix list by email every Monday</li>
+    </ul>
+    <a href="/workspace-posture/" class="price-btn blue">Start Workspace Posture →</a>
+  </div>
+
+  <!-- Vendor Watch -->
+  <div class="price-card">
+    <div class="price-card-icon">📡</div>
+    <div class="price-card-name" style="color:#ff9f43;">Vendor Watch</div>
+    <div class="price-card-tagline">Real-time outage alerts for 14 critical SaaS vendors — Stripe, GitHub, Cloudflare, and more.</div>
+    <div class="price-row"><span class="price-amount">$0</span><span class="price-period">/ forever</span></div>
+    <span class="price-badge badge-free">Free tier available</span>
+    <ul class="price-features">
+      <li>14 vendors monitored</li>
+      <li>Status page aggregation</li>
+      <li>Manual refresh anytime</li>
+      <li class="no">Email alert on degradation</li>
+      <li class="no">Webhook notifications</li>
+    </ul>
+    <a href="/vendor-watch/" class="price-btn secondary">Start Free →</a>
+  </div>
+
+  <!-- PhishSim -->
+  <div class="price-card">
+    <div class="price-card-icon">🎣</div>
+    <div class="price-card-name" style="color:#ff6b7a;">PhishSim</div>
+    <div class="price-card-tagline">Run phishing simulations against your own team to measure and improve click rates.</div>
+    <div class="price-row"><span class="price-amount" style="color:#ff6b7a;">$29</span><span class="price-period">/ month</span></div>
+    <span class="price-badge" style="background:rgba(255,107,122,0.1);border:1px solid rgba(255,107,122,0.25);color:#ff6b7a;">Paid only</span>
+    <ul class="price-features">
+      <li>Unlimited phishing campaigns</li>
+      <li>Pre-built and custom templates</li>
+      <li>Click rate tracking per employee</li>
+      <li>Training redirect on click</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="https://phishsim.edgeiqlabs.com/" class="price-btn" style="background:#ff6b7a;color:#071018;">Start PhishSim →</a>
+  </div>
+
+</div>
+
+<!-- MSP -->
+<div class="section-label">For MSPs & IT agencies</div>
+<div class="pricing-grid" style="max-width:480px;">
+  <div class="price-card" style="border-color:rgba(167,139,250,0.4);">
+    <div class="price-card-icon">🏢</div>
+    <div class="price-card-name" style="color:#a78bfa;">MSP Essentials</div>
+    <div class="price-card-tagline">Manage Pulse and Inbox Shield across unlimited client domains from one dashboard. White-label reporting included.</div>
+    <div class="price-row"><span class="price-amount" style="color:#a78bfa;">$79</span><span class="price-period">/ month</span></div>
+    <span class="price-badge" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;">Volume pricing available</span>
+    <ul class="price-features">
+      <li>Unlimited client domains</li>
+      <li>Unified MSP dashboard</li>
+      <li>White-label PDF reports</li>
+      <li>All Pulse + Inbox Shield features</li>
+      <li>Dedicated onboarding call</li>
+    </ul>
+    <a href="/msp/" class="price-btn purple">See MSP Plan →</a>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-wrap">
+  <h2>Frequently asked questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q">Is there a free trial?</div>
+    <div class="faq-a">Pulse, Inbox Shield, Vendor Watch, and Compliance all have free tiers that never expire. You can use the core scanning features indefinitely at no cost. Paid plans add automated scheduling, email digests, and alerts.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I cancel anytime?</div>
+    <div class="faq-a">Yes. All paid plans are month-to-month with no contracts. You can cancel from your account page at any time — your access continues until the end of the billing period.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Does one subscription cover multiple domains?</div>
+    <div class="faq-a">Each subscription covers one domain or tenant. If you need to monitor multiple domains you can add additional subscriptions. MSP Essentials covers unlimited client domains under one plan.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What is the Workspace Posture early access rate?</div>
+    <div class="faq-a">Early access subscribers pay $19/mo, which is locked in forever — standard pricing will be $39/mo. The rate never increases for active early access accounts.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do you offer annual billing?</div>
+    <div class="faq-a">Annual billing is not yet available but is on the roadmap. Contact support@edgeiqlabs.com if you'd like to discuss annual pricing.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What payment methods do you accept?</div>
+    <div class="faq-a">All major credit and debit cards via Stripe. No PayPal or invoice billing currently available.</div>
+  </div>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/products/">Products</a> · <a href="/blog/">Blog</a> · <a href="/account/">My Account</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(function(q) {
+  q.addEventListener('click', function() { q.closest('.faq-item').classList.toggle('open'); });
+});
+</script>
+</body>
+</html>
