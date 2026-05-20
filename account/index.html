@@ -146,6 +146,34 @@
       .sub-card { flex-direction: column; gap: 8px; }
       .sub-card .sub-icon { width: auto; }
     }
+
+    /* ── Upgrade nudge ─────────────────────────────────────────────── */
+    .upgrade-nudge{background:linear-gradient(135deg,#0a1929,#0d1c2e);border:1px solid rgba(61,217,255,0.22);border-radius:12px;padding:18px 22px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .upgrade-nudge.compliance{background:linear-gradient(135deg,#081a14,#0c1e17);border-color:rgba(61,225,158,0.22);}
+    .upgrade-nudge-left{flex:1;min-width:200px;}
+    .upgrade-nudge-eyebrow{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:6px;}
+    .upgrade-nudge.compliance .upgrade-nudge-eyebrow{color:#3de19e;}
+    .upgrade-nudge-title{font-size:0.93rem;font-weight:700;color:#d4e6ff;margin-bottom:8px;line-height:1.3;}
+    .upgrade-nudge-perks{display:flex;gap:10px;flex-wrap:wrap;}
+    .upgrade-nudge-perks span{font-size:0.77rem;color:var(--muted);}
+    .upgrade-nudge-perks span::before{content:"✓ ";color:var(--accent);}
+    .upgrade-nudge.compliance .upgrade-nudge-perks span::before{color:#3de19e;}
+    .upgrade-nudge-cta{background:var(--accent);color:#071018;font-weight:700;font-size:0.85rem;padding:11px 20px;border-radius:9px;text-decoration:none;white-space:nowrap;transition:opacity 0.2s;flex-shrink:0;}
+    .upgrade-nudge-cta:hover{opacity:0.85;}
+    .upgrade-nudge.compliance .upgrade-nudge-cta{background:#3de19e;}
+
+    /* ── Explore section ───────────────────────────────────────────── */
+    .explore-section{margin-top:12px;padding-top:28px;border-top:1px solid var(--border);}
+    .explore-hdr{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px;}
+    .explore-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:32px;}
+    .explore-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;transition:border-color 0.2s;text-decoration:none;}
+    .explore-card:hover{border-color:rgba(255,255,255,0.18);}
+    .explore-card-icon{font-size:1.3rem;}
+    .explore-card-name{font-size:0.88rem;font-weight:700;}
+    .explore-card-desc{font-size:0.78rem;color:var(--muted);flex:1;line-height:1.5;}
+    .explore-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+    .explore-card-price{font-size:0.75rem;color:var(--muted);}
+    .explore-card-cta{font-size:0.78rem;font-weight:700;}
   </style>
 </head>
 <body>
@@ -346,10 +374,27 @@ function renderPulse(subs, siteUrl) {
         </div>
         <div class="sub-actions">
           <a href="${siteUrl}/pulse/?domain=${encodeURIComponent(s.domain)}" class="btn-sm" target="_blank">View scan →</a>
-          ${s.plan === 'free' ? `<a href="${siteUrl}/pulse/#pricing" class="btn-sm" style="color:var(--accent);border-color:rgba(61,217,255,0.3);">Upgrade to Pro →</a>` : ''}
         </div>
       </div>
     </div>`).join('');
+  if (subs.some(s => s.plan === 'free')) {
+    el.insertAdjacentHTML('beforeend', `
+      <div class="upgrade-nudge">
+        <div class="upgrade-nudge-left">
+          <div class="upgrade-nudge-eyebrow">📈 Upgrade to Pulse Pro</div>
+          <div class="upgrade-nudge-title">Get weekly automated scans without lifting a finger</div>
+          <div class="upgrade-nudge-perks">
+            <span>Weekly automated scans</span>
+            <span>SSL expiry alerts</span>
+            <span>HTTP header grading</span>
+            <span>Subdomain exposure</span>
+            <span>Open port detection</span>
+            <span>Email digest on changes</span>
+          </div>
+        </div>
+        <a href="${siteUrl}/pulse/#pricing" class="upgrade-nudge-cta">Upgrade to Pro — $19/mo →</a>
+      </div>`);
+  }
 }
 
 function renderShield(subs, siteUrl) {
@@ -552,11 +597,27 @@ function renderCompliance(subs, siteUrl) {
         </div>
         <div class="sub-actions">
           <a href="${siteUrl}/compliance/?domain=${encodeURIComponent(s.domain)}" class="btn-sm" target="_blank">Open scanner →</a>
-          ${!isPro ? `<a href="${siteUrl}/compliance/#plans" class="btn-sm" style="color:var(--accent);border-color:rgba(61,217,255,0.3);">Upgrade to Pro →</a>` : ''}
         </div>
       </div>
     </div>`;
   }).join('');
+  if (subs.some(s => s.plan !== 'pro')) {
+    el.insertAdjacentHTML('beforeend', `
+      <div class="upgrade-nudge compliance">
+        <div class="upgrade-nudge-left">
+          <div class="upgrade-nudge-eyebrow">📋 Upgrade to Compliance Pro</div>
+          <div class="upgrade-nudge-title">Get this report delivered to your inbox every Monday</div>
+          <div class="upgrade-nudge-perks">
+            <span>Weekly automated scans</span>
+            <span>Email delivery</span>
+            <span>Score history &amp; trends</span>
+            <span>Remediation roadmap</span>
+            <span>SOC 2 / PCI / HIPAA checks</span>
+          </div>
+        </div>
+        <a href="${siteUrl}/compliance/#plans" class="upgrade-nudge-cta">Upgrade to Pro — $9/mo →</a>
+      </div>`);
+  }
 }
 
 // ── BrandGuard ────────────────────────────────────────────────────────────────
@@ -639,6 +700,58 @@ function renderWorkspacePosture(subs, siteUrl) {
   }).join('');
 }
 
+// ── Explore more products ─────────────────────────────────────────────────────
+
+const EXPLORE_CATALOG = [
+  { id: 'brandguard',        icon: '🛡️', name: 'BrandGuard',           color: '#f472b6', desc: 'Monitor typosquatted and lookalike domains targeting your brand — 24/7 alerts.',                  price: '$14/mo',  href: '/brandguard/' },
+  { id: 'workspace_posture', icon: '🏢', name: 'Workspace Posture Pro', color: '#4da6ff', desc: 'Weekly M365 / Google Workspace audit — OAuth apps, forwarding rules, stale admins.',              price: '$19/mo',  href: '/workspace-posture/' },
+  { id: 'compliance',        icon: '📋', name: 'Compliance Pro',        color: '#3de19e', desc: 'Automated weekly SOC 2 / PCI / HIPAA checks, score history, and remediation roadmap.',            price: '$9/mo',   href: '/compliance/' },
+  { id: 'inbox_shield',      icon: '✉️', name: 'Inbox Shield',          color: '#b47aff', desc: 'Check and monitor SPF, DMARC, and DKIM so no one can spoof emails from your domain.',             price: 'Free',    href: '/inbox-shield/' },
+  { id: 'pulse',             icon: '🟢', name: 'Pulse',                 color: '#3dd9ff', desc: 'Continuous domain security monitoring — SSL, HTTP headers, DNS, subdomain exposure.',              price: 'Free+',   href: '/pulse/' },
+  { id: 'phishsim',          icon: '🎣', name: 'PhishSim',              color: '#ff6b7a', desc: 'Run realistic phishing simulations and train employees before attackers do.',                       price: '$29/mo',  href: 'https://phishsim.edgeiqlabs.com/' },
+  { id: 'vendor_watch',      icon: '📡', name: 'Vendor Watch',          color: '#ff9f43', desc: 'Real-time outage alerts for Stripe, AWS, GitHub, Slack, and 40+ critical SaaS vendors.',           price: 'Free',    href: '/vendor-watch/' },
+  { id: 'msp',               icon: '🔧', name: 'MSP Essentials',        color: '#c084fc', desc: 'Manage Pulse and Inbox Shield monitoring for up to 10 client domains from one account.',           price: '$79/mo',  href: '/msp/' },
+];
+
+function renderExploreSection(subs) {
+  const has = {
+    pulse:             subs.pulse             && subs.pulse.length > 0,
+    inbox_shield:      subs.inbox_shield      && subs.inbox_shield.length > 0,
+    compliance:        subs.compliance        && subs.compliance.length > 0,
+    brandguard:        subs.brandguard        && subs.brandguard.length > 0,
+    workspace_posture: subs.workspace_posture && subs.workspace_posture.length > 0,
+    vendor_watch:      subs.vendor_watch      && subs.vendor_watch && subs.vendor_watch.vendors && subs.vendor_watch.vendors.length > 0,
+    msp:               subs.msp              && subs.msp.active,
+    phishsim:          false,
+  };
+  const suggestions = EXPLORE_CATALOG.filter(p => !has[p.id]).slice(0, 4);
+  if (!suggestions.length) return;
+
+  const dashboard = document.getElementById('dashboard');
+  const footer = dashboard.querySelector('[style*="border-top:1px solid var(--border)"]');
+  const section = document.createElement('div');
+  section.className = 'explore-section';
+  section.innerHTML = `
+    <div class="explore-hdr">More tools for your security stack</div>
+    <div class="explore-grid">
+      ${suggestions.map(p => `
+        <a href="${p.href}" class="explore-card">
+          <div class="explore-card-icon">${p.icon}</div>
+          <div class="explore-card-name" style="color:${p.color};">${p.name}</div>
+          <div class="explore-card-desc">${p.desc}</div>
+          <div class="explore-card-footer">
+            <span class="explore-card-price">${p.price}</span>
+            <span class="explore-card-cta" style="color:${p.color};">Explore →</span>
+          </div>
+        </a>`).join('')}
+    </div>`;
+  if (footer) {
+    dashboard.insertBefore(section, footer);
+  } else {
+    dashboard.appendChild(section);
+  }
+}
+
 // ── Boot ─────────────────────────────────────────────────────────────────────
 
 async function boot() {
@@ -696,6 +809,7 @@ async function boot() {
   renderCompliance(data.subscriptions.compliance, siteUrl);
   renderBrandguard(data.subscriptions.brandguard, siteUrl);
   renderWorkspacePosture(data.subscriptions.workspace_posture, siteUrl);
+  renderExploreSection(data.subscriptions);
 
   document.getElementById('dashboard').style.display = 'block';
 }
