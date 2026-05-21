@@ -411,7 +411,7 @@
   </url>
   <url>
     <loc>https://edgeiqlabs.com/compare/</loc>
-    <lastmod>2026-05-20</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -424,6 +424,24 @@
   <url>
     <loc>https://edgeiqlabs.com/compare/edgeiq-vs-dmarcian/</loc>
     <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/compare/edgeiq-vs-easydmarc/</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/compare/edgeiq-vs-valimail/</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://edgeiqlabs.com/blog/how-to-fix-dmarc-policy.html</loc>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
