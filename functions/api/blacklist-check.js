@@ -3,7 +3,7 @@
  * GET /api/blacklist-check?domain=example.com
  * GET /api/blacklist-check?ip=1.2.3.4
  *
- * Checks a domain or IP against 15 major DNSBLs / URIBLs.
+ * Checks a domain or IP against 9 major DNSBLs / URIBLs.
  *
  * IP-based lookup: reverse(ip).dnsbl → A query → listed if any 127.x.x.x answer
  * Domain-based lookup: domain.dnsbl → A query → listed if any answer
@@ -20,10 +20,12 @@ const CORS = {
 
 // ─── DNSBL Definitions ───────────────────────────────────────────────────────
 
+// Spamhaus public zones (sbl/xbl/pbl/dbl/hbl/zen) are excluded: without a
+// registered DQS key they return 127.0.0.2 for ALL queries, producing
+// false positives on legitimate domains. Remaining 9 lists are reliable
+// without API keys.
+
 const IP_LISTS = [
-  { id: 'spamhaus-sbl',  name: 'Spamhaus SBL',      zone: 'sbl.spamhaus.org',        tier: 'critical', removal: 'https://www.spamhaus.org/lookup/' },
-  { id: 'spamhaus-xbl',  name: 'Spamhaus XBL',      zone: 'xbl.spamhaus.org',        tier: 'critical', removal: 'https://www.spamhaus.org/lookup/' },
-  { id: 'spamhaus-pbl',  name: 'Spamhaus PBL',      zone: 'pbl.spamhaus.org',        tier: 'high',     removal: 'https://www.spamhaus.org/lookup/' },
   { id: 'barracuda',     name: 'Barracuda BRBL',    zone: 'b.barracudacentral.org',  tier: 'critical', removal: 'https://www.barracudacentral.org/lookups' },
   { id: 'sorbs-spam',    name: 'SORBS SPAM',        zone: 'spam.sorbs.net',          tier: 'high',     removal: 'http://www.sorbs.net/lookup.shtml' },
   { id: 'spamcop',       name: 'SpamCop BL',        zone: 'bl.spamcop.net',          tier: 'critical', removal: 'https://www.spamcop.net/bl.shtml' },
@@ -34,11 +36,8 @@ const IP_LISTS = [
 ];
 
 const DOMAIN_LISTS = [
-  { id: 'spamhaus-dbl',  name: 'Spamhaus DBL',      zone: 'dbl.spamhaus.org',        tier: 'critical', removal: 'https://www.spamhaus.org/lookup/' },
   { id: 'surbl',         name: 'SURBL Multi',       zone: 'multi.surbl.org',         tier: 'critical', removal: 'https://www.surbl.org/surbl-analysis' },
   { id: 'uribl',         name: 'URIBL Multi',       zone: 'multi.uribl.com',         tier: 'critical', removal: 'https://lookup.uribl.com/' },
-  { id: 'spamhaus-hbl',  name: 'Spamhaus HBL',      zone: 'hbl.spamhaus.org',        tier: 'critical', removal: 'https://www.spamhaus.org/lookup/' },
-  { id: 'dbl-spamhaus',  name: 'Spamhaus ZEN',      zone: 'zen.spamhaus.org',        tier: 'critical', removal: 'https://www.spamhaus.org/lookup/' },
 ];
 
 // ─── DNS helpers ─────────────────────────────────────────────────────────────
