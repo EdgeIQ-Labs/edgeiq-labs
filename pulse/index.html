@@ -599,6 +599,7 @@
         <div class="featured-badge">Most Popular</div>
         <div class="plan-name" style="color:var(--accent);">Pro</div>
         <div class="plan-price" style="color:var(--accent);">$19 <span>/ mo</span></div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--accent);margin:-8px 0 10px;opacity:0.85;">✦ 14-day free trial — no charge until day 15</div>
         <div class="plan-desc">For businesses serious about security. Daily scans across all 13 checks.</div>
         <ul class="plan-features">
           <li>5 domains monitored</li>
@@ -610,7 +611,7 @@
           <li>Priority email support</li>
           <li class="locked">20+ domains</li>
         </ul>
-        <a href="#signup" class="plan-btn primary" id="pro-cta">Get Pro — $19/mo</a>
+        <a href="#signup" class="plan-btn primary" id="pro-cta">Start 14-day free trial →</a>
       </div>
 
       <!-- BUSINESS -->
@@ -653,7 +654,7 @@
             <label class="plan-opt">
               <input type="radio" name="plan" value="pro" />
               <div class="po-name">Pro</div>
-              <div class="po-price">$19 / mo</div>
+              <div class="po-price">Free 14 days</div>
             </label>
             <label class="plan-opt">
               <input type="radio" name="plan" value="business" />
@@ -759,7 +760,7 @@
     // Update button label when plan changes
     document.querySelectorAll('input[name="plan"]').forEach(function(radio) {
       radio.addEventListener('change', function() {
-        var labels = { free: 'Start Free Monitoring →', pro: 'Get Pro — $19/mo →', business: 'Get Business — $39/mo →' };
+        var labels = { free: 'Start Free Monitoring →', pro: 'Start 14-day free trial →', business: 'Get Business — $39/mo →' };
         submitLabel.textContent = labels[this.value] || 'Start Monitoring →';
       });
     });
@@ -801,7 +802,7 @@
       // For paid plans, redirect to Stripe first (signup happens post-payment)
       if (plan === 'pro' || plan === 'business') {
         var stripeLinks = {
-          pro: 'https://buy.stripe.com/aFa14pgKvdFz8EcaIM7wA3o',
+          pro: 'https://buy.stripe.com/6oUdRbdyjeJD5s06sw7wA3C',
           business: 'https://buy.stripe.com/8x2fZj8dZ44Z1bK3gk7wA3p'
         };
         // Store email+domain in sessionStorage so success page can retrieve it
