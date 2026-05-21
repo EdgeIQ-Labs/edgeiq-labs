@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -2180,8 +2180,8 @@
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : (t === 'compliance' ? 'compliance-results' : (t === 'policy' ? 'policy-results' : (t === 'asm' ? 'asm-results' : (t === 'domain-score' ? 'domain-score-results' : (t === 'dmarc' ? 'dmarc-results' : (t === 'spf' ? 'spf-results' : (t === 'blacklist' ? 'blacklist-results' : 'cve-results'))))))))))))));
-      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : (t === 'docker' ? 'docker-error' : (t === 'compliance' ? 'compliance-error' : (t === 'policy' ? 'cve-results' : (t === 'asm' ? 'asm-error' : (t === 'domain-score' ? 'domain-score-error' : (t === 'dmarc' ? 'dmarc-error' : (t === 'spf' ? 'spf-error' : (t === 'blacklist' ? 'blacklist-error' : 'cve-error'))))))))))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : (t === 'compliance' ? 'compliance-results' : (t === 'policy' ? 'policy-results' : (t === 'asm' ? 'asm-results' : (t === 'domain-score' ? 'domain-score-results' : (t === 'dmarc' ? 'dmarc-results' : (t === 'spf' ? 'spf-results' : (t === 'blacklist' ? 'blacklist-results' : 'cve-results'))))))))))))))))));
+      var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : (t === 'docker' ? 'docker-error' : (t === 'compliance' ? 'compliance-error' : (t === 'policy' ? 'cve-results' : (t === 'asm' ? 'asm-error' : (t === 'domain-score' ? 'domain-score-error' : (t === 'dmarc' ? 'dmarc-error' : (t === 'spf' ? 'spf-error' : (t === 'blacklist' ? 'blacklist-error' : 'cve-error'))))))))))))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
       var tabBtn = document.getElementById('tab-btn-' + t);
