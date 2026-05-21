@@ -509,6 +509,9 @@ async function unlockReport() {
         source: 'domain-security-score',
         domain: currentDomain,
         grade: currentData?.grade,
+        score: currentData?.score,
+        categories: currentData?.categories,
+        issues: currentData?.issues,
       }),
     });
   } catch(e) {}
