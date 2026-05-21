@@ -50,11 +50,11 @@ function scannersForPlan(plan) {
   return FREE_SCANNERS;
 }
 
-async function runScan(scannerName, domain) {
+async function runScan(scannerName, domain, software = null) {
   const url = WORKER_URLS[scannerName];
   if (!url) return null;
   try {
-    const body = { domain, url: `https://${domain}`, host: domain, target: domain, software: domain };
+    const body = { domain, url: `https://${domain}`, host: domain, target: domain, software: software || domain };
     const resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -345,8 +345,27 @@ export default {
 
       const scanners = scannersForPlan(plan);
 
-      // Run all scans concurrently
+      // Phase 1: run headers first to detect server software for CVE matching
+      const headersRaw = await runScan('headers', domain);
+      const serverHeader = headersRaw?.headers?.server || headersRaw?.headers?.['x-powered-by'] || null;
+      // Only use server software if it's a real tech stack disclosure, not a CDN proxy
+      const CDN_PROXIES = ['cloudflare', 'fastly', 'cloudfront', 'akamai', 'nginx/cloudflare'];
+      const detectedSoftware = (serverHeader && !CDN_PROXIES.includes(serverHeader.toLowerCase()))
+        ? serverHeader.toLowerCase().split('/')[0].trim()
+        : null;
+
+      // Phase 2: run remaining scans concurrently, CVE uses detected software
       const results = await Promise.all(scanners.map(async (name) => {
+        if (name === 'headers') {
+          return [name, extractSummary('headers', headersRaw)];
+        }
+        if (name === 'cve') {
+          if (!detectedSoftware) {
+            return [name, { status: 'ok', detail: 'Server software not disclosed — CVE check skipped' }];
+          }
+          const data = await runScan('cve', domain, detectedSoftware);
+          return [name, extractSummary('cve', data)];
+        }
         const data = await runScan(name, domain);
         return [name, extractSummary(name, data)];
       }));

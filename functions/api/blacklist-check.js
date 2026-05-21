@@ -3,7 +3,7 @@
  * GET /api/blacklist-check?domain=example.com
  * GET /api/blacklist-check?ip=1.2.3.4
  *
- * Checks a domain or IP against 9 major DNSBLs / URIBLs.
+ * Checks a domain or IP against 7 major IP-based DNSBLs.
  *
  * IP-based lookup: reverse(ip).dnsbl → A query → listed if any 127.x.x.x answer
  * Domain-based lookup: domain.dnsbl → A query → listed if any answer
@@ -20,10 +20,12 @@ const CORS = {
 
 // ─── DNSBL Definitions ───────────────────────────────────────────────────────
 
-// Spamhaus public zones (sbl/xbl/pbl/dbl/hbl/zen) are excluded: without a
-// registered DQS key they return 127.0.0.2 for ALL queries, producing
-// false positives on legitimate domains. Remaining 9 lists are reliable
-// without API keys.
+// Excluded lists (all produce false positives via public DoH resolvers):
+//  - Spamhaus sbl/xbl/pbl/dbl/hbl/zen: without DQS key → 127.0.0.2 for ALL queries
+//  - SURBL multi.surbl.org: returns SERVFAIL ("No Reachable Authority") via Cloudflare DoH
+//  - URIBL multi.uribl.com: lists domains found in spam *URLs* (e.g. google.com) —
+//    not sending IP reputation. Returns false positives for major legitimate domains.
+// Remaining 7 IP-based lists check actual sending reputation reliably.
 
 const IP_LISTS = [
   { id: 'barracuda',     name: 'Barracuda BRBL',    zone: 'b.barracudacentral.org',  tier: 'critical', removal: 'https://www.barracudacentral.org/lookups' },
@@ -35,10 +37,9 @@ const IP_LISTS = [
   { id: 'truncate',      name: 'Truncate (GBudb)',  zone: 'truncate.gbudb.net',      tier: 'medium',   removal: 'https://gbudb.net/truncate/index.jsp' },
 ];
 
-const DOMAIN_LISTS = [
-  { id: 'surbl',         name: 'SURBL Multi',       zone: 'multi.surbl.org',         tier: 'critical', removal: 'https://www.surbl.org/surbl-analysis' },
-  { id: 'uribl',         name: 'URIBL Multi',       zone: 'multi.uribl.com',         tier: 'critical', removal: 'https://lookup.uribl.com/' },
-];
+// No domain-based lists: SURBL/URIBL both produce false positives via
+// public DoH resolvers. All 7 remaining checks are IP-based (sending reputation).
+const DOMAIN_LISTS = [];
 
 // ─── DNS helpers ─────────────────────────────────────────────────────────────
 
@@ -157,7 +158,7 @@ export async function onRequestGet(context) {
     clean:    'Your domain/IP is not listed on any of the checked blacklists.',
     medium:   'Listed on at least one blacklist. Some email providers may reject or filter your messages.',
     high:     'Listed on multiple blacklists. Email deliverability is likely affected.',
-    critical: 'Listed on a major blacklist (Spamhaus/Barracuda/SpamCop). Email deliverability will be severely impacted.',
+    critical: 'Listed on a major blacklist (Barracuda/SpamCop). Email deliverability will be severely impacted.',
   };
 
   // Categorise results for display
