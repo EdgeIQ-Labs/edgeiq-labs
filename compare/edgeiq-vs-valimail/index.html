@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>EdgeIQ Labs vs Valimail: DMARC Monitoring Comparison (2026)</title>
+  <meta name="description" content="EdgeIQ Labs vs Valimail — which DMARC and email security tool is right for your team? Detailed feature, pricing, and use-case comparison for 2026."/>
+  <meta property="og:title" content="EdgeIQ Labs vs Valimail (2026 Comparison)"/>
+  <meta property="og:description" content="EdgeIQ Labs vs Valimail — features, pricing, and which DMARC monitoring tool is right for your business."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/compare/edgeiq-vs-valimail/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/compare/edgeiq-vs-valimail/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is EdgeIQ cheaper than Valimail?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Significantly. Valimail is an enterprise platform with pricing typically in the thousands of dollars per year. EdgeIQ Inbox Shield starts at $9/month with a free monitoring tier. EdgeIQ is designed for small and mid-size businesses, while Valimail targets large enterprises." }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the main difference between EdgeIQ and Valimail?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Valimail focuses on enterprise DMARC enforcement and automated DMARC management at scale, typically for organizations with complex multi-brand email ecosystems. EdgeIQ is a broader security posture platform covering email authentication, SSL, HTTP headers, subdomains, open ports, and brand protection — aimed at SMBs and mid-market teams at a fraction of the price." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does EdgeIQ offer automated DMARC enforcement like Valimail?",
+        "acceptedAnswer": { "@type": "Answer", "text": "EdgeIQ Inbox Shield monitors your DMARC, SPF, and DKIM records continuously and alerts you to changes and misconfigurations. It provides a guided path toward p=reject. It does not provide hosted/automated DMARC enforcement (where the vendor manages your DNS record) like Valimail's Enforce product does." }
+      }
+    ]
+  }
+  </script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--border:#233142;--green:#34d399;--red:#f87171;--blue:#3dd9ff;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:860px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--blue);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--blue);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:620px){.nav-links a:not(.nav-cta){display:none;}}
+    .hero{padding:60px 0 40px;text-align:center;}
+    .breadcrumb{font-size:0.8rem;color:var(--muted);margin-bottom:20px;}
+    .breadcrumb a{color:var(--muted);text-decoration:none;}
+    .breadcrumb a:hover{color:var(--accent);}
+    .verdict-badge{display:inline-block;background:#1a0e2a;border:1px solid var(--accent);color:var(--accent);font-size:0.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .hero-sub{color:var(--muted);font-size:1.05rem;max-width:620px;margin:0 auto 32px;}
+    .vs-logos{display:flex;align-items:center;justify-content:center;gap:28px;margin:32px 0;flex-wrap:wrap;}
+    .vs-logo-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 28px;text-align:center;min-width:160px;}
+    .vs-logo-box .name{font-weight:800;font-size:1.15rem;}
+    .vs-logo-box .tagline{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+    .vs-logo-box.winner{border-color:var(--accent);background:#150e22;}
+    .vs-logo-box.winner .name{color:var(--accent);}
+    .vs-sep{font-size:1.4rem;font-weight:800;color:var(--muted);}
+    .toc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:32px 0;}
+    .toc h3{font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;}
+    .toc ol{margin-left:18px;color:var(--accent);font-size:0.92rem;}
+    .toc ol li{margin-bottom:6px;}
+    .toc ol li a{color:var(--accent);text-decoration:none;}
+    .toc ol li a:hover{text-decoration:underline;}
+    .prose h2{font-size:1.4rem;font-weight:800;margin:48px 0 16px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:16px;color:#d0dce9;}
+    .prose ul,.prose ol{margin:0 0 18px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;}
+    .prose a:hover{text-decoration:underline;}
+    code{background:#1a2535;color:#7dd3fc;padding:1px 6px;border-radius:4px;font-size:0.88em;font-family:monospace;}
+    .comp-table{width:100%;border-collapse:collapse;margin:24px 0 32px;font-size:0.9rem;}
+    .comp-table th{padding:12px 14px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);}
+    .comp-table th:first-child{color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:.05em;}
+    .comp-table th.edgeiq{color:var(--accent);background:#150e22;}
+    .comp-table th.competitor{color:#9fb0c7;background:#0e1621;}
+    .comp-table td{padding:11px 14px;border-bottom:1px solid #1a2535;vertical-align:top;}
+    .comp-table td:first-child{color:var(--muted);font-size:0.85rem;font-weight:600;}
+    .comp-table td.edgeiq{background:#150e22;}
+    .comp-table td.competitor{background:#0e1621;}
+    .comp-table tr:last-child td{border-bottom:none;}
+    .yes{color:var(--green);font-weight:700;}
+    .no{color:var(--red);font-weight:700;}
+    .partial{color:#fbbf24;font-weight:700;}
+    .score-row{display:flex;gap:16px;margin:28px 0;flex-wrap:wrap;}
+    .score-card{flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
+    .score-card.winner{border-color:var(--accent);background:#150e22;}
+    .score-card .score-num{font-size:2.4rem;font-weight:800;line-height:1;}
+    .score-card.winner .score-num{color:var(--accent);}
+    .score-card .score-label{font-size:0.78rem;color:var(--muted);margin-top:6px;font-weight:600;}
+    .score-card .score-for{font-size:0.72rem;color:var(--muted);margin-top:8px;}
+    .callout{background:#150e22;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
+    .callout strong{color:var(--accent);}
+    .warn{background:#1a1207;border-left:3px solid #f97316;border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#fed7aa;}
+    .warn strong{color:#f97316;}
+    .note{background:#0d1925;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
+    .note strong{color:var(--blue);}
+    .use-case-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0 32px;}
+    @media(max-width:560px){.use-case-grid{grid-template-columns:1fr;}}
+    .use-case-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+    .use-case-card h4{font-size:0.95rem;font-weight:700;margin-bottom:8px;}
+    .use-case-card p{font-size:0.85rem;color:var(--muted);margin:0;}
+    .use-case-card.for-edgeiq{border-color:rgba(180,122,255,0.3);}
+    .use-case-card.for-edgeiq h4{color:var(--accent);}
+    .use-case-card.for-other{border-color:rgba(159,176,199,0.2);}
+    .use-case-card.for-other h4{color:var(--muted);}
+    .cta-block{background:linear-gradient(135deg,#150e22 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:16px;padding:36px;margin:48px 0;text-align:center;}
+    .cta-block h3{font-size:1.4rem;font-weight:800;margin-bottom:10px;}
+    .cta-block p{color:var(--muted);margin-bottom:24px;font-size:0.95rem;}
+    .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:1rem;}
+    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:12px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;border:1px solid var(--accent);}
+    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .faq-q{font-weight:700;font-size:0.98rem;margin-bottom:8px;}
+    .faq-a{color:var(--muted);font-size:0.9rem;}
+    footer{border-top:1px solid var(--border);padding:28px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.85rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
+  <div class="nav-links">
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="nav-cta">Start Free →</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="breadcrumb"><a href="/">Home</a> › <a href="/compare/">Compare</a> › EdgeIQ vs Valimail</div>
+    <div class="verdict-badge">2026 Comparison · Updated May 2026</div>
+    <h1>EdgeIQ Labs vs Valimail</h1>
+    <p class="hero-sub">Valimail is an enterprise DMARC enforcement platform built for Fortune 500 email programs. EdgeIQ Inbox Shield is built for SMBs and mid-market teams who want DMARC monitoring — plus SSL, headers, and brand protection — without enterprise pricing.</p>
+    <div class="vs-logos">
+      <div class="vs-logo-box winner">
+        <div class="name">EdgeIQ Inbox Shield</div>
+        <div class="tagline">Full security posture for SMBs</div>
+      </div>
+      <div class="vs-sep">vs</div>
+      <div class="vs-logo-box">
+        <div class="name">Valimail</div>
+        <div class="tagline">Enterprise DMARC enforcement</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h3>In this comparison</h3>
+    <ol>
+      <li><a href="#tldr">TL;DR — The quick verdict</a></li>
+      <li><a href="#what-each-does">What each product actually does</a></li>
+      <li><a href="#features">Feature-by-feature comparison</a></li>
+      <li><a href="#pricing">Pricing comparison</a></li>
+      <li><a href="#use-cases">Which one is right for you?</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ol>
+  </div>
+
+  <div class="prose">
+
+    <h2 id="tldr">TL;DR — The Quick Verdict</h2>
+
+    <p><strong>Valimail</strong> is a purpose-built enterprise DMARC platform. Its flagship Enforce product automates the path to <code>p=reject</code> — it processes your DMARC rua reports, identifies and categorizes every sending source automatically, and manages the enforcement transition without requiring manual DNS record editing. For a Fortune 500 company with hundreds of sending services, multiple brands, and a large security team, Valimail can save months of DMARC migration work. The price reflects that: Valimail is an enterprise contract, typically sold through a sales process.</p>
+
+    <p><strong>EdgeIQ Inbox Shield</strong> approaches DMARC from the other direction. Rather than managing your DMARC record for you, it monitors your existing configuration continuously and alerts you the moment anything changes. No hosted DNS management, no automated source discovery at scale — just reliable monitoring, instant alerts, and a guided path to enforcement, at $9/month. Combined with <a href="/pulse/">Pulse Pro</a> for SSL/header/subdomain monitoring and <a href="/brandguard/">BrandGuard</a> for lookalike domain detection, the complete EdgeIQ stack covers everything a small or mid-size business needs at a price Valimail can't touch.</p>
+
+    <p>The reality is that Valimail and EdgeIQ target completely different markets. If you're evaluating both, the right question isn't which is better — it's whether you're a large enterprise that needs automated DMARC enforcement management, or a smaller organization that needs reliable monitoring and alerting without enterprise overhead.</p>
+
+    <div class="callout"><strong>Bottom line:</strong> Valimail for enterprise-scale automated DMARC enforcement with dedicated support. EdgeIQ Inbox Shield for affordable, reliable DMARC + full security posture monitoring — built for businesses that don't have a dedicated email security engineer.</div>
+
+    <h2 id="what-each-does">What Each Product Actually Does</h2>
+
+    <h3>Valimail</h3>
+    <p>Valimail's core product is DMARC enforcement automation. Instead of manually reading through rua XML reports and figuring out which sending services are failing DMARC alignment, Valimail ingests your reports and automatically identifies sending sources — tagging known services (Salesforce, Marketo, HubSpot, etc.) and flagging unknown senders. It then manages your DMARC record automatically, safely stepping up enforcement only when it's confident all legitimate senders are aligned.</p>
+    <p>This "set it and walk away" approach is valuable for large organizations where the alternative is months of manual DNS work across a sprawling email ecosystem. Valimail also offers DMARC monitoring, reporting dashboards for compliance teams, and professional services for complex deployments. It's enterprise software with enterprise support expectations.</p>
+
+    <h3>EdgeIQ Inbox Shield</h3>
+    <p>Inbox Shield monitors your DMARC, SPF, and DKIM records continuously and sends you an immediate alert if anything changes. Policy weakened from <code>p=reject</code> to <code>p=none</code>? Alert. SPF record modified? Alert. DKIM key rotated or selector removed? Alert. You get a real-time A–F email authentication grade, plain-English explanations of what each check means, and a step-by-step guide toward enforcement.</p>
+    <p>Inbox Shield is part of the EdgeIQ platform — which means email authentication monitoring shares a dashboard and billing with SSL certificate monitoring, HTTP security header checks, subdomain discovery, open port scanning, and brand impersonation detection. For a business that's trying to understand and maintain its complete security posture (not just email), this consolidated view is significantly more practical than running five separate tools.</p>
+
+    <h2 id="features">Feature-by-Feature Comparison</h2>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="edgeiq">EdgeIQ Inbox Shield</th>
+          <th class="competitor">Valimail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DMARC policy monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Continuous monitoring + instant alerts on change</td>
+          <td class="competitor"><span class="yes">✓</span> Policy monitoring + automated enforcement</td>
+        </tr>
+        <tr>
+          <td>Automated DMARC enforcement</td>
+          <td class="edgeiq"><span class="no">✗</span> Guided path, not automated</td>
+          <td class="competitor"><span class="yes">✓</span> Core product — automated path to p=reject</td>
+        </tr>
+        <tr>
+          <td>DMARC aggregate report (rua) parsing</td>
+          <td class="edgeiq"><span class="partial">~</span> Summary-level insights</td>
+          <td class="competitor"><span class="yes">✓</span> Full forensic analysis with source auto-tagging</td>
+        </tr>
+        <tr>
+          <td>Automatic sending source identification</td>
+          <td class="edgeiq"><span class="no">✗</span> Not available</td>
+          <td class="competitor"><span class="yes">✓</span> Auto-identifies known ESP and SaaS senders</td>
+        </tr>
+        <tr>
+          <td>Hosted DMARC DNS management</td>
+          <td class="edgeiq"><span class="no">✗</span> You manage your own DNS record</td>
+          <td class="competitor"><span class="yes">✓</span> Valimail manages DMARC record via their nameserver</td>
+        </tr>
+        <tr>
+          <td>SPF record monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Continuous monitoring + include chain alerts</td>
+          <td class="competitor"><span class="partial">~</span> Within DMARC context</td>
+        </tr>
+        <tr>
+          <td>DKIM monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Selector discovery + key rotation alerts</td>
+          <td class="competitor"><span class="partial">~</span> Within DMARC alignment context</td>
+        </tr>
+        <tr>
+          <td>A–F email security grade</td>
+          <td class="edgeiq"><span class="yes">✓</span> Real-time grade for SPF + DMARC + DKIM</td>
+          <td class="competitor"><span class="partial">~</span> Compliance percentage / enforcement status</td>
+        </tr>
+        <tr>
+          <td>Email alert on config change</td>
+          <td class="edgeiq"><span class="yes">✓</span> Immediate + weekly digest</td>
+          <td class="competitor"><span class="yes">✓</span> Alerts and reports</td>
+        </tr>
+        <tr>
+          <td>SSL certificate monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Via Pulse Pro — expiry warnings, chain validation</td>
+          <td class="competitor"><span class="no">✗</span> Email-only focus</td>
+        </tr>
+        <tr>
+          <td>HTTP security headers</td>
+          <td class="edgeiq"><span class="yes">✓</span> CSP, HSTS, X-Frame-Options, etc. via Pulse</td>
+          <td class="competitor"><span class="no">✗</span> Email-only focus</td>
+        </tr>
+        <tr>
+          <td>Subdomain exposure monitoring</td>
+          <td class="edgeiq"><span class="yes">✓</span> Discovery + subdomain takeover detection</td>
+          <td class="competitor"><span class="no">✗</span> Not available</td>
+        </tr>
+        <tr>
+          <td>Lookalike domain alerts</td>
+          <td class="edgeiq"><span class="yes">✓</span> Via BrandGuard — daily typosquatting detection</td>
+          <td class="competitor"><span class="no">✗</span> Not available</td>
+        </tr>
+        <tr>
+          <td>Self-serve setup</td>
+          <td class="edgeiq"><span class="yes">✓</span> Sign up and start monitoring in minutes</td>
+          <td class="competitor"><span class="partial">~</span> Enterprise onboarding process</td>
+        </tr>
+        <tr>
+          <td>Pricing model</td>
+          <td class="edgeiq"><span class="yes">Free tier</span> · Paid from $9/mo · No sales call required</td>
+          <td class="competitor">Enterprise contract · Contact for pricing</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="pricing">Pricing Comparison</h2>
+
+    <div class="score-row">
+      <div class="score-card winner">
+        <div class="score-num">$9</div>
+        <div class="score-label">EdgeIQ Inbox Shield / mo</div>
+        <div class="score-for">Free tier available · No sales call · Cancel any time</div>
+      </div>
+      <div class="score-card">
+        <div class="score-num">$$$$</div>
+        <div class="score-label">Valimail — Enterprise pricing</div>
+        <div class="score-for">Contact sales · Typically $3k–$20k+ annually</div>
+      </div>
+    </div>
+
+    <p>Valimail does not publish self-serve pricing — it's sold through a sales process with custom quotes based on the number of domains, sending volume, and required features. Based on publicly available information and user reports, Valimail contracts typically run in the thousands to tens of thousands of dollars annually, making it out of reach for most SMBs.</p>
+
+    <p>EdgeIQ is transparent about pricing. Inbox Shield monitoring is $9/month. Adding Pulse Pro (SSL, headers, subdomain, port monitoring) is $19/month. The complete platform — email security, infrastructure monitoring, and brand protection — runs under $30/month with no commitment required and a 14-day free trial on paid plans.</p>
+
+    <div class="warn"><strong>Valimail alternative?</strong> If you're specifically looking for a Valimail alternative because the contract is up for renewal or the price isn't justified, check your actual usage. If you achieved <code>p=reject</code> enforcement already, you may not need Valimail's automated source management anymore. EdgeIQ Inbox Shield can monitor your DMARC enforcement status and alert you if it ever slips — at a fraction of the ongoing cost.</div>
+
+    <h2 id="use-cases">Which One Is Right for You?</h2>
+
+    <div class="use-case-grid">
+      <div class="use-case-card for-edgeiq">
+        <h4>Choose EdgeIQ if you…</h4>
+        <p>Are an SMB, startup, or mid-market company. Want self-serve, no sales process. Need DMARC monitoring plus SSL, headers, and brand protection. Are already at p=reject and want to stay that way. Are an MSP managing multiple client domains affordably.</p>
+      </div>
+      <div class="use-case-card for-other">
+        <h4>Choose Valimail if you…</h4>
+        <p>Are a large enterprise with dozens of sending services across multiple brands. Need fully automated DMARC enforcement management without manual DNS work. Have a dedicated email security team and budget. Are managing DMARC compliance across a complex multi-brand organization.</p>
+      </div>
+    </div>
+
+    <h3>Already at p=reject? You may not need Valimail anymore</h3>
+    <p>Valimail's highest-value proposition is the automated migration from <code>p=none</code> to <code>p=reject</code> — figuring out every sending source and ensuring they're all properly authenticated before you enforce. Once you've achieved enforcement, the ongoing value is mainly monitoring and alerting: "did anything slip back to p=none, did a new rogue sender appear?" That's exactly what EdgeIQ Inbox Shield does, continuously, for $9/month. Many teams renewing Valimail contracts after achieving enforcement could switch to a simpler monitoring tool and reinvest the savings.</p>
+
+    <h3>For MSPs</h3>
+    <p>If you're managing email security for multiple clients, Valimail's per-domain enterprise pricing compounds quickly. EdgeIQ's flat-rate plans cover unlimited domains — meaning you can add a new client without a pricing conversation. The broader platform (SSL + email + brand) also means you can offer clients comprehensive security monitoring as a bundled service.</p>
+
+    <h2 id="faq">FAQ</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">What's the best Valimail alternative for small businesses?</div>
+      <div class="faq-a">For SMBs, the most practical Valimail alternative is a combination of EdgeIQ Inbox Shield (DMARC/SPF/DKIM monitoring and alerts) and Pulse Pro (SSL, header, subdomain monitoring). This covers your complete security posture at under $30/month — without a sales call, contract, or enterprise onboarding process.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I migrate from Valimail to EdgeIQ?</div>
+      <div class="faq-a">If you achieved DMARC enforcement with Valimail and want to switch to a simpler monitoring tool, the process is straightforward: ensure your DMARC record is set to p=reject in your own DNS (if Valimail was managing a hosted DMARC record, you'll need to migrate it back to your own DNS), then set up EdgeIQ Inbox Shield to monitor the record going forward. EdgeIQ will alert you immediately if the policy ever weakens.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does EdgeIQ do automated DMARC source management like Valimail?</div>
+      <div class="faq-a">No. EdgeIQ Inbox Shield monitors your DMARC record and alerts you to changes. It does not process rua aggregate reports to auto-tag sending sources or manage your DNS record for you. If you're in the middle of a large-scale DMARC deployment with many unknown sending services, Valimail's automation offers significant value that EdgeIQ doesn't replicate.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is there a free version of EdgeIQ?</div>
+      <div class="faq-a">Yes. EdgeIQ has free tools that require no account: the <a href="/free-domain-security-score/">domain security score</a> gives you a full A–F grade for your domain in seconds, and the <a href="/inbox-shield/">Inbox Shield instant check</a> shows your current DMARC, SPF, and DKIM status. Paid monitoring with email alerts starts at $9/month, with a 14-day free trial.</div>
+    </div>
+
+    <div class="cta-block">
+      <h3>Check your DMARC status — free, no account needed</h3>
+      <p>Get an instant A–F email security grade for your domain. See exactly what's configured and what needs fixing.</p>
+      <div class="cta-row">
+        <a href="/inbox-shield/" class="btn-primary">Check your domain free →</a>
+        <a href="/free-domain-security-score/" class="btn-secondary">Full security score →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/compare/">All comparisons</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/pricing/">Pricing</a>
+  </div>
+</footer>
+</body>
+</html>
