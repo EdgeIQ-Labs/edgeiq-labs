@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/play/" />
+  <title>Game Server Hosting — EdgeIQ Labs</title>
+  <meta name="description" content="High-performance Minecraft game server hosting. Start your server in minutes. $5/mo — no contracts, cancel anytime." />
+  <meta name="theme-color" content="#0b0f14" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0b0f14;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid #1e2a38;
+      position: sticky;
+      top: 0;
+      background: #0b0f14;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+    .nav-logo span { color: #4ade80; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: #4ade80;
+      color: #0b0f14 !important;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem !important;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #0f2a1a;
+      color: #4ade80;
+      border: 1px solid #1a4a2a;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: #4ade80; }
+    .hero p {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num { font-size: 1.6rem; font-weight: 800; color: #4ade80; }
+    .hero-stat .label { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+
+    /* PRICING */
+    .pricing-section {
+      padding: 60px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #4ade80;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 48px;
+      font-size: 0.95rem;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+    }
+
+    .plan {
+      background: #0d1520;
+      border: 1px solid #1e2a38;
+      border-radius: 14px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s;
+    }
+    .plan:hover { border-color: #2a4a6a; }
+    .plan.featured {
+      border-color: #4ade80;
+      background: #0d1f14;
+      position: relative;
+    }
+    .popular-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4ade80;
+      color: #0b0f14;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .plan-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .plan.featured .plan-name { color: #4ade80; }
+    .plan-price {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: #64748b; }
+    .plan-tagline {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+    .plan-features {
+      list-style: none;
+      margin-bottom: 32px;
+      flex: 1;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 10px;
+    }
+    .plan-features li::before {
+      content: '✓';
+      color: #4ade80;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .plan-btn {
+      display: block;
+      text-align: center;
+      padding: 13px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .plan-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .plan-btn.primary {
+      background: #4ade80;
+      color: #0b0f14;
+    }
+    .plan-btn.secondary {
+      background: #1e2a38;
+      color: #e2e8f0;
+    }
+
+    /* HOW IT WORKS */
+    .how-section {
+      padding: 60px 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .step {
+      background: #0d1520;
+      border: 1px solid #1e2a38;
+      border-radius: 12px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .step-num {
+      width: 40px;
+      height: 40px;
+      background: #0f2a1a;
+      border: 1px solid #1a4a2a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #4ade80;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 0.85rem; color: #64748b; }
+
+    /* FAQ */
+    .faq-section {
+      padding: 60px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid #1e2a38;
+      padding: 20px 0;
+    }
+    .faq-item h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+    .faq-item p { font-size: 0.875rem; color: #64748b; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: #0d1f14;
+      border: 1px solid #1a4a2a;
+      border-radius: 16px;
+      padding: 48px 40px;
+      text-align: center;
+      margin: 40px 24px 80px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-banner h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+    .cta-banner p { color: #64748b; margin-bottom: 28px; }
+    .cta-banner a {
+      display: inline-block;
+      background: #4ade80;
+      color: #0b0f14;
+      padding: 13px 32px;
+      border-radius: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid #1e2a38;
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer p { font-size: 0.8rem; color: #475569; }
+    footer a { color: #475569; text-decoration: none; font-size: 0.8rem; }
+    footer a:hover { color: #94a3b8; }
+
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .nav-links { gap: 16px; }
+      .hero { padding: 60px 20px 40px; }
+      .cta-banner { padding: 36px 24px; }
+      footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">EdgeIQ <span>Play</span></a>
+    <div class="nav-links">
+      <a href="/">EdgeIQ Labs</a>
+      <a href="#pricing">Pricing</a>
+      <a href="mailto:gaetano@tryedgeiq.com" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">⚡ Powered by Pterodactyl</div>
+    <h1>Game Server Hosting<br><span>That Just Works</span></h1>
+    <p>Minecraft servers on real hardware — not oversold cloud VMs. Start playing in under 10 minutes. Cancel anytime.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">99.9%</div>
+        <div class="label">Uptime</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">&lt;10min</div>
+        <div class="label">Setup time</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">$5/mo</div>
+        <div class="label">Starting price</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">24/7</div>
+        <div class="label">Server access</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing-section" id="pricing">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, Honest Pricing</h2>
+    <p class="section-sub">No contracts. No hidden fees. Cancel anytime.</p>
+
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$5<span>/mo</span></div>
+        <div class="plan-tagline">Perfect for a small friend group</div>
+        <ul class="plan-features">
+          <li>2 GB RAM</li>
+          <li>10 GB SSD storage</li>
+          <li>Up to 5 players</li>
+          <li>Minecraft Java (Paper)</li>
+          <li>Full console access</li>
+          <li>Automatic backups</li>
+          <li>SFTP file access</li>
+        </ul>
+        <a href="mailto:gaetano@tryedgeiq.com?subject=Starter Plan — Game Server&body=Hi, I'd like to order a Starter game server ($5/mo). My preferred server name is:" class="plan-btn secondary">Get Started →</a>
+      </div>
+
+      <!-- Standard (featured) -->
+      <div class="plan featured">
+        <div class="popular-badge">Most Popular</div>
+        <div class="plan-name">Standard</div>
+        <div class="plan-price">$10<span>/mo</span></div>
+        <div class="plan-tagline">Best for most communities</div>
+        <ul class="plan-features">
+          <li>4 GB RAM</li>
+          <li>20 GB SSD storage</li>
+          <li>Up to 15 players</li>
+          <li>Minecraft Java (Paper)</li>
+          <li>Full console access</li>
+          <li>Automatic backups</li>
+          <li>SFTP file access</li>
+          <li>Plugin support</li>
+          <li>Custom server.properties</li>
+        </ul>
+        <a href="mailto:gaetano@tryedgeiq.com?subject=Standard Plan — Game Server&body=Hi, I'd like to order a Standard game server ($10/mo). My preferred server name is:" class="plan-btn primary">Get Started →</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$20<span>/mo</span></div>
+        <div class="plan-tagline">For larger communities & modpacks</div>
+        <ul class="plan-features">
+          <li>8 GB RAM</li>
+          <li>40 GB SSD storage</li>
+          <li>Up to 30 players</li>
+          <li>Minecraft Java (Paper / Forge)</li>
+          <li>Full console access</li>
+          <li>Automatic backups</li>
+          <li>SFTP file access</li>
+          <li>Modpack support</li>
+          <li>Priority support</li>
+          <li>Custom subdomain</li>
+        </ul>
+        <a href="mailto:gaetano@tryedgeiq.com?subject=Pro Plan — Game Server&body=Hi, I'd like to order a Pro game server ($20/mo). My preferred server name is:" class="plan-btn secondary">Get Started →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">Up and running in minutes</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Pick your plan</h3>
+        <p>Choose the size that fits your group. You can upgrade anytime.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>We set it up</h3>
+        <p>Your server is provisioned and ready within 10 minutes of payment.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Start playing</h3>
+        <p>You get login credentials and your server IP. Jump in and play.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title" style="margin-bottom:32px;">Common questions</h2>
+
+    <div class="faq-item">
+      <h3>What version of Minecraft do you support?</h3>
+      <p>We support Minecraft Java Edition (Paper) on all plans. Forge modpack support is available on the Pro plan.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do I manage my server?</h3>
+      <p>You get full access to a web-based control panel where you can start/stop, access the console, manage files, and install plugins — no technical knowledge required.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I upgrade my plan later?</h3>
+      <p>Yes. You can upgrade at any time and we'll migrate your world data with zero downtime.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is there a contract or commitment?</h3>
+      <p>No contracts. Pay month-to-month and cancel anytime with no penalties.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Where is the server located?</h3>
+      <p>Our servers are located in the US (East Coast). Low latency for North American players.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do I pay?</h3>
+      <p>We accept all major credit/debit cards via Stripe. Your card is charged monthly on your billing date.</p>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <h2>Ready to start your server?</h2>
+    <p>Email us and your server will be live within 10 minutes.</p>
+    <a href="mailto:gaetano@tryedgeiq.com?subject=New Game Server Order&body=Hi, I'd like to order a game server. My plan of choice is:">Order Your Server →</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 EdgeIQ Labs · Game Server Hosting</p>
+    <div style="display:flex;gap:20px;">
+      <a href="/">EdgeIQ Labs</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="mailto:gaetano@tryedgeiq.com">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>
