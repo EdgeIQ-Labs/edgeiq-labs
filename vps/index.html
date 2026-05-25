@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/vps/" />
-  <title>VPS Hosting — EdgeIQ Cloud</title>
-  <meta name="description" content="Affordable Linux VPS hosting on dedicated Dell PowerEdge hardware. Full root access, SSD storage, instant setup. From $4/mo." />
+  <title>Linux Container Hosting — EdgeIQ Cloud</title>
+  <meta name="description" content="Affordable Linux container hosting on dedicated Dell PowerEdge hardware. Full root SSH access, ZFS storage, personal setup. From $4/mo." />
   <meta name="theme-color" content="#0b0f14" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="EdgeIQ Labs" />
   <meta property="og:url" content="https://edgeiqlabs.com/vps/" />
-  <meta property="og:title" content="VPS Hosting — EdgeIQ Cloud" />
-  <meta property="og:description" content="Affordable Linux VPS hosting on dedicated Dell PowerEdge hardware. Full root access, SSD storage, instant setup. From $4/mo." />
+  <meta property="og:title" content="Linux Container Hosting — EdgeIQ Cloud" />
+  <meta property="og:description" content="Affordable Linux container hosting on dedicated Dell PowerEdge hardware. Full root SSH access, ZFS storage, personal setup. From $4/mo." />
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
@@ -58,7 +58,7 @@
       max-width: 820px;
       margin: 0 auto;
     }
-    .live-badge {
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -71,26 +71,30 @@
       font-weight: 600;
       margin-bottom: 22px;
     }
-    .live-dot {
-      width: 7px; height: 7px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.85); }
-    }
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-size: clamp(2rem, 5vw, 3.2rem);
       font-weight: 800;
       line-height: 1.12;
       letter-spacing: -1.5px;
       margin-bottom: 18px;
     }
     .hero h1 span { color: var(--accent); }
-    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 560px; margin: 0 auto 14px; }
+    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 580px; margin: 0 auto 14px; }
     .hero-sub { font-size: 0.85rem !important; color: var(--accent) !important; font-weight: 600; margin-bottom: 36px !important; }
+
+    /* HONEST NOTICE */
+    .honest-box {
+      background: #0d1a2a;
+      border: 1px solid #1e3a5a;
+      border-radius: 12px;
+      padding: 20px 24px;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .honest-box strong { color: #e2e8f0; }
 
     /* TRUST BAR */
     .trust-bar {
@@ -106,29 +110,6 @@
     }
     .trust-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #94a3b8; }
     .trust-item strong { color: #e2e8f0; font-weight: 700; }
-
-    /* DISTROS MARQUEE */
-    .distro-section { padding: 36px 0 28px; overflow: hidden; border-bottom: 1px solid #1e2a38; }
-    .distro-label { text-align: center; font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; }
-    .marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
-    .marquee-track:hover { animation-play-state: paused; }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .distro-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #0d1520;
-      border: 1px solid #1e2a38;
-      border-radius: 8px;
-      padding: 8px 16px;
-      margin: 0 8px;
-      font-size: 0.85rem;
-      color: #94a3b8;
-      white-space: nowrap;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .distro-chip:hover { border-color: var(--accent); color: #e2e8f0; }
-    .distro-chip .icon { font-size: 1.1rem; }
 
     /* PRICING */
     .pricing-section { padding: 60px 24px 40px; max-width: 1100px; margin: 0 auto; }
@@ -189,28 +170,6 @@
     .feature-icon { font-size: 1.6rem; margin-bottom: 12px; }
     .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
     .feature-card p { font-size: 0.85rem; color: #64748b; }
-
-    /* COMPARISON TABLE */
-    .compare-section { padding: 60px 24px; max-width: 960px; margin: 0 auto; }
-    .compare-wrap { overflow-x: auto; }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    .compare-table th {
-      padding: 14px 20px; text-align: center;
-      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px;
-      border-bottom: 2px solid #1e2a38;
-      color: #94a3b8;
-    }
-    .compare-table th.highlight { color: var(--accent); background: var(--accent-mid); border-radius: 8px 8px 0 0; }
-    .compare-table th:first-child { text-align: left; }
-    .compare-table td { padding: 12px 20px; text-align: center; border-bottom: 1px solid #1a2535; color: #94a3b8; }
-    .compare-table td:first-child { text-align: left; color: #e2e8f0; font-weight: 500; }
-    .compare-table td.highlight { background: var(--accent-mid); color: #e2e8f0; }
-    .compare-table tr:last-child td { border-bottom: none; }
-    .compare-table tr:hover td { background: #0d1520; }
-    .compare-table tr:hover td.highlight { background: #0c1e1c; }
-    .check { color: var(--accent); font-weight: 700; }
-    .cross { color: #ef4444; }
-    .neutral { color: #64748b; }
 
     /* HOW IT WORKS */
     .how-section { padding: 60px 24px; max-width: 900px; margin: 0 auto; }
@@ -275,77 +234,46 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="live-badge">
-      <span class="live-dot"></span>
-      <span>VPS Hosting — Now Available</span>
-    </div>
-    <h1>Linux VPS Hosting<br><span>Built on Real Iron</span></h1>
-    <p>Full root access, SSD storage, and dedicated resources — running on our own Dell PowerEdge hardware. Not oversold cloud VMs.</p>
-    <p class="hero-sub">⚡ Instant provisioning &nbsp;·&nbsp; Full root access &nbsp;·&nbsp; Cancel anytime</p>
+    <div class="hero-badge">☁️ EdgeIQ Cloud — Now Available</div>
+    <h1>Linux Container Hosting<br><span>On Real Hardware</span></h1>
+    <p>Affordable Linux containers with full root SSH access, running on our own dedicated Dell PowerEdge hardware. Personal setup, honest pricing.</p>
+    <p class="hero-sub">🐧 Ubuntu 24.04 LTS &nbsp;·&nbsp; Full root access &nbsp;·&nbsp; ZFS storage &nbsp;·&nbsp; Personal support</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="#pricing"
          style="display:inline-block;background:#2dd4bf;color:#0b0f14;padding:13px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
         See Plans →
       </a>
-      <a href="#features"
+      <a href="#honest"
          style="display:inline-block;background:#1a2535;color:#e2e8f0;padding:13px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
-        What's Included
+        What You're Getting
       </a>
     </div>
   </section>
 
+  <!-- HONEST NOTICE -->
+  <div class="honest-box" id="honest">
+    <strong>📋 What you're actually getting (read this first)</strong><br><br>
+    These are <strong>LXC Linux containers</strong>, not full virtual machines. They share the host kernel, which means they're lightweight and fast, but they differ from a traditional VM — you can't load custom kernel modules, and Docker requires privileged mode. If you need a full KVM virtual machine, <a href="mailto:support@edgeiqlabs.com" style="color:#2dd4bf;">contact us</a> to discuss options.<br><br>
+    <strong>Networking:</strong> We currently operate from a single public IP address. Your container gets a <strong>dedicated port range</strong> (SSH + app ports) forwarded to it — not a dedicated IP. If your use case requires a dedicated public IP, email us and we'll work something out.<br><br>
+    <strong>Setup time:</strong> Provisioning is done personally by us — typically within a few hours of payment during business hours.<br><br>
+    <strong>OS:</strong> Ubuntu 24.04 LTS is available now. Debian 12 coming soon. Other distros — ask us.
+  </div>
+
   <!-- TRUST BAR -->
   <div class="trust-bar">
     <div class="trust-item"><strong>$4/mo</strong> starting price</div>
-    <div class="trust-item"><strong>Full</strong> root access</div>
-    <div class="trust-item"><strong>SSD</strong> storage</div>
-    <div class="trust-item"><strong>99.9%</strong> uptime</div>
-    <div class="trust-item"><strong>US East</strong> location</div>
-    <div class="trust-item"><strong>Real hardware</strong>, not cloud VMs</div>
+    <div class="trust-item"><strong>Full</strong> root SSH access</div>
+    <div class="trust-item"><strong>ZFS</strong> storage</div>
+    <div class="trust-item"><strong>Dell PowerEdge</strong> hardware</div>
+    <div class="trust-item"><strong>Personal</strong> support</div>
+    <div class="trust-item"><strong>No contract</strong> · cancel anytime</div>
   </div>
-
-  <!-- DISTROS MARQUEE -->
-  <section class="distro-section">
-    <div class="distro-label">Supported OS &amp; Use Cases</div>
-    <div class="marquee-track">
-      <!-- Set 1 -->
-      <div class="distro-chip"><span class="icon">🐧</span> Ubuntu 24.04 LTS</div>
-      <div class="distro-chip"><span class="icon">🌀</span> Debian 12</div>
-      <div class="distro-chip"><span class="icon">🎩</span> AlmaLinux 9</div>
-      <div class="distro-chip"><span class="icon">🗿</span> Rocky Linux 9</div>
-      <div class="distro-chip"><span class="icon">🌐</span> Web Hosting</div>
-      <div class="distro-chip"><span class="icon">🟩</span> Node.js Apps</div>
-      <div class="distro-chip"><span class="icon">🐍</span> Python Apps</div>
-      <div class="distro-chip"><span class="icon">🐳</span> Docker</div>
-      <div class="distro-chip"><span class="icon">🔷</span> Nginx / Apache</div>
-      <div class="distro-chip"><span class="icon">🗄️</span> MySQL / MariaDB</div>
-      <div class="distro-chip"><span class="icon">📦</span> Redis</div>
-      <div class="distro-chip"><span class="icon">🤖</span> Discord Bots</div>
-      <div class="distro-chip"><span class="icon">🔒</span> VPN Server</div>
-      <div class="distro-chip"><span class="icon">📊</span> Monitoring</div>
-      <!-- Set 2 (duplicate for seamless loop) -->
-      <div class="distro-chip"><span class="icon">🐧</span> Ubuntu 24.04 LTS</div>
-      <div class="distro-chip"><span class="icon">🌀</span> Debian 12</div>
-      <div class="distro-chip"><span class="icon">🎩</span> AlmaLinux 9</div>
-      <div class="distro-chip"><span class="icon">🗿</span> Rocky Linux 9</div>
-      <div class="distro-chip"><span class="icon">🌐</span> Web Hosting</div>
-      <div class="distro-chip"><span class="icon">🟩</span> Node.js Apps</div>
-      <div class="distro-chip"><span class="icon">🐍</span> Python Apps</div>
-      <div class="distro-chip"><span class="icon">🐳</span> Docker</div>
-      <div class="distro-chip"><span class="icon">🔷</span> Nginx / Apache</div>
-      <div class="distro-chip"><span class="icon">🗄️</span> MySQL / MariaDB</div>
-      <div class="distro-chip"><span class="icon">📦</span> Redis</div>
-      <div class="distro-chip"><span class="icon">🤖</span> Discord Bots</div>
-      <div class="distro-chip"><span class="icon">🔒</span> VPN Server</div>
-      <div class="distro-chip"><span class="icon">📊</span> Monitoring</div>
-    </div>
-  </section>
 
   <!-- PRICING -->
   <section class="pricing-section" id="pricing">
     <div class="section-label">Pricing</div>
     <h2 class="section-title">Simple, Honest Pricing</h2>
-    <p class="section-sub">No contracts. No hidden fees. Cancel anytime. All plans include full root access and SSD storage.</p>
+    <p class="section-sub">No contracts. No hidden fees. Cancel anytime. All plans include full root SSH access and ZFS storage.</p>
 
     <div class="pricing-grid">
 
@@ -353,15 +281,15 @@
       <div class="plan">
         <div class="plan-name">Nano</div>
         <div class="plan-price">$4<span>/mo</span></div>
-        <div class="plan-tagline">Perfect for small projects &amp; testing</div>
+        <div class="plan-tagline">Small projects, scripts &amp; testing</div>
         <ul class="plan-features">
           <li>1 vCPU</li>
           <li>512 MB RAM</li>
-          <li>10 GB SSD storage</li>
+          <li>10 GB ZFS storage</li>
           <li>Full root SSH access</li>
-          <li>Ubuntu / Debian</li>
-          <li>1 IPv4 address</li>
-          <li>1 TB bandwidth</li>
+          <li>Ubuntu 24.04 LTS</li>
+          <li>Dedicated port range</li>
+          <li>Personal email support</li>
         </ul>
         <a href="https://buy.stripe.com/6oU6oJcufeJD5s018c7wA3N" target="_blank" rel="noopener" class="plan-btn secondary">Order Now →</a>
       </div>
@@ -370,15 +298,15 @@
       <div class="plan">
         <div class="plan-name">Micro</div>
         <div class="plan-price">$7<span>/mo</span></div>
-        <div class="plan-tagline">Great for bots, scripts &amp; small apps</div>
+        <div class="plan-tagline">Bots, small apps &amp; dev environments</div>
         <ul class="plan-features">
           <li>1 vCPU</li>
           <li>1 GB RAM</li>
-          <li>20 GB SSD storage</li>
+          <li>20 GB ZFS storage</li>
           <li>Full root SSH access</li>
-          <li>Ubuntu / Debian / AlmaLinux</li>
-          <li>1 IPv4 address</li>
-          <li>2 TB bandwidth</li>
+          <li>Ubuntu 24.04 LTS</li>
+          <li>Dedicated port range</li>
+          <li>Personal email support</li>
         </ul>
         <a href="https://buy.stripe.com/28E14p51NfNH3jScQU7wA3O" target="_blank" rel="noopener" class="plan-btn secondary">Order Now →</a>
       </div>
@@ -388,16 +316,15 @@
         <div class="popular-badge">Most Popular</div>
         <div class="plan-name">Basic</div>
         <div class="plan-price">$12<span>/mo</span></div>
-        <div class="plan-tagline">Best for web apps &amp; production sites</div>
+        <div class="plan-tagline">Web apps, Node.js &amp; production workloads</div>
         <ul class="plan-features">
           <li>2 vCPU</li>
           <li>2 GB RAM</li>
-          <li>40 GB SSD storage</li>
+          <li>40 GB ZFS storage</li>
           <li>Full root SSH access</li>
-          <li>Any supported Linux distro</li>
-          <li>1 IPv4 address</li>
-          <li>3 TB bandwidth</li>
-          <li>Priority support</li>
+          <li>Ubuntu 24.04 LTS</li>
+          <li>Dedicated port range</li>
+          <li>Priority email support</li>
         </ul>
         <a href="https://buy.stripe.com/3cIaEZdyj5936w46sw7wA3P" target="_blank" rel="noopener" class="plan-btn primary">Order Now →</a>
       </div>
@@ -406,163 +333,83 @@
       <div class="plan">
         <div class="plan-name">Standard</div>
         <div class="plan-price">$22<span>/mo</span></div>
-        <div class="plan-tagline">For larger workloads &amp; high traffic</div>
+        <div class="plan-tagline">Larger workloads &amp; resource-heavy apps</div>
         <ul class="plan-features">
           <li>4 vCPU</li>
           <li>4 GB RAM</li>
-          <li>80 GB SSD storage</li>
+          <li>80 GB ZFS storage</li>
           <li>Full root SSH access</li>
-          <li>Any supported Linux distro</li>
-          <li>1 IPv4 address</li>
-          <li>5 TB bandwidth</li>
-          <li>Priority support</li>
-          <li>Snapshot backups</li>
+          <li>Ubuntu 24.04 LTS</li>
+          <li>Dedicated port range</li>
+          <li>Priority email support</li>
         </ul>
         <a href="https://buy.stripe.com/9B6fZj0LxdFz07G7wA7wA3Q" target="_blank" rel="noopener" class="plan-btn secondary">Order Now →</a>
       </div>
 
     </div>
 
-    <p style="text-align:center;color:#475569;font-size:0.82rem;margin-top:24px;">Need more resources? <a href="mailto:support@edgeiqlabs.com" style="color:#2dd4bf;">Contact us</a> for custom plans.</p>
+    <p style="text-align:center;color:#475569;font-size:0.82rem;margin-top:24px;">Need more resources or a dedicated IP? <a href="mailto:support@edgeiqlabs.com" style="color:#2dd4bf;">Contact us</a> to discuss.</p>
   </section>
 
   <!-- FEATURES -->
   <section class="features-section" id="features">
-    <div class="section-label">Features</div>
-    <h2 class="section-title">Everything you need</h2>
-    <p class="section-sub">No artificial limits. Full control from day one.</p>
+    <div class="section-label">What's Included</div>
+    <h2 class="section-title">What you actually get</h2>
+    <p class="section-sub">No hidden limits. No surprise charges.</p>
 
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">🖥️</div>
-        <h3>Dedicated Resources</h3>
-        <p>Your RAM and CPU are yours — not shared with dozens of other customers on the same VM.</p>
-      </div>
-      <div class="feature-card">
         <div class="feature-icon">🔑</div>
-        <h3>Full Root Access</h3>
-        <p>SSH in as root. Install anything, configure anything. No restrictions on what you can run.</p>
+        <h3>Full Root SSH Access</h3>
+        <p>SSH in as root from day one. Install anything, configure anything. Your container, your rules.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>SSD Storage</h3>
-        <p>All plans run on fast SSD storage with ZFS for data integrity. No spinning disks.</p>
+        <div class="feature-icon">💾</div>
+        <h3>ZFS Storage</h3>
+        <p>All storage runs on ZFS on our Tank pool — data integrity built in. Fast, reliable, and checksummed.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🐧</div>
-        <h3>Your Choice of Linux</h3>
-        <p>Ubuntu 24.04, Debian 12, AlmaLinux 9, Rocky Linux — or ask for another distro.</p>
+        <h3>Ubuntu 24.04 LTS</h3>
+        <p>Start with the latest Ubuntu LTS. More distros coming. Have a specific request? Just ask.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🏗️</div>
-        <h3>Real Hardware</h3>
-        <p>Hosted on Dell PowerEdge servers — enterprise-grade hardware, not oversold public cloud.</p>
+        <h3>Dell PowerEdge Hardware</h3>
+        <p>Hosted on a Dell PowerEdge R720 — enterprise-grade hardware we own and manage ourselves.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔌</div>
+        <h3>Dedicated Port Range</h3>
+        <p>You get a set of ports forwarded to your container for SSH and app traffic. Not a shared proxy.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📬</div>
         <h3>Personal Support</h3>
-        <p>Real humans answer your questions. Email or Discord — no ticket queue black hole.</p>
+        <p>Email or Discord. Real answers from the person who set up your container — not a ticket system.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- COMPARISON TABLE -->
-  <section class="compare-section">
-    <div class="section-label">Comparison</div>
-    <h2 class="section-title">How we stack up</h2>
-    <p class="section-sub" style="margin-bottom:32px;">Real hardware and personal service — without the enterprise price tag.</p>
-    <div class="compare-wrap">
-      <table class="compare-table">
-        <thead>
-          <tr>
-            <th style="width:200px;text-align:left;"></th>
-            <th class="highlight">EdgeIQ Cloud</th>
-            <th>DigitalOcean</th>
-            <th>Linode</th>
-            <th>AWS Lightsail</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Starting price (1GB RAM)</td>
-            <td class="highlight" style="color:#2dd4bf;font-weight:700;">$7/mo</td>
-            <td>$12/mo</td>
-            <td>$12/mo</td>
-            <td>$10/mo</td>
-          </tr>
-          <tr>
-            <td>Full root access</td>
-            <td class="highlight"><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-          </tr>
-          <tr>
-            <td>Dedicated resources</td>
-            <td class="highlight"><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="neutral">Shared CPU</span></td>
-          </tr>
-          <tr>
-            <td>Real hardware (not cloud VM)</td>
-            <td class="highlight"><span class="check">✓ Dell PowerEdge</span></td>
-            <td><span class="cross">✗ Public cloud</span></td>
-            <td><span class="cross">✗ Public cloud</span></td>
-            <td><span class="cross">✗ Public cloud</span></td>
-          </tr>
-          <tr>
-            <td>Personal support</td>
-            <td class="highlight"><span class="check">✓ Direct</span></td>
-            <td><span class="neutral">Ticket</span></td>
-            <td><span class="neutral">Ticket</span></td>
-            <td><span class="neutral">Ticket / paid</span></td>
-          </tr>
-          <tr>
-            <td>No contract</td>
-            <td class="highlight"><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-          </tr>
-          <tr>
-            <td>SSD storage</td>
-            <td class="highlight"><span class="check">✓ ZFS SSD</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-            <td><span class="check">✓</span></td>
-          </tr>
-          <tr>
-            <td>Uptime</td>
-            <td class="highlight"><span class="check">99.9%</span></td>
-            <td><span class="check">99.99%</span></td>
-            <td><span class="check">99.99%</span></td>
-            <td><span class="check">99.9%</span></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </section>
 
   <!-- HOW IT WORKS -->
   <section class="how-section">
     <div class="section-label">Process</div>
-    <h2 class="section-title">Up and running fast</h2>
+    <h2 class="section-title">How it works</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
         <h3>Pick your plan</h3>
-        <p>Choose the resources you need. Email us your OS preference and we'll get started.</p>
+        <p>Choose the resources you need and complete checkout. You'll get a confirmation email.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>We provision it</h3>
-        <p>Your VPS is set up on our hardware and ready in under 30 minutes.</p>
+        <h3>We set it up</h3>
+        <p>We provision your container personally — typically within a few hours during business hours.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>SSH in &amp; go</h3>
-        <p>You get your IP address, root credentials, and full control. Build whatever you want.</p>
+        <p>We email you your SSH details and port assignments. Log in as root and build whatever you need.</p>
       </div>
     </div>
   </section>
@@ -572,46 +419,46 @@
     <div class="section-label">FAQ</div>
     <h2 class="section-title" style="margin-bottom:32px;">Common questions</h2>
     <div class="faq-item">
+      <h3>Is this a VPS or a container?</h3>
+      <p>It's an LXC container running on Proxmox. LXC shares the host kernel, which makes it lighter than a full VM but means you can't load custom kernel modules. For most web apps, bots, dev environments, and light workloads it works great. If you need full KVM virtualization, email us.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do I get a dedicated public IP?</h3>
+      <p>Not currently — we operate from a single public IP. Your container gets a dedicated range of ports forwarded to it for SSH and your apps. If your project specifically requires a dedicated IP, reach out and we'll discuss options.</p>
+    </div>
+    <div class="faq-item">
       <h3>What OS can I run?</h3>
-      <p>We support Ubuntu 24.04 LTS, Debian 12, AlmaLinux 9, and Rocky Linux 9 out of the box. Need something else? Just ask — if it runs on LXC or KVM, we can likely accommodate it.</p>
+      <p>Ubuntu 24.04 LTS is available now. Debian 12 is coming soon. If you need something else, email us — we'll do our best to accommodate.</p>
     </div>
     <div class="faq-item">
-      <h3>Do I get a real public IP address?</h3>
-      <p>Yes. Every VPS gets a dedicated public IP address with SSH access. You can run web servers, game servers, VPNs, or anything else that needs inbound connections.</p>
+      <h3>Can I run Docker?</h3>
+      <p>Yes, with privileged mode enabled on the container. Let us know when you order and we'll configure it. Be aware that privileged containers have less isolation from the host.</p>
     </div>
     <div class="faq-item">
-      <h3>What kind of hardware is this running on?</h3>
-      <p>Our VPS infrastructure runs on Dell PowerEdge servers with ZFS SSD storage. These are the same machines powering our game hosting — enterprise hardware, not cheap cloud VMs.</p>
+      <h3>How long does setup take?</h3>
+      <p>Provisioning is done manually by us — typically within a few hours of payment during business hours. We'll email you once it's ready.</p>
     </div>
     <div class="faq-item">
-      <h3>Can I install Docker or run a web server?</h3>
-      <p>Yes to both. Full root access means you can install and run anything — Docker, Nginx, Apache, Node.js, Python, databases, or anything else you need.</p>
+      <h3>Is there a contract?</h3>
+      <p>None. Month-to-month. Cancel anytime by emailing us.</p>
     </div>
     <div class="faq-item">
-      <h3>How do I order?</h3>
-      <p>Click any plan button and send us an email with your plan, preferred OS, and any special requirements. We'll have your VPS ready within 30 minutes during business hours.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Is there a contract or minimum commitment?</h3>
-      <p>None. Month-to-month billing. Cancel anytime, no questions asked.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Where are the servers located?</h3>
-      <p>US East Coast. Same data center as our game servers — low latency for North American users.</p>
+      <h3>Where are the servers?</h3>
+      <p>Our hardware is located in the northeastern United States on a residential fiber connection. This is a small, owner-operated service — not a datacenter.</p>
     </div>
   </section>
 
   <!-- CTA BANNER -->
   <div class="cta-banner">
-    <h2>Ready to spin up your VPS?</h2>
-    <p>Real hardware. Full root access. Personal support. Starting at $4/mo.</p>
+    <h2>Ready to spin one up?</h2>
+    <p>Personal setup, real hardware, honest pricing. Starting at $4/mo.</p>
     <a href="https://buy.stripe.com/3cIaEZdyj5936w46sw7wA3P" target="_blank" rel="noopener">Get Started →</a>
-    <p class="cta-note">No contract · Cancel anytime · Real Dell PowerEdge hardware</p>
+    <p class="cta-note">No contract · Cancel anytime · Questions? <a href="mailto:support@edgeiqlabs.com" style="color:#2dd4bf;">support@edgeiqlabs.com</a></p>
   </div>
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 EdgeIQ Labs · VPS Hosting</p>
+    <p>© 2026 EdgeIQ Labs · Linux Container Hosting</p>
     <div style="display:flex;gap:20px;flex-wrap:wrap;">
       <a href="/">EdgeIQ Labs</a>
       <a href="/play/">Game Servers</a>
