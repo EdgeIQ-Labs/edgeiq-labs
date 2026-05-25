@@ -6,13 +6,13 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/vps/" />
   <title>Linux Container Hosting — EdgeIQ Cloud</title>
-  <meta name="description" content="Affordable Linux container hosting on dedicated Dell PowerEdge hardware. Full root SSH access, ZFS storage, personal setup. From $4/mo." />
+  <meta name="description" content="Affordable Linux container hosting on dedicated Dell PowerEdge hardware. Full root SSH access, ZFS storage, auto-provisioned. From $4/mo." />
   <meta name="theme-color" content="#0b0f14" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="EdgeIQ Labs" />
   <meta property="og:url" content="https://edgeiqlabs.com/vps/" />
   <meta property="og:title" content="Linux Container Hosting — EdgeIQ Cloud" />
-  <meta property="og:description" content="Affordable Linux container hosting on dedicated Dell PowerEdge hardware. Full root SSH access, ZFS storage, personal setup. From $4/mo." />
+  <meta property="og:description" content="Affordable Linux container hosting on dedicated Dell PowerEdge hardware. Full root SSH access, ZFS storage, auto-provisioned. From $4/mo." />
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
@@ -236,7 +236,7 @@
   <section class="hero">
     <div class="hero-badge">☁️ EdgeIQ Cloud — Now Available</div>
     <h1>Linux Container Hosting<br><span>On Real Hardware</span></h1>
-    <p>Affordable Linux containers with full root SSH access, running on our own dedicated Dell PowerEdge hardware. Personal setup, honest pricing.</p>
+    <p>Affordable Linux containers with full root SSH access, running on our own dedicated Dell PowerEdge hardware. Pick your OS at checkout — auto-provisioned instantly.</p>
     <p class="hero-sub">🐧 Ubuntu · Debian · Rocky Linux · AlmaLinux &nbsp;·&nbsp; Full root access &nbsp;·&nbsp; ZFS storage &nbsp;·&nbsp; Personal support</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="#pricing"
@@ -255,8 +255,8 @@
     <strong>📋 What you're actually getting (read this first)</strong><br><br>
     These are <strong>LXC Linux containers</strong>, not full virtual machines. They share the host kernel, which means they're lightweight and fast, but they differ from a traditional VM — you can't load custom kernel modules, and Docker requires privileged mode. If you need a full KVM virtual machine, <a href="mailto:support@edgeiqlabs.com" style="color:#2dd4bf;">contact us</a> to discuss options.<br><br>
     <strong>Networking:</strong> We currently operate from a single public IP address. Your container gets a <strong>dedicated port range</strong> (SSH + app ports) forwarded to it — not a dedicated IP. If your use case requires a dedicated public IP, email us and we'll work something out.<br><br>
-    <strong>Setup time:</strong> Provisioning is done personally by us — typically within a few hours of payment during business hours.<br><br>
-    <strong>OS:</strong> Ubuntu 24.04 LTS, Debian 12, Rocky Linux 9, and AlmaLinux 9 are all available. Just let us know which one you want when ordering.
+    <strong>Setup time:</strong> Provisioning is fully automated — your container is created and SSH credentials emailed to you within minutes of payment.<br><br>
+    <strong>OS:</strong> Ubuntu 24.04 LTS, Debian 12, Rocky Linux 9, and AlmaLinux 9 are all available. Select your preferred distro from the dropdown at checkout.
   </div>
 
   <!-- TRUST BAR -->
@@ -427,18 +427,18 @@
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <h3>Pick your plan</h3>
-        <p>Choose the resources you need and complete checkout. You'll get a confirmation email.</p>
+        <h3>Pick your plan &amp; OS</h3>
+        <p>Choose your resources and select your Linux distro from the dropdown at checkout. Ubuntu, Debian, Rocky Linux, or AlmaLinux.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>We set it up</h3>
-        <p>We provision your container personally — typically within a few hours during business hours.</p>
+        <h3>Auto-provisioned instantly</h3>
+        <p>The moment payment goes through, your LXC container is created on our Proxmox server and your dedicated SSH port and app ports are configured automatically.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>SSH in &amp; go</h3>
-        <p>We email you your SSH details and port assignments. Log in as root and build whatever you need.</p>
+        <p>Your SSH credentials and port assignments land in your inbox within minutes. Log in as root and build whatever you need.</p>
       </div>
     </div>
   </section>
@@ -465,7 +465,7 @@
     </div>
     <div class="faq-item">
       <h3>How long does setup take?</h3>
-      <p>Provisioning is done manually by us — typically within a few hours of payment during business hours. We'll email you once it's ready.</p>
+      <p>Provisioning is fully automated — your container is created and SSH credentials emailed to you within minutes of payment. No waiting, no manual steps.</p>
     </div>
     <div class="faq-item">
       <h3>Is there a contract?</h3>
@@ -480,7 +480,7 @@
   <!-- CTA BANNER -->
   <div class="cta-banner">
     <h2>Ready to spin one up?</h2>
-    <p>Personal setup, real hardware, honest pricing. Starting at $4/mo.</p>
+    <p>Real hardware, auto-provisioned, honest pricing. Pick your OS at checkout. Starting at $4/mo.</p>
     <a href="https://buy.stripe.com/3cIaEZdyj5936w46sw7wA3P" target="_blank" rel="noopener">Get Started →</a>
     <p class="cta-note">No contract · Cancel anytime · Questions? <a href="mailto:support@edgeiqlabs.com" style="color:#2dd4bf;">support@edgeiqlabs.com</a></p>
   </div>
