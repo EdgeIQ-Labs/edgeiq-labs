@@ -19,21 +19,54 @@ const {
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
+// ─── Plans: Stripe price ID → resource limits ────────────────────────────────
 const PLANS = {
-  'price_1TadEJRC1NZ20yDTe3ur18Pk': { type:'game', name:'Play Starter',  memory:2048, disk:10240, cpu:100, nest:1, egg:1,  portRange:'25566-25600' },
-  'price_1TaKiBRC1NZ20yDTRpsosVTW': { type:'game', name:'Play Starter',  memory:2048, disk:10240, cpu:100, nest:1, egg:1,  portRange:'25566-25600' },
-  'price_1TaKiBRC1NZ20yDTWpWHqkdB': { type:'game', name:'Play Standard', memory:4096, disk:20480, cpu:200, nest:1, egg:1,  portRange:'25566-25600' },
-  'price_1TaKiBRC1NZ20yDTzX0wj9FM': { type:'game', name:'Play Pro',      memory:8192, disk:40960, cpu:300, nest:1, egg:1,  portRange:'25566-25600' },
-  'price_1Taf5ARC1NZ20yDT8yM3nL1i': { type:'bot',  name:'Bots Basic',    memory:512,  disk:2048,  cpu:50,  nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf51RC1NZ20yDTAubMcjxY': { type:'bot',  name:'Bots Basic',    memory:512,  disk:2048,  cpu:50,  nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf5MRC1NZ20yDTg3gflGPs': { type:'bot',  name:'Bots Standard', memory:1024, disk:5120,  cpu:100, nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf5GRC1NZ20yDTL9GZToCI': { type:'bot',  name:'Bots Standard', memory:1024, disk:5120,  cpu:100, nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf52RC1NZ20yDTOJL4b8M5': { type:'bot',  name:'Bots Standard', memory:1024, disk:5120,  cpu:100, nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf5MRC1NZ20yDTnnrm1gNs': { type:'bot',  name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf5GRC1NZ20yDTmWZBrxng': { type:'bot',  name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
-  'price_1Taf52RC1NZ20yDTfQ2SfrdW': { type:'bot',  name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
+  // Game plans  (egg/nest are defaults; overridden by game dropdown selection)
+  'price_1TadEJRC1NZ20yDTe3ur18Pk': { type:'game', name:'Play Starter',  memory:2048, disk:10240, cpu:100, nest:1, egg:1, portRange:'25566-25600' },
+  'price_1TaKiBRC1NZ20yDTRpsosVTW': { type:'game', name:'Play Starter',  memory:2048, disk:10240, cpu:100, nest:1, egg:1, portRange:'25566-25600' },
+  'price_1TaKiBRC1NZ20yDTWpWHqkdB': { type:'game', name:'Play Standard', memory:4096, disk:20480, cpu:200, nest:1, egg:1, portRange:'25566-25600' },
+  'price_1TaKiBRC1NZ20yDTzX0wj9FM': { type:'game', name:'Play Pro',      memory:8192, disk:40960, cpu:300, nest:1, egg:1, portRange:'25566-25600' },
+  // Bot plans
+  'price_1Taf5ARC1NZ20yDT8yM3nL1i': { type:'bot', name:'Bots Basic',    memory:512,  disk:2048,  cpu:50,  nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf51RC1NZ20yDTAubMcjxY': { type:'bot', name:'Bots Basic',    memory:512,  disk:2048,  cpu:50,  nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf5MRC1NZ20yDTg3gflGPs': { type:'bot', name:'Bots Standard', memory:1024, disk:5120,  cpu:100, nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf5GRC1NZ20yDTL9GZToCI': { type:'bot', name:'Bots Standard', memory:1024, disk:5120,  cpu:100, nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf52RC1NZ20yDTOJL4b8M5': { type:'bot', name:'Bots Standard', memory:1024, disk:5120,  cpu:100, nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf5MRC1NZ20yDTnnrm1gNs': { type:'bot', name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf5GRC1NZ20yDTmWZBrxng': { type:'bot', name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
+  'price_1Taf52RC1NZ20yDTfQ2SfrdW': { type:'bot', name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
 };
 
+// ─── Game Map: dropdown value → Pterodactyl egg/nest ─────────────────────────
+// Values must match the Stripe payment link custom_fields dropdown option values
+const GAME_MAP = {
+  papermcjava:       { egg: 1,  nest: 1, display: 'Paper Minecraft'       },
+  vanillamc:         { egg: 5,  nest: 1, display: 'Vanilla Minecraft'      },
+  minecraftforge:    { egg: 3,  nest: 1, display: 'Minecraft Forge'        },
+  minecraftbedrock:  { egg: 22, nest: 1, display: 'Minecraft Bedrock'      },
+  garrysmod:         { egg: 6,  nest: 2, display: "Garry's Mod"            },
+  ark:               { egg: 8,  nest: 2, display: 'ARK: Survival Evolved'  },
+  csgo:              { egg: 10, nest: 2, display: 'CS:GO'                  },
+  tf2:               { egg: 11, nest: 2, display: 'Team Fortress 2'        },
+  rust:              { egg: 14, nest: 4, display: 'Rust'                   },
+  valheim:           { egg: 15, nest: 5, display: 'Valheim'                },
+  palworld:          { egg: 16, nest: 5, display: 'Palworld'               },
+  sevendaystodie:    { egg: 17, nest: 5, display: '7 Days to Die'          },
+  eco:               { egg: 18, nest: 5, display: 'Eco'                    },
+  spaceengineers:    { egg: 19, nest: 5, display: 'Space Engineers'        },
+  conanexiles:       { egg: 20, nest: 5, display: 'Conan Exiles'           },
+  terraria:          { egg: 21, nest: 5, display: 'Terraria'               },
+  dayz:              { egg: 25, nest: 5, display: 'DayZ'                   },
+  dst:               { egg: 26, nest: 5, display: "Don't Starve Together"  },
+  projectzomboid:    { egg: 27, nest: 5, display: 'Project Zomboid'        },
+  satisfactory:      { egg: 28, nest: 5, display: 'Satisfactory'           },
+  sonsoftheforest:   { egg: 29, nest: 5, display: 'Sons of the Forest'     },
+  squad:             { egg: 30, nest: 5, display: 'Squad'                  },
+  vrising:           { egg: 31, nest: 5, display: 'V Rising'               },
+  fivem:             { egg: 32, nest: 7, display: 'FiveM'                  },
+};
+
+// ─── Routes ──────────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status:'ok', ts:new Date().toISOString() }));
 
 app.post('/stripe', express.raw({ type:'application/json' }), async (req, res) => {
@@ -53,6 +86,7 @@ app.post('/stripe', express.raw({ type:'application/json' }), async (req, res) =
   }
 });
 
+// ─── Checkout handler ─────────────────────────────────────────────────────────
 async function handleCheckout(session) {
   const email     = session.customer_details?.email;
   const rawName   = session.customer_details?.name || '';
@@ -60,6 +94,7 @@ async function handleCheckout(session) {
   const lastName  = rawName.split(' ').slice(1).join(' ') || 'Customer';
   if (!email) { console.error('[checkout] No email:', session.id); return; }
 
+  // Resolve price ID from subscription
   let priceId;
   if (session.subscription) {
     const sub = await stripe.subscriptions.retrieve(session.subscription);
@@ -69,6 +104,41 @@ async function handleCheckout(session) {
   if (!plan) { console.error('[checkout] Unknown price:', priceId); return; }
   console.log(`[checkout] ${email} -> ${plan.name}`);
 
+  // ── Resolve egg/nest from game selection (game orders only) ──────────────
+  let eggId   = plan.egg;
+  let nestId  = plan.nest;
+  let gameName = null;
+
+  if (plan.type === 'game') {
+    const gameField = (session.custom_fields || []).find(f => f.key === 'game');
+    const gameKey   = gameField?.dropdown?.value || 'papermcjava';
+    const gameInfo  = GAME_MAP[gameKey];
+    if (gameInfo) {
+      eggId    = gameInfo.egg;
+      nestId   = gameInfo.nest;
+      gameName = gameInfo.display;
+    } else {
+      console.warn(`[checkout] Unknown game key: ${gameKey}, defaulting to Paper MC`);
+      gameName = 'Paper Minecraft';
+    }
+    console.log(`[checkout] Game: ${gameName} (egg=${eggId}, nest=${nestId})`);
+  }
+
+  // ── Fetch egg details from Pterodactyl (docker image, startup, env vars) ──
+  const eggData  = await ptero('GET', `/api/application/nests/${nestId}/eggs/${eggId}?include=variables`);
+  const eggAttrs = eggData.attributes;
+  const dockerImage = eggAttrs.docker_image;
+  const startup     = eggAttrs.startup;
+
+  // Build environment from egg's variable defaults
+  const environment = {};
+  for (const varDef of (eggAttrs.relationships?.variables?.data || [])) {
+    const v = varDef.attributes;
+    environment[v.env_variable] = v.default_value ?? '';
+  }
+  console.log(`[ptero] Egg ${eggId}: image=${dockerImage}`);
+
+  // ── Create Pterodactyl user ───────────────────────────────────────────────
   const password = crypto.randomBytes(12).toString('base64url').slice(0, 16);
   const username = 'user_' + crypto.randomBytes(4).toString('hex');
 
@@ -78,23 +148,18 @@ async function handleCheckout(session) {
   const userId = ptUser.attributes.id;
   console.log(`[ptero] User id=${userId}`);
 
-  const isGame     = plan.type === 'game';
-  const serverName = `${firstName}'s ${isGame ? 'Game Server' : 'Bot Server'}`;
+  // ── Create server ─────────────────────────────────────────────────────────
+  const serverName = plan.type === 'game'
+    ? `${firstName}'s ${gameName} Server`
+    : `${firstName}'s Bot Server`;
 
   const server = await ptero('POST', '/api/application/servers', {
     name: serverName,
     user: userId,
-    egg:  plan.egg,
-    docker_image: isGame
-      ? 'ghcr.io/pterodactyl/yolks:java_21'
-      : 'ghcr.io/parkervcp/yolks:nodejs_21',
-    startup: isGame
-      ? 'java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}'
-      : 'if [ -f /home/container/package.json ]; then /usr/local/bin/npm install; fi; /usr/local/bin/node /home/container/{{MAIN_FILE}} ${NODE_ARGS}',
-    environment: isGame
-      ? { MINECRAFT_VERSION:'latest', SERVER_JARFILE:'server.jar', DL_PATH:'', BUILD_NUMBER:'latest' }
-      : { MAIN_FILE:'index.js', NODE_PACKAGES:'', UNNODE_PACKAGES:'', AUTO_UPDATE:'0',
-          GIT_ADDRESS:'', BRANCH:'', USERNAME:'', ACCESS_TOKEN:'', USER_UPLOAD:'1', NODE_ARGS:'' },
+    egg:  eggId,
+    docker_image: dockerImage,
+    startup,
+    environment,
     limits: { memory:plan.memory, swap:0, disk:plan.disk, io:500, cpu:plan.cpu },
     feature_limits: { databases:1, backups:2, allocations:0 },
     deploy: { locations:[1], dedicated_ip:false, port_range:[plan.portRange] },
@@ -103,10 +168,11 @@ async function handleCheckout(session) {
   const serverPort = server.attributes?.relationships?.allocations?.data?.[0]?.attributes?.port;
   console.log(`[ptero] Server id=${server.attributes.id} port=${serverPort}`);
 
-  await sendWelcome({ email, firstName, plan, password, serverPort, serverName });
+  await sendWelcome({ email, firstName, plan, password, serverPort, serverName, gameName });
   console.log(`[done] ${email} onboarded`);
 }
 
+// ─── Pterodactyl API helper ───────────────────────────────────────────────────
 async function ptero(method, path, body) {
   const res = await fetch(`${PTERODACTYL_URL}${path}`, {
     method,
@@ -126,23 +192,25 @@ async function ptero(method, path, body) {
   return data;
 }
 
-async function sendWelcome({ email, firstName, plan, password, serverPort, serverName }) {
+// ─── Welcome email ────────────────────────────────────────────────────────────
+async function sendWelcome({ email, firstName, plan, password, serverPort, serverName, gameName }) {
   const isGame  = plan.type === 'game';
   const accent  = isGame ? '#4ade80' : '#7c6fef';
   const border  = isGame ? '#1e3a2a' : '#1e1a3a';
   const codeBg  = isGame ? '#112211' : '#111122';
   const emoji   = isGame ? '🎮' : '🤖';
+  const gameLabel = gameName || 'Game';
   const subject = `${emoji} Your ${plan.name} server is ready!`;
   const addr    = isGame && serverPort ? `${SERVER_IP}:${serverPort}` : null;
 
   const steps = isGame ? `
     <li>Log in at <a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a></li>
     <li>Click <strong>${serverName}</strong> then hit <strong>Start</strong></li>
-    <li>Wait ~60 s to boot</li>
-    ${addr ? `<li>Connect in Minecraft: <strong style="color:${accent};">${addr}</strong></li>` : ''}
-    <li>Need a different game? Just reply to this email</li>` : `
+    <li>Allow 1–3 minutes for ${gameLabel} to download and start</li>
+    ${addr ? `<li>Connect to your server at: <strong style="color:${accent};">${addr}</strong></li>` : ''}
+    <li>Questions or need help? Reply to this email or join Discord</li>` : `
     <li>Log in at <a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a></li>
-    <li>Click <strong>${serverName}</strong> -> <strong>Files</strong> tab</li>
+    <li>Click <strong>${serverName}</strong> → <strong>Files</strong> tab</li>
     <li>Upload your bot files or set a Git URL in the Startup tab</li>
     <li>Hit <strong>Start</strong></li>
     <li>Need Python or Java instead of Node.js? Just reply</li>`;
@@ -150,7 +218,7 @@ async function sendWelcome({ email, firstName, plan, password, serverPort, serve
   const html = `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#0b0f14;font-family:sans-serif;">
 <div style="max-width:600px;margin:40px auto;padding:0 20px;">
   <h1 style="color:${accent};font-size:1.8rem;margin:0 0 8px;">${emoji} Your Server is Live!</h1>
-  <p style="color:#9fb0c7;margin:0 0 24px;">Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> is ready.</p>
+  <p style="color:#9fb0c7;margin:0 0 24px;">Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong>${isGame ? ` running <strong style="color:${accent};">${gameLabel}</strong>` : ''} is ready.</p>
   <div style="background:#0d1620;border:1px solid ${border};border-radius:12px;padding:24px;margin-bottom:20px;">
     <h2 style="color:${accent};font-size:.9rem;margin:0 0 14px;text-transform:uppercase;letter-spacing:.06em;">Login Credentials</h2>
     <table style="width:100%;font-size:.9rem;">
