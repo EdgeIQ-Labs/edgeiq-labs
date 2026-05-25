@@ -53,5 +53,9 @@
   "play_pro_monthly": "https://buy.stripe.com/bJefZjbqbeJDf2A7wA7wA3E",
   "bots_basic_monthly": "https://buy.stripe.com/00w28tdyjbxr9Igg367wA3K",
   "bots_standard_monthly": "https://buy.stripe.com/00wcN7fGratn4nW9EI7wA3L",
-  "bots_pro_monthly": "https://buy.stripe.com/aFa00l3XJ44Z8Ec7wA7wA3M"
+  "bots_pro_monthly": "https://buy.stripe.com/aFa00l3XJ44Z8Ec7wA7wA3M",
+  "vps_nano_monthly": "https://buy.stripe.com/6oU6oJcufeJD5s018c7wA3N",
+  "vps_micro_monthly": "https://buy.stripe.com/28E14p51NfNH3jScQU7wA3O",
+  "vps_basic_monthly": "https://buy.stripe.com/3cIaEZdyj5936w46sw7wA3P",
+  "vps_standard_monthly": "https://buy.stripe.com/9B6fZj0LxdFz07G7wA7wA3Q"
 }
