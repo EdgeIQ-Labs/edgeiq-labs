@@ -60,7 +60,8 @@ git push origin master     # triggers Cloudflare Pages deploy
 - Micro: $7/mo — 1 vCPU, 1GB RAM, 20GB SSD
 - Basic: $12/mo — 2 vCPU, 2GB RAM, 40GB SSD
 - Standard: $22/mo — 4 vCPU, 4GB RAM, 80GB SSD
-- Stripe products not yet created — /vps/ uses mailto: links temporarily
+- Stripe price IDs: Nano price_1Tb2VFRC1NZ20yDTfhCJ6651 · Micro price_1Tb2VHRC1NZ20yDTPFoMZmhj · Basic price_1Tb2VJRC1NZ20yDTIFFVAmJb · Standard price_1Tb2VKRC1NZ20yDTawsJRCJ6
+- Payment links in stripe-payment-links.json (vps_nano_monthly → vps_standard_monthly)
 
 ## VPS Infrastructure (Proxmox)
 - NAT bridge: vmbr2 (10.10.0.1/24), MASQUERADE through vmbr0
