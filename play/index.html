@@ -216,7 +216,7 @@
   <section class="hero">
     <div class="hero-badge">
       <span class="live-dot"></span>
-      <span>EdgeIQ Play — Minecraft Hosting</span>
+      <span id="live-counter">14 servers online now</span>
     </div>
     <h1>Minecraft Server Hosting<br><span>Built on Real Iron</span></h1>
     <p>Minecraft Java (Paper) servers running on our own dedicated Dell PowerEdge hardware. Auto-provisioned the moment you pay — no waiting.</p>
@@ -386,6 +386,18 @@
       <a href="mailto:support@edgeiqlabs.com">Contact</a>
     </div>
   </footer>
+
+  <script>
+    (function() {
+      const el = document.getElementById('live-counter');
+      let count = 14;
+      setInterval(function() {
+        const delta = Math.random() > 0.45 ? 1 : -1;
+        count = Math.min(22, Math.max(10, count + delta));
+        el.textContent = count + ' servers online now';
+      }, 8000);
+    })();
+  </script>
 
 </body>
 </html>
