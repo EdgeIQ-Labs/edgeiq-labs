@@ -3,6 +3,7 @@
 const express = require('express');
 const Stripe  = require('stripe');
 const crypto  = require('crypto');
+const https   = require('https');
 
 const app = express();
 
@@ -11,6 +12,10 @@ const {
   STRIPE_WEBHOOK_SECRET,
   PTERODACTYL_API_KEY,
   PTERODACTYL_URL   = 'http://localhost',
+  PROXMOX_URL       = 'https://10.5.1.236:8006',
+  PROXMOX_TOKEN,                          // root@pam!edgeiq=<secret>
+  PROXMOX_NODE      = 'pve',
+  PROXMOX_STORAGE   = 'tank',             // ZFS pool for container rootfs
   RESEND_API_KEY,
   PANEL_URL         = 'https://panel.edgeiqlabs.com',
   SERVER_IP         = '100.33.233.11',
@@ -19,9 +24,12 @@ const {
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-// ─── Plans: Stripe price ID → resource limits ────────────────────────────────
+// Proxmox ignores self-signed cert for internal API
+const proxmoxAgent = new https.Agent({ rejectUnauthorized: false });
+
+// ─── Plans ────────────────────────────────────────────────────────────────────
 const PLANS = {
-  // Game plans  (egg/nest are defaults; overridden by game dropdown selection)
+  // Game plans (egg/nest overridden by game dropdown)
   'price_1TadEJRC1NZ20yDTe3ur18Pk': { type:'game', name:'Play Starter',  memory:2048, disk:10240, cpu:100, nest:1, egg:1, portRange:'25566-25600' },
   'price_1TaKiBRC1NZ20yDTRpsosVTW': { type:'game', name:'Play Starter',  memory:2048, disk:10240, cpu:100, nest:1, egg:1, portRange:'25566-25600' },
   'price_1TaKiBRC1NZ20yDTWpWHqkdB': { type:'game', name:'Play Standard', memory:4096, disk:20480, cpu:200, nest:1, egg:1, portRange:'25566-25600' },
@@ -35,10 +43,14 @@ const PLANS = {
   'price_1Taf5MRC1NZ20yDTnnrm1gNs': { type:'bot', name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
   'price_1Taf5GRC1NZ20yDTmWZBrxng': { type:'bot', name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
   'price_1Taf52RC1NZ20yDTfQ2SfrdW': { type:'bot', name:'Bots Pro',      memory:2048, disk:10240, cpu:150, nest:6, egg:23, portRange:'40000-40100' },
+  // VPS plans  (cores/diskGB used for Proxmox LXC)
+  'price_1Tb2VFRC1NZ20yDTfhCJ6651': { type:'vps', name:'VPS Nano',     memory:512,  diskGB:10, cores:1 },
+  'price_1Tb2VHRC1NZ20yDTPFoMZmhj': { type:'vps', name:'VPS Micro',    memory:1024, diskGB:20, cores:1 },
+  'price_1Tb2VJRC1NZ20yDTIFFVAmJb': { type:'vps', name:'VPS Basic',    memory:2048, diskGB:40, cores:2 },
+  'price_1Tb2VKRC1NZ20yDTawsJRCJ6': { type:'vps', name:'VPS Standard', memory:4096, diskGB:80, cores:4 },
 };
 
-// ─── Game Map: dropdown value → Pterodactyl egg/nest ─────────────────────────
-// Values must match the Stripe payment link custom_fields dropdown option values
+// ─── Game Map ─────────────────────────────────────────────────────────────────
 const GAME_MAP = {
   papermcjava:       { egg: 1,  nest: 1, display: 'Paper Minecraft'       },
   vanillamc:         { egg: 5,  nest: 1, display: 'Vanilla Minecraft'      },
@@ -66,6 +78,15 @@ const GAME_MAP = {
   fivem:             { egg: 32, nest: 7, display: 'FiveM'                  },
 };
 
+// ─── VPS OS Map ───────────────────────────────────────────────────────────────
+// Dropdown values match Stripe custom_fields option values (alphanumeric only)
+const VPS_OS_MAP = {
+  ubuntu2404:  { template: 'local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst',  display: 'Ubuntu 24.04 LTS' },
+  debian12:    { template: 'local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst',     display: 'Debian 12'        },
+  rocky9:      { template: 'local:vztmpl/rockylinux-9-default_20240912_amd64.tar.xz',   display: 'Rocky Linux 9'    },
+  almalinux9:  { template: 'local:vztmpl/almalinux-9-default_20240911_amd64.tar.xz',    display: 'AlmaLinux 9'      },
+};
+
 // ─── Routes ──────────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status:'ok', ts:new Date().toISOString() }));
 
@@ -86,7 +107,7 @@ app.post('/stripe', express.raw({ type:'application/json' }), async (req, res) =
   }
 });
 
-// ─── Checkout handler ─────────────────────────────────────────────────────────
+// ─── Main checkout handler ───────────────────────────────────────────────────
 async function handleCheckout(session) {
   const email     = session.customer_details?.email;
   const rawName   = session.customer_details?.name || '';
@@ -94,7 +115,6 @@ async function handleCheckout(session) {
   const lastName  = rawName.split(' ').slice(1).join(' ') || 'Customer';
   if (!email) { console.error('[checkout] No email:', session.id); return; }
 
-  // Resolve price ID from subscription
   let priceId;
   if (session.subscription) {
     const sub = await stripe.subscriptions.retrieve(session.subscription);
@@ -102,64 +122,50 @@ async function handleCheckout(session) {
   }
   const plan = PLANS[priceId];
   if (!plan) { console.error('[checkout] Unknown price:', priceId); return; }
-  console.log(`[checkout] ${email} -> ${plan.name}`);
+  console.log(`[checkout] ${email} -> ${plan.name} (${plan.type})`);
 
-  // ── Resolve egg/nest from game selection (game orders only) ──────────────
-  let eggId   = plan.egg;
-  let nestId  = plan.nest;
+  if (plan.type === 'vps') {
+    return handleVPS(session, plan, email, firstName, lastName);
+  }
+
+  // ── Game / Bot provisioning (Pterodactyl) ────────────────────────────────
+  let eggId  = plan.egg;
+  let nestId = plan.nest;
   let gameName = null;
 
   if (plan.type === 'game') {
     const gameField = (session.custom_fields || []).find(f => f.key === 'game');
     const gameKey   = gameField?.dropdown?.value || 'papermcjava';
     const gameInfo  = GAME_MAP[gameKey];
-    if (gameInfo) {
-      eggId    = gameInfo.egg;
-      nestId   = gameInfo.nest;
-      gameName = gameInfo.display;
-    } else {
-      console.warn(`[checkout] Unknown game key: ${gameKey}, defaulting to Paper MC`);
-      gameName = 'Paper Minecraft';
-    }
+    if (gameInfo) { eggId = gameInfo.egg; nestId = gameInfo.nest; gameName = gameInfo.display; }
+    else { gameName = 'Paper Minecraft'; }
     console.log(`[checkout] Game: ${gameName} (egg=${eggId}, nest=${nestId})`);
   }
 
-  // ── Fetch egg details from Pterodactyl (docker image, startup, env vars) ──
-  const eggData  = await ptero('GET', `/api/application/nests/${nestId}/eggs/${eggId}?include=variables`);
-  const eggAttrs = eggData.attributes;
+  const eggData     = await ptero('GET', `/api/application/nests/${nestId}/eggs/${eggId}?include=variables`);
+  const eggAttrs    = eggData.attributes;
   const dockerImage = eggAttrs.docker_image;
   const startup     = eggAttrs.startup;
-
-  // Build environment from egg's variable defaults
   const environment = {};
-  for (const varDef of (eggAttrs.relationships?.variables?.data || [])) {
-    const v = varDef.attributes;
-    environment[v.env_variable] = v.default_value ?? '';
-  }
+  for (const v of (eggAttrs.relationships?.variables?.data || []))
+    environment[v.attributes.env_variable] = v.attributes.default_value ?? '';
   console.log(`[ptero] Egg ${eggId}: image=${dockerImage}`);
 
-  // ── Create Pterodactyl user ───────────────────────────────────────────────
   const password = crypto.randomBytes(12).toString('base64url').slice(0, 16);
   const username = 'user_' + crypto.randomBytes(4).toString('hex');
-
-  const ptUser = await ptero('POST', '/api/application/users', {
+  const ptUser   = await ptero('POST', '/api/application/users', {
     email, username, first_name: firstName, last_name: lastName, password,
   });
   const userId = ptUser.attributes.id;
   console.log(`[ptero] User id=${userId}`);
 
-  // ── Create server ─────────────────────────────────────────────────────────
   const serverName = plan.type === 'game'
     ? `${firstName}'s ${gameName} Server`
     : `${firstName}'s Bot Server`;
 
   const server = await ptero('POST', '/api/application/servers', {
-    name: serverName,
-    user: userId,
-    egg:  eggId,
-    docker_image: dockerImage,
-    startup,
-    environment,
+    name: serverName, user: userId, egg: eggId,
+    docker_image: dockerImage, startup, environment,
     limits: { memory:plan.memory, swap:0, disk:plan.disk, io:500, cpu:plan.cpu },
     feature_limits: { databases:1, backups:2, allocations:0 },
     deploy: { locations:[1], dedicated_ip:false, port_range:[plan.portRange] },
@@ -167,9 +173,119 @@ async function handleCheckout(session) {
 
   const serverPort = server.attributes?.relationships?.allocations?.data?.[0]?.attributes?.port;
   console.log(`[ptero] Server id=${server.attributes.id} port=${serverPort}`);
+  await sendGameBotWelcome({ email, firstName, plan, password, serverPort, serverName, gameName });
+  console.log(`[done] ${email} onboarded (game/bot)`);
+}
 
-  await sendWelcome({ email, firstName, plan, password, serverPort, serverName, gameName });
-  console.log(`[done] ${email} onboarded`);
+// ─── VPS provisioning (Proxmox LXC) ──────────────────────────────────────────
+async function handleVPS(session, plan, email, firstName, lastName) {
+  // Resolve OS selection
+  const osField   = (session.custom_fields || []).find(f => f.key === 'os');
+  const osKey     = osField?.dropdown?.value || 'ubuntu2404';
+  const osInfo    = VPS_OS_MAP[osKey] || VPS_OS_MAP.ubuntu2404;
+  console.log(`[vps] OS: ${osInfo.display} (${osKey})`);
+
+  // Find next available VMID (start from 201)
+  const containers = await proxmoxAPI('GET', `/nodes/${PROXMOX_NODE}/lxc`);
+  const usedVMIDs  = new Set(containers.data.map(c => Number(c.vmid)));
+  let vmid = 201;
+  while (usedVMIDs.has(vmid)) vmid++;
+
+  // IP derived from VMID: CT201 → 10.10.0.101, CT202 → 10.10.0.102, etc.
+  const octet     = vmid - 100;
+  const ip        = `10.10.0.${octet}`;
+  const sshPort   = 22000 + octet;
+  const appStart  = 30000 + octet * 20;
+  const appEnd    = appStart + 19;
+  console.log(`[vps] VMID=${vmid} IP=${ip} SSH=${sshPort} APP=${appStart}-${appEnd}`);
+
+  // Generate credentials
+  const rootPassword = crypto.randomBytes(10).toString('base64url').slice(0, 14);
+  const hostname     = 'vps-' + crypto.randomBytes(3).toString('hex');
+
+  // Create LXC container
+  const task = await proxmoxAPI('POST', `/nodes/${PROXMOX_NODE}/lxc`, {
+    vmid,
+    hostname,
+    ostemplate:  osInfo.template,
+    memory:      plan.memory,
+    swap:        0,
+    cores:       plan.cores,
+    rootfs:      `${PROXMOX_STORAGE}:${plan.diskGB}`,
+    net0:        `name=eth0,bridge=vmbr2,ip=${ip}/24,gw=10.10.0.1`,
+    password:    rootPassword,
+    unprivileged: 1,
+    nameserver:  '1.1.1.1',
+    hookscript:  'local:snippets/edgeiq-nat.sh',
+    start:       1,
+  });
+  console.log(`[proxmox] Created CT${vmid}, task: ${task.data}`);
+
+  // Wait for container to start and hookscript to apply DNAT rules
+  await waitForProxmoxTask(task.data);
+  await new Promise(r => setTimeout(r, 8000)); // hookscript needs a moment
+
+  await sendVPSWelcome({ email, firstName, plan, osDisplay: osInfo.display,
+    hostname, rootPassword, sshPort, appStart, appEnd, ip });
+  console.log(`[done] ${email} VPS CT${vmid} provisioned`);
+}
+
+// ─── Wait for Proxmox async task ──────────────────────────────────────────────
+async function waitForProxmoxTask(upid, timeoutMs = 120000) {
+  const node    = PROXMOX_NODE;
+  const encoded = encodeURIComponent(upid);
+  const start   = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    await new Promise(r => setTimeout(r, 2000));
+    try {
+      const res = await proxmoxAPI('GET', `/nodes/${node}/tasks/${encoded}/status`);
+      if (res.data?.status === 'stopped') {
+        if (res.data.exitstatus !== 'OK')
+          throw new Error(`Proxmox task failed: ${res.data.exitstatus}`);
+        return res.data;
+      }
+    } catch (e) { if (e.message.includes('failed')) throw e; }
+  }
+  throw new Error('Proxmox task timed out');
+}
+
+// ─── Proxmox API helper ───────────────────────────────────────────────────────
+async function proxmoxAPI(method, path, body) {
+  return new Promise((resolve, reject) => {
+    const url   = new URL(`${PROXMOX_URL}/api2/json${path}`);
+    const bodyStr = body ? JSON.stringify(body) : null;
+    const options = {
+      hostname: url.hostname,
+      port:     url.port || 8006,
+      path:     url.pathname + url.search,
+      method,
+      headers: {
+        'Authorization': `PVEAPIToken=${PROXMOX_TOKEN}`,
+        'Content-Type':  'application/json',
+        ...(bodyStr ? { 'Content-Length': Buffer.byteLength(bodyStr) } : {}),
+      },
+      agent: proxmoxAgent,
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode >= 400) {
+            const err = new Error(`Proxmox ${method} ${path} -> HTTP ${res.statusCode}`);
+            err.details = data;
+            reject(err);
+          } else {
+            resolve(parsed);
+          }
+        } catch (e) { reject(new Error(`Proxmox parse error: ${data.slice(0,200)}`)); }
+      });
+    });
+    req.on('error', reject);
+    if (bodyStr) req.write(bodyStr);
+    req.end();
+  });
 }
 
 // ─── Pterodactyl API helper ───────────────────────────────────────────────────
@@ -192,41 +308,92 @@ async function ptero(method, path, body) {
   return data;
 }
 
-// ─── Welcome email ────────────────────────────────────────────────────────────
-async function sendWelcome({ email, firstName, plan, password, serverPort, serverName, gameName }) {
-  const isGame  = plan.type === 'game';
-  const accent  = isGame ? '#4ade80' : '#7c6fef';
-  const border  = isGame ? '#1e3a2a' : '#1e1a3a';
-  const codeBg  = isGame ? '#112211' : '#111122';
-  const emoji   = isGame ? '🎮' : '🤖';
+// ─── Game/Bot welcome email ───────────────────────────────────────────────────
+async function sendGameBotWelcome({ email, firstName, plan, password, serverPort, serverName, gameName }) {
+  const isGame   = plan.type === 'game';
+  const accent   = isGame ? '#4ade80' : '#7c6fef';
+  const border   = isGame ? '#1e3a2a' : '#1e1a3a';
+  const codeBg   = isGame ? '#112211' : '#111122';
+  const emoji    = isGame ? '🎮' : '🤖';
   const gameLabel = gameName || 'Game';
-  const subject = `${emoji} Your ${plan.name} server is ready!`;
-  const addr    = isGame && serverPort ? `${SERVER_IP}:${serverPort}` : null;
+  const subject  = `${emoji} Your ${plan.name} server is ready!`;
+  const addr     = isGame && serverPort ? `${SERVER_IP}:${serverPort}` : null;
 
   const steps = isGame ? `
     <li>Log in at <a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a></li>
     <li>Click <strong>${serverName}</strong> then hit <strong>Start</strong></li>
     <li>Allow 1–3 minutes for ${gameLabel} to download and start</li>
-    ${addr ? `<li>Connect to your server at: <strong style="color:${accent};">${addr}</strong></li>` : ''}
-    <li>Questions or need help? Reply to this email or join Discord</li>` : `
+    ${addr ? `<li>Connect to your server: <strong style="color:${accent};">${addr}</strong></li>` : ''}
+    <li>Questions? Reply to this email or join Discord</li>` : `
     <li>Log in at <a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a></li>
     <li>Click <strong>${serverName}</strong> → <strong>Files</strong> tab</li>
     <li>Upload your bot files or set a Git URL in the Startup tab</li>
     <li>Hit <strong>Start</strong></li>
-    <li>Need Python or Java instead of Node.js? Just reply</li>`;
+    <li>Need Python or Java? Just reply</li>`;
 
-  const html = `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#0b0f14;font-family:sans-serif;">
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Your Server is Live!`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong>${isGame ? ` running <strong style="color:${accent};">${gameLabel}</strong>` : ''} is ready.`,
+    rows: [
+      ['Panel',    `<a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a>`],
+      ['Username', `<span style="color:#e8eef7;">${email}</span>`],
+      ['Password', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${password}</code>`],
+      ...(addr ? [['Server IP', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${addr}</code>`]] : []),
+    ],
+    steps,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] Game/bot welcome -> ${email}`);
+}
+
+// ─── VPS welcome email ────────────────────────────────────────────────────────
+async function sendVPSWelcome({ email, firstName, plan, osDisplay, hostname, rootPassword, sshPort, appStart, appEnd }) {
+  const accent = '#2dd4bf';
+  const border = '#1a3a36';
+  const codeBg = '#0a1e1c';
+  const subject = `☁️ Your ${plan.name} container is ready!`;
+
+  const steps = `
+    <li>SSH in: <code style="background:${codeBg};color:${accent};padding:2px 8px;border-radius:4px;">ssh root@${SERVER_IP} -p ${sshPort}</code></li>
+    <li>Password: the one shown in the credentials box below</li>
+    <li>Your app ports <strong style="color:${accent};">${appStart}–${appEnd}</strong> are forwarded to your container — use any of them for your services</li>
+    <li>Questions? Reply to this email or join Discord</li>`;
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji: '☁️',
+    title:    '☁️ Your Container is Live!',
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> running <strong style="color:${accent};">${osDisplay}</strong> is ready.`,
+    rows: [
+      ['SSH Host',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${SERVER_IP}</code>`],
+      ['SSH Port',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${sshPort}</code>`],
+      ['Username',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">root</code>`],
+      ['Password',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${rootPassword}</code>`],
+      ['App Ports',  `<span style="color:#e8eef7;">${appStart}–${appEnd}</span> (TCP &amp; UDP forwarded to your container)`],
+      ['OS',         `<span style="color:#e8eef7;">${osDisplay}</span>`],
+      ['Hostname',   `<span style="color:#e8eef7;">${hostname}</span>`],
+    ],
+    steps,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] VPS welcome -> ${email}`);
+}
+
+// ─── Email builder ────────────────────────────────────────────────────────────
+function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, steps }) {
+  const rowsHTML = rows.map(([label, value]) =>
+    `<tr><td style="padding:4px 0;color:#9fb0c7;width:120px;vertical-align:top;">${label}</td><td>${value}</td></tr>`
+  ).join('');
+
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#0b0f14;font-family:sans-serif;">
 <div style="max-width:600px;margin:40px auto;padding:0 20px;">
-  <h1 style="color:${accent};font-size:1.8rem;margin:0 0 8px;">${emoji} Your Server is Live!</h1>
-  <p style="color:#9fb0c7;margin:0 0 24px;">Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong>${isGame ? ` running <strong style="color:${accent};">${gameLabel}</strong>` : ''} is ready.</p>
+  <h1 style="color:${accent};font-size:1.8rem;margin:0 0 8px;">${title}</h1>
+  <p style="color:#9fb0c7;margin:0 0 24px;">${subtitle}</p>
   <div style="background:#0d1620;border:1px solid ${border};border-radius:12px;padding:24px;margin-bottom:20px;">
-    <h2 style="color:${accent};font-size:.9rem;margin:0 0 14px;text-transform:uppercase;letter-spacing:.06em;">Login Credentials</h2>
-    <table style="width:100%;font-size:.9rem;">
-      <tr><td style="padding:4px 0;color:#9fb0c7;width:120px;">Panel</td><td><a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a></td></tr>
-      <tr><td style="padding:4px 0;color:#9fb0c7;">Username</td><td style="color:#e8eef7;">${email}</td></tr>
-      <tr><td style="padding:4px 0;color:#9fb0c7;">Password</td><td><code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${password}</code></td></tr>
-      ${addr ? `<tr><td style="padding:4px 0;color:#9fb0c7;">Server IP</td><td><code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${addr}</code></td></tr>` : ''}
-    </table>
+    <h2 style="color:${accent};font-size:.9rem;margin:0 0 14px;text-transform:uppercase;letter-spacing:.06em;">Credentials</h2>
+    <table style="width:100%;font-size:.9rem;">${rowsHTML}</table>
   </div>
   <div style="background:#0d1620;border:1px solid ${border};border-radius:12px;padding:24px;margin-bottom:24px;">
     <h2 style="color:${accent};font-size:.9rem;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;">Getting Started</h2>
@@ -237,14 +404,15 @@ async function sendWelcome({ email, firstName, plan, password, serverPort, serve
     <p style="color:#9fb0c7;font-size:.78rem;margin:14px 0 0;">EdgeIQ Labs · <a href="https://edgeiqlabs.com" style="color:${accent};">edgeiqlabs.com</a></p>
   </div>
 </div></body></html>`;
+}
 
+async function sendEmail({ to, subject, html }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization:`Bearer ${RESEND_API_KEY}`, 'Content-Type':'application/json' },
-    body: JSON.stringify({ from:'EdgeIQ <noreply@edgeiqlabs.com>', to:[email], subject, html }),
+    body: JSON.stringify({ from:'EdgeIQ <noreply@edgeiqlabs.com>', to:[to], subject, html }),
   });
   if (!res.ok) console.error('[resend] Failed:', await res.text());
-  else console.log(`[resend] Sent -> ${email}`);
 }
 
 app.listen(Number(PORT), () => console.log(`[server] Listening on :${PORT}`));
