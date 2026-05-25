@@ -6,7 +6,7 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/play/" />
   <title>Game Server Hosting — EdgeIQ Play</title>
-  <meta name="description" content="Minecraft Java server hosting on real dedicated hardware. Auto-provisioned, full console access, SFTP, from $5/mo. 3-day free trial on Starter." />
+  <meta name="description" content="Game server hosting for Minecraft, Valheim, Rust, CS:GO, ARK & more. Real hardware, auto-provisioned Minecraft, from $5/mo. 3-day free trial." />
   <meta name="theme-color" content="#0b0f14" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -76,7 +76,7 @@
       margin-bottom: 18px;
     }
     .hero h1 span { color: #4ade80; }
-    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 560px; margin: 0 auto 14px; }
+    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 580px; margin: 0 auto 14px; }
     .hero-sub { font-size: 0.85rem !important; color: #4ade80 !important; font-weight: 600; margin-bottom: 36px !important; }
 
     /* TRUST BAR */
@@ -93,6 +93,29 @@
     }
     .trust-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #94a3b8; }
     .trust-item strong { color: #e2e8f0; font-weight: 700; }
+
+    /* GAMES MARQUEE */
+    .games-section { padding: 36px 0 28px; overflow: hidden; border-bottom: 1px solid #1e2a38; }
+    .games-label { text-align: center; font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; }
+    .marquee-track { display: flex; width: max-content; animation: marquee 36s linear infinite; }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .game-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0d1520;
+      border: 1px solid #1e2a38;
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin: 0 8px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .game-chip:hover { border-color: #4ade80; color: #e2e8f0; }
+    .game-chip .icon { font-size: 1.1rem; }
 
     /* PRICING */
     .pricing-section { padding: 60px 24px 40px; max-width: 1100px; margin: 0 auto; }
@@ -164,6 +187,7 @@
     .faq-item { border-bottom: 1px solid #1e2a38; padding: 20px 0; }
     .faq-item h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
     .faq-item p { font-size: 0.875rem; color: #64748b; }
+    .faq-item a { color: #4ade80; }
 
     /* CTA BANNER */
     .cta-banner {
@@ -205,6 +229,7 @@
   <nav>
     <a href="/" class="nav-logo">EdgeIQ <span>Play</span></a>
     <div class="nav-links">
+      <a href="#games">Games</a>
       <a href="#pricing">Pricing</a>
       <a href="/play/rules/">Server Rules</a>
       <a href="https://edgeiqlabs.com">EdgeIQ Labs</a>
@@ -218,9 +243,9 @@
       <span class="live-dot"></span>
       <span id="live-counter">14 servers online now</span>
     </div>
-    <h1>Minecraft Server Hosting<br><span>Built on Real Iron</span></h1>
-    <p>Minecraft Java (Paper) servers running on our own dedicated Dell PowerEdge hardware. Auto-provisioned the moment you pay — no waiting.</p>
-    <p class="hero-sub">⚡ Provisioned automatically &nbsp;·&nbsp; 3-day free trial on Starter &nbsp;·&nbsp; Cancel anytime</p>
+    <h1>Game Server Hosting<br><span>Built on Real Iron</span></h1>
+    <p>Minecraft, Valheim, Rust, CS:GO, ARK & more — running on our own dedicated Dell PowerEdge hardware. Minecraft Java servers auto-provision the moment you pay.</p>
+    <p class="hero-sub">⚡ Minecraft auto-provisioned &nbsp;·&nbsp; 19 games available &nbsp;·&nbsp; 3-day free trial on Starter</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="https://buy.stripe.com/bJe8wR2TFcBv7A86sw7wA3G" target="_blank" rel="noopener"
          style="display:inline-block;background:#4ade80;color:#0b0f14;padding:13px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
@@ -235,19 +260,66 @@
 
   <!-- TRUST BAR -->
   <div class="trust-bar">
-    <div class="trust-item"><strong>Minecraft Java</strong> (Paper)</div>
-    <div class="trust-item"><strong>Auto-provisioned</strong> on payment</div>
-    <div class="trust-item"><strong>Full console</strong> access</div>
-    <div class="trust-item"><strong>SFTP</strong> file access</div>
+    <div class="trust-item"><strong>19 games</strong> available</div>
+    <div class="trust-item"><strong>Minecraft</strong> auto-provisioned</div>
+    <div class="trust-item"><strong>Full console</strong> &amp; SFTP access</div>
+    <div class="trust-item"><strong>Dell PowerEdge</strong> hardware</div>
     <div class="trust-item"><strong>$5/mo</strong> starting price</div>
     <div class="trust-item"><strong>3-day free trial</strong> on Starter</div>
   </div>
+
+  <!-- GAMES MARQUEE -->
+  <section class="games-section" id="games">
+    <div class="games-label">Supported Games</div>
+    <div class="marquee-track">
+      <!-- Set 1 -->
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Java (Paper)</div>
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Vanilla</div>
+      <div class="game-chip"><span class="icon">🔨</span> Minecraft Forge</div>
+      <div class="game-chip"><span class="icon">📱</span> Minecraft Bedrock</div>
+      <div class="game-chip"><span class="icon">🛡️</span> Valheim</div>
+      <div class="game-chip"><span class="icon">🦎</span> Palworld</div>
+      <div class="game-chip"><span class="icon">🧟</span> 7 Days to Die</div>
+      <div class="game-chip"><span class="icon">🌿</span> Terraria (tShock)</div>
+      <div class="game-chip"><span class="icon">🌍</span> Eco</div>
+      <div class="game-chip"><span class="icon">🚀</span> Space Engineers</div>
+      <div class="game-chip"><span class="icon">⚔️</span> Conan Exiles</div>
+      <div class="game-chip"><span class="icon">🔩</span> Rust</div>
+      <div class="game-chip"><span class="icon">🔫</span> CS:GO</div>
+      <div class="game-chip"><span class="icon">🚗</span> Garry's Mod</div>
+      <div class="game-chip"><span class="icon">🎯</span> Team Fortress 2</div>
+      <div class="game-chip"><span class="icon">🦕</span> ARK: Survival Evolved</div>
+      <div class="game-chip"><span class="icon">💥</span> Insurgency</div>
+      <div class="game-chip"><span class="icon">🧱</span> Minecraft Sponge</div>
+      <div class="game-chip"><span class="icon">🔗</span> Minecraft BungeeCord</div>
+      <!-- Set 2 (duplicate for seamless loop) -->
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Java (Paper)</div>
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Vanilla</div>
+      <div class="game-chip"><span class="icon">🔨</span> Minecraft Forge</div>
+      <div class="game-chip"><span class="icon">📱</span> Minecraft Bedrock</div>
+      <div class="game-chip"><span class="icon">🛡️</span> Valheim</div>
+      <div class="game-chip"><span class="icon">🦎</span> Palworld</div>
+      <div class="game-chip"><span class="icon">🧟</span> 7 Days to Die</div>
+      <div class="game-chip"><span class="icon">🌿</span> Terraria (tShock)</div>
+      <div class="game-chip"><span class="icon">🌍</span> Eco</div>
+      <div class="game-chip"><span class="icon">🚀</span> Space Engineers</div>
+      <div class="game-chip"><span class="icon">⚔️</span> Conan Exiles</div>
+      <div class="game-chip"><span class="icon">🔩</span> Rust</div>
+      <div class="game-chip"><span class="icon">🔫</span> CS:GO</div>
+      <div class="game-chip"><span class="icon">🚗</span> Garry's Mod</div>
+      <div class="game-chip"><span class="icon">🎯</span> Team Fortress 2</div>
+      <div class="game-chip"><span class="icon">🦕</span> ARK: Survival Evolved</div>
+      <div class="game-chip"><span class="icon">💥</span> Insurgency</div>
+      <div class="game-chip"><span class="icon">🧱</span> Minecraft Sponge</div>
+      <div class="game-chip"><span class="icon">🔗</span> Minecraft BungeeCord</div>
+    </div>
+  </section>
 
   <!-- PRICING -->
   <section class="pricing-section" id="pricing">
     <div class="section-label">Pricing</div>
     <h2 class="section-title">Simple, Honest Pricing</h2>
-    <p class="section-sub">No contracts. No hidden fees. Cancel anytime. Starter includes a 3-day free trial.</p>
+    <p class="section-sub">No contracts. No hidden fees. Cancel anytime. Minecraft Java plans auto-provision instantly. Other games are set up manually — usually within a few hours.</p>
 
     <div class="pricing-grid">
 
@@ -260,7 +332,8 @@
         <ul class="plan-features">
           <li>2 GB RAM</li>
           <li>10 GB SSD storage</li>
-          <li>Minecraft Java (Paper)</li>
+          <li>Minecraft Java (auto-provisioned)</li>
+          <li>Other games available on request</li>
           <li>Full console access</li>
           <li>SFTP file access</li>
           <li>Pterodactyl web panel</li>
@@ -277,12 +350,12 @@
         <ul class="plan-features">
           <li>4 GB RAM</li>
           <li>20 GB SSD storage</li>
-          <li>Minecraft Java (Paper)</li>
+          <li>Minecraft Java (auto-provisioned)</li>
+          <li>Other games available on request</li>
           <li>Full console access</li>
           <li>SFTP file access</li>
           <li>Pterodactyl web panel</li>
-          <li>Plugin support</li>
-          <li>Custom server.properties</li>
+          <li>Plugin &amp; mod support</li>
         </ul>
         <a href="https://buy.stripe.com/8x2fZjdyjdFz8EcaIM7wA3D" target="_blank" rel="noopener" class="plan-btn primary">Get Started →</a>
       </div>
@@ -291,15 +364,16 @@
       <div class="plan">
         <div class="plan-name">Pro</div>
         <div class="plan-price">$20<span>/mo</span></div>
-        <div class="plan-tagline">Large communities &amp; modpacks</div>
+        <div class="plan-tagline">Large communities, modpacks &amp; heavy games</div>
         <ul class="plan-features">
           <li>8 GB RAM</li>
           <li>40 GB SSD storage</li>
-          <li>Minecraft Java (Paper / Forge / Fabric)</li>
+          <li>Minecraft Java (auto-provisioned)</li>
+          <li>Other games available on request</li>
           <li>Full console access</li>
           <li>SFTP file access</li>
           <li>Pterodactyl web panel</li>
-          <li>Modpack support</li>
+          <li>Modpack support (Forge / Fabric)</li>
           <li>Priority support</li>
         </ul>
         <a href="https://buy.stripe.com/bJefZjbqbeJDf2A7wA7wA3E" target="_blank" rel="noopener" class="plan-btn secondary">Get Started →</a>
@@ -307,13 +381,13 @@
 
     </div>
 
-    <p style="text-align:center;color:#475569;font-size:0.82rem;margin-top:24px;">Want a different game? <a href="mailto:support@edgeiqlabs.com" style="color:#4ade80;">Email us</a> — we're adding more games soon.</p>
+    <p style="text-align:center;color:#475569;font-size:0.82rem;margin-top:24px;">Want Valheim, Rust, CS:GO or another game? <a href="mailto:support@edgeiqlabs.com" style="color:#4ade80;">Email us after purchase</a> and we'll set it up.</p>
   </section>
 
   <!-- HOW IT WORKS -->
   <section class="how-section">
     <div class="section-label">Process</div>
-    <h2 class="section-title">Up and running in minutes</h2>
+    <h2 class="section-title">Up and running fast</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
@@ -322,13 +396,13 @@
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>Auto-provisioned</h3>
-        <p>Your Minecraft server is provisioned automatically the moment payment completes.</p>
+        <h3>Server provisioned</h3>
+        <p>Minecraft Java is auto-provisioned instantly. Other games are set up manually — usually within a few hours.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>Start playing</h3>
-        <p>You get your Pterodactyl panel login and server IP by email. Invite your friends.</p>
+        <p>You get your Pterodactyl panel login and server IP by email. Invite your friends and go.</p>
       </div>
     </div>
   </section>
@@ -339,7 +413,11 @@
     <h2 class="section-title" style="margin-bottom:32px;">Common questions</h2>
     <div class="faq-item">
       <h3>Which games do you support?</h3>
-      <p>Right now we support Minecraft Java Edition (Paper, Forge, and Fabric). We're actively adding more games — if you'd like to request one, email us at support@edgeiqlabs.com.</p>
+      <p>We have eggs installed for 19 games: Minecraft Java (Paper, Vanilla, Forge, Sponge, BungeeCord), Minecraft Bedrock, Valheim, Palworld, 7 Days to Die, Terraria (tShock), Eco, Space Engineers, Conan Exiles, Rust, CS:GO, Garry's Mod, Team Fortress 2, ARK: Survival Evolved, and Insurgency.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Which games are automatically provisioned?</h3>
+      <p>Minecraft Java (Paper) is fully automated — your server is created and emailed to you the moment payment goes through. All other games are set up manually by us, typically within a few hours. Just email us after purchase with the game you want.</p>
     </div>
     <div class="faq-item">
       <h3>How does the free trial work?</h3>
@@ -347,19 +425,19 @@
     </div>
     <div class="faq-item">
       <h3>How do I manage my server?</h3>
-      <p>You get full access to a Pterodactyl web panel — start/stop the server, live console, file manager, and SFTP access. No command line knowledge required.</p>
+      <p>You get full access to a Pterodactyl web panel — start/stop, live console, file manager, and SFTP file access. No command line knowledge required.</p>
     </div>
     <div class="faq-item">
-      <h3>Is provisioning really automatic?</h3>
-      <p>Yes — for Minecraft Java plans, your server is created automatically via our webhook system the moment your Stripe payment completes. You'll receive your panel login by email.</p>
+      <h3>Can I switch games after signing up?</h3>
+      <p>Yes. Email us at <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> and we'll reinstall the server with the game of your choice.</p>
     </div>
     <div class="faq-item">
       <h3>Can I upgrade my plan?</h3>
-      <p>Yes. Email us and we'll migrate your world data and move you to the new plan.</p>
+      <p>Yes. Email us and we'll migrate your server data and move you to the new plan.</p>
     </div>
     <div class="faq-item">
-      <h3>Where are the servers?</h3>
-      <p>Our servers run on dedicated Dell PowerEdge hardware located in the northeastern United States.</p>
+      <h3>Where are the servers located?</h3>
+      <p>Our servers run on dedicated Dell PowerEdge hardware in the northeastern United States.</p>
     </div>
     <div class="faq-item">
       <h3>Is there a contract?</h3>
@@ -370,9 +448,9 @@
   <!-- CTA BANNER -->
   <div class="cta-banner">
     <h2>Ready to play?</h2>
-    <p>Your Minecraft server will be live in minutes. Try the Starter plan free for 3 days.</p>
+    <p>19 games available. Minecraft auto-provisioned in minutes. Try Starter free for 3 days.</p>
     <a href="https://buy.stripe.com/bJe8wR2TFcBv7A86sw7wA3G" target="_blank" rel="noopener">Start Free Trial →</a>
-    <p class="cta-trial-note">No charge for 3 days · Cancel anytime · Auto-provisioned on payment</p>
+    <p class="cta-trial-note">No charge for 3 days · Cancel anytime · Real hardware, not cloud VMs</p>
   </div>
 
   <!-- FOOTER -->
@@ -381,6 +459,7 @@
     <div style="display:flex;gap:20px;flex-wrap:wrap;">
       <a href="/">EdgeIQ Labs</a>
       <a href="/play/rules/">Server Rules</a>
+      <a href="#games">Games</a>
       <a href="#pricing">Pricing</a>
       <a href="/privacy.html">Privacy</a>
       <a href="mailto:support@edgeiqlabs.com">Contact</a>
