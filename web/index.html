@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/web/" />
+  <title>Web & WordPress Hosting — EdgeIQ Labs</title>
+  <meta name="description" content="Affordable shared and WordPress hosting on real hardware. Free SSL, CyberPanel control panel, auto-provisioned. From $3/mo." />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://edgeiqlabs.com/web/" />
+  <meta property="og:title" content="Web & WordPress Hosting — EdgeIQ Labs" />
+  <meta property="og:description" content="Affordable shared and WordPress hosting on real hardware. Free SSL, CyberPanel control panel, auto-provisioned. From $3/mo." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #f97316;
+      --accent-dark: #1a0e05;
+      --accent-border: #3a1e0a;
+      --accent-mid: #1f1208;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0b0f14;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid #1e2a38;
+      position: sticky;
+      top: 0;
+      background: rgba(11,15,20,0.97);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: -0.3px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta { background: var(--accent); color: #0b0f14 !important; padding: 8px 18px; border-radius: 6px; font-weight: 700; font-size: 0.85rem !important; transition: opacity 0.2s; }
+    .nav-cta:hover { opacity: 0.88; }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 40px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dark);
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 580px; margin: 0 auto 14px; }
+    .hero-sub { font-size: 0.85rem !important; color: var(--accent) !important; font-weight: 600; margin-bottom: 36px !important; }
+
+    /* HONEST NOTICE */
+    .honest-box {
+      background: #0d1a2a;
+      border: 1px solid #1e3a5a;
+      border-radius: 12px;
+      padding: 20px 24px;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .honest-box strong { color: #e2e8f0; }
+
+    /* TRUST BAR */
+    .trust-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 18px 24px;
+      background: #0d1620;
+      border-top: 1px solid #1e2a38;
+      border-bottom: 1px solid #1e2a38;
+      margin-bottom: 60px;
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+    .trust-bar span { display: flex; align-items: center; gap: 6px; }
+    .trust-bar strong { color: #94a3b8; }
+
+    /* SECTION HEADINGS */
+    .section-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      background: var(--accent-dark);
+      border: 1px solid var(--accent-border);
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    section { max-width: 980px; margin: 0 auto; padding: 0 24px 64px; }
+    section h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .section-sub { color: #64748b; font-size: 0.92rem; margin-bottom: 32px; }
+
+    /* TABS */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid #1e2a38;
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 10px 22px;
+      border: none;
+      background: none;
+      color: #64748b;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+    }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-btn:hover { color: #e2e8f0; }
+
+    /* PLANS GRID */
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .plan-card {
+      background: #0d1620;
+      border: 1px solid #1e2a38;
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s;
+    }
+    .plan-card:hover { border-color: var(--accent); }
+    .plan-card.popular {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(249,115,22,0.15) inset;
+      position: relative;
+    }
+    .popular-badge {
+      position: absolute;
+      top: -11px;
+      right: 14px;
+      background: var(--accent);
+      color: #0b0f14;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .plan-name { font-size: 1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+    .plan-price { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .plan-price span { font-size: 0.9rem; font-weight: 500; color: #64748b; }
+    .plan-desc { font-size: 0.82rem; color: #64748b; margin-bottom: 20px; }
+    .plan-features { list-style: none; margin-bottom: 24px; flex: 1; }
+    .plan-features li {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      padding: 5px 0;
+      border-bottom: 1px solid #1a2535;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .plan-features li::before { content: "✓"; color: var(--accent); flex-shrink: 0; font-weight: 700; }
+    .plan-features li:last-child { border-bottom: none; }
+    .btn {
+      display: block;
+      text-align: center;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      margin-top: auto;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn-primary { background: var(--accent); color: #0b0f14; }
+    .btn-secondary { background: #1a2535; color: #94a3b8; border: 1px solid #1e2a38; }
+
+    /* FEATURES GRID */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+    .feature-card {
+      background: #0d1620;
+      border: 1px solid #1e2a38;
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .feature-icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .feature-title { font-size: 0.92rem; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+    .feature-desc { font-size: 0.82rem; color: #64748b; line-height: 1.55; }
+
+    /* HOW IT WORKS */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      counter-reset: steps;
+    }
+    .step {
+      background: #0d1620;
+      border: 1px solid #1e2a38;
+      border-radius: 12px;
+      padding: 24px 20px;
+      position: relative;
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-dark);
+      border: 1px solid var(--accent-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .step h3 { font-size: 0.95rem; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+    .step p { font-size: 0.82rem; color: #64748b; line-height: 1.55; }
+
+    /* STACK SECTION */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 64px;
+    }
+    .stack-card {
+      background: #0d1620;
+      border: 1px solid #1e2a38;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stack-card .stack-icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .stack-card .stack-name { font-size: 0.85rem; font-weight: 700; color: #e2e8f0; }
+    .stack-card .stack-sub { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 10px; }
+    .faq-item { background: #0d1620; border: 1px solid #1e2a38; border-radius: 10px; overflow: hidden; }
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .faq-q svg { flex-shrink: 0; transition: transform 0.2s; }
+    .faq-item.open .faq-q svg { transform: rotate(180deg); }
+    .faq-a { display: none; padding: 0 20px 16px; font-size: 0.85rem; color: #64748b; line-height: 1.65; }
+    .faq-item.open .faq-a { display: block; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: linear-gradient(135deg, #1a0e05, #1f1208);
+      border: 1px solid var(--accent-border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .cta-banner h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+    .cta-banner p { color: #64748b; font-size: 0.92rem; margin-bottom: 24px; }
+    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .cta-row .btn { display: inline-block; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid #1e2a38;
+      padding: 28px 40px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #475569;
+    }
+    footer a { color: #475569; text-decoration: none; }
+    footer a:hover { color: #94a3b8; }
+
+    @media (max-width: 640px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 44px 20px 28px; }
+      .tab-bar { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">EdgeIQ<span>.</span>Labs</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/play/">Game Servers</a>
+    <a href="/bots/">Bots</a>
+    <a href="/vps/">VPS</a>
+    <a href="https://discord.gg/PaP7nsFUJT" target="_blank" rel="noopener">Discord</a>
+    <a class="nav-cta" href="#plans">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🌐 Web &amp; WordPress Hosting</div>
+  <h1>Fast, Affordable Hosting<br><span>Built on Real Hardware</span></h1>
+  <p>Shared hosting and managed WordPress — no overselling, no slow VMs, no page builder upsells. Just your site, running fast.</p>
+  <p class="hero-sub">From $3/mo · Free SSL · Auto-provisioned · CyberPanel included</p>
+</div>
+
+<div class="trust-bar">
+  <span>⚡ <strong>Instant provisioning</strong> — live in minutes</span>
+  <span>🔒 <strong>Free SSL</strong> on every plan</span>
+  <span>🖥️ <strong>Real hardware</strong> — not a reseller</span>
+  <span>💳 <strong>Stripe-secured</strong> payments</span>
+  <span>💬 <strong>Real support</strong> — not a ticket bot</span>
+</div>
+
+<!-- PLANS -->
+<section id="plans">
+  <div style="text-align:center;margin-bottom:32px;">
+    <div class="section-label">Plans &amp; Pricing</div>
+    <h2>Choose your hosting type</h2>
+    <p class="section-sub">Shared hosting for any site — WordPress hosting for managed WP installs.</p>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('shared', this)">🌐 Shared Hosting</button>
+    <button class="tab-btn" onclick="switchTab('wordpress', this)">🟦 WordPress Hosting</button>
+  </div>
+
+  <!-- SHARED HOSTING PLANS -->
+  <div id="tab-shared">
+    <div class="plans">
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$3<span>/mo</span></div>
+        <div class="plan-desc">Perfect for a single personal or business site.</div>
+        <ul class="plan-features">
+          <li>1 website</li>
+          <li>5GB SSD storage</li>
+          <li>Free SSL certificate</li>
+          <li>1 email account</li>
+          <li>PHP 8.x + MySQL</li>
+          <li>CyberPanel control panel</li>
+          <li>1-click app installer</li>
+        </ul>
+        <a href="#" class="btn btn-primary" id="web-starter-btn">Get Started →</a>
+      </div>
+      <div class="plan-card popular">
+        <div class="popular-badge">MOST POPULAR</div>
+        <div class="plan-name">Business</div>
+        <div class="plan-price">$8<span>/mo</span></div>
+        <div class="plan-desc">Multiple sites, more storage, more email accounts.</div>
+        <ul class="plan-features">
+          <li>5 websites</li>
+          <li>20GB SSD storage</li>
+          <li>Free SSL on all sites</li>
+          <li>10 email accounts</li>
+          <li>PHP 8.x + MySQL</li>
+          <li>CyberPanel control panel</li>
+          <li>1-click app installer</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn-primary" id="web-business-btn">Get Started →</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$15<span>/mo</span></div>
+        <div class="plan-desc">Unlimited sites for agencies and power users.</div>
+        <ul class="plan-features">
+          <li>Unlimited websites</li>
+          <li>50GB SSD storage</li>
+          <li>Free SSL on all sites</li>
+          <li>Unlimited email accounts</li>
+          <li>PHP 8.x + MySQL</li>
+          <li>CyberPanel control panel</li>
+          <li>1-click app installer</li>
+          <li>Priority support</li>
+          <li>Daily backups</li>
+        </ul>
+        <a href="#" class="btn btn-primary" id="web-pro-btn">Get Started →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORDPRESS HOSTING PLANS -->
+  <div id="tab-wordpress" style="display:none;">
+    <div class="plans">
+      <div class="plan-card">
+        <div class="plan-name">WP Starter</div>
+        <div class="plan-price">$4<span>/mo</span></div>
+        <div class="plan-desc">One WordPress site, pre-installed and ready to go.</div>
+        <ul class="plan-features">
+          <li>1 WordPress site</li>
+          <li>5GB SSD storage</li>
+          <li>Auto WordPress install</li>
+          <li>Free SSL certificate</li>
+          <li>PHP 8.x optimized</li>
+          <li>1 email account</li>
+          <li>CyberPanel control panel</li>
+        </ul>
+        <a href="#" class="btn btn-primary" id="wp-starter-btn">Get Started →</a>
+      </div>
+      <div class="plan-card popular">
+        <div class="popular-badge">MOST POPULAR</div>
+        <div class="plan-name">WP Business</div>
+        <div class="plan-price">$10<span>/mo</span></div>
+        <div class="plan-desc">Multiple WP sites for freelancers managing client sites.</div>
+        <ul class="plan-features">
+          <li>3 WordPress sites</li>
+          <li>20GB SSD storage</li>
+          <li>Auto WordPress install</li>
+          <li>Free SSL on all sites</li>
+          <li>PHP 8.x optimized</li>
+          <li>10 email accounts</li>
+          <li>CyberPanel control panel</li>
+          <li>Staging environment</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn-primary" id="wp-business-btn">Get Started →</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">WP Pro</div>
+        <div class="plan-price">$20<span>/mo</span></div>
+        <div class="plan-desc">Unlimited WP sites for agencies and developers.</div>
+        <ul class="plan-features">
+          <li>Unlimited WordPress sites</li>
+          <li>50GB SSD storage</li>
+          <li>Auto WordPress install</li>
+          <li>Free SSL on all sites</li>
+          <li>PHP 8.x optimized</li>
+          <li>Unlimited email accounts</li>
+          <li>CyberPanel control panel</li>
+          <li>Staging environment</li>
+          <li>Daily backups</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn-primary" id="wp-pro-btn">Get Started →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="honest-box" style="margin-top:16px;">
+    <strong>How it works:</strong> Once payment goes through, your hosting account is provisioned automatically — you'll get an email with your CyberPanel login, your site's IP, and setup instructions. For WordPress plans, WordPress is pre-installed and ready to configure. No waiting on a human.
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section>
+  <div style="text-align:center;margin-bottom:32px;">
+    <div class="section-label">What's Included</div>
+    <h2>Everything you need out of the box</h2>
+    <p class="section-sub">No upsells, no gotchas — every plan includes these by default.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">Free SSL on Every Site</div>
+      <div class="feature-desc">Let's Encrypt SSL auto-issued and auto-renewed for every domain you host. HTTPS out of the box.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">OpenLiteSpeed Web Server</div>
+      <div class="feature-desc">Faster than Apache and nginx for most PHP workloads. CyberPanel runs on OpenLiteSpeed by default.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎛️</div>
+      <div class="feature-title">CyberPanel Control Panel</div>
+      <div class="feature-desc">Clean, modern control panel to manage sites, databases, emails, DNS, and file manager — no command line needed.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🗄️</div>
+      <div class="feature-title">MySQL Databases</div>
+      <div class="feature-desc">Full MySQL database access with phpMyAdmin included. Create and manage databases directly from the panel.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <div class="feature-title">Email Hosting</div>
+      <div class="feature-desc">Create professional email accounts at your domain (you@yourdomain.com) with webmail access included.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🐘</div>
+      <div class="feature-title">PHP 8.x + Multi-Version</div>
+      <div class="feature-desc">PHP 8.1, 8.2, and 8.3 available. Switch per-site in the control panel. Optimized for WordPress and Laravel.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <div class="feature-title">1-Click App Installer</div>
+      <div class="feature-desc">Install WordPress, Joomla, Drupal, and more in one click from the CyberPanel dashboard.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <div class="feature-title">Real Hardware</div>
+      <div class="feature-desc">We own our servers — not a reseller. SSD storage, no noisy neighbours from overselling.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section>
+  <div style="text-align:center;margin-bottom:32px;">
+    <div class="section-label">Tech Stack</div>
+    <h2>What's running under the hood</h2>
+    <p class="section-sub">Modern, fast, and well-supported open source stack.</p>
+  </div>
+  <div class="stack-grid">
+    <div class="stack-card">
+      <div class="stack-icon">⚡</div>
+      <div class="stack-name">OpenLiteSpeed</div>
+      <div class="stack-sub">Web server</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🐘</div>
+      <div class="stack-name">PHP 8.x</div>
+      <div class="stack-sub">8.1 · 8.2 · 8.3</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🗄️</div>
+      <div class="stack-name">MySQL 8</div>
+      <div class="stack-sub">Database</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🎛️</div>
+      <div class="stack-name">CyberPanel</div>
+      <div class="stack-sub">Control panel</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🔒</div>
+      <div class="stack-name">Let's Encrypt</div>
+      <div class="stack-sub">Free SSL</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🟦</div>
+      <div class="stack-name">WordPress</div>
+      <div class="stack-sub">WP plans only</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div style="text-align:center;margin-bottom:32px;">
+    <div class="section-label">How It Works</div>
+    <h2>Live in minutes, not hours</h2>
+    <p class="section-sub">Fully automated — no waiting on a human to set things up.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Pick your plan</h3>
+      <p>Choose shared or WordPress hosting. Select the plan that fits your number of sites and storage needs.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Pay via Stripe</h3>
+      <p>Secure checkout. Credit or debit card accepted. No contracts — cancel anytime.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Account provisioned</h3>
+      <p>Your hosting account is created automatically. WordPress plans come with WP pre-installed.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Check your email</h3>
+      <p>Login credentials for CyberPanel, your site's IP, and setup guide land in your inbox within minutes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div style="text-align:center;margin-bottom:32px;">
+    <div class="section-label">FAQ</div>
+    <h2>Common questions</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <span>Do I need to know how to code?</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">No. CyberPanel gives you a point-and-click control panel for managing everything — files, databases, email, DNS. For WordPress plans, WordPress is pre-installed and you just log in and start building.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <span>Can I host my domain here?</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Yes. Point your domain's nameservers or A record to your hosting account's IP and it'll resolve to your site. We'll include instructions in your welcome email.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <span>What's the difference between shared and WordPress hosting?</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Shared hosting is for any type of site — PHP apps, HTML sites, Laravel, etc. WordPress hosting is the same infrastructure but with WordPress pre-installed, PHP tuned for WP, and a staging environment on Business and Pro plans.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <span>Can I migrate my existing site?</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Yes. You can upload files via CyberPanel's file manager or FTP, import your database via phpMyAdmin, and update your DNS. For WordPress migrations, plugins like Duplicator or All-in-One WP Migration make it straightforward.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <span>Is there a money-back guarantee?</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">First-time purchases are eligible for a 7-day refund. Cancel any time — no penalties on monthly plans.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+        <span>Where are the servers located?</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">New Jersey, USA. Good latency for US and European visitors.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section>
+  <div class="cta-banner">
+    <h2>Ready to get your site live?</h2>
+    <p>Shared hosting from $3/mo · WordPress from $4/mo · Instant provisioning · Free SSL</p>
+    <div class="cta-row">
+      <a href="#plans" class="btn btn-primary">See Plans →</a>
+      <a href="https://discord.gg/PaP7nsFUJT" target="_blank" rel="noopener" class="btn btn-secondary">💬 Ask a Question</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:8px;">
+    <a href="/">EdgeIQ Labs</a> ·
+    <a href="/play/">Game Servers</a> ·
+    <a href="/bots/">Bot Hosting</a> ·
+    <a href="/vps/">VPS</a> ·
+    <a href="/web/">Web Hosting</a>
+  </p>
+  <p>© 2026 EdgeIQ Labs · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+</footer>
+
+<script>
+  function switchTab(tab, btn) {
+    document.getElementById('tab-shared').style.display = tab === 'shared' ? 'block' : 'none';
+    document.getElementById('tab-wordpress').style.display = tab === 'wordpress' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
