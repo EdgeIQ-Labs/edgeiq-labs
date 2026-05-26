@@ -57,5 +57,11 @@
   "vps_nano_monthly": "https://buy.stripe.com/6oU6oJcufeJD5s018c7wA3N",
   "vps_micro_monthly": "https://buy.stripe.com/28E14p51NfNH3jScQU7wA3O",
   "vps_basic_monthly": "https://buy.stripe.com/3cIaEZdyj5936w46sw7wA3P",
-  "vps_standard_monthly": "https://buy.stripe.com/9B6fZj0LxdFz07G7wA7wA3Q"
+  "vps_standard_monthly": "https://buy.stripe.com/9B6fZj0LxdFz07G7wA7wA3Q",
+  "web_starter_monthly": "https://buy.stripe.com/3cI6oJ9i3bxrdYw18c7wA3R",
+  "web_business_monthly": "https://buy.stripe.com/14A8wR9i31WR7A8aIM7wA3S",
+  "web_pro_monthly": "https://buy.stripe.com/6oU3cx51NatnbQog367wA3T",
+  "wp_starter_monthly": "https://buy.stripe.com/9B69AV51NgRL1bK2cg7wA3U",
+  "wp_business_monthly": "https://buy.stripe.com/4gMfZjdyjcBvdYw9EI7wA3V",
+  "wp_pro_monthly": "https://buy.stripe.com/00wbJ3bqb1WRdYw7wA7wA3W"
 }
