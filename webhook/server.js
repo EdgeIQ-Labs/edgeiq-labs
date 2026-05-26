@@ -11,15 +11,18 @@ const {
   STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET,
   PTERODACTYL_API_KEY,
-  PTERODACTYL_URL   = 'http://localhost',
-  PROXMOX_URL       = 'https://10.5.1.236:8006',
+  PTERODACTYL_URL    = 'http://localhost',
+  PROXMOX_URL        = 'https://10.5.1.236:8006',
   PROXMOX_TOKEN,                          // root@pam!edgeiq=<secret>
-  PROXMOX_NODE      = 'pve',
-  PROXMOX_STORAGE   = 'tank',             // ZFS pool for container rootfs
+  PROXMOX_NODE       = 'pve',
+  PROXMOX_STORAGE    = 'tank',            // ZFS pool for container rootfs
+  CYBERPANEL_URL     = 'https://localhost:8090', // CyberPanel admin API
+  CYBERPANEL_USER    = 'admin',
+  CYBERPANEL_PASS,                        // set in .env
   RESEND_API_KEY,
-  PANEL_URL         = 'https://panel.edgeiqlabs.com',
-  SERVER_IP         = '100.33.233.11',
-  PORT              = '3001',
+  PANEL_URL          = 'https://panel.edgeiqlabs.com',
+  SERVER_IP          = '100.33.233.11',
+  PORT               = '3001',
 } = process.env;
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
@@ -48,6 +51,14 @@ const PLANS = {
   'price_1Tb2VHRC1NZ20yDTPFoMZmhj': { type:'vps', name:'VPS Micro',    memory:1024, diskGB:20, cores:1 },
   'price_1Tb2VJRC1NZ20yDTIFFVAmJb': { type:'vps', name:'VPS Basic',    memory:2048, diskGB:40, cores:2 },
   'price_1Tb2VKRC1NZ20yDTawsJRCJ6': { type:'vps', name:'VPS Standard', memory:4096, diskGB:80, cores:4 },
+  // Web hosting plans (CyberPanel)
+  'price_1TbQ8WRC1NZ20yDTS2CiCp2Y': { type:'web', name:'Web Starter',   sites:1,  diskGB:5,  wordpress:false },
+  'price_1TbQ8XRC1NZ20yDTEjp7Pz1z': { type:'web', name:'Web Business',  sites:5,  diskGB:20, wordpress:false },
+  'price_1TbQ8XRC1NZ20yDT0UqN0EpZ': { type:'web', name:'Web Pro',       sites:0,  diskGB:50, wordpress:false },
+  // WordPress hosting plans (CyberPanel + auto WP install)
+  'price_1TbQ8YRC1NZ20yDTzmw9D2JU': { type:'web', name:'WP Starter',    sites:1,  diskGB:5,  wordpress:true },
+  'price_1TbQ8ZRC1NZ20yDTeaircyqg': { type:'web', name:'WP Business',   sites:3,  diskGB:20, wordpress:true },
+  'price_1TbQ8aRC1NZ20yDTunPI1he6': { type:'web', name:'WP Pro',        sites:0,  diskGB:50, wordpress:true },
 };
 
 // ─── Game Map ─────────────────────────────────────────────────────────────────
@@ -126,6 +137,9 @@ async function handleCheckout(session) {
 
   if (plan.type === 'vps') {
     return handleVPS(session, plan, email, firstName, lastName);
+  }
+  if (plan.type === 'web') {
+    return handleWebHosting(session, plan, email, firstName, lastName);
   }
 
   // ── Game / Bot provisioning (Pterodactyl) ────────────────────────────────
@@ -228,6 +242,131 @@ async function handleVPS(session, plan, email, firstName, lastName) {
   await sendVPSWelcome({ email, firstName, plan, osDisplay: osInfo.display,
     hostname, rootPassword, sshPort, appStart, appEnd, ip });
   console.log(`[done] ${email} VPS CT${vmid} provisioned`);
+}
+
+// ─── Web Hosting provisioning (CyberPanel) ───────────────────────────────────
+async function handleWebHosting(session, plan, email, firstName, lastName) {
+  const isWP     = plan.wordpress;
+  const username = 'user_' + crypto.randomBytes(4).toString('hex');
+  const password = crypto.randomBytes(10).toString('base64url').slice(0, 14);
+  // Use a sanitised subdomain as the primary domain (customer can add their real domain later)
+  const slug     = email.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 20);
+  const domain   = `${slug}.edgeiqlabs.com`;
+
+  console.log(`[web] Provisioning ${plan.name} for ${email} → ${domain}`);
+
+  // 1. Create CyberPanel user account
+  await cyberPanel('createUser', {
+    firstName, lastName,
+    email,
+    userName:  username,
+    password,
+    websiteLimit: plan.sites === 0 ? 9999 : plan.sites,
+    selectedACL:  'user',
+    securityLevel: 'HIGH',
+    status: 1,
+  });
+  console.log(`[cyberpanel] User created: ${username}`);
+
+  // 2. Create the primary website
+  await cyberPanel('createWebsite', {
+    domainName: domain,
+    ownerEmail: email,
+    websiteOwner: username,
+    packageName: 'Default',
+    websiteTemplate: 'Default',
+    ssl: 1,
+    dkimCheck: 1,
+    openBasedir: 1,
+  });
+  console.log(`[cyberpanel] Website created: ${domain}`);
+
+  // 3. For WordPress plans — auto-install WordPress
+  let wpAdminPass = null;
+  if (isWP) {
+    wpAdminPass = crypto.randomBytes(10).toString('base64url').slice(0, 14);
+    await cyberPanel('installWordPress', {
+      domainName:   domain,
+      title:        `${firstName}'s Site`,
+      adminUser:    'admin',
+      adminEmail:   email,
+      adminPassword: wpAdminPass,
+      dbName:       `wp_${username}`.slice(0, 64),
+    });
+    console.log(`[cyberpanel] WordPress installed on ${domain}`);
+  }
+
+  await sendWebWelcome({ email, firstName, plan, username, password, domain, wpAdminPass, isWP });
+  console.log(`[done] ${email} web hosting provisioned (${plan.name})`);
+}
+
+// ─── CyberPanel API helper ────────────────────────────────────────────────────
+async function cyberPanel(action, params) {
+  const agent = new https.Agent({ rejectUnauthorized: false });
+  const url   = `${CYBERPANEL_URL}/api/${action}`;
+  const body  = JSON.stringify({ adminUser: CYBERPANEL_USER, adminPass: CYBERPANEL_PASS, ...params });
+  const res   = await fetch(url, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+    // @ts-ignore — node-fetch / undici agent
+    agent,
+  });
+  const data = await res.json();
+  if (data.errorMessage && data.errorMessage !== 'None') {
+    throw new Error(`CyberPanel ${action} error: ${data.errorMessage}`);
+  }
+  return data;
+}
+
+// ─── Web hosting welcome email ────────────────────────────────────────────────
+async function sendWebWelcome({ email, firstName, plan, username, password, domain, wpAdminPass, isWP }) {
+  const accent  = '#f97316';
+  const border  = '#3a1e0a';
+  const codeBg  = '#1a0e05';
+  const emoji   = '🌐';
+  const subject = `${emoji} Your ${plan.name} hosting is ready!`;
+
+  const cpURL = CYBERPANEL_URL.replace(':8090', ':8090');
+
+  const steps = isWP ? `
+    <li>Log in to CyberPanel: <a href="${cpURL}" style="color:${accent};">${cpURL}</a></li>
+    <li>Your WordPress site is live at <strong style="color:${accent};">${domain}</strong></li>
+    <li>Log in to WordPress admin: <a href="https://${domain}/wp-admin" style="color:${accent};">https://${domain}/wp-admin</a></li>
+    <li>Use the WordPress credentials in the box below</li>
+    <li>To use your own domain: point its A record to the IP below, then add it in CyberPanel → Websites → Add Domain</li>
+    <li>Questions? Reply to this email or join Discord</li>` : `
+    <li>Log in to CyberPanel: <a href="${cpURL}" style="color:${accent};">${cpURL}</a></li>
+    <li>Your site is live at <strong style="color:${accent};">${domain}</strong></li>
+    <li>Upload files via CyberPanel → File Manager, or use FTP</li>
+    <li>To install WordPress: CyberPanel → WP Manager → Install</li>
+    <li>To use your own domain: point its A record to the IP below, then add it in CyberPanel → Websites → Add Domain</li>
+    <li>Questions? Reply to this email or join Discord</li>`;
+
+  const rows = [
+    ['CyberPanel',  `<a href="${cpURL}" style="color:${accent};">${cpURL}</a>`],
+    ['Username',    `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${username}</code>`],
+    ['Password',    `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${password}</code>`],
+    ['Your Domain', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${domain}</code>`],
+    ['Server IP',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${SERVER_IP}</code>`],
+  ];
+
+  if (isWP && wpAdminPass) {
+    rows.push(['WP Admin URL',  `<a href="https://${domain}/wp-admin" style="color:${accent};">https://${domain}/wp-admin</a>`]);
+    rows.push(['WP Username',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">admin</code>`]);
+    rows.push(['WP Password',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${wpAdminPass}</code>`]);
+  }
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Your Hosting is Live!`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> is ready.${isWP ? ' WordPress has been pre-installed.' : ''}`,
+    rows,
+    steps,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] Web hosting welcome -> ${email}`);
 }
 
 // ─── Wait for Proxmox async task ──────────────────────────────────────────────
