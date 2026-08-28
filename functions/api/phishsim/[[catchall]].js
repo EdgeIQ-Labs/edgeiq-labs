@@ -398,7 +398,20 @@ async function handleStripeWebhook(request, env) {
   try { event = JSON.parse(payload); } catch { return json({ error: 'Bad JSON' }, 400); }
 
   if (event.type === 'checkout.session.completed') {
-    const session    = event.data.object;
+    const session = event.data.object;
+
+    // SECURITY: this endpoint receives checkout.session.completed for EVERY
+    // product on the Stripe account — Stripe does not scope webhook events by
+    // product. Only provision PhishSim when the session is actually ours, or
+    // bots/game/vps/web buyers get a stray PhishSim instance + email.
+    const isPhishSimPurchase =
+      session.metadata?.service === 'phishsim' ||
+      session.line_items?.data?.[0]?.price?.id === env.PHISHSIM_PRICE_ID;
+    if (!isPhishSimPurchase) {
+      console.log('[phishsim-webhook] Ignored non-PhishSim checkout', session.id);
+      return json({ received: true, ignored: true });
+    }
+
     const customerId = session.client_reference_id || session.customer || session.id;
     const email      = session.customer_details?.email || '';
 
