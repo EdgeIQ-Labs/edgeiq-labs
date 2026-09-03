@@ -4,6 +4,7 @@ const express = require('express');
 const Stripe  = require('stripe');
 const crypto  = require('crypto');
 const https   = require('https');
+const fs      = require('fs');
 
 const app = express();
 
@@ -116,6 +117,16 @@ app.post('/stripe', express.raw({ type:'application/json' }), async (req, res) =
       console.error('[checkout] Error:', e.message, e.details || '')
     );
   }
+  if (event.type === 'customer.subscription.deleted') {
+    handleSubscriptionDeleted(event.data.object).catch(e =>
+      console.error('[lifecycle] Sub deleted error:', e.message)
+    );
+  }
+  if (event.type === 'invoice.payment_failed') {
+    handleInvoicePaymentFailed(event.data.object).catch(e =>
+      console.error('[lifecycle] Payment failed error:', e.message)
+    );
+  }
 });
 
 // ─── Main checkout handler ───────────────────────────────────────────────────
@@ -188,6 +199,13 @@ async function handleCheckout(session) {
   const serverPort = server.attributes?.relationships?.allocations?.data?.[0]?.attributes?.port;
   console.log(`[ptero] Server id=${server.attributes.id} port=${serverPort}`);
   await sendGameBotWelcome({ email, firstName, plan, password, serverPort, serverName, gameName });
+  // Store subscription mapping for lifecycle management
+  if (session.subscription) {
+    const map = loadSubMap();
+    map[session.subscription] = { serverId: server.attributes.id, email, plan: plan.name, created: new Date().toISOString() };
+    saveSubMap(map);
+    console.log(`[mapping] Stored sub ${session.subscription} -> server ${server.attributes.id}`);
+  }
   console.log(`[done] ${email} onboarded (game/bot)`);
 }
 
@@ -552,6 +570,53 @@ async function sendEmail({ to, subject, html }) {
     body: JSON.stringify({ from:'EdgeIQ <noreply@edgeiqlabs.com>', to:[to], subject, html }),
   });
   if (!res.ok) console.error('[resend] Failed:', await res.text());
+}
+
+// ─── Subscription Lifecycle ─────────────────────────────────────────────────
+const SUBSCRIPTION_MAP_FILE = '/opt/edgeiq-webhook/subscription-map.json';
+
+function loadSubMap() {
+  try { return JSON.parse(fs.readFileSync(SUBSCRIPTION_MAP_FILE, 'utf8')); }
+  catch { return {}; }
+}
+function saveSubMap(map) {
+  try { fs.writeFileSync(SUBSCRIPTION_MAP_FILE, JSON.stringify(map, null, 2)); }
+  catch (e) { console.error('[map] Write failed:', e.message); }
+}
+
+async function handleSubscriptionDeleted(subscription) {
+  const map = loadSubMap();
+  const entry = map[subscription.id];
+  if (!entry || !entry.serverId) {
+    console.error('[lifecycle] No mapping for sub:', subscription.id);
+    return;
+  }
+  console.log(`[lifecycle] Suspending server ${entry.serverId} (${entry.email})`);
+  try {
+    await ptero('PATCH', `/api/application/servers/${entry.serverId}/suspend`, {});
+    console.log(`[lifecycle] Server ${entry.serverId} suspended`);
+  } catch (e) {
+    console.error(`[lifecycle] Suspend failed:`, e.message);
+  }
+  await sendEmail({
+    to: entry.email,
+    subject: '⚠️ Your EdgeIQ Labs service has been suspended',
+    html: `<div style="max-width:600px;margin:40px auto;padding:20px;background:#0b0f14;font-family:sans-serif;"><h1 style="color:#f97316;">Service Suspended</h1><p style="color:#9fb0c7;">Your <strong>${entry.plan}</strong> subscription has ended. Server suspended, data kept 30 days.</p><p style="color:#9fb0c7;">Resubscribe at <a href="https://edgeiqlabs.com/bots/" style="color:#f97316;">edgeiqlabs.com/bots</a></p></div>`
+  });
+}
+
+async function handleInvoicePaymentFailed(invoice) {
+  const subId = invoice.subscription;
+  if (!subId) return;
+  const map = loadSubMap();
+  const entry = map[subId];
+  if (!entry) return;
+  console.log(`[lifecycle] Payment failed: ${subId} (${entry.email})`);
+  await sendEmail({
+    to: entry.email,
+    subject: '💳 Payment failed - EdgeIQ Labs',
+    html: `<div style="max-width:600px;margin:40px auto;padding:20px;background:#0b0f14;font-family:sans-serif;"><h1 style="color:#ef4444;">Payment Failed</h1><p style="color:#9fb0c7;">We couldn't process your <strong>${entry.plan}</strong> payment. Service stays active 3 more days.</p><p style="color:#9fb0c7;">Update payment or reply for help.</p></div>`
+  });
 }
 
 app.listen(Number(PORT), () => console.log(`[server] Listening on :${PORT}`));
