@@ -9,7 +9,6 @@ The edgeiqlabs.com website. Hosted on Cloudflare Pages, auto-deploys from GitHub
 | `/index.html` | Homepage — has announcement bar, paths cards, sister-services section |
 | `/play/index.html` | Game server hosting storefront (green theme) |
 | `/bots/index.html` | Discord bot hosting storefront (purple theme) |
-| `/play/rules/index.html` | Community rules for EdgeIQ Public MC server |
 | `/vps/index.html` | VPS hosting storefront (teal theme #2dd4bf) |
 | `/terms.html` | Terms of service |
 | `/privacy.html` | Privacy policy |
