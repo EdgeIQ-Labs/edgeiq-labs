@@ -4,43 +4,86 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <title>EdgeIQ Affiliate — Open-Source Partner Tracking</title>
-  <meta name="description" content="Self-hosted affiliate marketing tool. No Stripe read access required. Privacy-first partner tracking you control." />
+  <title>EdgeIQ Affiliate Program — Relay</title>
+  <meta name="description" content="Join the EdgeIQ Labs affiliate program. Earn commissions by referring SMB security plans. Powered by Relay." />
   <style>
-    :root { --bg: #0b0f14; --surface: #0d1620; --border: #1e2a38; --text: #e8eef7; --muted: #9fb0c7; --accent: #3dd9ff; }
+    :root { --bg: #0b0f14; --surface: #0d1620; --border: #1e2a38; --text: #e8eef7; --muted: #9fb0c7; --accent: #3dd9ff; --green: #70f0a8; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .container { max-width: 640px; text-align: center; padding: 60px 24px; }
-    h1 { font-size: 2.2rem; margin-bottom: 16px; line-height: 1.2; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px; }
+    h1 { font-size: 2.4rem; margin-bottom: 16px; line-height: 1.2; }
     h1 span { color: var(--accent); }
-    p { color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 24px; }
+    h2 { font-size: 1.5rem; margin: 40px 0 16px; color: var(--accent); }
+    p { color: var(--muted); font-size: 1.05rem; margin-bottom: 20px; }
     .badge { display: inline-block; background: #0f2535; border: 1px solid #1e4060; color: #7ab8d0; padding: 6px 14px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; margin-bottom: 24px; }
-    .features { text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 32px 0; }
-    .features li { list-style: none; padding: 8px 0; color: var(--muted); font-size: 0.95rem; }
-    .features li::before { content: '→ '; color: var(--accent); font-weight: 700; }
-    .cta { display: inline-block; background: var(--accent); color: #0b0f14; font-weight: 700; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-size: 0.95rem; }
-    .back { display: block; margin-top: 32px; color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+    .card li { list-style: none; padding: 6px 0; color: var(--muted); font-size: 0.95rem; }
+    .card li::before { content: '→ '; color: var(--accent); font-weight: 700; }
+    .cta { display: inline-block; background: var(--accent); color: #0b0f14; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 1rem; margin-top: 8px; }
+    .cta:hover { opacity: 0.9; }
+    .back { display: block; margin-top: 40px; color: var(--muted); text-decoration: none; font-size: 0.85rem; }
     .back:hover { color: var(--accent); }
+    code { background: #111820; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: var(--green); }
+    pre { background: #111820; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 16px 0; }
+    pre code { padding: 0; background: none; }
+    .steps { counter-reset: step; }
+    .steps li { counter-increment: step; padding: 12px 0; position: relative; padding-left: 40px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: 10px; width: 28px; height: 28px; background: var(--accent); color: #0b0f14; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="badge">🚧 Coming Soon</div>
-    <h1>Affiliate tracking that doesn't need your <span>Stripe keys</span></h1>
-    <p>Open-source, self-hosted partner management. Your revenue data stays on your server. Your partners can audit the attribution logic because the code is public.</p>
+    <div class="badge">🟢 Live — Powered by Relay</div>
+    <h1>Earn commissions securing <span>small businesses</span></h1>
+    <p>Join the EdgeIQ Labs affiliate program. Refer cybersecurity monitoring plans to business owners and earn recurring commissions. Transparent tracking, open-source attribution, no black boxes.</p>
 
-    <ul class="features">
-      <li>No third-party read access to your Stripe account</li>
-      <li>Webhook-based conversion tracking — minimal permissions</li>
-      <li>Open-source attribution logic partners can verify</li>
-      <li>Self-host via Docker Compose or Cloudflare Workers</li>
-      <li>Built by EdgeIQ Labs — cybersecurity-first infrastructure</li>
-    </ul>
+    <a href="https://partners.edgeiqlabs.com/signup" target="_blank" rel="noopener" class="cta">Become an Affiliate Partner →</a>
 
-    <p style="font-size: 0.9rem;">We're building this for our own partner program first.<br/>Join the waitlist to get early access when it ships.</p>
+    <h2>How It Works</h2>
+    <ol class="steps card">
+      <li><strong>Sign up</strong> as a partner on our portal. Get your unique referral link instantly.</li>
+      <li><strong>Share your link</strong> with business owners who need SSL monitoring, uptime checks, and phishing protection.</li>
+      <li><strong>Visitors click</strong> and get a privacy-first tracking cookie (no PII collected).</li>
+      <li><strong>They subscribe</strong> via Stripe checkout. The conversion is matched automatically via webhook.</li>
+      <li><strong>You earn</strong> 20% recurring on SMB Essentials ($29/mo) or 15% on SMB Plus ($49/mo). Commissions tracked in your dashboard.</li>
+    </ol>
 
-    <a href="https://discord.gg/PaP7nsFUJT" target="_blank" rel="noopener" class="cta">Join Discord for updates →</a>
+    <h2>Commission Structure</h2>
+    <div class="card">
+      <ul>
+        <li>SMB Essentials ($29/mo) — 20% recurring commission</li>
+        <li>SMB Plus ($49/mo) — 15% recurring commission</li>
+        <li>SSL Watcher Pro ($9/mo) — 20% recurring commission</li>
+        <li>Scanner tools (lifetime) — $5 fixed per sale</li>
+      </ul>
+    </div>
+
+    <h2>Why Partners Trust Us</h2>
+    <p>Our affiliate tracking runs on <strong>Relay</strong>, our own open-source platform. No third-party SaaS reads your data. The attribution logic is public on GitHub — you can audit every line.</p>
+    <p>We never ask for Stripe read access. Conversions are tracked via signed webhooks only. Your visitors' privacy is preserved.</p>
+
+    <h2>Integrate Relay on Your Site</h2>
+    <p>If you run a site that links to EdgeIQ checkout pages, add this snippet to automatically append affiliate tracking:</p>
+    <pre><code>&lt;script src="https://relay.edgeiqlabs.com/relay-integration.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  RelayIntegration.init({
+    relayBaseUrl: 'https://relay.edgeiqlabs.com'
+  });
+&lt;/script&gt;</code></pre>
+    <p>This rewrites all <code>buy.stripe.com</code> links on your page to include the visitor's tracking ID automatically.</p>
+
+    <h2>Ready to Start?</h2>
+    <p>Sign up takes 60 seconds. Get your referral link, start sharing, and track everything in real time.</p>
+    <a href="https://partners.edgeiqlabs.com/signup" target="_blank" rel="noopener" class="cta">Join the Partner Program →</a>
+
     <a href="/" class="back">← Back to EdgeIQ Labs</a>
   </div>
+
+  <script src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+  <script>
+    if (typeof RelayIntegration !== 'undefined') {
+      RelayIntegration.init({ relayBaseUrl: 'https://relay.edgeiqlabs.com' });
+    }
+  </script>
 </body>
 </html>
