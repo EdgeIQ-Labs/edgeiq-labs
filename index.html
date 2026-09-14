@@ -957,22 +957,21 @@
   <main class="container">
     <section class="hero">
       <div class="hero-badge-row">
-        <span class="badge" style="background:#0f2535;border-color:#1e4060;color:#7ab8d0;">🛡 Cybersecurity</span>
-        <span class="badge" style="background:#1b2622;border-color:#2a503e;color:#a8d5c0;">🎮 Game Servers</span>
-        <span class="badge" style="background:#1a1730;border-color:#2e2860;color:#a09de8;">🤖 Bot Hosting</span>
-        <span class="badge" style="background:#0a1e1c;border-color:#1a3a36;color:#2dd4bf;">☁️ VPS Hosting — New</span>
+        <span class="badge" style="background:#0f2535;border-color:#1e4060;color:#7ab8d0;">🛡 Cybersecurity Monitoring</span>
+        <span class="badge" style="background:#10261b;border-color:#24523a;color:#8ce1b5;">📊 Monthly Reports</span>
+        <span class="badge" style="background:#122437;border-color:#25476a;color:#8ecbff;">⚡ 24h Onboarding</span>
       </div>
-      <h1>Security, Servers &amp; Hosting — Built for Real People</h1>
+      <h1>Security monitoring for small business — without the enterprise price tag</h1>
       <p>
-        Whether you're protecting your business, running a Minecraft server, or hosting a Discord bot —
-        EdgeIQ Labs gives you professional-grade infrastructure without the enterprise price tag.
+        SSL alerts, DMARC enforcement, phishing simulation, compliance checks, and monthly action reports.
+        Everything a lean team needs to stay protected — nothing you don't.
       </p>
 
       <div class="hero-audience-ctas">
-        <a class="btn btn-primary" href="#paths">Find Your Service →</a>
+        <a class="btn btn-primary" href="#smb-essentials">Start free trial →</a>
         <a class="btn btn-secondary" href="#scanner">Free Security Scan</a>
       </div>
-      <p class="hero-audience-note">No lock-in. Real support. Pick exactly what you need.</p>
+      <p class="hero-audience-note">No lock-in · 14-day free trial · Real human support</p>
       <a class="btn btn-secondary" href="https://discord.gg/PaP7nsFUJT" target="_blank" rel="noopener">Talk to Support</a>
 
       <div class="trust-bar" aria-label="Trust signals">
@@ -998,6 +997,83 @@
       </div>
     </section>
 
+    <!-- SMB Pricing — moved above fold 2026-09-14 -->
+    <section id="pricing">
+      <div class="billing-toggle-section">
+        <div class="billing-toggle-wrap">
+          <span class="billing-toggle-label active" data-billing="monthly">Monthly</span>
+          <button class="billing-toggle" id="billingToggle" aria-label="Toggle annual billing" aria-checked="false">
+            <span class="billing-toggle-thumb"></span>
+          </button>
+          <span class="billing-toggle-label" data-billing="annual">Annual <span class="save-badge">Save 20%</span></span>
+        </div>
+        <p class="billing-note" id="billingNote">Switch to annual and save on any tool — billed once, owned 12 months</p>
+      </div>
+
+      <!-- Browse all tools CTA -->
+      <div class="card" style="background:linear-gradient(180deg,rgba(61,217,255,0.06),rgba(61,217,255,0.02));border:1px solid rgba(61,217,255,0.3);text-align:center;padding:28px 22px;margin-bottom:18px;">
+        <h3 style="margin-bottom:6px;">🔧 Looking for individual security tools?</h3>
+        <p style="color:var(--muted);font-size:0.92rem;margin-bottom:14px;">Browse all 40+ EdgeIQ Labs products — lifetime scanners, dashboards, white-label reports, setup services, and APIs.</p>
+        <a class="btn btn-primary" href="/products/" style="font-size:0.95rem;">Browse all products →</a>
+      </div>
+
+      <h2 id="smb-essentials" style="margin-top:40px;">SMB Security Essentials Bundle</h2>
+      <p class="section-sub" style="margin-bottom:8px;">Managed monitoring bundle for business owners. Prefer to DIY? <a href="/products/" style="color:var(--accent);">Browse individual tools →</a></p>
+      <p style="color:var(--muted);font-size:0.9rem;margin:0 0 14px;">📄 Want to see exactly what you'll get? <a href="/sample-report/" style="color:var(--accent);font-weight:600;">View a sample monthly report →</a></p>
+
+      <p style="color:var(--muted);font-size:0.86rem;margin:0 0 10px;"><strong style="color:var(--text);">Lane clarity:</strong> <span style="color:#9fd4ff;"><a href="/products/" style="color:#9fd4ff;">Individual tools</a></span> = self-serve scans • <span style="color:#8ce1b5;">SMB bundle</span> = managed monitoring + reporting.</p>
+
+      <div class="hero-badge-row" style="justify-content:flex-start;margin:0 0 16px;">
+        <span class="badge" style="background:#1a2810;border-color:#3a5e1f;color:#a4e070;font-weight:700;">🆓 14-day free trial — no charge until day 15</span>
+        <span class="badge" style="background:#122437;border-color:#25476a;color:#8ecbff;">⚡ Setup kickoff in 24h</span>
+        <span class="badge" style="background:#10261b;border-color:#24523a;color:#8ce1b5;">💬 Human support included</span>
+        <span class="badge" style="background:#261a10;border-color:#5a3f25;color:#f6c482;">📄 Monthly report included</span>
+      </div>
+
+      <div class="pricing" style="align-items:stretch;">
+
+        <article class="card anim-card" style="border-color:#2b445f;display:flex;flex-direction:column;">
+          <h3>🛡️ SMB Essentials <span class="billing-price-flip" data-monthly-text="$29/mo" data-annual-text="$278/yr" style="color:var(--accent);font-size:0.88rem;">$29/mo</span></h3>
+          <p style="color:var(--muted);font-size:0.88rem;">Core protection for small teams that want visibility without overhead.</p>
+          <ul>
+            <li>SSL certificate + domain expiry monitoring</li>
+            <li>Uptime and outage checks</li>
+            <li>Email header phishing analysis</li>
+            <li>Monthly security summary report</li>
+          </ul>
+          <p style="color:#a4e070;font-size:0.78rem;font-weight:600;margin:6px 0 10px;">🆓 14-day free trial</p>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary billing-monthly-btn" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" data-annual-link="https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f" data-monthly-text="Start free trial" data-annual-text="Start free trial — $278/yr after" target="_blank" rel="noopener">Start free trial</a>
+            <a class="btn btn-secondary" href="#contact" style="font-size:0.8rem;">Questions? Talk to us</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="border-color:#3a5c2a;box-shadow:0 0 0 1px rgba(112,240,168,0.2) inset;display:flex;flex-direction:column;position:relative;">
+          <span style="position:absolute;top:-11px;right:14px;background:#70f0a8;color:#052012;border-radius:999px;padding:4px 10px;font-size:0.72rem;font-weight:800;">MOST POPULAR</span>
+          <h3>🚀 SMB Plus <span class="billing-price-flip" data-monthly-text="$49/mo" data-annual-text="$470/yr" style="color:#70f0a8;font-size:0.88rem;">$49/mo</span></h3>
+          <p style="color:var(--muted);font-size:0.88rem;">Everything in Essentials, plus faster support and deeper guidance.</p>
+          <ul>
+            <li><strong>Everything in SMB Essentials</strong></li>
+            <li>Priority remediation support</li>
+            <li>Expanded monthly report + action plan</li>
+            <li>Higher-touch help for urgent findings</li>
+          </ul>
+          <p style="color:#a4e070;font-size:0.78rem;font-weight:600;margin:6px 0 10px;">🆓 14-day free trial</p>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary billing-monthly-btn" href="https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w" data-annual-link="https://buy.stripe.com/3cI00l1PB7hb7A84ko7wA3g" data-monthly-text="Start free trial" data-annual-text="Start free trial — $470/yr after" target="_blank" rel="noopener">Start free trial</a>
+            <a class="btn btn-secondary" href="#contact" style="font-size:0.8rem;">Book a quick intro</a>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="card" style="margin-top:14px;padding:14px 16px;">
+        <p style="margin:0;color:var(--muted);font-size:0.9rem;"><strong style="color:var(--text);">How onboarding works:</strong> checkout → we contact you → we configure your monitoring profile → first report cycle starts.</p>
+      </div>
+
+    </section>
+
+
     <!-- Persona routing -->
     <section id="paths" aria-label="Choose your path" style="padding:0 0 8px;">
       <h2 style="text-align:center;font-size:1.05rem;font-weight:700;color:#9fb0c7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px;">What best describes you?</h2>
@@ -1019,34 +1095,6 @@
           <div style="font-weight:700;font-size:0.95rem;color:#e8eef7;margin-bottom:6px;">Security professional</div>
           <div style="font-size:0.84rem;color:#9fb0c7;line-height:1.5;">I need specific security tools — scanners, monitors, and automation I can use right now for free.</div>
           <div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:#3de19e;">Open free dashboard →</div>
-        </a>
-        <a href="https://play.edgeiqlabs.com" target="_blank" rel="noopener" style="text-decoration:none;background:#0d1620;border:1px solid #1a3a20;border-radius:14px;padding:22px 20px;display:block;transition:border-color 0.2s;position:relative;" onmouseover="this.style.borderColor='#4ade80'" onmouseout="this.style.borderColor='#1a3a20'">
-          <span style="position:absolute;top:12px;right:14px;background:#0f2a1a;color:#4ade80;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid #1a4a2a;letter-spacing:0.5px;">NEW</span>
-          <div style="font-size:1.8rem;margin-bottom:10px;">🎮</div>
-          <div style="font-weight:700;font-size:0.95rem;color:#e8eef7;margin-bottom:6px;">Gamer / server owner</div>
-          <div style="font-size:0.84rem;color:#9fb0c7;line-height:1.5;">I want affordable game server hosting — 24 games including Minecraft, Valheim &amp; CS2, auto-provisioned from $5/mo.</div>
-          <div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:#4ade80;">Start free trial → play.edgeiqlabs.com</div>
-        </a>
-        <a href="https://bots.edgeiqlabs.com" target="_blank" rel="noopener" style="text-decoration:none;background:#0d1620;border:1px solid #1e1a3a;border-radius:14px;padding:22px 20px;display:block;transition:border-color 0.2s;position:relative;" onmouseover="this.style.borderColor='#7c6fef'" onmouseout="this.style.borderColor='#1e1a3a'">
-          <span style="position:absolute;top:12px;right:14px;background:#18153a;color:#7c6fef;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid #2a2460;letter-spacing:0.5px;">NEW</span>
-          <div style="font-size:1.8rem;margin-bottom:10px;">🤖</div>
-          <div style="font-weight:700;font-size:0.95rem;color:#e8eef7;margin-bottom:6px;">Discord bot developer</div>
-          <div style="font-size:0.84rem;color:#9fb0c7;line-height:1.5;">I want reliable 24/7 Discord bot hosting — Node.js, Python, Java & Deno supported from $3/mo.</div>
-          <div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:#7c6fef;">Host your bot → bots.edgeiqlabs.com</div>
-        </a>
-        <a href="/vps/" style="text-decoration:none;background:#0d1620;border:1px solid #0e2e2a;border-radius:14px;padding:22px 20px;display:block;transition:border-color 0.2s;position:relative;" onmouseover="this.style.borderColor='#2dd4bf'" onmouseout="this.style.borderColor='#0e2e2a'">
-          <span style="position:absolute;top:12px;right:14px;background:#0a1e1c;color:#2dd4bf;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid #1a3a36;letter-spacing:0.5px;">NEW</span>
-          <div style="font-size:1.8rem;margin-bottom:10px;">🖥️</div>
-          <div style="font-weight:700;font-size:0.95rem;color:#e8eef7;margin-bottom:6px;">Developer / sysadmin</div>
-          <div style="font-size:0.84rem;color:#9fb0c7;line-height:1.5;">I need a Linux VPS with full root access — SSD storage on real hardware from $4/mo.</div>
-          <div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:#2dd4bf;">Get a VPS → edgeiqlabs.com/vps</div>
-        </a>
-        <a href="/web/" style="text-decoration:none;background:#0d1620;border:1px solid #2a1a0a;border-radius:14px;padding:22px 20px;display:block;transition:border-color 0.2s;position:relative;" onmouseover="this.style.borderColor='#f97316'" onmouseout="this.style.borderColor='#2a1a0a'">
-          <span style="position:absolute;top:12px;right:14px;background:#1a0e05;color:#f97316;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid #3a1e0a;letter-spacing:0.5px;">NEW</span>
-          <div style="font-size:1.8rem;margin-bottom:10px;">🌐</div>
-          <div style="font-weight:700;font-size:0.95rem;color:#e8eef7;margin-bottom:6px;">Website / WordPress owner</div>
-          <div style="font-size:0.84rem;color:#9fb0c7;line-height:1.5;">I need fast, affordable web hosting — shared or WordPress, free SSL, CyberPanel from $3/mo.</div>
-          <div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:#f97316;">Get hosting → edgeiqlabs.com/web</div>
         </a>
       </div>
     </section>
@@ -1141,7 +1189,7 @@
           <button class="scan-tab" onclick="showScannerTab('policy')" id="tab-btn-policy">📄 Policy Builder</button>
           <button class="scan-tab" onclick="showScannerTab('asm')" id="tab-btn-asm">🗺️ ASM Dashboard</button>
           <button class="scan-tab" onclick="showScannerTab('cve')" id="tab-btn-cve">🔎 CVE Lookup</button>
-          <button class="scan-tab" onclick="showScannerTab('domain-score')" id="tab-btn-domain-score">🛡 Security Score</button>
+          <button class="scan-tab" onclick="showScannerTab('domain-score')" id="tab-btn-domain-score">🛡️ Security Score</button>
           <button class="scan-tab" onclick="showScannerTab('dmarc')" id="tab-btn-dmarc">📧 DMARC Check</button>
           <button class="scan-tab" onclick="showScannerTab('spf')" id="tab-btn-spf">📋 SPF Analyzer</button>
           <button class="scan-tab" onclick="showScannerTab('blacklist')" id="tab-btn-blacklist">🚫 Blacklist</button>
@@ -1835,124 +1883,9 @@
      ship. Do NOT publish fabricated testimonials (FTC 16 CFR §255).
      Each quote: 1–2 sentences, specific outcome, real first name +
      role + company with permission. -->
-<template id="testimonials-scaffold">
-  <section class="testimonials">
-    <div class="container">
-      <h2>What customers say</h2>
-      <p class="section-sub">Real feedback from teams using EdgeIQ Labs.</p>
-      <div class="testimonial-grid">
-        <article class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">[REPLACE: 1–2 sentence quote about a specific outcome — e.g. "Found 4 expired SSL certs in 5 minutes during onboarding."]</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">[INITIALS]</div>
-            <div>
-              <div class="testimonial-name">[REPLACE: First name + last initial]</div>
-              <div class="testimonial-role">[REPLACE: Role · Company]</div>
-            </div>
-          </div>
-        </article>
-        <article class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">[REPLACE: 1–2 sentence quote — focus on what changed for them, not features.]</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">[INITIALS]</div>
-            <div>
-              <div class="testimonial-name">[REPLACE: First name + last initial]</div>
-              <div class="testimonial-role">[REPLACE: Role · Company]</div>
-            </div>
-          </div>
-        </article>
-        <article class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">[REPLACE: 1–2 sentence quote — ideally from a different audience segment than the others.]</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">[INITIALS]</div>
-            <div>
-              <div class="testimonial-name">[REPLACE: First name + last initial]</div>
-              <div class="testimonial-role">[REPLACE: Role · Company]</div>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-</template>
+<!-- Testimonials section removed — no real testimonials yet. Re-add when available. -->
 
-<section id="pricing">
-      <div class="billing-toggle-section">
-        <div class="billing-toggle-wrap">
-          <span class="billing-toggle-label active" data-billing="monthly">Monthly</span>
-          <button class="billing-toggle" id="billingToggle" aria-label="Toggle annual billing" aria-checked="false">
-            <span class="billing-toggle-thumb"></span>
-          </button>
-          <span class="billing-toggle-label" data-billing="annual">Annual <span class="save-badge">Save 20%</span></span>
-        </div>
-        <p class="billing-note" id="billingNote">Switch to annual and save on any tool — billed once, owned 12 months</p>
-      </div>
 
-      <!-- Browse all tools CTA -->
-      <div class="card" style="background:linear-gradient(180deg,rgba(61,217,255,0.06),rgba(61,217,255,0.02));border:1px solid rgba(61,217,255,0.3);text-align:center;padding:28px 22px;margin-bottom:18px;">
-        <h3 style="margin-bottom:6px;">🔧 Looking for individual security tools?</h3>
-        <p style="color:var(--muted);font-size:0.92rem;margin-bottom:14px;">Browse all 40+ EdgeIQ Labs products — lifetime scanners, dashboards, white-label reports, setup services, and APIs.</p>
-        <a class="btn btn-primary" href="/products/" style="font-size:0.95rem;">Browse all products →</a>
-      </div>
-
-      <h2 id="smb-essentials" style="margin-top:40px;">SMB Security Essentials Bundle</h2>
-      <p class="section-sub" style="margin-bottom:8px;">Managed monitoring bundle for business owners. Prefer to DIY? <a href="/products/" style="color:var(--accent);">Browse individual tools →</a></p>
-      <p style="color:var(--muted);font-size:0.9rem;margin:0 0 14px;">📄 Want to see exactly what you'll get? <a href="/sample-report/" style="color:var(--accent);font-weight:600;">View a sample monthly report →</a></p>
-
-      <p style="color:var(--muted);font-size:0.86rem;margin:0 0 10px;"><strong style="color:var(--text);">Lane clarity:</strong> <span style="color:#9fd4ff;"><a href="/products/" style="color:#9fd4ff;">Individual tools</a></span> = self-serve scans • <span style="color:#8ce1b5;">SMB bundle</span> = managed monitoring + reporting.</p>
-
-      <div class="hero-badge-row" style="justify-content:flex-start;margin:0 0 16px;">
-        <span class="badge" style="background:#1a2810;border-color:#3a5e1f;color:#a4e070;font-weight:700;">🆓 14-day free trial — no charge until day 15</span>
-        <span class="badge" style="background:#122437;border-color:#25476a;color:#8ecbff;">⚡ Setup kickoff in 24h</span>
-        <span class="badge" style="background:#10261b;border-color:#24523a;color:#8ce1b5;">💬 Human support included</span>
-        <span class="badge" style="background:#261a10;border-color:#5a3f25;color:#f6c482;">📄 Monthly report included</span>
-      </div>
-
-      <div class="pricing" style="align-items:stretch;">
-
-        <article class="card anim-card" style="border-color:#2b445f;display:flex;flex-direction:column;">
-          <h3>🛡️ SMB Essentials <span class="billing-price-flip" data-monthly-text="$29/mo" data-annual-text="$278/yr" style="color:var(--accent);font-size:0.88rem;">$29/mo</span></h3>
-          <p style="color:var(--muted);font-size:0.88rem;">Core protection for small teams that want visibility without overhead.</p>
-          <ul>
-            <li>SSL certificate + domain expiry monitoring</li>
-            <li>Uptime and outage checks</li>
-            <li>Email header phishing analysis</li>
-            <li>Monthly security summary report</li>
-          </ul>
-          <p style="color:#a4e070;font-size:0.78rem;font-weight:600;margin:6px 0 10px;">🆓 14-day free trial</p>
-          <div class="plan-actions" style="margin-top:auto;">
-            <a class="btn btn-primary billing-monthly-btn" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" data-annual-link="https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f" data-monthly-text="Start free trial" data-annual-text="Start free trial — $278/yr after" target="_blank" rel="noopener">Start free trial</a>
-            <a class="btn btn-secondary" href="#contact" style="font-size:0.8rem;">Questions? Talk to us</a>
-          </div>
-        </article>
-
-        <article class="card anim-card" style="border-color:#3a5c2a;box-shadow:0 0 0 1px rgba(112,240,168,0.2) inset;display:flex;flex-direction:column;position:relative;">
-          <span style="position:absolute;top:-11px;right:14px;background:#70f0a8;color:#052012;border-radius:999px;padding:4px 10px;font-size:0.72rem;font-weight:800;">MOST POPULAR</span>
-          <h3>🚀 SMB Plus <span class="billing-price-flip" data-monthly-text="$49/mo" data-annual-text="$470/yr" style="color:#70f0a8;font-size:0.88rem;">$49/mo</span></h3>
-          <p style="color:var(--muted);font-size:0.88rem;">Everything in Essentials, plus faster support and deeper guidance.</p>
-          <ul>
-            <li><strong>Everything in SMB Essentials</strong></li>
-            <li>Priority remediation support</li>
-            <li>Expanded monthly report + action plan</li>
-            <li>Higher-touch help for urgent findings</li>
-          </ul>
-          <p style="color:#a4e070;font-size:0.78rem;font-weight:600;margin:6px 0 10px;">🆓 14-day free trial</p>
-          <div class="plan-actions" style="margin-top:auto;">
-            <a class="btn btn-primary billing-monthly-btn" href="https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w" data-annual-link="https://buy.stripe.com/3cI00l1PB7hb7A84ko7wA3g" data-monthly-text="Start free trial" data-annual-text="Start free trial — $470/yr after" target="_blank" rel="noopener">Start free trial</a>
-            <a class="btn btn-secondary" href="#contact" style="font-size:0.8rem;">Book a quick intro</a>
-          </div>
-        </article>
-
-      </div>
-
-      <div class="card" style="margin-top:14px;padding:14px 16px;">
-        <p style="margin:0;color:var(--muted);font-size:0.9rem;"><strong style="color:var(--text);">How onboarding works:</strong> checkout → we contact you → we configure your monitoring profile → first report cycle starts.</p>
-      </div>
-
-    </section>
 
     <!-- Comparison: EdgeIQ vs Tenable / Detectify / Intruder -->
     <section id="compare" class="compare-section" aria-label="EdgeIQ Labs vs other security platforms">
