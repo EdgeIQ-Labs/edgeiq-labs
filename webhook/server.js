@@ -60,6 +60,9 @@ const PLANS = {
   'price_1TbQ8YRC1NZ20yDTzmw9D2JU': { type:'web', name:'WP Starter',    sites:1,  diskGB:5,  wordpress:true },
   'price_1TbQ8ZRC1NZ20yDTeaircyqg': { type:'web', name:'WP Business',   sites:3,  diskGB:20, wordpress:true },
   'price_1TbQ8aRC1NZ20yDTunPI1he6': { type:'web', name:'WP Pro',        sites:0,  diskGB:50, wordpress:true },
+  // Sentinel (Agentic QA)
+  'price_1UG1CYRC1NZ20yDTkr2LtFo6': { type:'sentinel', name:'Sentinel Pro',     tier:'pro' },
+  'price_1UG1CYRC1NZ20yDTA6q4YPYq': { type:'sentinel', name:'Sentinel Managed', tier:'managed' },
 };
 
 // ─── Game Map ─────────────────────────────────────────────────────────────────
@@ -151,6 +154,9 @@ async function handleCheckout(session) {
   }
   if (plan.type === 'web') {
     return handleWebHosting(session, plan, email, firstName, lastName);
+  }
+  if (plan.type === 'sentinel') {
+    return handleSentinel(session, plan, email, firstName, lastName);
   }
 
   // ── Game / Bot provisioning (Pterodactyl) ────────────────────────────────
@@ -386,6 +392,59 @@ async function sendWebWelcome({ email, firstName, plan, username, password, doma
 
   await sendEmail({ to: email, subject, html });
   console.log(`[resend] Web hosting welcome -> ${email}`);
+}
+
+// ─── Sentinel (Agentic QA) provisioning ──────────────────────────────────────
+async function handleSentinel(session, plan, email, firstName, lastName) {
+  const licenseKey = 'SENT-' + crypto.randomBytes(16).toString('hex').toUpperCase();
+  const isManaged = plan.tier === 'managed';
+
+  // Store subscription mapping for lifecycle management
+  if (session.subscription) {
+    const map = loadSubMap();
+    map[session.subscription] = { type: 'sentinel', tier: plan.tier, licenseKey, email, plan: plan.name, created: new Date().toISOString() };
+    saveSubMap(map);
+  }
+
+  const accent   = '#c084fc';
+  const border   = 'rgba(192,132,252,0.3)';
+  const codeBg   = 'rgba(192,132,252,0.08)';
+  const emoji    = '🔍';
+  const subject  = `${emoji} Your Sentinel License — EdgeIQ Labs`;
+
+  const repoUrl = 'https://github.com/EdgeIQ-Labs/edgeiq-sentinel';
+  const docsUrl = 'https://edgeiqlabs.com/docs/';
+
+  const steps = isManaged ? `
+    <li>Your managed Sentinel instance is being provisioned at <strong style="color:${accent};">sentinel.edgeiqlabs.com</strong></li>
+    <li>You'll receive a separate email with your dashboard login within 15 minutes</li>
+    <li>Point it at any URL from the dashboard — we handle the infrastructure</li>
+    <li>Need help? Reply to this email or join our Discord</li>
+  ` : `
+    <li>Clone the repo: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">git clone ${repoUrl}</code></li>
+    <li>Configure: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">cp .env.example .env</code> and add your LLM API key</li>
+    <li>Add your license: set <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">SENTINEL_LICENSE_KEY=${licenseKey}</code> in .env</li>
+    <li>Launch: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">docker compose up -d</code></li>
+    <li>Dashboard → <strong style="color:${accent};">http://localhost:3000</strong></li>
+  `;
+
+  const rows = [
+    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
+    ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
+    ['Repository', `<a href="${repoUrl}" style="color:${accent};">GitHub ↗</a>`],
+    ['Documentation', `<a href="${docsUrl}" style="color:${accent};">Docs ↗</a>`],
+  ];
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Welcome to Sentinel`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
+    rows,
+    steps,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] Sentinel ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
 }
 
 // ─── Wait for Proxmox async task ──────────────────────────────────────────────
