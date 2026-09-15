@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel — Agentic QA by EdgeIQ Labs</title>
+  <meta name="description" content="Autonomous AI agents that crawl your web app, find bugs, and report failures. No scripts. Self-hosted. Privacy-first.">
+  <style>
+    :root { --bg:#0b0f14; --surface:#131820; --border:#1e2530; --text:#e2e8f0; --muted:#94a3b8; --red:#ff1a1a; --purple:#c084fc; --green:#00ff66; --teal:#2dd4bf; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono','Fira Code',monospace; line-height:1.6; }
+    a { color:var(--purple); text-decoration:none; }
+    a:hover { color:var(--red); }
+    .container { max-width:1100px; margin:0 auto; padding:0 2rem; }
+    .nav { border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+    .nav-brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.1rem; }
+    .nav-links { display:flex; gap:20px; font-size:0.85rem; }
+    .hero { padding:6rem 0 4rem; text-align:center; }
+    .hero h1 { font-size:2.8rem; font-weight:800; line-height:1.2; margin-bottom:1.5rem; }
+    .hero p { color:var(--muted); font-size:1.1rem; max-width:700px; margin:0 auto 2rem; }
+    .btn { display:inline-block; padding:12px 28px; border-radius:8px; font-weight:700; font-size:0.9rem; font-family:inherit; transition:opacity 0.2s; }
+    .btn:hover { opacity:0.85; }
+    .btn-primary { background:var(--red); color:#fff; }
+    .btn-secondary { background:transparent; border:1px solid var(--purple); color:var(--purple); }
+    .section { padding:4rem 0; }
+    .section h2 { font-size:1.8rem; margin-bottom:1.5rem; color:var(--purple); }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.5rem; }
+    .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; }
+    .pricing-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+    .pricing-table th, .pricing-table td { padding:12px 16px; text-align:left; border-bottom:1px solid var(--border); font-size:0.85rem; }
+    .pricing-table th { color:var(--muted); font-weight:600; }
+    .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:700; }
+    footer { border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--muted); font-size:0.8rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-brand"><span style="color:var(--red)">⬡</span> Sentinel <span style="color:var(--muted);font-size:0.75rem;font-weight:400;">by EdgeIQ Labs</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/EdgeIQ-Labs/edgeiq-sentinel" target="_blank">GitHub</a>
+      <a href="/docs/">Docs</a>
+    </div>
+  </nav>
+
+  <section class="hero container">
+    <h1>Stop writing tests.<br><span style="color:var(--red)">Start deploying guards.</span></h1>
+    <p>Sentinel is the open-source, self-hosted agentic QA platform. Point it at your app, and autonomous AI agents will crawl, click, and break everything before your users do. No scripts. No cloud exfiltration.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/EdgeIQ-Labs/edgeiq-sentinel" class="btn btn-secondary" target="_blank">View on GitHub</a>
+      <a href="#pricing" class="btn btn-primary">Get Started</a>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Your QA pipeline is a liability.</h2>
+    <div class="card" style="color:var(--muted);font-size:0.95rem;line-height:1.8;">
+      <p>Playwright and Cypress require armies of engineers to maintain brittle selectors. Cloud AI tools like Mabl and QA Wolf demand you pipe your application's internal data through their servers.</p>
+      <p style="margin-top:1rem;color:var(--text);">We're a cybersecurity firm. We refuse both options. Sentinel runs entirely inside your own Docker infrastructure. Your application data, credentials, and user flows never leave your network.</p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>How it works</h2>
+    <div class="grid-3">
+      <div class="card">
+        <div style="color:var(--red);font-size:1.5rem;margin-bottom:0.5rem;">①</div>
+        <h3 style="margin-bottom:0.5rem;">Point</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">Give Sentinel a URL and an LLM endpoint (OpenAI, Ollama, vLLM). One command.</p>
+        <code style="display:block;margin-top:0.75rem;color:var(--green);font-size:0.8rem;">sentinel run https://myapp.com</code>
+      </div>
+      <div class="card">
+        <div style="color:var(--purple);font-size:1.5rem;margin-bottom:0.5rem;">②</div>
+        <h3 style="margin-bottom:0.5rem;">Explore</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">Autonomous agents map your application, fill forms, and hunt for edge cases using accessibility snapshots and LLM reasoning.</p>
+      </div>
+      <div class="card">
+        <div style="color:var(--teal);font-size:1.5rem;margin-bottom:0.5rem;">③</div>
+        <h3 style="margin-bottom:0.5rem;">Report</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">Get deterministic findings with screenshots, console logs, and accessibility violations. Fail your CI pipeline automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="pricing">
+    <h2>Pricing</h2>
+    <div class="card" style="overflow-x:auto;">
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="color:var(--green)">Community</th>
+            <th style="color:var(--purple)">Pro</th>
+            <th style="color:var(--red)">Managed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">Price</td>
+            <td>Free forever</td>
+            <td>$399 one-time</td>
+            <td>$149/month</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">License</td>
+            <td>AGPL-3.0</td>
+            <td>Commercial</td>
+            <td>SaaS</td>
+          </tr>
+          <tr>
+            <td>Agents</td>
+            <td>Single (sequential)</td>
+            <td>Multi-agent parallel</td>
+            <td>Multi-agent parallel</td>
+          </tr>
+          <tr>
+            <td>CI/CD integration</td>
+            <td>—</td>
+            <td>✓ CLI + GitHub Action</td>
+            <td>✓ CLI + GitHub Action</td>
+          </tr>
+          <tr>
+            <td>Custom assertions</td>
+            <td>—</td>
+            <td>✓ Natural language</td>
+            <td>✓ Natural language</td>
+          </tr>
+          <tr>
+            <td>Visual regression</td>
+            <td>Basic</td>
+            <td>Baseline management</td>
+            <td>Baseline management</td>
+          </tr>
+          <tr>
+            <td>Hosting</td>
+            <td>Docker self-hosted</td>
+            <td>Docker self-hosted</td>
+            <td>We host it for you</td>
+          </tr>
+          <tr>
+            <td>Support</td>
+            <td>GitHub Discussions</td>
+            <td>Priority Discord</td>
+            <td>SLA guarantee</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><a href="https://github.com/EdgeIQ-Labs/edgeiq-sentinel" class="btn btn-secondary" style="padding:8px 16px;font-size:0.8rem;" target="_blank">Get Started</a></td>
+            <td><a href="https://buy.stripe.com/aFa5kF0Lx1WRcUs4ko7wA42" class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;background:var(--purple);color:#0b0f14;">Buy License</a></td>
+            <td><a href="https://buy.stripe.com/3cI9AV8dZcBv6w47wA7wA43" class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">Subscribe</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>⬡ Sentinel by <a href="/">EdgeIQ Labs</a> · <a href="https://github.com/EdgeIQ-Labs/edgeiq-sentinel">GitHub</a> · AGPL-3.0</p>
+  </footer>
+</body>
+</html>
