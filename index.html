@@ -1829,7 +1829,47 @@
         </div>
       </section>
 
-</section>
+    <!-- SaaS Products -->
+    <section id="products" style="padding:52px 0 40px;">
+      <h2>Open-Source Tools</h2>
+      <p class="section-sub">Self-hosted, privacy-first. Built by EdgeIQ Labs, released under AGPL-3.0.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;">
+
+        <!-- Relay -->
+        <article class="card anim-card" style="background:linear-gradient(135deg,#1a0808 0%,#0d0a14 100%);border-color:rgba(255,26,26,0.35);position:relative;overflow:hidden;">
+          <div style="position:absolute;top:12px;right:14px;background:rgba(112,240,168,0.12);border:1px solid rgba(112,240,168,0.3);color:#70f0a8;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">LIVE</div>
+          <h3 style="color:#ff1a1a;">⚡ Relay</h3>
+          <p style="color:var(--muted);font-size:0.9rem;margin:8px 0 12px;">Open-source affiliate tracking for Stripe checkout links. No API keys shared, no vendor lock-in. Self-host in minutes.</p>
+          <ul style="margin:0 0 14px 18px;color:var(--muted);font-size:0.85rem;line-height:1.7;">
+            <li>Webhook-only — works with <code style="color:#c084fc;">buy.stripe.com</code> links</li>
+            <li>Partner portal + admin dashboard</li>
+            <li>Docker Compose deployment</li>
+            <li>Community free · Pro $299 lifetime</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="https://relay.edgeiqlabs.com/portal/signup" style="font-size:0.85rem;background:#ff1a1a;color:#fff;border:none;">Join as Partner →</a>
+            <a class="btn btn-secondary" href="https://github.com/EdgeIQ-Labs/edgeiq-affiliate" target="_blank" rel="noopener" style="font-size:0.85rem;">GitHub ↗</a>
+          </div>
+        </article>
+
+        <!-- Agentic QA -->
+        <article class="card anim-card" style="background:linear-gradient(135deg,#0d0a14 0%,#0b0f14 100%);border-color:rgba(192,132,252,0.25);position:relative;overflow:hidden;">
+          <div style="position:absolute;top:12px;right:14px;background:rgba(192,132,252,0.12);border:1px solid rgba(192,132,252,0.3);color:#c084fc;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">COMING SOON</div>
+          <h3 style="color:#c084fc;">🔍 Agentic QA</h3>
+          <p style="color:var(--muted);font-size:0.9rem;margin:8px 0 12px;">AI agents that crawl your web app, click every flow, fill forms, and report bugs — no test scripts to write.</p>
+          <ul style="margin:0 0 14px 18px;color:var(--muted);font-size:0.85rem;line-height:1.7;">
+            <li>Autonomous exploration — point at a URL, get a report</li>
+            <li>Visual regression + accessibility audit</li>
+            <li>CI/CD integration via webhook</li>
+            <li>Self-hosted — your data never leaves</li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-secondary" href="#newsletter" style="font-size:0.85rem;border-color:#c084fc;color:#c084fc;">Get Notified →</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
 
 <!-- TESTIMONIALS — dormant until real customer quotes are collected.
      Stored inside a <template> element so the markup never renders
