@@ -1,0 +1,18 @@
+services:
+  edgeiq-webhook:
+    build: .
+    container_name: edgeiq-webhook
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - t3_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.edgeiq-webhook.rule=Host(`webhook.edgeiqlabs.com`)"
+      - "traefik.http.routers.edgeiq-webhook.entrypoints=websecure-external"
+      - "traefik.http.routers.edgeiq-webhook.tls.certresolver=dns-cloudflare"
+      - "traefik.http.services.edgeiq-webhook.loadbalancer.server.port=3001"
+
+networks:
+  t3_proxy:
+    external: true
