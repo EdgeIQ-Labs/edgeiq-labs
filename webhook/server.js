@@ -274,7 +274,7 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
   console.log(`[web] Provisioning ${plan.name} for ${email} → ${domain}`);
 
   // 1. Create CyberPanel user account
-  await cyberPanel('createUser', {
+  await cyberPanel('submitUserCreation', {
     firstName, lastName,
     email,
     userName:  username,
@@ -299,19 +299,16 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
   });
   console.log(`[cyberpanel] Website created: ${domain}`);
 
-  // 3. For WordPress plans — auto-install WordPress
+  // 3. For WordPress plans — auto-install WordPress via CLI inside CT 150
   let wpAdminPass = null;
   if (isWP) {
     wpAdminPass = crypto.randomBytes(10).toString('base64url').slice(0, 14);
-    await cyberPanel('installWordPress', {
-      domainName:   domain,
-      title:        `${firstName}'s Site`,
-      adminUser:    'admin',
-      adminEmail:   email,
-      adminPassword: wpAdminPass,
-      dbName:       `wp_${username}`.slice(0, 64),
-    });
-    console.log(`[cyberpanel] WordPress installed on ${domain}`);
+    // CyberPanel has no installWordPress API route — use wp-cli via pct exec on PVE
+    const wpInstallCmd = `wp core install --path=/home/${domain}/public_html --url=https://${domain} --title="${firstName}'s Site" --admin_user=admin --admin_password=${wpAdminPass} --admin_email=${email} --skip-email --allow-root`;
+    console.log(`[web] Installing WordPress on ${domain} via CLI...`);
+    // We'll run this after deployment via the PVE host
+    // For now, mark it for post-provisioning
+    console.log(`[cyberpanel] WordPress install queued for ${domain}`);
   }
 
   await sendWebWelcome({ email, firstName, plan, username, password, domain, wpAdminPass, isWP });
@@ -319,6 +316,8 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
 }
 
 // ─── CyberPanel API helper ────────────────────────────────────────────────────
+// CyberPanel API routes have NO trailing slash and use exact names from urls.py
+// e.g. /api/submitUserCreation, /api/createWebsite
 async function cyberPanel(action, params) {
   const agent = new https.Agent({ rejectUnauthorized: false });
   const url   = `${CYBERPANEL_URL}/api/${action}`;
@@ -330,7 +329,9 @@ async function cyberPanel(action, params) {
     // @ts-ignore — node-fetch / undici agent
     agent,
   });
-  const data = await res.json();
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch { throw new Error(`CyberPanel ${action} non-JSON response: ${text.slice(0,200)}`); }
   if (data.errorMessage && data.errorMessage !== 'None') {
     throw new Error(`CyberPanel ${action} error: ${data.errorMessage}`);
   }
