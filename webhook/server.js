@@ -428,6 +428,34 @@ async function handleSentinel(session, plan, email, firstName, lastName) {
     <li>Dashboard → <strong style="color:${accent};">http://localhost:3000</strong></li>
   `;
 
+  const usageGuide = isManaged ? `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Using Your Dashboard</h3>
+    <ul style="margin:0 0 0 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li>Log in at <strong style="color:${accent};">sentinel.edgeiqlabs.com</strong> with the credentials in your next email</li>
+      <li>Create a project by entering your app's URL</li>
+      <li>Click "Trigger Scan" — agents start exploring immediately</li>
+      <li>Watch findings appear in real time as bugs, console errors, and accessibility issues are caught</li>
+      <li>Use the CLI for CI/CD: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">sentinel run https://yourapp.com --fail-on high</code></li>
+    </ul>
+  ` : `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Running Your First Scan</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Once the dashboard is live at <strong>http://localhost:3000</strong>:</p>
+    <ul style="margin:0 0 12px 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li><strong style="color:#e8eef7;">Create a project:</strong> Enter your app's name and target URL in the dashboard</li>
+      <li><strong style="color:#e8eef7;">Trigger a scan:</strong> Click "Trigger Scan" on your project — an autonomous agent will crawl every page, fill forms, click buttons, and log failures</li>
+      <li><strong style="color:#e8eef7;">Read findings:</strong> Results appear grouped by severity (critical/high/medium/low) with screenshots, console logs, and the exact URL where each issue was found</li>
+    </ul>
+    <h3 style="color:${accent};margin:16px 0 12px;font-size:1rem;">CLI & CI/CD Integration</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Run scans directly from your terminal or GitHub Actions pipeline:</p>
+    <div style="background:#0b0f14;border:1px solid ${border};border-radius:6px;padding:12px;margin-bottom:12px;font-size:0.82rem;color:#00ff66;line-height:1.7;overflow-x:auto;">
+      <div style="color:#94a3b8;"># Run a scan and fail CI if critical or high bugs are found</div>
+      <div>export SENTINEL_API=http://localhost:3000</div>
+      <div>export SENTINEL_TOKEN=your-api-token</div>
+      <div>npx tsx packages/cli/src/index.ts run https://yourapp.com --max-steps 50 --fail-on high</div>
+    </div>
+    <p style="color:#c4b5a4;font-size:0.85rem;">Exit code <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">0</code> = clean run. Exit code <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">1</code> = findings at or above your <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">--fail-on</code> threshold. Wire this into GitHub Actions to automatically block deploys that introduce bugs.</p>
+  `;
+
   const rows = [
     ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
     ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
@@ -441,6 +469,7 @@ async function handleSentinel(session, plan, email, firstName, lastName) {
     subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
     rows,
     steps,
+    usageGuide,
   });
 
   await sendEmail({ to: email, subject, html });
@@ -599,10 +628,15 @@ async function sendVPSWelcome({ email, firstName, plan, osDisplay, hostname, roo
 }
 
 // ─── Email builder ────────────────────────────────────────────────────────────
-function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, steps }) {
+function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, steps, usageGuide }) {
   const rowsHTML = rows.map(([label, value]) =>
     `<tr><td style="padding:4px 0;color:#9fb0c7;width:120px;vertical-align:top;">${label}</td><td>${value}</td></tr>`
   ).join('');
+
+  const usageHTML = usageGuide ? `
+  <div style="background:#0d1620;border:1px solid ${border};border-radius:12px;padding:24px;margin-bottom:24px;">
+    ${usageGuide}
+  </div>` : '';
 
   return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#0b0f14;font-family:sans-serif;">
 <div style="max-width:600px;margin:40px auto;padding:0 20px;">
@@ -616,6 +650,7 @@ function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, step
     <h2 style="color:${accent};font-size:.9rem;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;">Getting Started</h2>
     <ol style="color:#9fb0c7;line-height:2.1;margin:0;padding-left:18px;">${steps}</ol>
   </div>
+  ${usageHTML}
   <div style="text-align:center;padding:20px 0;border-top:1px solid #1a2535;">
     <a href="https://discord.gg/PaP7nsFUJT" style="background:${accent};color:#0b0f14;font-weight:700;padding:11px 28px;border-radius:8px;text-decoration:none;">Join Discord for Help</a>
     <p style="color:#9fb0c7;font-size:.78rem;margin:14px 0 0;">EdgeIQ Labs · <a href="https://edgeiqlabs.com" style="color:${accent};">edgeiqlabs.com</a></p>
