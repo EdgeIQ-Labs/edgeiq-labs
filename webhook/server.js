@@ -353,13 +353,13 @@ async function sendWebWelcome({ email, firstName, plan, username, password, doma
     <li>Your WordPress site is live at <strong style="color:${accent};">${domain}</strong></li>
     <li>Log in to WordPress admin: <a href="https://${domain}/wp-admin" style="color:${accent};">https://${domain}/wp-admin</a></li>
     <li>Use the WordPress credentials in the box below</li>
-    <li>To use your own domain: point its A record to the IP below, then add it in CyberPanel → Websites → Add Domain</li>
+    <li>To use your own domain: add a CNAME record pointing to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:3px;">hosting.edgeiqlabs.com</code> in your registrar's DNS settings, then add your domain in CyberPanel → Websites → Add Domain</li>
     <li>Questions? Reply to this email or join Discord</li>` : `
     <li>Log in to CyberPanel: <a href="${cpURL}" style="color:${accent};">${cpURL}</a></li>
     <li>Your site is live at <strong style="color:${accent};">${domain}</strong></li>
     <li>Upload files via CyberPanel → File Manager, or use FTP</li>
     <li>To install WordPress: CyberPanel → WP Manager → Install</li>
-    <li>To use your own domain: point its A record to the IP below, then add it in CyberPanel → Websites → Add Domain</li>
+    <li>To use your own domain: add a CNAME record pointing to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:3px;">hosting.edgeiqlabs.com</code> in your registrar's DNS settings, then add your domain in CyberPanel → Websites → Add Domain</li>
     <li>Questions? Reply to this email or join Discord</li>`;
 
   const rows = [
@@ -367,7 +367,7 @@ async function sendWebWelcome({ email, firstName, plan, username, password, doma
     ['Username',    `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${username}</code>`],
     ['Password',    `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${password}</code>`],
     ['Your Domain', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${domain}</code>`],
-    ['Server IP',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${SERVER_IP}</code>`],
+    ['Custom Domain CNAME', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">hosting.edgeiqlabs.com</code>`],
   ];
 
   if (isWP && wpAdminPass) {
