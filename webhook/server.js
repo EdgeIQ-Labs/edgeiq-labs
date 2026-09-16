@@ -64,8 +64,8 @@ const PLANS = {
   'price_1UG1CYRC1NZ20yDTkr2LtFo6': { type:'sentinel', name:'Sentinel Pro',     tier:'pro' },
   'price_1UG1CYRC1NZ20yDTA6q4YPYq': { type:'sentinel', name:'Sentinel Managed', tier:'managed' },
   // Shadow DB (Data Sovereignty)
-  'price_SHADOW_PRO':     { type:'shadowdb', name:'Shadow DB Pro',     tier:'pro' },
-  'price_SHADOW_MANAGED': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' },
+  'price_1UGL4tRC1NZ20yDTFuArhdKd': { type:'shadowdb', name:'Shadow DB Pro',     tier:'pro' },
+  'price_1UGL4uRC1NZ20yDT4pXjPFPH': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' },
 };
 
 // ─── Game Map ─────────────────────────────────────────────────────────────────
