@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow DB — SaaS Data Sovereignty by EdgeIQ Labs</title>
+  <meta name="description" content="Real-time shadow mirror of your SaaS data. Self-hosted Postgres, AES-256 encrypted, tamper-evident. Never get locked out of your own business.">
+  <style>
+    :root { --bg:#0b0f14; --surface:#131820; --border:#1e2530; --text:#e2e8f0; --muted:#94a3b8; --red:#ff1a1a; --purple:#c084fc; --green:#00ff66; --teal:#2dd4bf; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono','Fira Code',monospace; line-height:1.6; }
+    a { color:var(--purple); text-decoration:none; }
+    a:hover { color:var(--red); }
+    .container { max-width:1100px; margin:0 auto; padding:0 2rem; }
+    .nav { border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+    .nav-brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.1rem; }
+    .nav-links { display:flex; gap:20px; font-size:0.85rem; }
+    .hero { padding:6rem 0 4rem; text-align:center; }
+    .hero h1 { font-size:2.8rem; font-weight:800; line-height:1.2; margin-bottom:1.5rem; }
+    .hero p { color:var(--muted); font-size:1.1rem; max-width:700px; margin:0 auto 2rem; }
+    .btn { display:inline-block; padding:12px 28px; border-radius:8px; font-weight:700; font-size:0.9rem; font-family:inherit; transition:opacity 0.2s; }
+    .btn:hover { opacity:0.85; }
+    .btn-primary { background:var(--red); color:#fff; }
+    .btn-secondary { background:transparent; border:1px solid var(--purple); color:var(--purple); }
+    .section { padding:4rem 0; }
+    .section h2 { font-size:1.8rem; margin-bottom:1.5rem; color:var(--purple); }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1.5rem; }
+    .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; }
+    .pricing-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+    .pricing-table th, .pricing-table td { padding:12px 16px; text-align:left; border-bottom:1px solid var(--border); font-size:0.85rem; }
+    .pricing-table th { color:var(--muted); font-weight:600; }
+    footer { border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--muted); font-size:0.8rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-brand"><span style="color:var(--red)">◉</span> Shadow DB <span style="color:var(--muted);font-size:0.75rem;font-weight:400;">by EdgeIQ Labs</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="https://github.com/EdgeIQ-Labs/edgeiq-shadow-db" target="_blank">GitHub</a>
+      <a href="/docs/">Docs</a>
+    </div>
+  </nav>
+
+  <section class="hero container">
+    <h1>Your SaaS tools own your data.<br><span style="color:var(--red)">Take it back.</span></h1>
+    <p>Shadow DB is the open-source, self-hosted data sovereignty engine. It mirrors every record from Notion, Airtable, Linear, and more into a structured Postgres database you control. Tamper-evident. Encrypted. No vendor lock-in.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/EdgeIQ-Labs/edgeiq-shadow-db" class="btn btn-secondary" target="_blank">View on GitHub</a>
+      <a href="#pricing" class="btn btn-primary">Get Started</a>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Vendor lock-in is a security risk.</h2>
+    <div class="card" style="color:var(--muted);font-size:0.95rem;line-height:1.8;">
+      <p>Notion doubles their pricing. Airtable changes their terms. A platform bans your account. Suddenly your entire business is trapped inside a proprietary data store you can't access.</p>
+      <p style="margin-top:1rem;color:var(--text);">We're a cybersecurity firm. We don't trust third parties with our data, and neither should you. Shadow DB runs entirely on your infrastructure. Your records are AES-256 encrypted at rest, SHA-256 hashed for tamper detection, and always one click away from migration.</p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>How it works</h2>
+    <div class="grid-3">
+      <div class="card">
+        <div style="color:var(--red);font-size:1.5rem;margin-bottom:0.5rem;">①</div>
+        <h3 style="margin-bottom:0.5rem;">Connect</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">Add your SaaS API keys. Shadow DB encrypts them with AES-256-GCM before they ever touch your database.</p>
+        <code style="display:block;margin-top:0.75rem;color:var(--green);font-size:0.8rem;">POST /api/connections</code>
+      </div>
+      <div class="card">
+        <div style="color:var(--purple);font-size:1.5rem;margin-bottom:0.5rem;">②</div>
+        <h3 style="margin-bottom:0.5rem;">Mirror</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">BullMQ workers pull your data on schedule — paginated, normalized, and upserted into your own Postgres instance. Every record gets a SHA-256 hash.</p>
+      </div>
+      <div class="card">
+        <div style="color:var(--teal);font-size:1.5rem;margin-bottom:0.5rem;">③</div>
+        <h3 style="margin-bottom:0.5rem;">Own</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">Query your shadow database directly. Detect tampering via hash mismatches. Migrate to any platform instantly if your vendor goes sideways.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="pricing">
+    <h2>Pricing</h2>
+    <div class="card" style="overflow-x:auto;">
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="color:var(--green)">Community</th>
+            <th style="color:var(--purple)">Pro</th>
+            <th style="color:var(--red)">Managed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">Price</td>
+            <td>Free forever</td>
+            <td>$299 one-time</td>
+            <td>$99/month</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">License</td>
+            <td>AGPL-3.0</td>
+            <td>Commercial</td>
+            <td>SaaS</td>
+          </tr>
+          <tr>
+            <td>Connectors</td>
+            <td>Notion + Airtable</td>
+            <td>All connectors</td>
+            <td>All connectors</td>
+          </tr>
+          <tr>
+            <td>Tamper detection</td>
+            <td>✓ SHA-256 hashing</td>
+            <td>✓ SHA-256 + alerts</td>
+            <td>✓ SHA-256 + alerts</td>
+          </tr>
+          <tr>
+            <td>Encryption at rest</td>
+            <td>✓ AES-256-GCM</td>
+            <td>✓ AES-256-GCM</td>
+            <td>✓ AES-256-GCM</td>
+          </tr>
+          <tr>
+            <td>Scheduled syncs</td>
+            <td>Manual trigger</td>
+            <td>BullMQ repeatable (6h)</td>
+            <td>Custom intervals</td>
+          </tr>
+          <tr>
+            <td>Enterprise connectors</td>
+            <td>—</td>
+            <td>Salesforce, SAP, Oracle</td>
+            <td>Salesforce, SAP, Oracle</td>
+          </tr>
+          <tr>
+            <td>Hosting</td>
+            <td>Docker self-hosted</td>
+            <td>Docker self-hosted</td>
+            <td>We host it for you</td>
+          </tr>
+          <tr>
+            <td>Support</td>
+            <td>GitHub Discussions</td>
+            <td>Priority Discord</td>
+            <td>SLA guarantee</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><a href="https://github.com/EdgeIQ-Labs/edgeiq-shadow-db" class="btn btn-secondary" style="padding:8px 16px;font-size:0.8rem;" target="_blank">Get Started</a></td>
+            <td><a href="https://buy.stripe.com/PLACEHOLDER_SHADOW_PRO" class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;background:var(--purple);color:#0b0f14;">Buy License</a></td>
+            <td><a href="https://buy.stripe.com/PLACEHOLDER_SHADOW_MANAGED" class="btn btn-primary" style="padding:8px 16px;font-size:0.8rem;">Subscribe</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>◉ Shadow DB by <a href="/">EdgeIQ Labs</a> · <a href="https://github.com/EdgeIQ-Labs/edgeiq-shadow-db">GitHub</a> · AGPL-3.0</p>
+  </footer>
+</body>
+</html>

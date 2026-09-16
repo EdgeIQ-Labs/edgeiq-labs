@@ -63,6 +63,9 @@ const PLANS = {
   // Sentinel (Agentic QA)
   'price_1UG1CYRC1NZ20yDTkr2LtFo6': { type:'sentinel', name:'Sentinel Pro',     tier:'pro' },
   'price_1UG1CYRC1NZ20yDTA6q4YPYq': { type:'sentinel', name:'Sentinel Managed', tier:'managed' },
+  // Shadow DB (Data Sovereignty)
+  'price_SHADOW_PRO':     { type:'shadowdb', name:'Shadow DB Pro',     tier:'pro' },
+  'price_SHADOW_MANAGED': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' },
 };
 
 // ─── Game Map ─────────────────────────────────────────────────────────────────
@@ -157,6 +160,10 @@ async function handleCheckout(session) {
   }
   if (plan.type === 'sentinel') {
     return handleSentinel(session, plan, email, firstName, lastName);
+  }
+
+  if (plan.type === 'shadowdb') {
+    return handleShadowDb(session, plan, email, firstName, lastName);
   }
 
   // ── Game / Bot provisioning (Pterodactyl) ────────────────────────────────
@@ -474,6 +481,79 @@ async function handleSentinel(session, plan, email, firstName, lastName) {
 
   await sendEmail({ to: email, subject, html });
   console.log(`[resend] Sentinel ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
+}
+
+// ─── Shadow DB (Data Sovereignty) provisioning ──────────────────────────────
+async function handleShadowDb(session, plan, email, firstName, lastName) {
+  const licenseKey = 'SHDW-' + crypto.randomBytes(16).toString('hex').toUpperCase();
+  const isManaged = plan.tier === 'managed';
+
+  if (session.subscription) {
+    const map = loadSubMap();
+    map[session.subscription] = { type: 'shadowdb', tier: plan.tier, licenseKey, email, plan: plan.name, created: new Date().toISOString() };
+    saveSubMap(map);
+  }
+
+  const accent   = '#ff1a1a';
+  const border   = 'rgba(255,26,26,0.3)';
+  const codeBg   = 'rgba(255,26,26,0.08)';
+  const emoji    = '◉';
+  const subject  = `${emoji} Your Shadow DB License — EdgeIQ Labs`;
+
+  const repoUrl = 'https://github.com/EdgeIQ-Labs/edgeiq-shadow-db';
+  const docsUrl = 'https://edgeiqlabs.com/docs/';
+
+  const steps = isManaged ? `
+    <li>Your managed Shadow DB instance is being provisioned at <strong style="color:${accent};">shadow.edgeiqlabs.com</strong></li>
+    <li>You'll receive a separate email with your dashboard login within 15 minutes</li>
+    <li>Connect your SaaS tools from the dashboard — we handle the infrastructure</li>
+    <li>Need help? Reply to this email or join our Discord</li>
+  ` : `
+    <li>Clone the repo: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">git clone ${repoUrl}</code></li>
+    <li>Configure: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">cp .env.example .env</code> and set your ENCRYPTION_KEY</li>
+    <li>Add your license: set <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">SHADOW_LICENSE_KEY=${licenseKey}</code> in .env</li>
+    <li>Launch: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">docker compose up -d</code></li>
+    <li>Dashboard → <strong style="color:${accent};">http://localhost:5174</strong></li>
+  `;
+
+  const usageGuide = isManaged ? `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Using Your Dashboard</h3>
+    <ul style="margin:0 0 0 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li>Log in at <strong style="color:${accent};">shadow.edgeiqlabs.com</strong> with the credentials in your next email</li>
+      <li>Add a connection: enter your Notion/Airtable API key and select entities to mirror</li>
+      <li>Syncs run automatically every 6 hours — or trigger manually from the dashboard</li>
+      <li>Monitor tamper alerts: SHA-256 hash mismatches flag unauthorized changes instantly</li>
+    </ul>
+  ` : `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Connecting Your First SaaS Tool</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Once the dashboard is live at <strong>http://localhost:5174</strong>:</p>
+    <ul style="margin:0 0 12px 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li><strong style="color:#e8eef7;">Create a connection:</strong> POST your Notion or Airtable API key to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/connections</code> — it's encrypted with AES-256-GCM before storage</li>
+      <li><strong style="color:#e8eef7;">Trigger a sync:</strong> POST to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/sync/:connection_id</code> — the worker pulls all records, normalizes them, and upserts into your Postgres</li>
+      <li><strong style="color:#e8eef7;">Verify integrity:</strong> Every record gets a SHA-256 hash. Query <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/records/:connection_id</code> to see your shadow mirror</li>
+    </ul>
+    <h3 style="color:${accent};margin:16px 0 12px;font-size:1rem;">Scheduled Syncs</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;">The BullMQ worker automatically schedules repeatable syncs every 6 hours for all enabled connections. Adjust the cron pattern in <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">packages/worker/src/index.ts</code> to match your needs.</p>
+  `;
+
+  const rows = [
+    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
+    ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
+    ['Repository', `<a href="${repoUrl}" style="color:${accent};">GitHub ↗</a>`],
+    ['Documentation', `<a href="${docsUrl}" style="color:${accent};">Docs ↗</a>`],
+  ];
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Welcome to Shadow DB`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
+    rows,
+    steps,
+    usageGuide,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] Shadow DB ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
 }
 
 // ─── Wait for Proxmox async task ──────────────────────────────────────────────
