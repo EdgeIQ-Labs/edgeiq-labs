@@ -275,22 +275,22 @@
     <h2 class="section-title" style="margin-bottom:10px;">Pick Your Distro</h2>
     <p class="section-sub">All four are available on any plan — just tell us which one you want when ordering.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:32px;">
-      <div style="background:#0d1520;border:1px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;">
+      <div class="os-card" data-os="ubuntu" onclick="selectOS(this,'ubuntu')" style="background:#0d1520;border:2px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;">
         <div style="font-size:2rem;margin-bottom:10px;">🐧</div>
-        <div style="font-weight:700;color:#e2e8f0;margin-bottom:4px;">Ubuntu 24.04 LTS</div>
+        <div style="font-weight:700;color:#e2e8f0;margin-bottom:4px;">Ubuntu 22.04 LTS</div>
         <div style="font-size:0.8rem;color:#64748b;">Most popular · apt · snap · broad package support</div>
       </div>
-      <div style="background:#0d1520;border:1px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;">
+      <div class="os-card" data-os="debian" onclick="selectOS(this,'debian')" style="background:#0d1520;border:2px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;">
         <div style="font-size:2rem;margin-bottom:10px;">🌀</div>
         <div style="font-weight:700;color:#e2e8f0;margin-bottom:4px;">Debian 12</div>
         <div style="font-size:0.8rem;color:#64748b;">Stable &amp; minimal · great for production servers</div>
       </div>
-      <div style="background:#0d1520;border:1px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;">
+      <div class="os-card" data-os="rocky" onclick="selectOS(this,'rocky')" style="background:#0d1520;border:2px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;">
         <div style="font-size:2rem;margin-bottom:10px;">🪨</div>
         <div style="font-weight:700;color:#e2e8f0;margin-bottom:4px;">Rocky Linux 9</div>
         <div style="font-size:0.8rem;color:#64748b;">RHEL-compatible · enterprise-grade · dnf/yum</div>
       </div>
-      <div style="background:#0d1520;border:1px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;">
+      <div class="os-card" data-os="alma" onclick="selectOS(this,'alma')" style="background:#0d1520;border:2px solid #1e2a38;border-radius:12px;padding:24px 20px;text-align:center;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;">
         <div style="font-size:2rem;margin-bottom:10px;">⭐</div>
         <div style="font-weight:700;color:#e2e8f0;margin-bottom:4px;">AlmaLinux 9</div>
         <div style="font-size:0.8rem;color:#64748b;">RHEL-compatible · popular for cPanel &amp; web hosting</div>
@@ -320,7 +320,7 @@
           <li>Dedicated port range</li>
           <li>Personal email support</li>
         </ul>
-        <a href="https://buy.stripe.com/6oU6oJcufeJD5s018c7wA3N" target="_blank" rel="noopener" class="plan-btn secondary">Order Now →</a>
+        <button onclick="orderVPS('nano')" class="plan-btn secondary" style="cursor:pointer;border:none;font-family:inherit;">Order Now →</button>
       </div>
 
       <!-- Micro -->
@@ -337,7 +337,7 @@
           <li>Dedicated port range</li>
           <li>Personal email support</li>
         </ul>
-        <a href="https://buy.stripe.com/28E14p51NfNH3jScQU7wA3O" target="_blank" rel="noopener" class="plan-btn secondary">Order Now →</a>
+        <button onclick="orderVPS('micro')" class="plan-btn secondary" style="cursor:pointer;border:none;font-family:inherit;">Order Now →</button>
       </div>
 
       <!-- Basic (featured) -->
@@ -355,7 +355,7 @@
           <li>Dedicated port range</li>
           <li>Priority email support</li>
         </ul>
-        <a href="https://buy.stripe.com/3cIaEZdyj5936w46sw7wA3P" target="_blank" rel="noopener" class="plan-btn primary">Order Now →</a>
+        <button onclick="orderVPS('basic')" class="plan-btn primary" style="cursor:pointer;border:none;font-family:inherit;">Order Now →</button>
       </div>
 
       <!-- Standard -->
@@ -372,7 +372,7 @@
           <li>Dedicated port range</li>
           <li>Priority email support</li>
         </ul>
-        <a href="https://buy.stripe.com/9B6fZj0LxdFz07G7wA7wA3Q" target="_blank" rel="noopener" class="plan-btn secondary">Order Now →</a>
+        <button onclick="orderVPS('standard')" class="plan-btn secondary" style="cursor:pointer;border:none;font-family:inherit;">Order Now →</button>
       </div>
 
     </div>
@@ -496,6 +496,52 @@
       <a href="mailto:support@edgeiqlabs.com">Contact</a>
     </div>
   </footer>
+
+<!-- VPS Checkout Logic -->
+<script>
+let selectedOS = '';
+
+function selectOS(el, os) {
+  selectedOS = os;
+  document.querySelectorAll('.os-card').forEach(c => {
+    c.style.borderColor = '#1e2a38';
+    c.style.boxShadow = 'none';
+  });
+  el.style.borderColor = '#2dd4bf';
+  el.style.boxShadow = '0 0 20px rgba(45,212,191,0.15)';
+}
+
+async function orderVPS(plan) {
+  if (!selectedOS) {
+    alert('Please select an operating system first.');
+    document.querySelector('.os-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  const btn = event.target;
+  const orig = btn.textContent;
+  btn.textContent = 'Creating checkout...';
+  btn.disabled = true;
+  try {
+    const resp = await fetch('/api/vps-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, os: selectedOS })
+    });
+    const data = await resp.json();
+    if (data.ok && data.url) {
+      window.location.href = data.url;
+    } else {
+      alert(data.error || 'Checkout failed. Please try again.');
+      btn.textContent = orig;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    alert('Network error. Please try again.');
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+</script>
 
 <!-- Relay Affiliate Tracking -->
 <script src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
