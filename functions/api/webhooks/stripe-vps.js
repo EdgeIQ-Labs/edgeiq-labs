@@ -277,13 +277,18 @@ export async function onRequestPost({ request, env }) {
     await pveRequest(`/nodes/${PVE_NODE}/lxc`, 'POST', env.PVE_API_TOKEN, createParams);
     console.log(`Created CT ${vmid} (${hostname}) at ${ip} for ${customerEmail}`);
 
-    // 4. Create NAT port forward on PVE so customer can reach container from internet
+    // 4. Create NAT port forward + outbound MASQUERADE on PVE so customer can reach container from internet
     try {
-      const natCmd = `iptables -t nat -A PREROUTING -p tcp --dport ${sshPort} -j DNAT --to-destination ${ip}:22 && netfilter-persistent save`;
+      const natCmd = [
+        `iptables -t nat -A PREROUTING -p tcp --dport ${sshPort} -j DNAT --to-destination ${ip}:22`,
+        `iptables -t nat -C POSTROUTING -s ${PVE_SUBNET}.0/24 -j MASQUERADE 2>/dev/null || iptables -t nat -I POSTROUTING 1 -s ${PVE_SUBNET}.0/24 -j MASQUERADE`,
+        `iptables -C FORWARD -s ${PVE_SUBNET}.0/24 ! -d 10.0.0.0/8 -j ACCEPT 2>/dev/null || iptables -I FORWARD 1 -s ${PVE_SUBNET}.0/24 ! -d 10.0.0.0/8 -j ACCEPT`,
+        'netfilter-persistent save'
+      ].join(' && ');
       await pveRequest(`/nodes/${PVE_NODE}/execute`, 'POST', env.PVE_API_TOKEN, {
         command: natCmd,
       });
-      console.log(`NAT rule added: port ${sshPort} -> ${ip}:22`);
+      console.log(`NAT + MASQUERADE rules added for CT ${vmid}: port ${sshPort} -> ${ip}:22`);
     } catch (natErr) {
       console.error(`NAT rule creation failed (non-fatal): ${natErr.message}`);
       // Continue — container is created, admin can add NAT manually
