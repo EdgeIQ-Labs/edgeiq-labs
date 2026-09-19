@@ -29,7 +29,12 @@ async function verifyStripeSignature(rawBody, sigHeader, secret) {
     );
     const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
     const computed = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
-    return computed === parts.v1;
+    const a = new TextEncoder().encode(computed);
+    const b = new TextEncoder().encode(parts.v1);
+    if (a.length !== b.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+    return diff === 0;
   } catch { return false; }
 }
 
