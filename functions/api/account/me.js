@@ -259,7 +259,7 @@ export async function onRequestGet({ request, env }) {
             for (const sub of vpsSubs) {
               const meta = sub.metadata || {};
               const plan = meta.plan || 'nano';
-              const vmid = meta.vmid ? parseInt(meta.vmid) : null;
+              let vmid = meta.vmid ? parseInt(meta.vmid) : null;
               const sshPort = vmid ? 22000 + vmid : null;
 
               // Try to find matching CT on PVE
