@@ -158,7 +158,6 @@ export async function onRequestOptions() {
 }
 
 export async function onRequestPost({ request, env }) {
-  // Verify Stripe signature
   const sig = request.headers.get('stripe-signature');
   const body = await request.text();
 
@@ -167,8 +166,48 @@ export async function onRequestPost({ request, env }) {
     return json({ error: 'Service not configured' }, 503);
   }
 
-  // Basic Stripe signature check (production should use stripe library)
-  // For CF Workers, we verify the event type from parsed body
+  // Verify Stripe webhook signature using HMAC-SHA256
+  if (env.STRIPE_VPS_WEBHOOK_SECRET && sig) {
+    try {
+      const parts = Object.fromEntries(sig.split(',').map(p => p.split('=').map(s => s.trim())));
+      const timestamp = parts['t'];
+      const signatures = sig.split(',').filter(p => p.startsWith('v1=')).map(p => p.slice(3));
+      if (!timestamp || !signatures.length) throw new Error('Missing timestamp or v1 sig');
+
+      const signedPayload = `${timestamp}.${body}`;
+      const keyData = new TextEncoder().encode(env.STRIPE_VPS_WEBHOOK_SECRET);
+      const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+      const sigBuffer = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(signedPayload));
+      const expectedSig = Array.from(new Uint8Array(sigBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const valid = signatures.some(s => {
+        const a = new TextEncoder().encode(s);
+        const b = new TextEncoder().encode(expectedSig);
+        if (a.length !== b.length) return false;
+        return crypto.subtle.timingSafeEqual ? true : (s === expectedSig); // fallback compare
+      });
+
+      if (!valid) {
+        console.error('Invalid Stripe webhook signature');
+        return json({ error: 'Invalid signature' }, 401);
+      }
+
+      // Reject events older than 5 minutes
+      const age = Math.abs(Date.now() / 1000 - parseInt(timestamp));
+      if (age > 300) {
+        console.error(`Webhook too old: ${age}s`);
+        return json({ error: 'Event too old' }, 400);
+      }
+    } catch (sigErr) {
+      console.error('Signature verification failed:', sigErr.message);
+      return json({ error: 'Invalid signature' }, 401);
+    }
+  } else if (env.STRIPE_VPS_WEBHOOK_SECRET) {
+    // Secret is configured but no signature header — reject
+    console.error('No stripe-signature header on request');
+    return json({ error: 'Missing signature' }, 401);
+  }
+
   let event;
   try {
     event = JSON.parse(body);
