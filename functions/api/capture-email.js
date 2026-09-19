@@ -356,6 +356,45 @@ function buildEmail3() {
   return { subject, html };
 }
 
+// ── Checklist lead magnet email ───────────────────────────────────────────────
+
+function buildChecklistEmail() {
+  const subject = 'Your Free SMB Cybersecurity Checklist — EdgeIQ Labs';
+  const html = emailWrap(`
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${S.accent};margin-bottom:12px;">🛡️ Lead Magnet</div>
+    <h1 style="font-size:22px;font-weight:800;color:${S.text};margin:0 0 16px;line-height:1.3;">Your SMB Cybersecurity Checklist is ready</h1>
+    <p style="font-size:14px;color:${S.muted};line-height:1.7;margin:0 0 20px;">Here's the exact 13-step checklist EdgeIQ Labs uses to audit small businesses — MFA, patching, network segmentation, backups, phishing training, incident response, and more.</p>
+    <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:8px 0 28px;">
+      <a href="https://edgeiqlabs.com/blog/small-business-cybersecurity-checklist-2026.html" style="display:inline-block;background:${S.accent};color:#071018;font-weight:700;font-size:15px;padding:14px 32px;border-radius:9px;text-decoration:none;">Open the Checklist →</a>
+    </td></tr></table>
+    <p style="font-size:13px;color:${S.muted};line-height:1.6;margin:0 0 12px;">You'll also get weekly security tips — practical stuff, no fluff. Unsubscribe anytime by replying to this email.</p>
+    <p style="font-size:12px;color:#4a6080;line-height:1.6;margin:16px 0 0;border-top:1px solid ${S.border};padding-top:16px;">Questions? Reply to this email or join <a href="https://discord.gg/PaP7nsFUJT" style="color:${S.accent};">our Discord</a>.</p>
+  `);
+  return { subject, html };
+}
+
+// ── Security Intelligence newsletter welcome email ────────────────────────────
+
+function buildNewsletterEmail() {
+  const subject = 'Welcome to EdgeIQ Labs Security Intelligence';
+  const html = emailWrap(`
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${S.accent};margin-bottom:12px;">📬 Newsletter</div>
+    <h1 style="font-size:22px;font-weight:800;color:${S.text};margin:0 0 16px;line-height:1.3;">You're in — Security Intelligence</h1>
+    <p style="font-size:14px;color:${S.muted};line-height:1.7;margin:0 0 20px;">Welcome to the EdgeIQ Labs security digest. Here's what you'll get:</p>
+    <ul style="color:${S.muted};font-size:14px;line-height:2;padding-left:20px;margin:0 0 24px;">
+      <li>Attack technique breakdowns — real threats explained practically</li>
+      <li>New tool releases and updates from our lab</li>
+      <li>Practical security guides for lean teams</li>
+    </ul>
+    <p style="font-size:14px;color:${S.muted};line-height:1.7;margin:0 0 24px;">No fluff, no spam. Just actionable security intel delivered to your inbox.</p>
+    <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:4px 0 24px;">
+      <a href="https://edgeiqlabs.com/free-tools/" style="display:inline-block;background:${S.accent};color:#071018;font-weight:700;font-size:14px;padding:13px 28px;border-radius:9px;text-decoration:none;">Try Our Free Scanners →</a>
+    </td></tr></table>
+    <p style="font-size:12px;color:#4a6080;line-height:1.6;margin:16px 0 0;border-top:1px solid ${S.border};padding-top:16px;">Unsubscribe anytime by replying to this email. Questions? Join <a href="https://discord.gg/PaP7nsFUJT" style="color:${S.accent};">our Discord</a>.</p>
+  `);
+  return { subject, html };
+}
+
 // ── Send helper ───────────────────────────────────────────────────────────────
 
 async function sendEmail(env, to, payload) {
@@ -431,6 +470,24 @@ export async function onRequestPost(context) {
       ]);
     }
 
+    return Response.json({ ok: true });
+  }
+
+  // ── Checklist lead magnet ─────────────────────────────────────────────────
+  if (source === 'checklist' || source === 'lead-magnet-checklist') {
+    if (env.RESEND_API_KEY) {
+      const cl = buildChecklistEmail();
+      await sendEmail(env, email, cl);
+    }
+    return Response.json({ ok: true });
+  }
+
+  // ── Security Intelligence newsletter ──────────────────────────────────────
+  if (source === 'newsletter' || source === 'security-intel') {
+    if (env.RESEND_API_KEY) {
+      const nl = buildNewsletterEmail();
+      await sendEmail(env, email, nl);
+    }
     return Response.json({ ok: true });
   }
 

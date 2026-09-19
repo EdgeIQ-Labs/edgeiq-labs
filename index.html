@@ -2006,7 +2006,7 @@
             <button type="submit">Subscribe →</button>
           </form>
           <p id="nlok1" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
-          <script>(function(){var f=document.getElementById('nlf1');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok1').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+          <script>(function(){var f=document.getElementById('nlf1');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'newsletter'})}).then(function(r){return r.json();}).then(function(data){if(data&&data.ok){f.style.display='none';var ok=document.getElementById('nlok1');ok.style.display='block';ok.innerHTML='✓ Subscribed — check your inbox for the welcome email!';}else{b.disabled=false;b.textContent='Subscribe →';alert('Something went wrong. Please try again.');}}).catch(function(){b.disabled=false;b.textContent='Subscribe →';alert('Network error. Please try again.');});});})();</script>
           <p class="newsletter-note">Free forever. No spam. Unsubscribe anytime.</p>
         </div>
       </div>
@@ -3558,6 +3558,7 @@
     var note = form.parentElement.querySelector('.lead-magnet-note');
     if (note) note.style.display = 'none';
     success.style.display = 'block';
+    success.innerHTML = '<strong>✅ You\'re in!</strong> Check your inbox for the checklist link — we just emailed it to you.<br><a href="/blog/small-business-cybersecurity-checklist-2026.html" style="color:#3dd9ff;font-weight:600;">Or open it here →</a>';
   }
   if (alreadyCaptured()) showSuccess();
 
@@ -3573,30 +3574,28 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
-    var payload = JSON.stringify({
-      email: email,
-      first_url: location.href,
-      first_referrer: document.referrer || '',
-      current_url: location.href,
-      current_referrer: document.referrer || '',
-      referral_code: '',
-      source: 'lead-magnet-checklist'
-    });
+    var payload = JSON.stringify({ email: email, source: 'checklist' });
 
-    var done = function() {
-      try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e) {}
-      showSuccess();
-    };
-    try {
-      fetch(SUBSTACK_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/json'},
-        body: payload
-      }).then(done).catch(done);
-    } catch (err) {
-      done();
-    }
+    fetch('/api/capture-email', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: payload
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data && data.ok) {
+        try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e) {}
+        showSuccess();
+      } else {
+        errEl.textContent = 'Something went wrong. Please try again or email support@edgeiqlabs.com.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Get the checklist';
+      }
+    }).catch(function() {
+      errEl.textContent = 'Network error. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Get the checklist';
+    });
   });
 })();
 </script>
