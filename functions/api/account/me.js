@@ -224,6 +224,86 @@ export async function onRequestGet({ request, env }) {
     })
   ).then(r => r.filter(Boolean));
 
+  // VPS Hosting — query Stripe for active VPS subscriptions, then check PVE for container status
+  let vpsRecords = [];
+  if (env.STRIPE_SECRET_KEY && env.PVE_API_TOKEN) {
+    try {
+      // Find Stripe customer
+      const custResp = await fetch(
+        `https://api.stripe.com/v1/customers?email=${encodeURIComponent(email)}&limit=1`,
+        { headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}` }, signal: AbortSignal.timeout(6000) }
+      );
+      if (custResp.ok) {
+        const custData = await custResp.json();
+        const customerId = custData.data?.[0]?.id;
+        if (customerId) {
+          // Get active subscriptions
+          const subResp = await fetch(
+            `https://api.stripe.com/v1/subscriptions?customer=${customerId}&status=active&limit=10`,
+            { headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}` }, signal: AbortSignal.timeout(6000) }
+          );
+          if (subResp.ok) {
+            const subData = await subResp.json();
+            const vpsSubs = (subData.data || []).filter(s => {
+              const meta = s.metadata || {};
+              return meta.plan || (s.items?.data?.[0]?.price?.product && ['prod_UaCuF3L5VrZZ84','prod_UaCu8YBqiiZCSZ','prod_UaCu24hkzrKiEh','prod_UaCui9GkAptGyI'].includes(s.items.data[0].price.product));
+            });
+
+            // Query PVE for running containers
+            const pveHeaders = { Authorization: `PVEAPIToken=${env.PVE_API_TOKEN}` };
+            const ctResp = await fetch(`https://10.5.1.236:8006/api2/json/nodes/pve/lxc`, { headers: pveHeaders, signal: AbortSignal.timeout(6000) });
+            const ctList = ctResp.ok ? (await ctResp.json()).data || [] : [];
+
+            const planLabels = { 'nano': 'VPS Nano', 'micro': 'VPS Micro', 'basic': 'VPS Basic', 'standard': 'VPS Standard' };
+
+            for (const sub of vpsSubs) {
+              const meta = sub.metadata || {};
+              const plan = meta.plan || 'nano';
+              const vmid = meta.vmid ? parseInt(meta.vmid) : null;
+              const sshPort = vmid ? 22000 + vmid : null;
+
+              // Try to find matching CT on PVE
+              let ctStatus = 'provisioning';
+              let ctIp = meta.ip || '';
+              if (vmid) {
+                const ct = ctList.find(c => c.vmid === vmid);
+                if (ct) {
+                  ctStatus = ct.status || 'unknown';
+                  if (!ctIp && ct.name) ctIp = meta.ip || '';
+                }
+              }
+
+              // If no VMID in metadata yet, try to find by hostname pattern
+              if (!vmid) {
+                const emailPrefix = email.split('@')[0].replace(/[^a-z0-9]/g, '');
+                const match = ctList.find(c => c.name && c.name.includes(emailPrefix));
+                if (match) {
+                  ctStatus = match.status || 'unknown';
+                }
+              }
+
+              const publicIp = '100.33.233.11';
+              vpsRecords.push({
+                plan: plan.toLowerCase(),
+                plan_name: planLabels[plan.toLowerCase()] || `VPS ${plan}`,
+                status: ctStatus,
+                ip: publicIp,
+                internal_ip: ctIp,
+                ssh_port: sshPort,
+                os: meta.os || 'debian',
+                created_at: new Date(sub.created * 1000).toISOString(),
+                ssh_command: sshPort ? `ssh -p ${sshPort} root@${publicIp}` : '',
+                vmid: vmid,
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('VPS lookup error:', e.message);
+    }
+  }
+
   // Try to create a Stripe billing portal URL (best-effort)
   const portalUrl = await getStripePortalUrl(env, email, `${siteUrl}/account/`);
 
@@ -238,6 +318,7 @@ export async function onRequestGet({ request, env }) {
       compliance: complianceRecords,
       brandguard: brandguardRecords,
       workspace_posture: wpRecords,
+      vps: vpsRecords,
     },
     billing_portal_url: portalUrl,
     site_url: siteUrl,

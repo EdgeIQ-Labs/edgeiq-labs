@@ -144,6 +144,7 @@ async function sendCredentialsEmail(resendKey, email, name, plan, os, ip, sshPor
     },
     body: JSON.stringify({
       from: 'EdgeIQ Labs <vps@edgeiqlabs.com>',
+      reply_to: 'support@edgeiqlabs.com',
       to: [email],
       subject: `Your ${spec.label} is ready — credentials inside`,
       html,
@@ -252,6 +253,42 @@ export async function onRequestPost({ request, env }) {
       plan, os, PUBLIC_IP, sshPort, password, siteUrl
     );
     console.log(`Sent VPS credentials to ${customerEmail}`);
+
+    // 6. Save VMID + IP back to Stripe subscription metadata for /account/ dashboard
+    try {
+      const custResp = await fetch(
+        `https://api.stripe.com/v1/customers?email=${encodeURIComponent(customerEmail)}&limit=1`,
+        { headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}` }, signal: AbortSignal.timeout(6000) }
+      );
+      if (custResp.ok) {
+        const custData = await custResp.json();
+        const customerId = custData.data?.[0]?.id;
+        if (customerId) {
+          const subResp = await fetch(
+            `https://api.stripe.com/v1/subscriptions?customer=${customerId}&status=active&limit=10`,
+            { headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}` }, signal: AbortSignal.timeout(6000) }
+          );
+          if (subResp.ok) {
+            const subData = await subResp.json();
+            const vpsSub = (subData.data || []).find(s => {
+              const p = s.items?.data?.[0]?.price?.product;
+              return ['prod_UaCuF3L5VrZZ84','prod_UaCu8YBqiiZCSZ','prod_UaCu24hkzrKiEh','prod_UaCui9GkAptGyI'].includes(p);
+            });
+            if (vpsSub) {
+              await fetch(`https://api.stripe.com/v1/subscriptions/${vpsSub.id}`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `metadata[vmid]=${vmid}&metadata[ip]=${ip}&metadata[plan]=${plan}&metadata[os]=${os}`,
+                signal: AbortSignal.timeout(6000),
+              });
+              console.log(`Saved VMID ${vmid} to Stripe sub ${vpsSub.id}`);
+            }
+          }
+        }
+      }
+    } catch (metaErr) {
+      console.error(`Failed to save metadata to Stripe (non-fatal): ${metaErr.message}`);
+    }
 
     return json({ ok: true, vmid, ip, message: 'Provisioned and emailed' });
 
