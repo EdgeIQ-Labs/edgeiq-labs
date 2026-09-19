@@ -487,6 +487,14 @@ export async function onRequestPost(context) {
     if (env.RESEND_API_KEY) {
       const nl = buildNewsletterEmail();
       await sendEmail(env, email, nl);
+      // Add to Resend Audience for weekly sends
+      try {
+        await fetch('https://api.resend.com/audiences/e0b2c71a-0a3d-4a06-baa7-deabc88b1158/contacts', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, unsubscribed: false }),
+        });
+      } catch(_) {}
     }
     return Response.json({ ok: true });
   }
