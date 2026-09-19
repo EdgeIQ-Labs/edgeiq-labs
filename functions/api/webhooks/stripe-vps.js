@@ -19,6 +19,7 @@ const PVE_BRIDGE = 'vmbr2';
 const PVE_SUBNET = '10.10.0'; // IPs: 10.10.0.X
 const IP_START = 10; // First assignable IP octet
 const IP_END = 200;  // Last assignable (avoid conflicts)
+const PUBLIC_IP = '100.33.233.11'; // WAN IP for customer-facing SSH
 
 const OS_TEMPLATES = {
   ubuntu: 'local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst',
@@ -233,10 +234,22 @@ export async function onRequestPost({ request, env }) {
     await pveRequest(`/nodes/${PVE_NODE}/lxc`, 'POST', env.PVE_API_TOKEN, createParams);
     console.log(`Created CT ${vmid} (${hostname}) at ${ip} for ${customerEmail}`);
 
-    // 4. Send credentials email
+    // 4. Create NAT port forward on PVE so customer can reach container from internet
+    try {
+      const natCmd = `iptables -t nat -A PREROUTING -p tcp --dport ${sshPort} -j DNAT --to-destination ${ip}:22 && netfilter-persistent save`;
+      await pveRequest(`/nodes/${PVE_NODE}/execute`, 'POST', env.PVE_API_TOKEN, {
+        command: natCmd,
+      });
+      console.log(`NAT rule added: port ${sshPort} -> ${ip}:22`);
+    } catch (natErr) {
+      console.error(`NAT rule creation failed (non-fatal): ${natErr.message}`);
+      // Continue — container is created, admin can add NAT manually
+    }
+
+    // 5. Send credentials email with PUBLIC IP
     await sendCredentialsEmail(
       env.RESEND_API_KEY, customerEmail, customerName,
-      plan, os, ip, sshPort, password, siteUrl
+      plan, os, PUBLIC_IP, sshPort, password, siteUrl
     );
     console.log(`Sent VPS credentials to ${customerEmail}`);
 
