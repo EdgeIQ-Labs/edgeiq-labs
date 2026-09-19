@@ -289,7 +289,18 @@ export async function onRequestPost({ request, env }) {
       // Continue — container is created, admin can add NAT manually
     }
 
-    // 5. Send credentials email with PUBLIC IP
+    // 5. Fix SSH: enable root password login (Debian 12 defaults to prohibit-password)
+    try {
+      const sshFixCmd = `mkdir -p /etc/ssh/sshd_config.d && printf 'PermitRootLogin yes\nPasswordAuthentication yes\n' > /etc/ssh/sshd_config.d/99-edgeiq.conf && systemctl restart ssh`;
+      await pveRequest(`/nodes/${PVE_NODE}/lxc/${vmid}/exec`, 'POST', env.PVE_API_TOKEN, {
+        command: sshFixCmd,
+      });
+      console.log(`SSH config patched for CT ${vmid}: PermitRootLogin=yes`);
+    } catch (sshErr) {
+      console.error(`SSH fix failed for CT ${vmid} (non-fatal): ${sshErr.message}`);
+    }
+
+    // 6. Send credentials email with PUBLIC IP
     await sendCredentialsEmail(
       env.RESEND_API_KEY, customerEmail, customerName,
       plan, os, PUBLIC_IP, sshPort, password, siteUrl
