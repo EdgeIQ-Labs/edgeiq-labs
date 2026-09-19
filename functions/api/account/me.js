@@ -276,8 +276,20 @@ export async function onRequestGet({ request, env }) {
               // If no VMID in metadata yet, try to find by hostname pattern
               if (!vmid) {
                 const emailPrefix = email.split('@')[0].replace(/[^a-z0-9]/g, '');
-                const match = ctList.find(c => c.name && c.name.includes(emailPrefix));
+                // Fetch customer name from Stripe for better matching
+                let custNameParts = [];
+                try {
+                  const cResp = await fetch(`https://api.stripe.com/v1/customers/${customerId}`, { headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}` }, signal: AbortSignal.timeout(4000) });
+                  if (cResp.ok) { const cData = await cResp.json(); custNameParts = (cData.name || '').toLowerCase().split(/\s+/).filter(p => p.length > 1); }
+                } catch {}
+                const match = ctList.find(c => {
+                  if (!c.name) return false;
+                  const n = c.name.toLowerCase();
+                  if (n.includes(emailPrefix)) return true;
+                  return custNameParts.some(p => n.includes(p));
+                });
                 if (match) {
+                  vmid = match.vmid;
                   ctStatus = match.status || 'unknown';
                 }
               }
