@@ -7,9 +7,9 @@
  *
  * Env vars: STRIPE_SECRET_KEY (for signature verification),
  *           PVE_API_TOKEN, RESEND_API_KEY, SITE_URL
+ *
+ * Note: crypto and crypto.subtle are globals in CF Workers/Pages — do NOT import('crypto').
  */
-
-const crypto = await import('crypto');
 
 // --- Config ---
 const PVE_HOST = '10.5.1.236';
@@ -180,11 +180,14 @@ export async function onRequestPost({ request, env }) {
       const sigBuffer = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(signedPayload));
       const expectedSig = Array.from(new Uint8Array(sigBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 
+      // Constant-time comparison to prevent timing attacks
       const valid = signatures.some(s => {
         const a = new TextEncoder().encode(s);
         const b = new TextEncoder().encode(expectedSig);
         if (a.length !== b.length) return false;
-        return crypto.subtle.timingSafeEqual ? true : (s === expectedSig); // fallback compare
+        let diff = 0;
+        for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+        return diff === 0;
       });
 
       if (!valid) {
