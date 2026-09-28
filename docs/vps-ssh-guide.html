@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VPS Connection Guide — EdgeIQ Labs</title>
+  <meta name="description" content="How to connect to your EdgeIQ VPS via browser terminal or SSH." />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    :root { --bg: #0b0f14; --card: #121923; --text: #e8eef7; --muted: #9fb0c7; --accent: #3dd9ff; --border: #233142; --ok: #70f0a8; --warn: #f0a83d; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+    nav a:hover { color: var(--accent); }
+    .nav-brand { font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+    .nav-brand span { color: var(--accent); }
+    .doc-header { padding: 64px 0 40px; }
+    .doc-header h1 { font-size: 2rem; margin-bottom: 12px; }
+    .doc-header p { color: var(--muted); font-size: 1.05rem; }
+    .section { margin: 40px 0; }
+    .section h2 { font-size: 1.4rem; margin-bottom: 16px; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+    .section h2 .badge { font-size: 0.7rem; background: rgba(61,217,255,0.1); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); padding: 2px 8px; border-radius: 5px; font-family: monospace; }
+    .section h3 { font-size: 1.1rem; margin: 20px 0 10px; color: var(--text); }
+    .section p, .section li { color: var(--muted); font-size: 0.95rem; }
+    .section ol, .section ul { padding-left: 24px; margin: 12px 0; }
+    .section li { margin: 6px 0; }
+    .step-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin: 16px 0; }
+    .step-card h3 { margin-top: 0; }
+    pre { background: #0a0e13; border: 1px solid var(--border); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 12px 0; }
+    code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.88rem; color: var(--ok); }
+    .highlight { color: var(--accent); font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    th { color: var(--accent); font-weight: 600; }
+    td { color: var(--muted); }
+    .note { background: rgba(61,217,255,0.06); border-left: 3px solid var(--accent); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .note p { color: var(--text); margin: 0; font-size: 0.9rem; }
+    .warn { background: rgba(240,168,61,0.06); border-left: 3px solid var(--warn); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .warn p { color: var(--text); margin: 0; font-size: 0.9rem; }
+    footer { border-top: 1px solid var(--border); padding: 30px 0; margin-top: 60px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; margin-bottom: 20px; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/docs/" class="nav-brand">Edge<span>IQ</span> Docs</a>
+    <a href="https://edgeiqlabs.com">← Back to edgeiqlabs.com</a>
+  </nav>
+
+  <div class="container">
+    <div class="doc-header">
+      <a href="/docs/" class="back-link">← All Guides</a>
+      <h1>VPS Connection Guide</h1>
+      <p>How to access your EdgeIQ VPS container via browser terminal or SSH client.</p>
+    </div>
+
+    <!-- BROWSER METHOD -->
+    <div class="section">
+      <h2><span class="badge">RECOMMENDED</span> Browser Terminal</h2>
+      <p>No software installation required. Works in any modern browser (Chrome, Firefox, Safari, Edge).</p>
+      <div class="step-card">
+        <ol>
+          <li>Go to <a href="https://vps-ssh.edgeiqlabs.com" class="highlight" target="_blank">https://vps-ssh.edgeiqlabs.com</a></li>
+          <li>Enter the <strong>email address</strong> you used when signing up for your EdgeIQ VPS plan</li>
+          <li>Click <strong>"Send login code"</strong></li>
+          <li>Check your inbox for a 6-digit code from Cloudflare (check spam if you don't see it within a minute)</li>
+          <li>Enter the code on the login page</li>
+          <li>You'll be connected directly to your VPS container's root terminal</li>
+        </ol>
+      </div>
+      <div class="note">
+        <p><strong>Security:</strong> The browser terminal uses Cloudflare Access with email OTP authentication. No passwords are sent over the wire during login. Your session is encrypted end-to-end through Cloudflare's tunnel network.</p>
+      </div>
+    </div>
+
+    <!-- CLI METHOD -->
+    <div class="section">
+      <h2>CLI SSH (Advanced Users)</h2>
+      <p>If you prefer using your own terminal app (kitty, ghostty, iTerm2, Windows Terminal, PowerShell, etc.), you have two options:</p>
+
+      <h3>Option A: Direct SSH (uses your assigned port)</h3>
+      <p>Your welcome email includes a unique SSH port assigned to your container. Connect directly:</p>
+      <pre><code>ssh root@vps.edgeiqlabs.com -p YOUR_SSH_PORT</code></pre>
+      <p>Replace <code>YOUR_SSH_PORT</code> with the port number from your welcome email. Enter your root password when prompted.</p>
+
+      <h3>Option B: Via Cloudflare Tunnel (no port needed)</h3>
+      <p>This method routes through the same secure tunnel as the browser terminal. Requires installing <code>cloudflared</code> first:</p>
+      <ul>
+        <li><strong>macOS:</strong> <code>brew install cloudflared</code></li>
+        <li><strong>Linux (Debian/Ubuntu):</strong>
+          <pre><code>curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+sudo apt update && sudo apt install cloudflared</code></pre>
+        </li>
+        <li><strong>Windows:</strong> Download from <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/" target="_blank" style="color:var(--accent)">Cloudflare Downloads</a></li>
+      </ul>
+      <p>Then connect using ProxyCommand:</p>
+      <pre><code>ssh -o ProxyCommand="cloudflared access ssh --hostname %h" root@vps-ssh.edgeiqlabs.com</code></pre>
+      <p>You'll be prompted for your email → receive a login code via email → enter it → connected to your container.</p>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <div class="section">
+      <h2>Troubleshooting</h2>
+      <table>
+        <thead>
+          <tr><th>Problem</th><th>Fix</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>"Site can't be reached" (browser)</td><td>Clear browser cache or try an incognito/private window</td></tr>
+          <tr><td>Login code not arriving</td><td>Check spam folder. Ensure you're using the exact email you signed up with</td></tr>
+          <tr><td>SSH connection refused (CLI)</td><td>Verify you're using the correct port from your welcome email</td></tr>
+          <tr><td>"Permission denied"</td><td>Make sure you're logging in as <code>root</code>, not your email username</td></tr>
+          <tr><td>Terminal appears blank after auth</td><td>Wait 5-10 seconds; the jump host needs a moment to route to your container</td></tr>
+          <tr><td>Still stuck</td><td>Reply to your welcome email or join our <a href="https://discord.gg/PaP7nsFUJT" style="color:var(--accent)">Discord</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECURITY NOTES -->
+    <div class="section">
+      <h2>Security Notes</h2>
+      <ul>
+        <li>Your VPS container is fully isolated — you only have access to your own environment</li>
+        <li>The browser terminal uses Cloudflare Access (email OTP), so no static passwords are transmitted during authentication</li>
+        <li>We recommend changing your root password after first login: run <code>passwd</code></li>
+        <li>Keep your welcome email credentials safe — they contain your unique port and password</li>
+        <li>All traffic is encrypted through Cloudflare's tunnel network; your connection never touches the public internet directly</li>
+      </ul>
+      <div class="warn">
+        <p><strong>Important:</strong> Never share your login code or root password with anyone. EdgeIQ staff will never ask for your password.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>EdgeIQ Labs · <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> · <a href="https://discord.gg/PaP7nsFUJT">Discord</a></p>
+  </footer>
+</body>
+</html>
