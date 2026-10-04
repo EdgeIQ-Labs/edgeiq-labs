@@ -13,7 +13,7 @@ Cron: 0 10 * * 1,3,5  (Mon/Wed/Fri 10am ET)
 import json, requests, sys, os
 from datetime import datetime
 
-HASHNODE_KEY = os.getenv("HASHNODE_KEY", "HASHNODE_KEY_REDACTED")
+HASHNODE_KEY = os.getenv("HASHNODE_KEY", "")
 STATE_FILE = "/home/guy/.openclaw/workspace/temp/hashnode_autopilot_state.json"
 API_URL = "https://hashnode.com/api/graphql"
 
