@@ -65,7 +65,8 @@ const PLANS = {
   'price_1UG1CYRC1NZ20yDTA6q4YPYq': { type:'sentinel', name:'Sentinel Managed', tier:'managed' },
   // Shadow DB (Data Sovereignty)
   'price_1UGL4tRC1NZ20yDTFuArhdKd': { type:'shadowdb', name:'Shadow DB Pro',     tier:'pro' },
-  'price_1UGL4uRC1NZ20yDT4pXjPFPH': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' },
+  'price_1UGL4uRC1NZ20yDT4pXjPFPH': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' }
+
 };
 
 // ─── Game Map ─────────────────────────────────────────────────────────────────
@@ -133,6 +134,11 @@ app.post('/stripe', express.raw({ type:'application/json' }), async (req, res) =
       console.error('[lifecycle] Payment failed error:', e.message)
     );
   }
+  if (event.type === 'invoice.payment_succeeded') {
+    handleInvoicePaymentSucceeded(event.data.object).catch(e =>
+      console.error('[invoice] Payment succeeded error:', e.message)
+    );
+  }
 });
 
 // ─── Main checkout handler ───────────────────────────────────────────────────
@@ -158,19 +164,18 @@ async function handleCheckout(session) {
   if (plan.type === 'web') {
     return handleWebHosting(session, plan, email, firstName, lastName);
   }
-  if (plan.type === 'sentinel') {
-    return handleSentinel(session, plan, email, firstName, lastName);
-  }
-
-  if (plan.type === 'shadowdb') {
-    return handleShadowDb(session, plan, email, firstName, lastName);
-  }
 
   // ── Game / Bot provisioning (Pterodactyl) ────────────────────────────────
   let eggId  = plan.egg;
   let nestId = plan.nest;
   let gameName = null;
 
+    if (plan.type === 'sentinel') {
+    return handleSentinel(session, plan, email, firstName, lastName);
+  }
+  if (plan.type === 'shadowdb') {
+    return handleShadowDb(session, plan, email, firstName, lastName);
+  }
   if (plan.type === 'game') {
     const gameField = (session.custom_fields || []).find(f => f.key === 'game');
     const gameKey   = gameField?.dropdown?.value || 'papermcjava';
@@ -185,16 +190,42 @@ async function handleCheckout(session) {
   const dockerImage = eggAttrs.docker_image;
   const startup     = eggAttrs.startup;
   const environment = {};
-  for (const v of (eggAttrs.relationships?.variables?.data || []))
-    environment[v.attributes.env_variable] = v.attributes.default_value ?? '';
+  for (const v of (eggAttrs.relationships?.variables?.data || [])) {
+    const va = v.attributes;
+    let val = va.default_value ?? '';
+    // Eggs can mark variables required with no default (e.g. bot egg's
+    // DISCORD_TOKEN/DATABASE_URL/SESSION_SECRET). Pterodactyl 422s on empty
+    // required vars, so send a placeholder the customer replaces in the panel.
+    if (!val && /required/.test(va.rules || '')) val = 'changeme';
+    environment[va.env_variable] = val;
+  }
   console.log(`[ptero] Egg ${eggId}: image=${dockerImage}`);
 
   const password = crypto.randomBytes(12).toString('base64url').slice(0, 16);
   const username = 'user_' + crypto.randomBytes(4).toString('hex');
-  const ptUser   = await ptero('POST', '/api/application/users', {
-    email, username, first_name: firstName, last_name: lastName, password,
-  });
-  const userId = ptUser.attributes.id;
+  let userId;
+  try {
+    const ptUser = await ptero('POST', '/api/application/users', {
+      email, username, first_name: firstName, last_name: lastName, password,
+    });
+    userId = ptUser.attributes.id;
+  } catch (e) {
+    // Repeat purchase by an existing customer: reuse their panel user.
+    if (/already been taken/.test(String(e.message || '') + String(e.details || ''))) {
+      const found = await ptero('GET', `/api/application/users?filter[email]=${encodeURIComponent(email)}`);
+      const existing = found.data?.[0];
+      userId = existing?.attributes?.id;
+      if (!userId) throw e;
+      // Sync the password so the welcome-email credentials actually work
+      // (the first attempt created the account but never sent the email).
+      await ptero('PATCH', `/api/application/users/${userId}`, {
+        email, username: existing.attributes.username, first_name: firstName, last_name: lastName, password,
+      });
+      console.log(`[ptero] Reusing existing user id=${userId} (password synced)`);
+    } else {
+      throw e;
+    }
+  }
   console.log(`[ptero] User id=${userId}`);
 
   const serverName = plan.type === 'game'
@@ -219,6 +250,8 @@ async function handleCheckout(session) {
     saveSubMap(map);
     console.log(`[mapping] Stored sub ${session.subscription} -> server ${server.attributes.id}`);
   }
+  // Track customer for lifecycle/renewal/cancellation events
+  syncCustomerTracker({ email, firstName, lastName, planName: plan.name, serverId: server.attributes.id, subscriptionId: session.subscription || null, status: 'active' });
   console.log(`[done] ${email} onboarded (game/bot)`);
 }
 
@@ -272,7 +305,65 @@ async function handleVPS(session, plan, email, firstName, lastName) {
 
   await sendVPSWelcome({ email, firstName, plan, osDisplay: osInfo.display,
     hostname, rootPassword, sshPort, appStart, appEnd, ip });
+
+  // Register customer in SSH jump host routing table
+  await registerJumpHost(email, ip, 22);
+
   console.log(`[done] ${email} VPS CT${vmid} provisioned`);
+}
+
+// ─── Jump Host Registration + Access Policy Update ──────────────────────────
+async function registerJumpHost(email, ip, port) {
+  const mapFile = '/opt/edgeiq-jump/customers.json';
+  try {
+    let map = {};
+    try { map = JSON.parse(fs.readFileSync(mapFile, 'utf8')); } catch {}
+    map[email] = { ip, port: String(port), added: new Date().toISOString() };
+    fs.writeFileSync(mapFile, JSON.stringify(map, null, 2));
+    console.log(`[jump] Registered ${email} -> ${ip}:${port}`);
+  } catch (e) {
+    console.error(`[jump] Failed to register ${email}:`, e.message);
+  }
+
+  // Auto-add customer email to Cloudflare Access policy
+  await addAccessPolicyEmail(email);
+}
+
+const CF_ACCESS_ACCOUNT = process.env.CF_ACCESS_ACCOUNT || '632b16163d95a11698f8542b418ba236';
+const CF_ACCESS_APP     = process.env.CF_ACCESS_APP || '1737f3ae-ca38-40fd-8c5f-5391515d41f4';
+const CF_ACCESS_POLICY  = process.env.CF_ACCESS_POLICY || 'cff0d7d4-64ed-400e-ac13-9a1dd1fdef09';
+
+async function addAccessPolicyEmail(email) {
+  const cfToken = process.env.CF_ACCESS_API_KEY;
+  if (!cfToken) { console.error('[access] No CF_ACCESS_API_KEY in env, skipping policy update'); return; }
+  try {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCESS_ACCOUNT}/access/apps/${CF_ACCESS_APP}/policies/${CF_ACCESS_POLICY}`;
+    // Fetch current policy
+    const getRes = await fetch(url, { headers: { Authorization: `Bearer ${cfToken}`, 'Content-Type': 'application/json' } });
+    const getData = await getRes.json();
+    if (!getData.success) { console.error('[access] Failed to fetch policy:', getData.errors); return; }
+    const policy = getData.result;
+    const includes = policy.include || [];
+    // Check if email already exists
+    const exists = includes.some(i => i.email && i.email.email === email);
+    if (exists) { console.log(`[access] ${email} already in policy`); return; }
+    // Add new email
+    includes.push({ email: { email } });
+    // Update policy
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${cfToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...policy, include: includes }),
+    });
+    const putData = await putRes.json();
+    if (putData.success) {
+      console.log(`[access] Added ${email} to VPS SSH policy`);
+    } else {
+      console.error('[access] Failed to update policy:', putData.errors);
+    }
+  } catch (e) {
+    console.error(`[access] Error adding ${email}:`, e.message);
+  }
 }
 
 // ─── Web Hosting provisioning (CyberPanel) ───────────────────────────────────
@@ -287,7 +378,7 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
   console.log(`[web] Provisioning ${plan.name} for ${email} → ${domain}`);
 
   // 1. Create CyberPanel user account
-  await cyberPanel('submitUserCreation', {
+  await cyberPanel('createUser', {
     firstName, lastName,
     email,
     userName:  username,
@@ -312,16 +403,19 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
   });
   console.log(`[cyberpanel] Website created: ${domain}`);
 
-  // 3. For WordPress plans — auto-install WordPress via CLI inside CT 150
+  // 3. For WordPress plans — auto-install WordPress
   let wpAdminPass = null;
   if (isWP) {
     wpAdminPass = crypto.randomBytes(10).toString('base64url').slice(0, 14);
-    // CyberPanel has no installWordPress API route — use wp-cli via pct exec on PVE
-    const wpInstallCmd = `wp core install --path=/home/${domain}/public_html --url=https://${domain} --title="${firstName}'s Site" --admin_user=admin --admin_password=${wpAdminPass} --admin_email=${email} --skip-email --allow-root`;
-    console.log(`[web] Installing WordPress on ${domain} via CLI...`);
-    // We'll run this after deployment via the PVE host
-    // For now, mark it for post-provisioning
-    console.log(`[cyberpanel] WordPress install queued for ${domain}`);
+    await cyberPanel('installWordPress', {
+      domainName:   domain,
+      title:        `${firstName}'s Site`,
+      adminUser:    'admin',
+      adminEmail:   email,
+      adminPassword: wpAdminPass,
+      dbName:       `wp_${username}`.slice(0, 64),
+    });
+    console.log(`[cyberpanel] WordPress installed on ${domain}`);
   }
 
   await sendWebWelcome({ email, firstName, plan, username, password, domain, wpAdminPass, isWP });
@@ -329,8 +423,6 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
 }
 
 // ─── CyberPanel API helper ────────────────────────────────────────────────────
-// CyberPanel API routes have NO trailing slash and use exact names from urls.py
-// e.g. /api/submitUserCreation, /api/createWebsite
 async function cyberPanel(action, params) {
   const agent = new https.Agent({ rejectUnauthorized: false });
   const url   = `${CYBERPANEL_URL}/api/${action}`;
@@ -342,9 +434,7 @@ async function cyberPanel(action, params) {
     // @ts-ignore — node-fetch / undici agent
     agent,
   });
-  const text = await res.text();
-  let data;
-  try { data = JSON.parse(text); } catch { throw new Error(`CyberPanel ${action} non-JSON response: ${text.slice(0,200)}`); }
+  const data = await res.json();
   if (data.errorMessage && data.errorMessage !== 'None') {
     throw new Error(`CyberPanel ${action} error: ${data.errorMessage}`);
   }
@@ -366,13 +456,13 @@ async function sendWebWelcome({ email, firstName, plan, username, password, doma
     <li>Your WordPress site is live at <strong style="color:${accent};">${domain}</strong></li>
     <li>Log in to WordPress admin: <a href="https://${domain}/wp-admin" style="color:${accent};">https://${domain}/wp-admin</a></li>
     <li>Use the WordPress credentials in the box below</li>
-    <li>To use your own domain: add a CNAME record pointing to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:3px;">hosting.edgeiqlabs.com</code> in your registrar's DNS settings, then add your domain in CyberPanel → Websites → Add Domain</li>
+    <li>To use your own domain: point its A record to the IP below, then add it in CyberPanel → Websites → Add Domain</li>
     <li>Questions? Reply to this email or join Discord</li>` : `
     <li>Log in to CyberPanel: <a href="${cpURL}" style="color:${accent};">${cpURL}</a></li>
     <li>Your site is live at <strong style="color:${accent};">${domain}</strong></li>
     <li>Upload files via CyberPanel → File Manager, or use FTP</li>
     <li>To install WordPress: CyberPanel → WP Manager → Install</li>
-    <li>To use your own domain: add a CNAME record pointing to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:3px;">hosting.edgeiqlabs.com</code> in your registrar's DNS settings, then add your domain in CyberPanel → Websites → Add Domain</li>
+    <li>To use your own domain: point its A record to the IP below, then add it in CyberPanel → Websites → Add Domain</li>
     <li>Questions? Reply to this email or join Discord</li>`;
 
   const rows = [
@@ -380,7 +470,7 @@ async function sendWebWelcome({ email, firstName, plan, username, password, doma
     ['Username',    `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${username}</code>`],
     ['Password',    `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${password}</code>`],
     ['Your Domain', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${domain}</code>`],
-    ['Custom Domain CNAME', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">hosting.edgeiqlabs.com</code>`],
+    ['Server IP',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">web.edgeiqlabs.com</code>`],
   ];
 
   if (isWP && wpAdminPass) {
@@ -399,161 +489,6 @@ async function sendWebWelcome({ email, firstName, plan, username, password, doma
 
   await sendEmail({ to: email, subject, html });
   console.log(`[resend] Web hosting welcome -> ${email}`);
-}
-
-// ─── Sentinel (Agentic QA) provisioning ──────────────────────────────────────
-async function handleSentinel(session, plan, email, firstName, lastName) {
-  const licenseKey = 'SENT-' + crypto.randomBytes(16).toString('hex').toUpperCase();
-  const isManaged = plan.tier === 'managed';
-
-  // Store subscription mapping for lifecycle management
-  if (session.subscription) {
-    const map = loadSubMap();
-    map[session.subscription] = { type: 'sentinel', tier: plan.tier, licenseKey, email, plan: plan.name, created: new Date().toISOString() };
-    saveSubMap(map);
-  }
-
-  const accent   = '#c084fc';
-  const border   = 'rgba(192,132,252,0.3)';
-  const codeBg   = 'rgba(192,132,252,0.08)';
-  const emoji    = '🔍';
-  const subject  = `${emoji} Your Sentinel License — EdgeIQ Labs`;
-
-  const repoUrl = 'https://github.com/EdgeIQ-Labs/edgeiq-sentinel';
-  const docsUrl = 'https://edgeiqlabs.com/docs/';
-
-  const steps = isManaged ? `
-    <li>Your managed Sentinel instance is being provisioned at <strong style="color:${accent};">sentinel.edgeiqlabs.com</strong></li>
-    <li>You'll receive a separate email with your dashboard login within 15 minutes</li>
-    <li>Point it at any URL from the dashboard — we handle the infrastructure</li>
-    <li>Need help? Reply to this email or join our Discord</li>
-  ` : `
-    <li>Clone the repo: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">git clone ${repoUrl}</code></li>
-    <li>Configure: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">cp .env.example .env</code> and add your LLM API key</li>
-    <li>Add your license: set <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">SENTINEL_LICENSE_KEY=${licenseKey}</code> in .env</li>
-    <li>Launch: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">docker compose up -d</code></li>
-    <li>Dashboard → <strong style="color:${accent};">http://localhost:3000</strong></li>
-  `;
-
-  const usageGuide = isManaged ? `
-    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Using Your Dashboard</h3>
-    <ul style="margin:0 0 0 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
-      <li>Log in at <strong style="color:${accent};">sentinel.edgeiqlabs.com</strong> with the credentials in your next email</li>
-      <li>Create a project by entering your app's URL</li>
-      <li>Click "Trigger Scan" — agents start exploring immediately</li>
-      <li>Watch findings appear in real time as bugs, console errors, and accessibility issues are caught</li>
-      <li>Use the CLI for CI/CD: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">sentinel run https://yourapp.com --fail-on high</code></li>
-    </ul>
-  ` : `
-    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Running Your First Scan</h3>
-    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Once the dashboard is live at <strong>http://localhost:3000</strong>:</p>
-    <ul style="margin:0 0 12px 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
-      <li><strong style="color:#e8eef7;">Create a project:</strong> Enter your app's name and target URL in the dashboard</li>
-      <li><strong style="color:#e8eef7;">Trigger a scan:</strong> Click "Trigger Scan" on your project — an autonomous agent will crawl every page, fill forms, click buttons, and log failures</li>
-      <li><strong style="color:#e8eef7;">Read findings:</strong> Results appear grouped by severity (critical/high/medium/low) with screenshots, console logs, and the exact URL where each issue was found</li>
-    </ul>
-    <h3 style="color:${accent};margin:16px 0 12px;font-size:1rem;">CLI & CI/CD Integration</h3>
-    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Run scans directly from your terminal or GitHub Actions pipeline:</p>
-    <div style="background:#0b0f14;border:1px solid ${border};border-radius:6px;padding:12px;margin-bottom:12px;font-size:0.82rem;color:#00ff66;line-height:1.7;overflow-x:auto;">
-      <div style="color:#94a3b8;"># Run a scan and fail CI if critical or high bugs are found</div>
-      <div>export SENTINEL_API=http://localhost:3000</div>
-      <div>export SENTINEL_TOKEN=your-api-token</div>
-      <div>npx tsx packages/cli/src/index.ts run https://yourapp.com --max-steps 50 --fail-on high</div>
-    </div>
-    <p style="color:#c4b5a4;font-size:0.85rem;">Exit code <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">0</code> = clean run. Exit code <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">1</code> = findings at or above your <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">--fail-on</code> threshold. Wire this into GitHub Actions to automatically block deploys that introduce bugs.</p>
-  `;
-
-  const rows = [
-    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
-    ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
-    ['Repository', `<a href="${repoUrl}" style="color:${accent};">GitHub ↗</a>`],
-    ['Documentation', `<a href="${docsUrl}" style="color:${accent};">Docs ↗</a>`],
-  ];
-
-  const html = buildEmail({
-    accent, border, codeBg, emoji,
-    title:    `${emoji} Welcome to Sentinel`,
-    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
-    rows,
-    steps,
-    usageGuide,
-  });
-
-  await sendEmail({ to: email, subject, html });
-  console.log(`[resend] Sentinel ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
-}
-
-// ─── Shadow DB (Data Sovereignty) provisioning ──────────────────────────────
-async function handleShadowDb(session, plan, email, firstName, lastName) {
-  const licenseKey = 'SHDW-' + crypto.randomBytes(16).toString('hex').toUpperCase();
-  const isManaged = plan.tier === 'managed';
-
-  if (session.subscription) {
-    const map = loadSubMap();
-    map[session.subscription] = { type: 'shadowdb', tier: plan.tier, licenseKey, email, plan: plan.name, created: new Date().toISOString() };
-    saveSubMap(map);
-  }
-
-  const accent   = '#ff1a1a';
-  const border   = 'rgba(255,26,26,0.3)';
-  const codeBg   = 'rgba(255,26,26,0.08)';
-  const emoji    = '◉';
-  const subject  = `${emoji} Your Shadow DB License — EdgeIQ Labs`;
-
-  const repoUrl = 'https://github.com/EdgeIQ-Labs/edgeiq-shadow-db';
-  const docsUrl = 'https://edgeiqlabs.com/docs/';
-
-  const steps = isManaged ? `
-    <li>Your managed Shadow DB instance is being provisioned at <strong style="color:${accent};">shadow.edgeiqlabs.com</strong></li>
-    <li>You'll receive a separate email with your dashboard login within 15 minutes</li>
-    <li>Connect your SaaS tools from the dashboard — we handle the infrastructure</li>
-    <li>Need help? Reply to this email or join our Discord</li>
-  ` : `
-    <li>Clone the repo: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">git clone ${repoUrl}</code></li>
-    <li>Configure: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">cp .env.example .env</code> and set your ENCRYPTION_KEY</li>
-    <li>Add your license: set <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">SHADOW_LICENSE_KEY=${licenseKey}</code> in .env</li>
-    <li>Launch: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">docker compose up -d</code></li>
-    <li>Dashboard → <strong style="color:${accent};">http://localhost:5174</strong></li>
-  `;
-
-  const usageGuide = isManaged ? `
-    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Using Your Dashboard</h3>
-    <ul style="margin:0 0 0 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
-      <li>Log in at <strong style="color:${accent};">shadow.edgeiqlabs.com</strong> with the credentials in your next email</li>
-      <li>Add a connection: enter your Notion/Airtable API key and select entities to mirror</li>
-      <li>Syncs run automatically every 6 hours — or trigger manually from the dashboard</li>
-      <li>Monitor tamper alerts: SHA-256 hash mismatches flag unauthorized changes instantly</li>
-    </ul>
-  ` : `
-    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Connecting Your First SaaS Tool</h3>
-    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Once the dashboard is live at <strong>http://localhost:5174</strong>:</p>
-    <ul style="margin:0 0 12px 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
-      <li><strong style="color:#e8eef7;">Create a connection:</strong> POST your Notion or Airtable API key to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/connections</code> — it's encrypted with AES-256-GCM before storage</li>
-      <li><strong style="color:#e8eef7;">Trigger a sync:</strong> POST to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/sync/:connection_id</code> — the worker pulls all records, normalizes them, and upserts into your Postgres</li>
-      <li><strong style="color:#e8eef7;">Verify integrity:</strong> Every record gets a SHA-256 hash. Query <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/records/:connection_id</code> to see your shadow mirror</li>
-    </ul>
-    <h3 style="color:${accent};margin:16px 0 12px;font-size:1rem;">Scheduled Syncs</h3>
-    <p style="color:#c4b5a4;font-size:0.88rem;">The BullMQ worker automatically schedules repeatable syncs every 6 hours for all enabled connections. Adjust the cron pattern in <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">packages/worker/src/index.ts</code> to match your needs.</p>
-  `;
-
-  const rows = [
-    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
-    ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
-    ['Repository', `<a href="${repoUrl}" style="color:${accent};">GitHub ↗</a>`],
-    ['Documentation', `<a href="${docsUrl}" style="color:${accent};">Docs ↗</a>`],
-  ];
-
-  const html = buildEmail({
-    accent, border, codeBg, emoji,
-    title:    `${emoji} Welcome to Shadow DB`,
-    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
-    rows,
-    steps,
-    usageGuide,
-  });
-
-  await sendEmail({ to: email, subject, html });
-  console.log(`[resend] Shadow DB ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
 }
 
 // ─── Wait for Proxmox async task ──────────────────────────────────────────────
@@ -643,7 +578,8 @@ async function sendGameBotWelcome({ email, firstName, plan, password, serverPort
   const emoji    = isGame ? '🎮' : '🤖';
   const gameLabel = gameName || 'Game';
   const subject  = `${emoji} Your ${plan.name} server is ready!`;
-  const addr     = isGame && serverPort ? `${SERVER_IP}:${serverPort}` : null;
+  const GAME_DOMAIN = 'play.edgeiqlabs.com';
+  const addr     = isGame && serverPort ? `${GAME_DOMAIN}:${serverPort}` : null;
 
   const steps = isGame ? `
     <li>Log in at <a href="${PANEL_URL}" style="color:${accent};">${PANEL_URL}</a></li>
@@ -681,10 +617,14 @@ async function sendVPSWelcome({ email, firstName, plan, osDisplay, hostname, roo
   const codeBg = '#0a1e1c';
   const subject = `☁️ Your ${plan.name} container is ready!`;
 
+  const VPS_DOMAIN = 'vps.edgeiqlabs.com';
+  const BROWSER_SSH = 'https://vps-ssh.edgeiqlabs.com';
   const steps = `
-    <li>SSH in: <code style="background:${codeBg};color:${accent};padding:2px 8px;border-radius:4px;">ssh root@${SERVER_IP} -p ${sshPort}</code></li>
+    <li><strong>Browser Terminal (easiest):</strong> Go to <a href="${BROWSER_SSH}" style="color:${accent};">${BROWSER_SSH}</a> → enter your email → click "Send login code" → check your inbox for the code → enter it → you're in!</li>
+    <li><strong>CLI SSH:</strong> <code style="background:${codeBg};color:${accent};padding:2px 8px;border-radius:4px;">ssh root@${VPS_DOMAIN} -p ${sshPort}</code></li>
     <li>Password: the one shown in the credentials box below</li>
     <li>Your app ports <strong style="color:${accent};">${appStart}–${appEnd}</strong> are forwarded to your container — use any of them for your services</li>
+    <li><strong>Please reply to this email confirming you can connect and everything is working.</strong></li>
     <li>Questions? Reply to this email or join Discord</li>`;
 
   const html = buildEmail({
@@ -692,7 +632,7 @@ async function sendVPSWelcome({ email, firstName, plan, osDisplay, hostname, roo
     title:    '☁️ Your Container is Live!',
     subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> running <strong style="color:${accent};">${osDisplay}</strong> is ready.`,
     rows: [
-      ['SSH Host',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${SERVER_IP}</code>`],
+      ['SSH Host',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${VPS_DOMAIN}</code>`],
       ['SSH Port',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${sshPort}</code>`],
       ['Username',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">root</code>`],
       ['Password',   `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${rootPassword}</code>`],
@@ -708,15 +648,10 @@ async function sendVPSWelcome({ email, firstName, plan, osDisplay, hostname, roo
 }
 
 // ─── Email builder ────────────────────────────────────────────────────────────
-function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, steps, usageGuide }) {
+function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, steps }) {
   const rowsHTML = rows.map(([label, value]) =>
     `<tr><td style="padding:4px 0;color:#9fb0c7;width:120px;vertical-align:top;">${label}</td><td>${value}</td></tr>`
   ).join('');
-
-  const usageHTML = usageGuide ? `
-  <div style="background:#0d1620;border:1px solid ${border};border-radius:12px;padding:24px;margin-bottom:24px;">
-    ${usageGuide}
-  </div>` : '';
 
   return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#0b0f14;font-family:sans-serif;">
 <div style="max-width:600px;margin:40px auto;padding:0 20px;">
@@ -730,7 +665,6 @@ function buildEmail({ accent, border, codeBg, emoji, title, subtitle, rows, step
     <h2 style="color:${accent};font-size:.9rem;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;">Getting Started</h2>
     <ol style="color:#9fb0c7;line-height:2.1;margin:0;padding-left:18px;">${steps}</ol>
   </div>
-  ${usageHTML}
   <div style="text-align:center;padding:20px 0;border-top:1px solid #1a2535;">
     <a href="https://discord.gg/PaP7nsFUJT" style="background:${accent};color:#0b0f14;font-weight:700;padding:11px 28px;border-radius:8px;text-decoration:none;">Join Discord for Help</a>
     <p style="color:#9fb0c7;font-size:.78rem;margin:14px 0 0;">EdgeIQ Labs · <a href="https://edgeiqlabs.com" style="color:${accent};">edgeiqlabs.com</a></p>
@@ -749,6 +683,7 @@ async function sendEmail({ to, subject, html }) {
 
 // ─── Subscription Lifecycle ─────────────────────────────────────────────────
 const SUBSCRIPTION_MAP_FILE = '/opt/edgeiq-webhook/subscription-map.json';
+const CUSTOMER_TRACKER_FILE = '/opt/edgeiq-webhook/customers.json';
 
 function loadSubMap() {
   try { return JSON.parse(fs.readFileSync(SUBSCRIPTION_MAP_FILE, 'utf8')); }
@@ -759,6 +694,33 @@ function saveSubMap(map) {
   catch (e) { console.error('[map] Write failed:', e.message); }
 }
 
+// ─── Customer Tracker Sync ──────────────────────────────────────────────────
+function syncCustomerTracker({ email, firstName, lastName, planName, serverId, subscriptionId, status }) {
+  let tracker = { schema_version: 1, customers: [] };
+  try { tracker = JSON.parse(fs.readFileSync(CUSTOMER_TRACKER_FILE, 'utf8')); } catch {}
+  const idx = tracker.customers.findIndex(c => c.email === email);
+  const now = new Date().toISOString();
+  const entry = {
+    name: (firstName || '') + ' ' + (lastName || ''),
+    email,
+    username: null,
+    pterodactyl_user_id: null,
+    pterodactyl_server_id: serverId,
+    server_name: (firstName || '') + "'s Bot Server",
+    plan: planName,
+    billing_interval: 'monthly',
+    start_date: now.split('T')[0],
+    next_renewal: null,
+    status: status || 'active',
+    stripe_subscription_id: subscriptionId || null,
+    notes: 'Auto-captured by webhook ' + now
+  };
+  if (idx >= 0) { Object.assign(tracker.customers[idx], entry); }
+  else { tracker.customers.push(entry); }
+  try { fs.writeFileSync(CUSTOMER_TRACKER_FILE, JSON.stringify(tracker, null, 2)); console.log('[tracker] Synced ' + email + ' -> ' + (status||'active')); }
+  catch (e) { console.error('[tracker] Write failed: ' + e.message); }
+}
+
 async function handleSubscriptionDeleted(subscription) {
   const map = loadSubMap();
   const entry = map[subscription.id];
@@ -767,6 +729,7 @@ async function handleSubscriptionDeleted(subscription) {
     return;
   }
   console.log(`[lifecycle] Suspending server ${entry.serverId} (${entry.email})`);
+  syncCustomerTracker({ email: entry.email, firstName: '', lastName: '', planName: entry.plan, serverId: entry.serverId, subscriptionId: subscription.id, status: 'cancelled' });
   try {
     await ptero('PATCH', `/api/application/servers/${entry.serverId}/suspend`, {});
     console.log(`[lifecycle] Server ${entry.serverId} suspended`);
@@ -778,6 +741,40 @@ async function handleSubscriptionDeleted(subscription) {
     subject: '⚠️ Your EdgeIQ Labs service has been suspended',
     html: `<div style="max-width:600px;margin:40px auto;padding:20px;background:#0b0f14;font-family:sans-serif;"><h1 style="color:#f97316;">Service Suspended</h1><p style="color:#9fb0c7;">Your <strong>${entry.plan}</strong> subscription has ended. Server suspended, data kept 30 days.</p><p style="color:#9fb0c7;">Resubscribe at <a href="https://edgeiqlabs.com/bots/" style="color:#f97316;">edgeiqlabs.com/bots</a></p></div>`
   });
+}
+
+async function handleInvoicePaymentSucceeded(invoice) {
+  // Only provision on first invoice payment (not renewals)
+  const subId = invoice.subscription;
+  if (!subId) return;
+  const map = loadSubMap();
+  if (map[subId]) {
+    console.log(`[invoice] Renewal payment for ${subId}, skipping provision`);
+    return; // Already provisioned
+  }
+
+  // Fetch subscription to get price ID and customer
+  const sub = await stripe.subscriptions.retrieve(subId);
+  const priceId = sub.items.data[0]?.price?.id;
+  const plan = PLANS[priceId];
+  if (!plan) { console.error('[invoice] Unknown price:', priceId); return; }
+
+  const customer = await stripe.customers.retrieve(sub.customer);
+  const email = customer.email;
+  const rawName = customer.name || '';
+  const firstName = rawName.split(' ')[0] || email.split('@')[0];
+  const lastName = rawName.split(' ').slice(1).join(' ') || 'Customer';
+
+  console.log(`[invoice] Provisioning ${email} -> ${plan.name} (${plan.type}) via invoice.payment_succeeded`);
+
+  // Build a fake session object so handleCheckout can process it
+  const fakeSession = {
+    id: 'inv_' + invoice.id,
+    subscription: subId,
+    customer_details: { email, name: rawName },
+    custom_fields: [],
+  };
+  await handleCheckout(fakeSession);
 }
 
 async function handleInvoicePaymentFailed(invoice) {
@@ -792,6 +789,161 @@ async function handleInvoicePaymentFailed(invoice) {
     subject: '💳 Payment failed - EdgeIQ Labs',
     html: `<div style="max-width:600px;margin:40px auto;padding:20px;background:#0b0f14;font-family:sans-serif;"><h1 style="color:#ef4444;">Payment Failed</h1><p style="color:#9fb0c7;">We couldn't process your <strong>${entry.plan}</strong> payment. Service stays active 3 more days.</p><p style="color:#9fb0c7;">Update payment or reply for help.</p></div>`
   });
+}
+
+async function handleSentinel(session, plan, email, firstName, lastName) {
+  const licenseKey = 'SENT-' + crypto.randomBytes(16).toString('hex').toUpperCase();
+  const isManaged = plan.tier === 'managed';
+
+  // Store subscription mapping for lifecycle management
+  if (session.subscription) {
+    const map = loadSubMap();
+    map[session.subscription] = { type: 'sentinel', tier: plan.tier, licenseKey, email, plan: plan.name, created: new Date().toISOString() };
+    saveSubMap(map);
+  }
+
+  const accent   = '#c084fc';
+  const border   = 'rgba(192,132,252,0.3)';
+  const codeBg   = 'rgba(192,132,252,0.08)';
+  const emoji    = '🔍';
+  const subject  = `${emoji} Your Sentinel License — EdgeIQ Labs`;
+
+  const repoUrl = 'https://github.com/EdgeIQ-Labs/edgeiq-sentinel';
+  const docsUrl = 'https://edgeiqlabs.com/docs/';
+
+  const steps = isManaged ? `
+    <li>Your managed Sentinel instance is being provisioned at <strong style="color:${accent};">sentinel.edgeiqlabs.com</strong></li>
+    <li>You'll receive a separate email with your dashboard login within 15 minutes</li>
+    <li>Point it at any URL from the dashboard — we handle the infrastructure</li>
+    <li>Need help? Reply to this email or join our Discord</li>
+  ` : `
+    <li>Clone the repo: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">git clone ${repoUrl}</code></li>
+    <li>Configure: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">cp .env.example .env</code> and add your LLM API key</li>
+    <li>Add your license: set <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">SENTINEL_LICENSE_KEY=${licenseKey}</code> in .env</li>
+    <li>Launch: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">docker compose up -d</code></li>
+    <li>Dashboard → <strong style="color:${accent};">http://localhost:3000</strong></li>
+  `;
+
+  const usageGuide = isManaged ? `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Using Your Dashboard</h3>
+    <ul style="margin:0 0 0 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li>Log in at <strong style="color:${accent};">sentinel.edgeiqlabs.com</strong> with the credentials in your next email</li>
+      <li>Create a project by entering your app's URL</li>
+      <li>Click "Trigger Scan" — agents start exploring immediately</li>
+      <li>Watch findings appear in real time as bugs, console errors, and accessibility issues are caught</li>
+      <li>Use the CLI for CI/CD: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">sentinel run https://yourapp.com --fail-on high</code></li>
+    </ul>
+  ` : `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Running Your First Scan</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Once the dashboard is live at <strong>http://localhost:3000</strong>:</p>
+    <ul style="margin:0 0 12px 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li><strong style="color:#e8eef7;">Create a project:</strong> Enter your app's name and target URL in the dashboard</li>
+      <li><strong style="color:#e8eef7;">Trigger a scan:</strong> Click "Trigger Scan" on your project — an autonomous agent will crawl every page, fill forms, click buttons, and log failures</li>
+      <li><strong style="color:#e8eef7;">Read findings:</strong> Results appear grouped by severity (critical/high/medium/low) with screenshots, console logs, and the exact URL where each issue was found</li>
+    </ul>
+    <h3 style="color:${accent};margin:16px 0 12px;font-size:1rem;">CLI & CI/CD Integration</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Run scans directly from your terminal or GitHub Actions pipeline:</p>
+    <div style="background:#0b0f14;border:1px solid ${border};border-radius:6px;padding:12px;margin-bottom:12px;font-size:0.82rem;color:#00ff66;line-height:1.7;overflow-x:auto;">
+      <div style="color:#94a3b8;"># Run a scan and fail CI if critical or high bugs are found</div>
+      <div>export SENTINEL_API=http://localhost:3000</div>
+      <div>export SENTINEL_TOKEN=your-api-token</div>
+      <div>npx tsx packages/cli/src/index.ts run https://yourapp.com --max-steps 50 --fail-on high</div>
+    </div>
+    <p style="color:#c4b5a4;font-size:0.85rem;">Exit code <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">0</code> = clean run. Exit code <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">1</code> = findings at or above your <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">--fail-on</code> threshold. Wire this into GitHub Actions to automatically block deploys that introduce bugs.</p>
+  `;
+
+  const rows = [
+    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
+    ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
+    ['Repository', `<a href="${repoUrl}" style="color:${accent};">GitHub ↗</a>`],
+    ['Documentation', `<a href="${docsUrl}" style="color:${accent};">Docs ↗</a>`],
+  ];
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Welcome to Sentinel`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
+    rows,
+    steps,
+    usageGuide,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] Sentinel ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
+}
+
+// ─── Shadow DB (Data Sovereignty) provisioning ──────────────────────────────
+
+async function handleShadowDb(session, plan, email, firstName, lastName) {
+  const licenseKey = 'SHDW-' + crypto.randomBytes(16).toString('hex').toUpperCase();
+  const isManaged = plan.tier === 'managed';
+
+  if (session.subscription) {
+    const map = loadSubMap();
+    map[session.subscription] = { type: 'shadowdb', tier: plan.tier, licenseKey, email, plan: plan.name, created: new Date().toISOString() };
+    saveSubMap(map);
+  }
+
+  const accent   = '#ff1a1a';
+  const border   = 'rgba(255,26,26,0.3)';
+  const codeBg   = 'rgba(255,26,26,0.08)';
+  const emoji    = '◉';
+  const subject  = `${emoji} Your Shadow DB License — EdgeIQ Labs`;
+
+  const repoUrl = 'https://github.com/EdgeIQ-Labs/edgeiq-shadow-db';
+  const docsUrl = 'https://edgeiqlabs.com/docs/';
+
+  const steps = isManaged ? `
+    <li>Your managed Shadow DB instance is being provisioned at <strong style="color:${accent};">shadow.edgeiqlabs.com</strong></li>
+    <li>You'll receive a separate email with your dashboard login within 15 minutes</li>
+    <li>Connect your SaaS tools from the dashboard — we handle the infrastructure</li>
+    <li>Need help? Reply to this email or join our Discord</li>
+  ` : `
+    <li>Clone the repo: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">git clone ${repoUrl}</code></li>
+    <li>Configure: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">cp .env.example .env</code> and set your ENCRYPTION_KEY</li>
+    <li>Add your license: set <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">SHADOW_LICENSE_KEY=${licenseKey}</code> in .env</li>
+    <li>Launch: <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">docker compose up -d</code></li>
+    <li>Dashboard → <strong style="color:${accent};">http://localhost:5174</strong></li>
+  `;
+
+  const usageGuide = isManaged ? `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Using Your Dashboard</h3>
+    <ul style="margin:0 0 0 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li>Log in at <strong style="color:${accent};">shadow.edgeiqlabs.com</strong> with the credentials in your next email</li>
+      <li>Add a connection: enter your Notion/Airtable API key and select entities to mirror</li>
+      <li>Syncs run automatically every 6 hours — or trigger manually from the dashboard</li>
+      <li>Monitor tamper alerts: SHA-256 hash mismatches flag unauthorized changes instantly</li>
+    </ul>
+  ` : `
+    <h3 style="color:${accent};margin:24px 0 12px;font-size:1rem;">Connecting Your First SaaS Tool</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;margin-bottom:8px;">Once the dashboard is live at <strong>http://localhost:5174</strong>:</p>
+    <ul style="margin:0 0 12px 18px;color:#c4b5a4;font-size:0.88rem;line-height:1.8;">
+      <li><strong style="color:#e8eef7;">Create a connection:</strong> POST your Notion or Airtable API key to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/connections</code> — it's encrypted with AES-256-GCM before storage</li>
+      <li><strong style="color:#e8eef7;">Trigger a sync:</strong> POST to <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/sync/:connection_id</code> — the worker pulls all records, normalizes them, and upserts into your Postgres</li>
+      <li><strong style="color:#e8eef7;">Verify integrity:</strong> Every record gets a SHA-256 hash. Query <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">/api/records/:connection_id</code> to see your shadow mirror</li>
+    </ul>
+    <h3 style="color:${accent};margin:16px 0 12px;font-size:1rem;">Scheduled Syncs</h3>
+    <p style="color:#c4b5a4;font-size:0.88rem;">The BullMQ worker automatically schedules repeatable syncs every 6 hours for all enabled connections. Adjust the cron pattern in <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">packages/worker/src/index.ts</code> to match your needs.</p>
+  `;
+
+  const rows = [
+    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
+    ...(isManaged ? [] : [['License Key', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;font-size:0.85rem;">${licenseKey}</code>`]]),
+    ['Repository', `<a href="${repoUrl}" style="color:${accent};">GitHub ↗</a>`],
+    ['Documentation', `<a href="${docsUrl}" style="color:${accent};">Docs ↗</a>`],
+  ];
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Welcome to Shadow DB`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> license is ready. ${isManaged ? "We're spinning up your instance now." : 'Deploy it on your own infrastructure in under 5 minutes.'}`,
+    rows,
+    steps,
+    usageGuide,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] Shadow DB ${plan.tier} welcome -> ${email} | key: ${licenseKey.slice(0, 12)}...`);
 }
 
 app.listen(Number(PORT), () => console.log(`[server] Listening on :${PORT}`));
