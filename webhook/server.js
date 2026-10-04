@@ -8,6 +8,22 @@ const fs      = require('fs');
 
 const app = express();
 
+// ─── Stripe event idempotency ──────────────────────────────────────────────
+// Prevents retry storms from double-provisioning (keeps last 1000 event IDs)
+const processedEvents = new Set();
+const MAX_PROCESSED = 1000;
+function isDuplicateEvent(eventId) {
+  if (!eventId) return false;
+  if (processedEvents.has(eventId)) return true;
+  processedEvents.add(eventId);
+  if (processedEvents.size > MAX_PROCESSED) {
+    const first = processedEvents.values().next().value;
+    processedEvents.delete(first);
+  }
+  return false;
+}
+
+
 const {
   STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET,
@@ -118,7 +134,13 @@ app.post('/stripe', express.raw({ type:'application/json' }), async (req, res) =
     console.error('[webhook] Sig error:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-  res.json({ received: true });
+  
+  // Idempotency: skip already-processed events (prevents retry-storm duplicates)
+  if (isDuplicateEvent(event.id)) {
+    console.log(`[webhook] Duplicate event ${event.id} — skipping`);
+    return res.json({ received: true, duplicate: true });
+  }
+res.json({ received: true });
   if (event.type === 'checkout.session.completed') {
     handleCheckout(event.data.object).catch(e =>
       console.error('[checkout] Error:', e.message, e.details || '')
