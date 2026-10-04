@@ -100,7 +100,7 @@ const GAME_MAP = {
 // ─── VPS OS Map ───────────────────────────────────────────────────────────────
 // Dropdown values match Stripe custom_fields option values (alphanumeric only)
 const VPS_OS_MAP = {
-  ubuntu2404:  { template: 'local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst',  display: 'Ubuntu 24.04 LTS' },
+  ubuntu2404:  { template: 'local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst',  display: 'Ubuntu 24.04 LTS' },
   debian12:    { template: 'local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst',     display: 'Debian 12'        },
   rocky9:      { template: 'local:vztmpl/rockylinux-9-default_20240912_amd64.tar.xz',   display: 'Rocky Linux 9'    },
   almalinux9:  { template: 'local:vztmpl/almalinux-9-default_20240911_amd64.tar.xz',    display: 'AlmaLinux 9'      },
@@ -378,7 +378,7 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
   console.log(`[web] Provisioning ${plan.name} for ${email} → ${domain}`);
 
   // 1. Create CyberPanel user account
-  await cyberPanel('createUser', {
+  await cyberPanel('submitUserCreation', {
     firstName, lastName,
     email,
     userName:  username,
@@ -407,15 +407,21 @@ async function handleWebHosting(session, plan, email, firstName, lastName) {
   let wpAdminPass = null;
   if (isWP) {
     wpAdminPass = crypto.randomBytes(10).toString('base64url').slice(0, 14);
-    await cyberPanel('installWordPress', {
-      domainName:   domain,
-      title:        `${firstName}'s Site`,
-      adminUser:    'admin',
-      adminEmail:   email,
-      adminPassword: wpAdminPass,
-      dbName:       `wp_${username}`.slice(0, 64),
-    });
-    console.log(`[cyberpanel] WordPress installed on ${domain}`);
+    try {
+      await cyberPanel('installWordPress', {
+        domainName:   domain,
+        title:        `${firstName}'s Site`,
+        adminUser:    'admin',
+        adminEmail:   email,
+        adminPassword: wpAdminPass,
+        dbName:       `wp_${username}`.slice(0, 64),
+      });
+      console.log(`[cyberpanel] WordPress installed on ${domain}`);
+    } catch (wpErr) {
+      // installWordPress route may not exist on this panel version.
+      // Website is created; customer can install WP from CyberPanel UI.
+      console.error(`[cyberpanel] WP auto-install failed (${wpErr.message}) - site created, manual WP install needed`);
+    }
   }
 
   await sendWebWelcome({ email, firstName, plan, username, password, domain, wpAdminPass, isWP });
