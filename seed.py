@@ -3,7 +3,7 @@ Starter content seeded into every new GoPhish instance on provision.
 Called from server.py after the container is up and the API key is extracted.
 """
 
-import json, ssl, urllib.request, urllib.error, time
+import json, os, ssl, urllib.request, urllib.error, time
 
 TRAINING_URL = "https://edgeiqlabs.com/phishsim/"
 
@@ -248,7 +248,7 @@ def seed_instance(admin_port, api_key):
         "host": "smtp.resend.com:587",
         "from_address": "security@edgeiqlabs.com",
         "username": "resend",
-        "password": "RESEND_KEY_REDACTED",
+        "password": os.environ.get("RESEND_API_KEY", ""),
         "ignore_cert_errors": False,
         "headers": [],
       },
@@ -298,6 +298,7 @@ def seed_instance(admin_port, api_key):
         results["groups"].append({"name": g["name"], "id": r.get("id"), "ok": bool(r.get("id"))})
         time.sleep(0.2)
 
+    smtps = [s for s in smtps if s.get("password")]
     for s in smtps:
         r = _gophish(admin_port, api_key, "smtp/", s)
         results["smtps"].append({"name": s["name"], "id": r.get("id"), "ok": bool(r.get("id"))})
