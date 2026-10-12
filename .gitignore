@@ -1,3 +1,7 @@
 
 # PhishSim secrets
 phishsim-manager/.env
+
+# Local backups
+backups/
+*.umami-bak

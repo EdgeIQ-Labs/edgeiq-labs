@@ -141,6 +141,8 @@ def get_next_product():
     product = PRODUCT_QUEUE[idx]
     state["index"] = (idx + 1) % len(PRODUCT_QUEUE)
 
+    # Ensure directory exists before writing
+    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     with open(STATE_FILE, "w") as f:
         json.dump(state, f)
 
