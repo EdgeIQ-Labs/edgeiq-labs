@@ -102,8 +102,8 @@ async function probePort(hostname, port) {
   });
 }
 
-export default {
-  async fetch(request) {
+async function handleRequest(request) {
+
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
@@ -186,5 +186,6 @@ export default {
     parts.push('3 deep checks locked');
 
     return jsonResp({ hostname: target, grade, score, summary: parts.join(' | '), findings });
-  },
-};
+}
+
+export async function onRequest(context) { return handleRequest(context.request); }

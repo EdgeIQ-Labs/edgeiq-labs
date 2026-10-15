@@ -12,8 +12,8 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-export default {
-  async fetch(request) {
+async function handleRequest(request) {
+
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
@@ -181,5 +181,6 @@ export default {
       status: 200,
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
     });
-  },
-};
+}
+
+export async function onRequest(context) { return handleRequest(context.request); }
