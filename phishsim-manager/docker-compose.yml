@@ -19,9 +19,13 @@ services:
       - t3_proxy
     labels:
       - "traefik.enable=true"
+      # HTTPS router (port 444)
       - "traefik.http.routers.phishsim-api-rtr.rule=Host(`phishsim-api.edgeiqlabs.com`)"
       - "traefik.http.routers.phishsim-api-rtr.entrypoints=websecure-external"
       - "traefik.http.routers.phishsim-api-rtr.tls.certresolver=dns-cloudflare"
+      # HTTP router (port 80) — no TLS, for tunnel traffic
+      - "traefik.http.routers.phishsim-api-http.rule=Host(`phishsim-api.edgeiqlabs.com`)"
+      - "traefik.http.routers.phishsim-api-http.entrypoints=web"
       - "traefik.http.services.phishsim-api-svc.loadbalancer.server.port=3100"
 
 networks:
