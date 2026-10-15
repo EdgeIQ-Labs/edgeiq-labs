@@ -41,11 +41,13 @@ function saveRegistry(registry) {
   fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
 }
 
-// Auth middleware
+// Auth middleware — accepts Bearer token OR X-Provision-Secret header
+// (Cloudflare strips Authorization headers on proxied DNS records)
 function requireAuth(req, res, next) {
   const auth = req.headers.authorization || '';
-  const token = auth.replace(/^Bearer\s+/i, '');
-  if (token !== SECRET) {
+  const bearerToken = auth.replace(/^Bearer\s+/i, '');
+  const headerSecret = req.headers['x-provision-secret'] || '';
+  if (bearerToken !== SECRET && headerSecret !== SECRET) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   next();

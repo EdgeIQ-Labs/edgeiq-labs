@@ -32,7 +32,7 @@ async function mgr(env, path, method = 'GET', body = null) {
   const resp = await fetch(`${env.PHISHSIM_MGR_URL}${path}`, {
     method,
     headers: {
-      'Authorization': `Bearer ${env.PHISHSIM_SECRET}`,
+      'X-Provision-Secret': env.PHISHSIM_SECRET,
       'Content-Type':  'application/json',
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -49,7 +49,7 @@ async function gophishProxy(env, customerId, gophishPath, method = 'GET', body =
   const resp = await fetch(url, {
     method,
     headers: {
-      'Authorization': `Bearer ${env.PHISHSIM_SECRET}`,
+      'X-Provision-Secret': env.PHISHSIM_SECRET,
       'Content-Type':  'application/json',
     },
     body: body ? JSON.stringify(body) : undefined,
