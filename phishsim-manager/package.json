@@ -1,0 +1,14 @@
+{
+  "name": "phishsim-manager",
+  "version": "1.0.0",
+  "description": "EdgeIQ PhishSim - Multi-tenant GoPhish orchestrator",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dockerode": "^4.0.2",
+    "express": "^4.21.0",
+    "uuid": "^10.0.0"
+  }
+}

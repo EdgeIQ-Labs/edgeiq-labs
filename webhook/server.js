@@ -81,8 +81,11 @@ const PLANS = {
   'price_1UG1CYRC1NZ20yDTA6q4YPYq': { type:'sentinel', name:'Sentinel Managed', tier:'managed' },
   // Shadow DB (Data Sovereignty)
   'price_1UGL4tRC1NZ20yDTFuArhdKd': { type:'shadowdb', name:'Shadow DB Pro',     tier:'pro' },
-  'price_1UGL4uRC1NZ20yDT4pXjPFPH': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' }
-
+  'price_1UGL4uRC1NZ20yDT4pXjPFPH': { type:'shadowdb', name:'Shadow DB Managed', tier:'managed' },
+  // PhishSim (Phishing Simulation + Training)
+  'price_phishsim_monthly':           { type:'phishsim', name:'PhishSim Starter',   tier:'starter' },
+  'price_phishsim_pro_monthly':       { type:'phishsim', name:'PhishSim Pro',       tier:'pro' },
+  'price_phishsim_agency_monthly':    { type:'phishsim', name:'PhishSim Agency',    tier:'agency' }
 };
 
 // ─── Game Map ─────────────────────────────────────────────────────────────────
@@ -192,7 +195,10 @@ async function handleCheckout(session) {
   let nestId = plan.nest;
   let gameName = null;
 
-    if (plan.type === 'sentinel') {
+    if (plan.type === 'phishsim') {
+    return handlePhishSim(session, plan, email, firstName, lastName);
+  }
+  if (plan.type === 'sentinel') {
     return handleSentinel(session, plan, email, firstName, lastName);
   }
   if (plan.type === 'shadowdb') {
@@ -817,6 +823,91 @@ async function handleInvoicePaymentFailed(invoice) {
     subject: '💳 Payment failed - EdgeIQ Labs',
     html: `<div style="max-width:600px;margin:40px auto;padding:20px;background:#0b0f14;font-family:sans-serif;"><h1 style="color:#ef4444;">Payment Failed</h1><p style="color:#9fb0c7;">We couldn't process your <strong>${entry.plan}</strong> payment. Service stays active 3 more days.</p><p style="color:#9fb0c7;">Update payment or reply for help.</p></div>`
   });
+}
+
+// ─── PhishSim provisioning (GoPhish container via Manager API) ──────────────
+const PHISHSIM_MGR_URL = process.env.PHISHSIM_MGR_URL || 'http://10.18.157.11:3100';
+const PHISHSIM_SECRET  = process.env.PHISHSIM_SECRET  || 'edgeiq-phishsim-secret-2026';
+
+async function handlePhishSim(session, plan, email, firstName, lastName) {
+  const customerId = session.client_reference_id || ('ps_' + crypto.randomBytes(8).toString('hex'));
+  console.log(`[phishsim] Provisioning ${email} -> ${plan.name} (${plan.tier})`);
+
+  // Call manager API to spin up GoPhish container
+  let instance;
+  try {
+    const resp = await fetch(`${PHISHSIM_MGR_URL}/provision`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${PHISHSIM_SECRET}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ customer_id: customerId, email, plan: plan.tier }),
+    });
+    instance = await resp.json();
+    if (!resp.ok && instance.status !== 'exists') {
+      throw new Error(instance.error || `HTTP ${resp.status}`);
+    }
+  } catch (err) {
+    console.error(`[phishsim] Manager API failed:`, err.message);
+    // Fallback: send welcome email with manual setup instructions
+    await sendPhishSimWelcome({ email, firstName, plan, customerId, dashboardUrl: null, adminPassword: null, error: err.message });
+    return;
+  }
+
+  const dashboardUrl = instance.dashboard_url || `https://${customerId}.phishsim.edgeiqlabs.com`;
+  const adminPassword = instance.admin_password || '(see manager)';
+
+  // Store subscription mapping for lifecycle management
+  if (session.subscription) {
+    const map = loadSubMap();
+    map[session.subscription] = { type: 'phishsim', tier: plan.tier, customerId, email, plan: plan.name, created: new Date().toISOString() };
+    saveSubMap(map);
+  }
+
+  await sendPhishSimWelcome({ email, firstName, plan, customerId, dashboardUrl, adminPassword });
+  syncCustomerTracker({ email, firstName, lastName, planName: plan.name, serverId: customerId, subscriptionId: session.subscription || null, status: 'active' });
+  console.log(`[done] ${email} PhishSim provisioned -> ${dashboardUrl}`);
+}
+
+async function sendPhishSimWelcome({ email, firstName, plan, customerId, dashboardUrl, adminPassword, error }) {
+  const accent = '#f97316';
+  const border = '#3a1e0a';
+  const codeBg = '#1a0e05';
+  const emoji  = '🎣';
+  const subject = `${emoji} Your PhishSim is ready — EdgeIQ Labs`;
+
+  const rows = [
+    ['Plan', `<strong style="color:${accent};">${plan.name}</strong>`],
+    ['Customer ID', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${customerId}</code>`],
+  ];
+  if (dashboardUrl) {
+    rows.push(['Dashboard', `<a href="${dashboardUrl}" style="color:${accent};">${dashboardUrl}</a>`]);
+    rows.push(['Admin Password', `<code style="background:${codeBg};color:${accent};padding:3px 9px;border-radius:4px;">${adminPassword}</code>`]);
+  }
+
+  const steps = dashboardUrl ? `
+    <li>Log in at <a href="${dashboardUrl}" style="color:${accent};">${dashboardUrl}</a></li>
+    <li>Go to <strong>Groups</strong> → add your employee emails</li>
+    <li>Go to <strong>Templates</strong> → pick a pre-built phishing template or create your own</li>
+    <li>Go to <strong>Campaigns</strong> → <strong>+ New Campaign</strong> → launch your first simulation</li>
+    <li>Results update in real time — see who opened, clicked, and submitted credentials</li>
+    <li><strong>Important:</strong> Whitelist IP <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">100.33.233.11</code> and domain <code style="background:${codeBg};color:${accent};padding:2px 6px;border-radius:4px;">edgeiqlabs.com</code> in your mail gateway before sending campaigns</li>
+  ` : `
+    <li>Your PhishSim instance is being provisioned — you'll receive another email within 15 minutes with your dashboard URL</li>
+    <li>If you don't receive it, contact support@edgeiqlabs.com with your Customer ID</li>
+  `;
+
+  const html = buildEmail({
+    accent, border, codeBg, emoji,
+    title:    `${emoji} Welcome to PhishSim`,
+    subtitle: `Hi ${firstName} — your <strong style="color:#e8eef7;">${plan.name}</strong> phishing simulation platform is ready.`,
+    rows,
+    steps,
+  });
+
+  await sendEmail({ to: email, subject, html });
+  console.log(`[resend] PhishSim welcome -> ${email} | ${dashboardUrl || 'pending'}`);
 }
 
 async function handleSentinel(session, plan, email, firstName, lastName) {
