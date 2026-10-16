@@ -229,7 +229,7 @@ async function handleRequest(request) {
           cacheStatus: 'ERROR',
           cdn: null,
           elapsed: Date.now() - start,
-          error: e.message,
+          error: e.message || 'Fetch failed',
         };
       }
     }));

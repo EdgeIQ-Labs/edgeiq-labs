@@ -488,9 +488,11 @@ async function startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls)
       else { misses++; } // WARM, MISS, DYNAMIC, BYPASS, UNKNOWN all count as misses
 
       var shortPath = (r.url || '').replace(/^https?:\/\/[^\/]+/, '') || '/';
+      var timeDisplay = (r.elapsed || 0) + 'ms';
+      if (cacheStatus === 'ERROR' && r.error) timeDisplay = '<span title="' + esc(r.error) + '" style="cursor:help;border-bottom:1px dotted var(--bad);">' + timeDisplay + '</span>';
       row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div>' +
         '<div class="url-path" title="' + esc(r.url) + '">' + esc(shortPath) + '</div>' +
-        '<div class="url-time">' + (r.elapsed || 0) + 'ms</div>' +
+        '<div class="url-time">' + timeDisplay + '</div>' +
         (r.cdn ? '<div class="cdn-badge">' + r.cdn + '</div>' : '');
       listEl.appendChild(row);
     });
