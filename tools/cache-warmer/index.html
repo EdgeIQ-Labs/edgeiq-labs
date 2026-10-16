@@ -215,6 +215,14 @@ async function startWarming() {
   var delay = Math.min(5000, Math.max(0, parseInt(document.getElementById('delay').value) || 200));
   var maxUrls = Math.min(500, Math.max(1, parseInt(document.getElementById('max-urls').value) || 50));
 
+  // Premium mode: use server-side API
+  if (window.__premiumMode) {
+    var licenseKey = document.getElementById('license-key')?.value?.trim();
+    if (!licenseKey) { alert('Enter your license key to use Cache Warmer Pro'); return; }
+    await startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls);
+    return;
+  }
+
   // Reset UI
   isRunning = true;
   abortController = new AbortController();
@@ -436,10 +444,99 @@ function updateStats(hits, misses, errors, cdn) {
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Premium mode: server-side warming via CF Pages Function
+async function startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls) {
+  isRunning = true;
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'block';
+  document.getElementById('progress-section').style.display = 'block';
+  document.getElementById('results-table').style.display = 'block';
+  document.getElementById('url-list').innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">⚡ Warming from Cloudflare edge network...</div>';
+  document.getElementById('results-stats').innerHTML = '';
+  updateProgress(0, 0);
+
+  try {
+    var resp = await fetch('/api/cache-warmup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-License-Key': licenseKey,
+      },
+      body: JSON.stringify({ sitemapUrl: sitemapUrl, concurrency: concurrency, maxUrls: maxUrls }),
+    });
+
+    var data = await resp.json();
+
+    if (!resp.ok || !data.success) {
+      alert(data.error || 'Premium warming failed: ' + resp.status);
+      stopWarming();
+      return;
+    }
+
+    // Render results from server response
+    var listEl = document.getElementById('url-list');
+    listEl.innerHTML = '';
+    var hits = 0, misses = 0, errors = 0;
+
+    data.results.forEach(function(r) {
+      var row = document.createElement('div');
+      row.className = 'url-row';
+      var cacheStatus = r.cacheStatus || 'UNKNOWN';
+      var statusClass = 'status-MISS';
+      if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { statusClass = 'status-HIT'; hits++; }
+      else if (cacheStatus === 'ERROR') { statusClass = 'status-ERR'; errors++; }
+      else { misses++; }
+
+      var shortPath = (r.url || '').replace(/^https?:\/\/[^\/]+/, '') || '/';
+      row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div>' +
+        '<div class="url-path" title="' + esc(r.url) + '">' + esc(shortPath) + '</div>' +
+        '<div class="url-time">' + (r.elapsed || 0) + 'ms</div>' +
+        (r.cdn ? '<div class="cdn-badge">' + r.cdn + '</div>' : '');
+      listEl.appendChild(row);
+    });
+
+    updateProgress(data.warmed, data.totalFound);
+    var statsHtml = '';
+    if (hits > 0) statsHtml += '<span class="stat-pill stat-hit">HIT: ' + hits + '</span>';
+    if (misses > 0) statsHtml += '<span class="stat-pill stat-miss">MISS: ' + misses + '</span>';
+    if (errors > 0) statsHtml += '<span class="stat-pill stat-err">ERR: ' + errors + '</span>';
+    if (data.cdnDetected) statsHtml += '<span class="cdn-badge">' + data.cdnDetected + '</span>';
+    if (data.truncated) statsHtml += '<span style="color:#f59e0b;font-size:0.75rem;margin-left:8px;">(truncated to ' + maxUrls + ')</span>';
+    document.getElementById('results-stats').innerHTML = statsHtml;
+    document.getElementById('progress-rate').textContent = 'Server-side: ' + data.warmed + ' URLs in ' + (data.avgResponseMs || 0) + 'ms avg';
+
+  } catch (e) {
+    alert('Premium warming failed: ' + e.message);
+  }
+
+  stopWarming();
+}
+
 // Handle Enter key
 document.getElementById('sitemap-url').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') startWarming();
 });
+
+// Premium mode: check for ?upgraded=true in URL
+(function checkPremium() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('upgraded') === 'true') {
+    // Show premium banner and license key input
+    var hero = document.querySelector('.hero');
+    var banner = document.createElement('div');
+    banner.style.cssText = 'background:rgba(61,225,158,0.1);border:1px solid rgba(61,225,158,0.3);border-radius:12px;padding:16px 24px;margin-bottom:24px;text-align:center;';
+    banner.innerHTML = '<div style="color:#3de19e;font-weight:700;font-size:1.1rem;margin-bottom:8px;">🚀 Cache Warmer Pro Activated</div>' +
+      '<div style="color:#94a3b8;font-size:0.88rem;margin-bottom:12px;">Server-side warming from Cloudflare\'s edge network. No CORS limits, full cache-status headers, up to 500 URLs.</div>' +
+      '<input type="text" id="license-key" placeholder="Paste your license key" style="max-width:320px;margin:0 auto;display:block;background:#0b0f14;border:2px solid #1e2a38;border-radius:8px;color:#e2e8f0;padding:10px 16px;font-family:\'Fira Mono\',monospace;font-size:0.85rem;text-align:center;" />';
+    hero.insertBefore(banner, hero.querySelector('.comparison'));
+
+    // Store premium flag
+    window.__premiumMode = true;
+
+    // Auto-focus license key
+    setTimeout(function() { document.getElementById('license-key')?.focus(); }, 100);
+  }
+})();
 </script>
 </body>
 </html>"}}]}
