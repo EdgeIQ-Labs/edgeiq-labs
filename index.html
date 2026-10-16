@@ -1866,6 +1866,20 @@
               <a class="btn btn-secondary" href="/free-tools/" style="font-size:0.8rem;">All Free Tools</a>
             </div>
           </article>
+          <article class="card anim-card" style="background:linear-gradient(135deg,#071018 0%,#0d1a26 100%);border-color:rgba(61,217,255,0.35);position:relative;overflow:hidden;">
+            <div style="position:absolute;top:12px;right:14px;background:rgba(61,217,255,0.15);border:1px solid rgba(61,217,255,0.35);color:#3dd9ff;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">NEW</div>
+            <h3>🚀 CDN Cache Warmer</h3>
+            <p>Pre-warm your CDN edge cache after deploys. Fetch URLs from your sitemap, see HIT/MISS status, auto-detect Cloudflare, Fastly, Akamai.</p>
+            <ul style="margin:6px 0 8px 18px;color:var(--muted);font-size:0.85rem;">
+              <li>Free: client-side warming from your browser</li>
+              <li>Sitemap auto-discovery + concurrent fetching</li>
+              <li>Cache-status analytics per URL</li>
+            </ul>
+            <div class="plan-actions">
+              <a class="btn btn-primary" href="/tools/cache-warmer/" style="font-size:0.8rem;background:#3dd9ff;color:#071018;font-weight:800;">Warm Your Cache →</a>
+              <a class="btn btn-secondary" href="/tools/" style="font-size:0.8rem;">All Dev Tools</a>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -3825,6 +3839,7 @@ function toggleAdvancedTools() {
     { icon:'🚫', label:'Blacklist Checker',   sub:'7 DNSBLs in parallel',      href:'/free-blacklist-checker/' },
     { icon:'🛡',  label:'Full Security Score', sub:'Share your grade',          href:'/free-domain-security-score/' },
     { icon:'🐙', label:'Repo Scanner',        sub:'GitHub secret & config audit', href:'/free-repo-scanner/' },
+    { icon:'🚀', label:'Cache Warmer',        sub:'Pre-warm CDN edge caches',     href:'/tools/cache-warmer/' },
   ];
 
   function setStep(idx) {
