@@ -887,6 +887,7 @@
     <a href="/free-ssl-checker/" style="color:#f59e0b;">🔒 SSL Checker</a>
     <a href="/free-subdomain-scanner/" style="color:#ff6b7a;">🔍 Subdomains</a>
     <a href="/free-blacklist-checker/" style="color:#3dd9ff;">🚫 Blacklist</a>
+    <a href="/free-repo-scanner/" style="color:#6366f1;">🐙 Repo Scanner</a>
     <a href="/affiliate/" style="color:#00ff66;font-weight:600;">🤝 Affiliates</a>
     <span class="mob-section">Products</span>
     <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
@@ -1153,6 +1154,7 @@
           <button class="scan-tab" onclick="showScannerTab('dmarc')" id="tab-btn-dmarc">📧 DMARC Check</button>
           <button class="scan-tab" onclick="showScannerTab('spf')" id="tab-btn-spf">📋 SPF Analyzer</button>
           <button class="scan-tab" onclick="showScannerTab('blacklist')" id="tab-btn-blacklist">🚫 Blacklist</button>
+          <button class="scan-tab" onclick="showScannerTab('repo')" id="tab-btn-repo">🐙 Repo Scanner</button>
         </div>
         <div id="ssl-panel" class="scan-panel">
         <form id="ssl-scan-form" class="scan-form" style="display:block;">
@@ -1769,6 +1771,22 @@
       <div id="blacklist-error" class="scan-error" style="display:none;"><p id="blacklist-error-msg">Something went wrong. Please try again.</p></div>
     </div>
 
+    <!-- Repo Security Scanner — Free Tool #21 -->
+    <div id="repo-panel" class="scan-panel" style="display:none;">
+      <form id="repo-scan-form" class="scan-form">
+        <div class="scan-input-row">
+          <input type="text" id="repo-input" placeholder="https://github.com/owner/repo" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.95rem;" autocomplete="off" />
+          <button type="submit" class="btn btn-primary scan-btn" id="repo-submit">
+            <span id="repo-label">Scan Repo</span>
+            <span id="repo-loading" style="display:none;">Scanning...</span>
+          </button>
+        </div>
+        <p class="scan-note">Free — checks public repos for leaked secrets, .env files, gitignore gaps &amp; RLS policies · No account needed</p>
+      </form>
+      <div id="repo-results" style="display:none;margin-top:24px;text-align:left;"></div>
+      <div id="repo-error" class="scan-error" style="display:none;"><p id="repo-error-msg">Something went wrong. Please try again.</p></div>
+    </div>
+
       </div><!-- /advanced-tools-content -->
     </div><!-- /advanced-tools-wrap -->
 
@@ -2167,14 +2185,14 @@
   // Tab switching
   window.showScannerTab = function(tab) {
     // Panel + form IDs for each tab
-    var panelMap = { asm: 'asm-panel', ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel', docker: 'docker-panel', compliance: 'compliance-panel', policy: 'policy-panel', 'domain-score': 'domain-score-panel', dmarc: 'dmarc-panel', spf: 'spf-panel', blacklist: 'blacklist-panel' };
-    var formMap  = { asm: 'asm-scan-form', ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form', docker: 'docker-scan-form', compliance: 'compliance-scan-form', policy: 'policy-form', 'domain-score': 'domain-score-form', dmarc: 'dmarc-form', spf: 'spf-form', blacklist: 'blacklist-form' };
-    var tabs = ['asm', 'ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner', 'docker', 'compliance', 'policy', 'domain-score', 'dmarc', 'spf', 'blacklist'];
+    var panelMap = { asm: 'asm-panel', ssl: 'ssl-panel', headers: 'headers-panel', xss: 'xss-quick-panel', sub: 'sub-panel', dns: 'dns-panel', whois: 'whois-panel', cve: 'cve-panel', dast: 'dast-panel', api: 'api-panel', cspm: 'cspm-panel', threats: 'threats-panel', netscanner: 'netscanner-panel', docker: 'docker-panel', compliance: 'compliance-panel', policy: 'policy-panel', 'domain-score': 'domain-score-panel', dmarc: 'dmarc-panel', spf: 'spf-panel', blacklist: 'blacklist-panel', repo: 'repo-panel' };
+    var formMap  = { asm: 'asm-scan-form', ssl: 'ssl-scan-form', headers: 'headers-scan-form', xss: 'xss-quick-form', sub: 'sub-scan-form', dns: 'dns-scan-form', whois: 'whois-scan-form', cve: 'cve-scan-form', dast: 'dast-scan-form', api: 'api-scan-form', cspm: 'cspm-scan-form', threats: 'threats-scan-form', netscanner: 'netscanner-scan-form', docker: 'docker-scan-form', compliance: 'compliance-scan-form', policy: 'policy-form', 'domain-score': 'domain-score-form', dmarc: 'dmarc-form', spf: 'spf-form', blacklist: 'blacklist-form', repo: 'repo-scan-form' };
+    var tabs = ['asm', 'ssl', 'headers', 'xss', 'sub', 'dns', 'whois', 'cve', 'dast', 'api', 'cspm', 'threats', 'netscanner', 'docker', 'compliance', 'policy', 'domain-score', 'dmarc', 'spf', 'blacklist', 'repo'];
 
     tabs.forEach(function(t) {
       var panel = document.getElementById(panelMap[t]);
       var form  = document.getElementById(formMap[t]);
-      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : (t === 'compliance' ? 'compliance-results' : (t === 'policy' ? 'policy-results' : (t === 'asm' ? 'asm-results' : (t === 'domain-score' ? 'domain-score-results' : (t === 'dmarc' ? 'dmarc-results' : (t === 'spf' ? 'spf-results' : (t === 'blacklist' ? 'blacklist-results' : 'cve-results'))))))))))))))))));
+      var resultsId = t === 'ssl' ? 'scan-results' : (t === 'headers' ? 'headers-results' : (t === 'xss' ? 'xss-quick-results' : (t === 'sub' ? 'sub-results' : (t === 'dns' ? 'dns-results' : (t === 'whois' ? 'whois-results' : (t === 'dast' ? 'dast-results' : (t === 'api' ? 'api-results' : (t === 'cspm' ? 'cspm-results' : (t === 'threats' ? 'threats-results' : (t === 'netscanner' ? 'netscanner-results' : (t === 'docker' ? 'docker-results' : (t === 'compliance' ? 'compliance-results' : (t === 'policy' ? 'policy-results' : (t === 'asm' ? 'asm-results' : (t === 'domain-score' ? 'domain-score-results' : (t === 'dmarc' ? 'dmarc-results' : (t === 'spf' ? 'spf-results' : (t === 'blacklist' ? 'blacklist-results' : (t === 'repo' ? 'repo-results' : 'cve-results')))))))))))))))))));
       var errId     = t === 'ssl' ? 'scan-error'     : (t === 'headers' ? 'headers-error'     : (t === 'xss' ? 'xss-quick-error' : (t === 'sub' ? 'sub-error' : (t === 'dns' ? 'dns-error' : (t === 'whois' ? 'whois-error' : (t === 'dast' ? 'dast-error' : (t === 'api' ? 'api-error' : (t === 'cspm' ? 'cspm-error' : (t === 'threats' ? 'threats-error' : (t === 'netscanner' ? 'netscanner-error' : (t === 'docker' ? 'docker-error' : (t === 'compliance' ? 'compliance-error' : (t === 'policy' ? 'cve-results' : (t === 'asm' ? 'asm-error' : (t === 'domain-score' ? 'domain-score-error' : (t === 'dmarc' ? 'dmarc-error' : (t === 'spf' ? 'spf-error' : (t === 'blacklist' ? 'blacklist-error' : 'cve-error'))))))))))))))))));
       var r = document.getElementById(resultsId);
       var e = document.getElementById(errId);
@@ -3789,6 +3807,7 @@ function toggleAdvancedTools() {
     { icon:'🔍', label:'Subdomain Scanner',   sub:'Exposed subdomains',         href:'/free-subdomain-scanner/' },
     { icon:'🚫', label:'Blacklist Checker',   sub:'7 DNSBLs in parallel',      href:'/free-blacklist-checker/' },
     { icon:'🛡',  label:'Full Security Score', sub:'Share your grade',          href:'/free-domain-security-score/' },
+    { icon:'🐙', label:'Repo Scanner',        sub:'GitHub secret & config audit', href:'/free-repo-scanner/' },
   ];
 
   function setStep(idx) {
@@ -4117,6 +4136,67 @@ function toggleAdvancedTools() {
     } finally {
       document.getElementById('blacklist-label').style.display = '';
       document.getElementById('blacklist-loading').style.display = 'none';
+      btn.disabled = false;
+    }
+  });
+})();
+
+// ── Repo Security Scanner tab ─────────────────────────────────────────────
+(function() {
+  var form = document.getElementById('repo-scan-form');
+  if (!form) return;
+  var STRIPE_REPO_SCANNER = 'https://buy.stripe.com/8x2eVf2TF7hb4nWg367wA46';
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var url = document.getElementById('repo-input').value.trim();
+    if (!url || url.indexOf('github.com') === -1) return;
+    var btn = document.getElementById('repo-submit');
+    document.getElementById('repo-label').style.display = 'none';
+    document.getElementById('repo-loading').style.display = '';
+    document.getElementById('repo-results').style.display = 'none';
+    document.getElementById('repo-error').style.display = 'none';
+    btn.disabled = true;
+    try {
+      var res = await fetch('/api/repo-scanner', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({url: url})
+      });
+      var d = await res.json();
+      if (!res.ok && !d.grade) throw new Error(d.error || 'Scan failed');
+      var grade = d.grade || '?';
+      var score = d.score || 0;
+      var findings = d.findings || [];
+      var gc = grade==='A'?'#22c55e':grade==='B'?'#3dd9ff':grade==='C'?'#eab308':grade==='D'?'#f97316':'#ef4444';
+      var lockedCount = 0;
+      findings.forEach(function(f){ if(f.severity==='locked') lockedCount++; });
+      var findingsHtml = findings.map(function(f) {
+        var isLocked = f.severity === 'locked';
+        var sevColor = isLocked ? '#6366f1' : f.severity==='critical'?'#ef4444':f.severity==='high'?'#f97316':f.severity==='medium'?'#eab308':f.severity==='low'?'#3dd9ff':'#22c55e';
+        var clickAttr = isLocked ? ' onclick="window.location.href=\'' + STRIPE_REPO_SCANNER + '\'" style="cursor:pointer;"' : '';
+        return '<div' + clickAttr + ' style="padding:12px 16px;border-left:3px solid ' + sevColor + ';background:' + (isLocked?'rgba(99,102,241,0.08)':'#0d1620') + ';border-radius:0 8px 8px 0;margin-bottom:6px;font-size:0.85rem;color:' + (isLocked?'#c7d2fe':'#b8cce0') + ';">' +
+          '<span style="font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;color:' + sevColor + ';display:block;margin-bottom:3px;">' + f.type + (isLocked?' 🔒':'') + '</span>' +
+          f.message + '</div>';
+      }).join('');
+      var gateHtml = lockedCount > 0 ? '<div style="margin-top:16px;padding:24px;background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(99,102,241,0.3);border-radius:12px;text-align:center;">' +
+        '<h3 style="color:#fff;font-size:1rem;margin-bottom:8px;">' + lockedCount + ' advanced checks locked</h3>' +
+        '<p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:14px;">Unlock private repo scanning, dependency audits, deep secret detection, and CI hardening.</p>' +
+        '<a href="' + STRIPE_REPO_SCANNER + '" style="display:inline-block;background:#6366f1;color:#fff;font-weight:700;padding:10px 22px;border-radius:9px;text-decoration:none;font-size:0.88rem;">Unlock Repo Scanner Pro →</a></div>' : '';
+      document.getElementById('repo-results').innerHTML =
+        '<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:18px;background:#121923;border:1px solid #233142;border-radius:12px;">' +
+        '<div style="width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:' + gc + ';border:2px solid ' + gc + ';background:' + gc + '15;">' + grade + '</div>' +
+        '<div style="flex:1;"><div style="font-weight:700;font-family:monospace;font-size:0.95rem;color:#e8eef7;margin-bottom:4px;">' + (d.repo||'') + '</div>' +
+        '<div style="font-size:0.82rem;color:#9fb0c7;">' + (d.summary||'') + '</div>' +
+        '<div style="height:5px;background:#1a2535;border-radius:3px;margin-top:8px;overflow:hidden;"><div style="height:100%;width:' + score + '%;background:' + gc + ';border-radius:3px;"></div></div>' +
+        '<div style="font-size:0.7rem;color:#64748b;margin-top:3px;">Score: ' + score + '/100</div></div></div>' +
+        findingsHtml + gateHtml;
+      document.getElementById('repo-results').style.display = 'block';
+    } catch(err) {
+      document.getElementById('repo-error-msg').textContent = err.message || 'Something went wrong.';
+      document.getElementById('repo-error').style.display = 'block';
+    } finally {
+      document.getElementById('repo-label').style.display = '';
+      document.getElementById('repo-loading').style.display = 'none';
       btn.disabled = false;
     }
   });
