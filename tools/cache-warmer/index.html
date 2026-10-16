@@ -64,7 +64,8 @@
     .url-row.pending{opacity:0.5;}
     .url-status{width:60px;text-align:center;font-weight:700;font-size:0.72rem;padding:2px 8px;border-radius:6px;flex-shrink:0;}
     .status-HIT{background:rgba(61,225,158,0.15);color:var(--ok);}
-    .status-MISS,.status-EXPIRED,.status-WARM{background:rgba(245,158,11,0.15);color:var(--warn);}
+    .status-MISS,.status-EXPIRED,.status-WARM,.status-DYNAMIC,.status-BYPASS{background:rgba(245,158,11,0.15);color:var(--warn);}
+    .status-REVALIDATED{background:rgba(61,225,158,0.15);color:var(--ok);}
     .status-ERR,.status-CORS{background:rgba(239,68,68,0.15);color:var(--bad);}
     .status-WAIT{background:rgba(100,116,139,0.15);color:var(--muted);}
     .url-path{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Fira Mono',monospace;font-size:0.78rem;}
@@ -280,22 +281,23 @@ async function startWarming() {
 
       if (isOpaque) {
         // Request succeeded and warmed the cache, but headers are hidden by CORS.
-        // Use timing heuristic: <200ms likely HIT, >500ms likely MISS
+        // Use timing heuristic: <200ms likely HIT, else WARM
         if (elapsed < 200) { cacheStatus = 'HIT'; hits++; }
-        else if (elapsed < 800) { cacheStatus = 'WARM'; misses++; }
         else { cacheStatus = 'WARM'; misses++; }
         cdn = '';
       } else {
         cacheStatus = getCacheStatus(r.headers);
         cdn = detectCdn(r.headers);
         if (cdn && !cdnDetected) cdnDetected = cdn;
-        if (cacheStatus === 'HIT') hits++;
-        else if (cacheStatus === 'MISS' || cacheStatus === 'EXPIRED' || cacheStatus === 'WARM') misses++;
-        else errors++;
+        // Map CDN-specific statuses to our display categories
+        if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { hits++; }
+        else if (cacheStatus === 'MISS' || cacheStatus === 'EXPIRED' || cacheStatus === 'WARM' || cacheStatus === 'DYNAMIC' || cacheStatus === 'BYPASS') { misses++; }
+        else { errors++; }
       }
 
       var statusClass = 'status-' + cacheStatus;
-      if (cacheStatus === 'WARM') statusClass = 'status-MISS';
+      if (cacheStatus === 'WARM' || cacheStatus === 'DYNAMIC' || cacheStatus === 'BYPASS') statusClass = 'status-MISS';
+      if (cacheStatus === 'REVALIDATED') statusClass = 'status-HIT';
 
       row.className = 'url-row';
       row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div><div class="url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="url-time">' + elapsed + 'ms</div>' + (cdn ? '<div class="cdn-badge">' + cdn + '</div>' : '');
