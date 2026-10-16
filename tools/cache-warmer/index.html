@@ -481,11 +481,11 @@ async function startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls)
     data.results.forEach(function(r) {
       var row = document.createElement('div');
       row.className = 'url-row';
-      var cacheStatus = r.cacheStatus || 'UNKNOWN';
+      var cacheStatus = r.cacheStatus || 'WARM';
       var statusClass = 'status-MISS';
       if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { statusClass = 'status-HIT'; hits++; }
       else if (cacheStatus === 'ERROR') { statusClass = 'status-ERR'; errors++; }
-      else { misses++; }
+      else { misses++; } // WARM, MISS, DYNAMIC, BYPASS, UNKNOWN all count as misses
 
       var shortPath = (r.url || '').replace(/^https?:\/\/[^\/]+/, '') || '/';
       row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div>' +

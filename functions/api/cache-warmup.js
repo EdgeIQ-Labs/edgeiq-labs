@@ -41,29 +41,49 @@ function detectCdn(headers) {
 }
 
 // Extract cache status from CDN-specific headers
-function getCacheStatus(headers) {
-  // Cloudflare
+// Note: CF Pages Functions fetching external URLs don't always get cf-cache-status.
+// Use cf-ray presence + timing heuristics as fallback.
+function getCacheStatus(headers, elapsedMs) {
+  // Cloudflare explicit status
   const cfStatus = headers.get('cf-cache-status');
-  if (cfStatus) return cfStatus.toUpperCase(); // HIT, MISS, DYNAMIC, EXPIRED, REVALIDATED, BYPASS
+  if (cfStatus) return cfStatus.toUpperCase();
 
   // Vercel
   const vercelStatus = headers.get('x-vercel-cache');
-  if (vercelStatus) return vercelStatus.toUpperCase(); // HIT, MISS, STALE, PRERENDER
+  if (vercelStatus) return vercelStatus.toUpperCase();
 
-  // Fastly
-  const fastlyStatus = headers.get('x-cache');
-  if (fastlyStatus) return fastlyStatus.includes('HIT') ? 'HIT' : 'MISS';
+  // Fastly / Akamai / generic x-cache
+  const xc = headers.get('x-cache');
+  if (xc) {
+    if (/hit/i.test(xc)) return 'HIT';
+    if (/miss/i.test(xc)) return 'MISS';
+    if (/expired/i.test(xc)) return 'EXPIRED';
+    return xc.split(/[,;]/)[0].trim().toUpperCase();
+  }
 
   // CloudFront
-  const cfId = headers.get('x-amz-cf-id');
-  const cfResult = headers.get('x-cache');
-  if (cfId) return cfResult?.includes('Hit') ? 'HIT' : 'MISS';
+  if (headers.get('x-amz-cf-id')) {
+    return xc?.includes('Hit') ? 'HIT' : 'MISS';
+  }
 
-  // Generic
+  // bunny.net
+  const bunny = headers.get('bunnycdn-cache-status');
+  if (bunny) return bunny.toUpperCase();
+
+  // Age header = cached
   const age = headers.get('age');
   if (age && parseInt(age) > 0) return 'HIT';
 
-  return 'UNKNOWN';
+  // Fallback: if CF ray exists, we went through edge — use timing
+  if (headers.get('cf-ray')) {
+    if (elapsedMs < 150) return 'HIT';
+    if (elapsedMs < 500) return 'WARM';
+    return 'MISS';
+  }
+
+  // No CDN signals at all — still warmed via direct fetch
+  if (elapsedMs < 200) return 'HIT';
+  return 'WARM';
 }
 
 async function handleRequest(request) {
@@ -177,7 +197,7 @@ async function handleRequest(request) {
           redirect: 'follow',
         });
         const elapsed = Date.now() - start;
-        const cacheStatus = getCacheStatus(resp.headers);
+        const cacheStatus = getCacheStatus(resp.headers, elapsed);
         const cdn = detectCdn(resp.headers);
         const colo = resp.headers.get('cf-ray') ? 'CF-EDGE' : null; // CF doesn't expose colo name directly
 
@@ -187,8 +207,7 @@ async function handleRequest(request) {
         // Categorize
         const statusLower = cacheStatus.toLowerCase();
         if (statusLower === 'hit' || statusLower === 'revalidated') stats.hit++;
-        else if (statusLower === 'miss' || statusLower === 'expired') stats.miss++;
-        else if (statusLower === 'dynamic' || statusLower === 'bypass') stats.dynamic++;
+        else if (statusLower === 'miss' || statusLower === 'expired' || statusLower === 'warm' || statusLower === 'dynamic' || statusLower === 'bypass') stats.miss++;
         else stats.unknown++;
 
         totalMs += elapsed;
