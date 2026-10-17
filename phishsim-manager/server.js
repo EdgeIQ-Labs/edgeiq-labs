@@ -272,6 +272,66 @@ app.delete('/instances/:customerId', requireAuth, async (req, res) => {
 
 // ─── Proxy to customer GoPhish instance ─────────────────────────────────
 // This is what the CF Pages catchall uses to manage campaigns/templates/etc
+// ─── Session invalidation helper ──────────────────────────────────────────────
+// GoPhish stores sessions in SQLite and does NOT invalidate them on password
+// change or logout (known bug: gophish/gophish#9368). We fix this at the proxy
+// layer by deleting stale sessions from the GoPhish DB after sensitive ops.
+// Uses dockerode to run a one-shot alpine/sqlite container that mounts the
+// customer's GoPhish DB directory (no sqlite3 needed in manager container).
+// Reuses the global `docker` instance declared at line 13.
+
+async function invalidateGoPhishSessions(inst, exceptSessionId = null) {
+  // GoPhish DBs are bind-mounted at /opt/gophish/<customer_id>/ on the host
+  const hostDbDir = `/opt/gophish/${inst.id}`;
+  const query = exceptSessionId
+    ? `DELETE FROM sessions WHERE key != '${exceptSessionId.replace(/'/g, "''")}';`
+    : 'DELETE FROM sessions;';
+
+  try {
+    // Pull image if needed (cached after first run)
+    try { await docker.getImage('alpine/sqlite').inspect(); } catch {
+      console.log('[session-invalidation] Pulling alpine/sqlite image...');
+      await new Promise((res, rej) => {
+        docker.pull('alpine/sqlite', (err, stream) => {
+          if (err) return rej(err);
+          docker.modem.followProgress(stream, (e) => e ? rej(e) : res());
+        });
+      });
+    }
+
+    // Run one-shot container: mount DB dir read-write, execute DELETE, auto-remove
+    const container = await docker.createContainer({
+      Image: 'alpine/sqlite',
+      Cmd: ['sh', '-c', `apk add --no-cache sqlite-libs > /dev/null 2>&1; sqlite3 /db/gophish.db "${query}"`],
+      HostConfig: {
+        Binds: [`${hostDbDir}:/db:rw`],
+        AutoRemove: true,
+        NetworkMode: 'none',
+      },
+    });
+    await container.start();
+    const result = await container.wait(10000);
+    if (result.StatusCode !== 0) {
+      console.error(`[session-invalidation] sqlite3 exited ${result.StatusCode} for ${inst.id}`);
+    } else {
+      console.log(`[session-invalidation] Cleared sessions for ${inst.id}${exceptSessionId ? ' (except current)' : ''}`);
+    }
+  } catch (err) {
+    console.error(`[session-invalidation] Failed for ${inst.id}:`, err.message);
+  }
+}
+
+// Detect password-change and logout requests that need session invalidation
+function isSessionInvalidationTrigger(method, gophishPath) {
+  // Password change: PUT /api/users/:id or POST /api/users/:id/password
+  if ((method === 'PUT' || method === 'POST') && /^\/api\/users\/\d+(\/password)?$/.test(gophishPath)) return true;
+  // Reset password: POST /api/reset_password
+  if (method === 'POST' && gophishPath === '/api/reset_password') return true;
+  // Logout: POST /logout or GET /logout
+  if ((method === 'POST' || method === 'GET') && gophishPath === '/logout') return true;
+  return false;
+}
+
 app.all('/proxy/:customerId/*', requireAuth, async (req, res) => {
   const registry = loadRegistry();
   const inst = registry[req.params.customerId];
@@ -294,6 +354,18 @@ app.all('/proxy/:customerId/*', requireAuth, async (req, res) => {
 
     const response = await fetch(targetUrl, fetchOpts);
     const text = await response.text();
+
+    // On successful password change or logout, invalidate other sessions
+    if (response.ok && isSessionInvalidationTrigger(req.method, gophishPath)) {
+      // Extract current session cookie to preserve it (if present)
+      const setCookie = response.headers.get('set-cookie') || '';
+      const match = setCookie.match(/_gophish=([^;]+)/);
+      const currentSession = match ? match[1] : null;
+      // Fire-and-forget — don't block the response
+      invalidateGoPhishSessions(inst, currentSession).catch(err =>
+        console.error('[session-invalidation] Async error:', err.message)
+      );
+    }
 
     res.status(response.status);
     try {
