@@ -156,13 +156,14 @@
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
   <link rel="stylesheet" href="/css/design-system.css?v=11" />
   <script src="/js/theme.js"></script>
+<link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
     <!-- NAV -->
   <nav class="nav">
     <div class="container nav__inner">
       <a href="/" class="nav__logo">
-        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" / loading="lazy">
         EdgeIQ Labs
       </a>
       <ul class="nav__links">
@@ -209,7 +210,7 @@
     <article class="report" aria-label="Sample monthly security report">
       <div class="report-header">
         <div class="report-brand">
-          <img src="/logo-edgeiq-selected.png" alt="" />
+          <img src="/logo-edgeiq-selected.png" alt="" / loading="lazy">
           <div class="report-brand-text">Edge<span>IQ</span> Labs · Monthly Report</div>
         </div>
         <div class="report-meta">
@@ -349,7 +350,7 @@
     <div class="container footer__inner">
       <div>
         <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
-          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" / loading="lazy">
           EdgeIQ Labs
         </a>
         <p>Cybersecurity monitoring, secure hosting, and tools for small businesses.</p>
