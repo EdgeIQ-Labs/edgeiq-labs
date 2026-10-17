@@ -140,3 +140,44 @@
     }, 4000);
   }
 })();
+
+// Re-run terminal animation on DOMContentLoaded if it missed the elements
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('terminal-line-1');
+    if (el && !el.querySelector('span')) {
+      // Trigger the IIFE logic again by re-firing
+      var lines = [
+        { delay: 0,    text: '> scanning edgeiqlabs.com...' },
+        { delay: 600,  text: 'SSL Certificate    <span class="ok">✅ Valid — A+</span>' },
+        { delay: 1100, text: 'TLS Version        <span class="ok">✅ TLS 1.3</span>' },
+        { delay: 1600, text: 'Security Headers   <span class="warn">⚠ 7/8 — X-Frame missing</span>' },
+        { delay: 2100, text: 'XSS Posture        <span class="ok">✅ No reflected params</span>' },
+        { delay: 2600, text: 'Subdomain Enum     <span class="ok">✅ 12 exposed subdomains</span>' },
+        { delay: 3000, text: 'Threats Detected   <span class="ok">✅ 0 critical</span>' },
+      ];
+      var output = document.createElement('span');
+      el.appendChild(output);
+      var html = '', charIdx = 0, lineIdx = 0;
+      function typeNextChar() {
+        if (lineIdx >= lines.length) return;
+        var line = lines[lineIdx];
+        if (charIdx < line.text.length) {
+          var remaining = line.text.substring(charIdx);
+          var tagMatch = remaining.match(/^<[^>]+>/);
+          if (tagMatch) { html += tagMatch[0]; charIdx += tagMatch[0].length; }
+          else { html += line.text[charIdx]; charIdx++; }
+          output.innerHTML = html;
+          setTimeout(typeNextChar, 18);
+        } else {
+          lineIdx++; charIdx = 0;
+          if (lineIdx < lines.length) {
+            html += '<br>'; output.innerHTML = html;
+            setTimeout(typeNextChar, lines[lineIdx].delay - line.delay - line.text.length * 18);
+          }
+        }
+      }
+      setTimeout(typeNextChar, 400);
+    }
+  });
+}
