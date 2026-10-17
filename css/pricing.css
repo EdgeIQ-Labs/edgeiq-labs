@@ -1,0 +1,354 @@
+/* ==========================================================================
+   Pricing Page Styles — EdgeIQ Labs
+   Uses design system tokens from /css/design-system.css
+   ========================================================================== */
+
+/* --- Product Strip (sub-nav) --------------------------------------------- */
+.product-strip {
+  background-color: var(--color-bg-light-band);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 76px;
+  z-index: 9;
+}
+
+.product-strip-inner {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 0 5px var(--space-lg);
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.product-strip-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.product-strip-inner::after {
+  content: "";
+  flex: 0 0 28px;
+}
+
+.product-strip-inner a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+}
+
+.product-strip-inner a:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 768px) {
+  .product-strip-inner a {
+    font-size: var(--text-xs);
+    padding: 4px 8px;
+  }
+}
+
+/* --- Hero ---------------------------------------------------------------- */
+.pricing-hero {
+  text-align: center;
+  padding: var(--space-section) var(--space-lg) var(--space-3xl);
+}
+
+.pricing-hero h1 {
+  font-size: var(--text-hero);
+  font-weight: 900;
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-md);
+}
+
+.pricing-hero p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .pricing-hero h1 {
+    font-size: var(--text-4xl);
+  }
+}
+
+/* --- Section Label ------------------------------------------------------- */
+.section-label {
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: var(--space-3xl) var(--space-lg) var(--space-lg);
+}
+
+/* --- Pricing Grid -------------------------------------------------------- */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-lg);
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg) var(--space-section);
+}
+
+/* --- Price Card ---------------------------------------------------------- */
+.price-card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.price-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.price-card.featured {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent-subtle), 0 8px 32px var(--color-accent-subtle);
+}
+
+.price-card-icon {
+  font-size: 1.8rem;
+  margin-bottom: var(--space-md);
+}
+
+.price-card-name {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  margin-bottom: var(--space-xs);
+}
+
+.price-card-tagline {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+  line-height: var(--leading-normal);
+}
+
+/* --- Price Row ----------------------------------------------------------- */
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.price-amount {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: var(--tracking-tight);
+}
+
+.price-period {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.price-was {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  margin-bottom: var(--space-xs);
+}
+
+/* --- Badges -------------------------------------------------------------- */
+.price-badge {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.badge-free {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--color-text-secondary);
+}
+
+.badge-early {
+  background: var(--color-accent-subtle);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: var(--color-accent);
+}
+
+.badge-hot {
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  color: #34d399;
+}
+
+/* --- Feature List -------------------------------------------------------- */
+.price-features {
+  list-style: none;
+  margin-bottom: var(--space-lg);
+  flex: 1;
+}
+
+.price-features li {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.price-features li:last-child {
+  border-bottom: none;
+}
+
+.price-features li::before {
+  content: "✓";
+  color: #34d399;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.price-features li.no {
+  color: var(--color-text-muted);
+}
+
+.price-features li.no::before {
+  content: "–";
+  color: var(--color-text-muted);
+}
+
+/* --- Price Buttons ------------------------------------------------------- */
+.price-btn {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--text-base);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.price-btn:hover {
+  opacity: 0.88;
+}
+
+.price-btn.primary {
+  background: var(--color-accent);
+  color: #000;
+}
+
+.price-btn.secondary {
+  background: var(--color-accent-subtle);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: var(--color-accent);
+}
+
+.price-btn.green {
+  background: #34d399;
+  color: #000;
+}
+
+.price-btn.pink {
+  background: #f472b6;
+  color: #000;
+}
+
+.price-btn.blue {
+  background: #4da6ff;
+  color: #000;
+}
+
+.price-btn.purple {
+  background: #a78bfa;
+  color: #000;
+}
+
+.price-btn.orange {
+  background: #ff9f43;
+  color: #000;
+}
+
+/* --- FAQ ----------------------------------------------------------------- */
+.faq-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg) var(--space-section);
+}
+
+.faq-wrap h2 {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.faq-q {
+  font-size: var(--text-base);
+  font-weight: 600;
+  padding: 18px 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-text-primary);
+}
+
+.faq-q::after {
+  content: "+";
+  font-size: var(--text-xl);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.faq-item.open .faq-q::after {
+  content: "−";
+}
+
+.faq-a {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  padding-bottom: 18px;
+  display: none;
+}
+
+.faq-item.open .faq-a {
+  display: block;
+}
+
+/* --- Light mode adjustments ---------------------------------------------- */
+[data-theme="light"] .product-strip-inner a:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .price-card {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-border-light);
+}
+
+[data-theme="light"] .price-features li {
+  border-bottom-color: var(--color-border-light);
+}

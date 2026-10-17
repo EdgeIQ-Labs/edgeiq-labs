@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free Developer Security Tools — Zero Data Upload | EdgeIQ Labs</title>
+  <meta name="description" content="13 free privacy-first developer tools: JWT decoder, hash generator, secret scanner, CDN cache warmer, base64 encoder, regex tester, and more. All processing happens in your browser — your data never leaves your machine."/>
+  <meta property="og:title" content="Free Developer Security Tools — Zero Data Upload"/>
+  <meta property="og:description" content="JWT decoder, hash generator, secret scanner, base64 encoder, regex tester, and more. 100% client-side processing."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/tools/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/tools/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"EdgeIQ Developer Tools","url":"https://edgeiqlabs.com/tools/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <style>
+    :root{--bg:#0b0f14;--surface:#111720;--border:#1e2a38;--text:#e2e8f0;--muted:#64748b;--accent:#3dd9ff;--ok:#3de19e;--purple:#b47aff;--indigo:#6366f1;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;line-height:1.6;}
+    a{color:inherit;text-decoration:none;}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);background:rgba(11,15,20,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:1100px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-links a:hover{color:var(--text);}
+    .nav-cta{background:var(--accent)!important;color:#071018!important;font-weight:700;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .hero{padding:64px 0 48px;text-align:center;}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px;}
+    .hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;letter-spacing:-0.03em;margin-bottom:14px;}
+    .hero p{font-size:1.05rem;color:var(--muted);max-width:600px;margin:0 auto 24px;}
+    .trust-bar{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:0.82rem;color:var(--muted);margin-bottom:40px;}
+    .trust-bar span{display:flex;align-items:center;gap:6px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding-bottom:60px;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;transition:border-color 0.2s,transform 0.15s;display:flex;flex-direction:column;gap:10px;}
+    .card:hover{border-color:var(--card-accent,var(--accent));transform:translateY(-2px);}
+    .card-icon{font-size:1.8rem;line-height:1;}
+    .card-tag{display:inline-block;font-size:0.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:rgba(61,217,255,0.1);color:var(--card-accent,var(--accent));border:1px solid rgba(61,217,255,0.2);width:fit-content;}
+    .card h2{font-size:1.1rem;font-weight:700;}
+    .card p{font-size:0.85rem;color:var(--muted);flex:1;}
+    .card-link{display:block;text-align:center;background:var(--card-accent,var(--accent));color:#071018;font-weight:700;font-size:0.85rem;padding:10px 20px;border-radius:9px;margin-top:4px;transition:opacity 0.15s;}
+    .card-link:hover{opacity:0.85;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:20px 0 60px;text-align:center;}
+    .cta-box h3{font-size:1.15rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.9rem;margin-bottom:20px;max-width:520px;margin-left:auto;margin-right:auto;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 26px;border-radius:9px;font-size:0.92rem;}
+    .cta-btn:hover{opacity:0.87;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);margin:0 10px;}
+    footer a:hover{color:var(--text);}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/free-tools/">Scanners</a>
+      <a href="/tools/" style="color:var(--accent);">Dev Tools</a>
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/blog/">Blog</a>
+      <a href="/dashboard/" class="nav-cta">Free Full Scan →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge">🔒 Privacy-First Dev Tools</div>
+    <h1>Developer Security Tools<br>Zero Data Upload</h1>
+    <p>JWT decoder, hash generator, secret scanner, base64 encoder, regex tester, and more. All processing happens in your browser — your data never leaves your machine.</p>
+    <div class="trust-bar">
+      <span>🔒 100% client-side</span>
+      <span>🚫 No uploads</span>
+      <span>⚡ Instant results</span>
+      <span>🆓 Free forever</span>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card" style="--card-accent:#6366f1;">
+      <div class="card-icon">🔑</div>
+      <div class="card-tag">Auth</div>
+      <h2>JWT Decoder</h2>
+      <p>Decode JWT headers and payloads instantly. Inspect claims, check expiry, and view token structure — without sending tokens to any server.</p>
+      <a class="card-link" href="/tools/jwt-decoder/" style="background:#6366f1;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#3dd9ff;">
+      <div class="card-icon">#️⃣</div>
+      <div class="card-tag">Crypto</div>
+      <h2>Hash Generator</h2>
+      <p>Generate SHA-1, SHA-256, SHA-512, and MD5 hashes locally using the Web Crypto API. Your input never leaves the browser.</p>
+      <a class="card-link" href="/tools/hash-generator/">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#ef4444;">
+      <div class="card-icon">🔍</div>
+      <div class="card-tag">Security</div>
+      <h2>Secret Scanner</h2>
+      <p>Paste code or config files to scan for leaked API keys, tokens, private keys, and hardcoded secrets. 100% local regex matching.</p>
+      <a class="card-link" href="/tools/secret-scanner/" style="background:#ef4444;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#3de19e;">
+      <div class="card-icon">🔄</div>
+      <div class="card-tag">Encoding</div>
+      <h2>Base64 Encoder / Decoder</h2>
+      <p>Encode and decode Base64 strings instantly. Handles text and binary-safe conversions with zero server round-trips.</p>
+      <a class="card-link" href="/tools/base64/" style="background:#3de19e;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#b47aff;">
+      <div class="card-icon">🎯</div>
+      <div class="card-tag">Dev</div>
+      <h2>Regex Tester</h2>
+      <p>Test regular expressions with live match highlighting, capture groups, and flag support. All pattern matching runs locally.</p>
+      <a class="card-link" href="/tools/regex-tester/" style="background:#b47aff;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#f59e0b;">
+      <div class="card-icon">🔗</div>
+      <div class="card-tag">Encoding</div>
+      <h2>URL Encoder / Decoder</h2>
+      <p>Percent-encode and decode URLs and query parameters. Essential for API work, redirects, and form submissions.</p>
+      <a class="card-link" href="/tools/url-encoder/" style="background:#f59e0b;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#3dd9ff;">
+      <div class="card-icon">🕐</div>
+      <div class="card-tag">Utility</div>
+      <h2>Unix Timestamp Converter</h2>
+      <p>Convert between Unix epochs and human-readable dates. Live ticker shows current timestamp. Zero server calls.</p>
+      <a class="card-link" href="/tools/timestamp-converter/">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#3de19e;">
+      <div class="card-icon">🆔</div>
+      <div class="card-tag">Utility</div>
+      <h2>UUID Generator</h2>
+      <p>Generate cryptographically secure v4 UUIDs using crypto.randomUUID(). Batch generation supported.</p>
+      <a class="card-link" href="/tools/uuid-generator/" style="background:#3de19e;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#6366f1;">
+      <div class="card-icon">🛡️</div>
+      <div class="card-tag">Security</div>
+      <h2>Password Strength Checker</h2>
+      <p>Analyze password entropy, crack time estimates, and composition rules. Your password is never transmitted anywhere.</p>
+      <a class="card-link" href="/tools/password-strength/" style="background:#6366f1;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#f59e0b;">
+      <div class="card-icon">📋</div>
+      <div class="card-tag">Config</div>
+      <h2>.env File Formatter</h2>
+      <p>Format, sort, and align .env files locally. Keep your secrets safe — nothing is uploaded or stored.</p>
+      <a class="card-link" href="/tools/env-formatter/" style="background:#f59e0b;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#ef4444;">
+      <div class="card-icon">🧹</div>
+      <div class="card-tag">Privacy</div>
+      <h2>Log Anonymizer</h2>
+      <p>Strip IPs, emails, API keys, and PII from server logs before sharing. Regex-based scrubbing runs entirely in your browser.</p>
+      <a class="card-link" href="/tools/log-anonymizer/" style="background:#ef4444;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#b47aff;">
+      <div class="card-icon">📝</div>
+      <div class="card-tag">Code</div>
+      <h2>HTML Entity Encoder</h2>
+      <p>Encode and decode HTML entities to prevent XSS. Convert special characters safely for embedding in markup.</p>
+      <a class="card-link" href="/tools/html-entities/" style="background:#b47aff;">Open Tool →</a>
+    </div>
+
+    <div class="card" style="--card-accent:#3dd9ff;">
+      <div class="card-icon">🚀</div>
+      <div class="card-tag">Performance</div>
+      <h2>CDN Cache Warmer</h2>
+      <p>Pre-warm your CDN edge cache by fetching URLs from your sitemap. See HIT/MISS status, response times, and auto-detect Cloudflare, Fastly, Akamai.</p>
+      <a class="card-link" href="/tools/cache-warmer/">Open Tool →</a>
+    </div>
+
+  </div>
+
+  <div class="cta-box">
+    <h3>Want automated security scanning across your entire infrastructure?</h3>
+    <p>These tools handle one-off checks. Pulse monitors your domains, SSL certs, DMARC records, and subdomains weekly — and emails you when anything changes.</p>
+    <a href="/pulse/" class="cta-btn">Start Free Monitoring →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/free-tools/">Scanners</a>
+    <a href="/tools/">Dev Tools</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p>
+  </div>
+</footer>
+
+</body>
+</html>

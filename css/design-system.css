@@ -43,17 +43,18 @@
 /* --- Design Tokens: Dark Mode (default) ---------------------------------- */
 :root {
   /* Colors */
-  --color-bg-primary: #0A1628;
-  --color-bg-surface: #111B2E;
-  --color-bg-elevated: #1A2540;
-  --color-bg-light-band: #F7F8FA;
-  --color-bg-pale-blue: #EAF4FA;
-  --color-bg-pale-mint: #E9F6EF;
+  /* Premium dark — tinted charcoal with depth, not flat navy */
+  --color-bg-primary: #0C0C14;
+  --color-bg-surface: #16161F;
+  --color-bg-elevated: #1E1E2A;
+  --color-bg-light-band: #12121A;
+  --color-bg-pale-blue: rgba(34, 211, 238, 0.06);
+  --color-bg-pale-mint: rgba(52, 211, 153, 0.06);
 
-  --color-text-primary: #F7F8FA;
+  --color-text-primary: #F1F5F9;
   --color-text-secondary: #94A3B8;
-  --color-text-on-light: #0F172A;
-  --color-text-muted: #4B5563;
+  --color-text-on-light: #F1F5F9;
+  --color-text-muted: #64748B;
 
   --color-accent: #22D3EE;
   --color-accent-hover: #06B6D4;
@@ -109,17 +110,18 @@
 
 /* --- Design Tokens: Light Mode ------------------------------------------- */
 [data-theme="light"] {
-  --color-bg-primary: #F7F8FA;
-  --color-bg-surface: #FFFFFF;
-  --color-bg-elevated: #F1F5F9;
-  --color-bg-light-band: #FFFFFF;
-  --color-bg-pale-blue: #EAF4FA;
-  --color-bg-pale-mint: #E9F6EF;
+  /* Soft warm gradient feel — no pure white backgrounds */
+  --color-bg-primary: #F5F3F0;
+  --color-bg-surface: #EDEAE6;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-light-band: #EBE8E4;
+  --color-bg-pale-blue: #E0EAF4;
+  --color-bg-pale-mint: #DFF0E8;
 
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-on-light: #0F172A;
-  --color-text-muted: #64748B;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #555555;
+  --color-text-on-light: #1A1A1A;
+  --color-text-muted: #777777;
 
   --color-accent: #0891B2;
   --color-accent-hover: #0E7490;
