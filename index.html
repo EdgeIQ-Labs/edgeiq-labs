@@ -104,9 +104,13 @@
           <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Vendor Watch</strong>
           <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Monitor third-party vendor security posture and supply chain risk.</span>
         </a>
+        <a href="/sentinel/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Sentinel</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Managed security monitoring for infrastructure — SIEM, alerting, incident response.</span>
+        </a>
       </div>
 
-      <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-md);color:var(--color-accent)">🖥️ Secure Hosting</h3>
+      <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-md);color:var(--color-accent)">🖥️ Hosting & Infrastructure</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-md);margin-bottom:var(--space-2xl)">
         <a href="/vps/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
           <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">VPS Hosting</strong>
@@ -124,10 +128,7 @@
           <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Bot Hosting</strong>
           <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Discord bots, automation scripts, and always-on services with uptime monitoring.</span>
         </a>
-        <a href="/sentinel/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
-          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Sentinel</strong>
-          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Managed security monitoring for infrastructure — SIEM, alerting, incident response.</span>
-        </a>
+
         <a href="/shadow-db/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
           <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Shadow DB</strong>
           <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Managed database hosting with automated backups, encryption, and access auditing.</span>
@@ -136,9 +137,37 @@
 
       <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-md);color:var(--color-accent)">🛠️ Free Tools</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-md)">
-        <a href="/free-tools/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
-          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">All Free Tools →</strong>
-          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">DMARC checker, SSL checker, SPF validator, subdomain scanner, domain security score, and more.</span>
+        <a href="/free-domain-security-score/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Domain Security Score</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Get an A–F grade across email auth, SSL, and DNS in under 10 seconds.</span>
+        </a>
+        <a href="/free-dmarc-checker/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">DMARC Checker</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Verify your DMARC record is valid and enforcing reject/quarantine policy.</span>
+        </a>
+        <a href="/free-ssl-checker/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">SSL Checker</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Check certificate validity, chain trust, expiry date, and TLS configuration.</span>
+        </a>
+        <a href="/free-spf-checker/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">SPF Checker</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Validate your SPF record syntax and check for common misconfigurations.</span>
+        </a>
+        <a href="/free-subdomain-scanner/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Subdomain Scanner</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Discover exposed subdomains that could be attack surface or shadow IT.</span>
+        </a>
+        <a href="/free-blacklist-checker/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Blacklist Checker</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Check if your domain or IP is listed on major email and DNS blacklists.</span>
+        </a>
+        <a href="/free-repo-scanner/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Repo Scanner</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">Scan any GitHub repo for leaked secrets, .env files, and RLS gaps.</span>
+        </a>
+        <a href="/tools/" class="card" style="padding:var(--space-lg);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);text-decoration:none">
+          <strong style="display:block;font-size:var(--text-base);color:var(--color-text-primary);margin-bottom:var(--space-xs)">Open Source Dev Tools →</strong>
+          <span style="font-size:var(--text-sm);color:var(--color-text-secondary)">JWT decoder, hash generator, regex tester, password strength checker, and 9 more.</span>
         </a>
       </div>
     </div>
@@ -422,6 +451,7 @@
             <a href="/compliance/">Compliance</a>
             <a href="/phishsim/">PhishSim</a>
             <a href="/vendor-watch/">Vendor Watch</a>
+            <a href="/sentinel/">Sentinel</a>
           </div>
         </div>
         <div>
@@ -431,7 +461,6 @@
             <a href="/web/">Web Hosting</a>
             <a href="/play/">Game Servers</a>
             <a href="/bots/">Bot Hosting</a>
-            <a href="/sentinel/">Sentinel</a>
             <a href="/shadow-db/">Shadow DB</a>
           </div>
         </div>
