@@ -607,7 +607,7 @@ a:hover {
 .msp-node { position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin-top: -26px; margin-left: -26px; background: var(--color-bg-surface); border: 1.5px solid var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 0 12px rgba(34,211,238,0.15); transition: box-shadow var(--transition-fast), transform var(--transition-fast); transform: rotate(var(--angle)) translate(170px) rotate(calc(-1 * var(--angle))); }
 .msp-node:hover { box-shadow: 0 0 24px rgba(34,211,238,0.4); transform: rotate(var(--angle)) translate(170px) rotate(calc(-1 * var(--angle))) scale(1.1); }
 .msp-node__icon { font-size: 1.2rem; color: var(--color-accent); }
-.msp-node__label { position: absolute; white-space: nowrap; font-size: 10px; font-family: var(--font-mono); font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.03em; transform: rotate(var(--angle)) translate(38px) rotate(calc(-1 * var(--angle))); }
+.msp-node__label { position: absolute; white-space: nowrap; font-size: 10px; font-family: var(--font-mono); font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.03em; padding-left: 4px; transform: rotate(var(--angle)) translate(48px) rotate(calc(-1 * var(--angle))); }
 .msp-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 .msp-lines line { stroke: var(--color-accent); stroke-width: 1; opacity: 0.3; }
 
