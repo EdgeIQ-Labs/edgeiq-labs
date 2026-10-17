@@ -12,7 +12,7 @@
   <link rel="canonical" href="https://edgeiqlabs.com/tools/jwt-decoder/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"JWT Decoder","url":"https://edgeiqlabs.com/tools/jwt-decoder/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it safe to paste a JWT into this tool?","acceptedAnswer":{"@type":"Answer","text":"Yes. All decoding happens in your browser using JavaScript. No data is sent to any server. You can verify this by opening your browser Network tab — you will see zero outbound requests when you decode a token."}},{"@type":"Question","name":"Does this tool verify JWT signatures?","acceptedAnswer":{"@type":"Answer","text":"No. Signature verification requires the signing key, which should never be pasted into a web tool. This tool decodes the header and payload for inspection only. Always verify signatures server-side in your application."}},{"@type":"Question","name":"What JWT claims does this tool show?","acceptedAnswer":{"@type":"Answer","text":"It shows all standard registered claims (iss, sub, aud, exp, nbf, iat, jti) with human-readable descriptions, plus any custom claims in the payload. Expiry and not-before timestamps are converted to local time with a relative countdown."}}]}</script>
-  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <link rel="stylesheet" href="/css/design-system.css?v=11" />
   <script src="/js/theme.js"></script>
   <style>
     .jwt-hero { padding: var(--space-3xl) 0 var(--space-xl); text-align: center; }
