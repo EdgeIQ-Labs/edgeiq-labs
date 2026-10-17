@@ -312,6 +312,12 @@ a:hover {
   border-color: var(--color-accent);
   transform: translateY(-2px);
 }
+/* Preserve accent left-borders on hover for tool cards */
+.card[style*="border-left"]:hover {
+  border-top-color: var(--color-accent);
+  border-right-color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
 
 .card--tint-blue {
   background-color: var(--color-bg-pale-blue);
