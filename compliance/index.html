@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,152 +22,144 @@
   <meta name="twitter:title" content="Compliance Posture Tracker — EdgeIQ Labs">
   <meta name="twitter:description" content="Track SOC 2 compliance with control-by-control scanning and month-over-month score trends.">
   <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png">
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0b0f14; --card: #111820; --border: #1e2e3e;
-      --text: #e8eef7; --muted: #9fb0c7; --dim: #4a6080;
-      --green: #3de19e; --blue: #3dd9ff; --yellow: #ffb347;
-      --red: #ff6b6b; --orange: #ff8c42;
-    }
-    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100vh; }
-    a { color: inherit; text-decoration: none; }
-
-    /* Nav */
-    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
-    .nav-logo { font-weight: 800; font-size: 15px; }
-    .nav-logo span { color: var(--green); }
-    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--muted); }
-    .nav-links a:hover { color: var(--text); }
-    .nav-cta { background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; }
-
-    /* Layout */
+    /* Page-specific styles for Compliance Posture Tracker UI */
     .page { display: grid; grid-template-columns: 1fr 280px; gap: 20px; max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
     @media(max-width: 860px) { .page { grid-template-columns: 1fr; } .sidebar { order: -1; } }
 
     /* Scan bar */
-    .scan-bar { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .scan-bar-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); flex: 0 0 100%; }
-    .scan-input { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; transition: border-color .2s; }
-    .scan-input:focus { border-color: var(--green); }
-    .scan-input::placeholder { color: var(--dim); }
-    .framework-select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--muted); outline: none; font-family: inherit; cursor: pointer; }
-    .scan-btn { background: var(--green); color: #071018; font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s; }
+    .scan-bar { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .scan-bar-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-secondary); flex: 0 0 100%; }
+    .scan-input { flex: 1; min-width: 200px; background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--color-text-primary); outline: none; font-family: inherit; transition: border-color .2s; }
+    .scan-input:focus { border-color: var(--color-accent); }
+    .scan-input::placeholder { color: var(--color-text-secondary); opacity: 0.6; }
+    .framework-select { background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--color-text-secondary); outline: none; font-family: inherit; cursor: pointer; }
+    .scan-btn { background: var(--color-accent); color: #071018; font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s; }
     .scan-btn:hover { opacity: .88; }
     .scan-btn:disabled { opacity: .5; cursor: not-allowed; }
 
     /* Status bar */
-    .status-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 20px; overflow: hidden; display: none; }
-    .status-bar-inner { height: 100%; background: var(--green); border-radius: 2px; width: 0; transition: width .4s ease; }
+    .status-bar { height: 3px; background: var(--color-border); border-radius: 2px; margin-bottom: 20px; overflow: hidden; display: none; }
+    .status-bar-inner { height: 100%; background: var(--color-accent); border-radius: 2px; width: 0; transition: width .4s ease; }
 
     /* Score hero */
-    .score-hero { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 20px; display: none; }
+    .score-hero { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 22px; margin-bottom: 20px; display: none; }
     .score-hero-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-    .grade-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--green); flex-shrink: 0; }
+    .grade-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--color-accent); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--color-accent); flex-shrink: 0; }
     .score-stats { display: flex; gap: 24px; flex-wrap: wrap; }
     .stat { text-align: center; }
     .stat-val { font-size: 22px; font-weight: 800; }
-    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
-    .score-meta { margin-left: auto; text-align: right; font-size: 12px; color: var(--muted); }
-    .score-meta strong { color: var(--text); display: block; font-size: 14px; margin-bottom: 2px; }
+    .stat-label { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+    .score-meta { margin-left: auto; text-align: right; font-size: 12px; color: var(--color-text-secondary); }
+    .score-meta strong { color: var(--color-text-primary); display: block; font-size: 14px; margin-bottom: 2px; }
 
     /* Trend chart */
-    .trend-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: none; }
+    .trend-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: none; }
     .trend-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
     .trend-title { font-size: 13px; font-weight: 700; }
-    .trend-subtitle { font-size: 11px; color: var(--muted); }
+    .trend-subtitle { font-size: 11px; color: var(--color-text-secondary); }
     canvas#trendCanvas { width: 100%; display: block; }
 
     /* Controls grid */
-    .controls-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: none; }
+    .controls-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 18px 20px; display: none; }
     .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .controls-title { font-size: 13px; font-weight: 700; }
     .controls-list { display: flex; flex-direction: column; gap: 8px; }
-    .control-row { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; }
+    .control-row { background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: 8px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; }
     .control-status { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .control-status.pass { background: rgba(61,225,158,.15); color: var(--green); }
-    .control-status.warning { background: rgba(255,179,71,.15); color: var(--yellow); }
-    .control-status.fail { background: rgba(255,107,107,.15); color: var(--red); }
+    .control-status.pass { background: rgba(61,225,158,.15); color: var(--color-accent); }
+    .control-status.warning { background: rgba(255,179,71,.15); color: #ffb347; }
+    .control-status.fail { background: rgba(255,107,107,.15); color: #ff6b6b; }
     .control-body { flex: 1; min-width: 0; }
     .control-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-    .control-id { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
-    .control-action { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+    .control-id { font-size: 10px; color: var(--color-text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .control-action { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; margin-top: 4px; }
     .control-score { font-size: 13px; font-weight: 700; flex-shrink: 0; }
 
     /* Empty / placeholder */
     .empty-state { text-align: center; padding: 48px 24px; }
     .empty-icon { font-size: 40px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .empty-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .empty-sub { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
 
     /* Sidebar */
     .sidebar { display: flex; flex-direction: column; gap: 16px; }
-    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
+    .sidebar-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 16px; }
+    .sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-secondary); margin-bottom: 12px; }
     .history-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: pointer; transition: background .15s; }
     .history-item:hover { background: rgba(255,255,255,.04); }
     .history-item.active { background: rgba(61,225,158,.08); border: 1px solid rgba(61,225,158,.2); }
     .history-grade { font-size: 15px; font-weight: 900; width: 28px; text-align: center; flex-shrink: 0; }
     .history-domain { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .history-date { font-size: 11px; color: var(--muted); }
-    .history-score { font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
-    .no-history { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .history-date { font-size: 11px; color: var(--color-text-secondary); }
+    .history-score { font-size: 11px; color: var(--color-text-secondary); margin-left: auto; flex-shrink: 0; }
+    .no-history { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
 
     /* Upsell */
-    .plans-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .plan-tier { padding: 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+    .plans-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 16px; }
+    .plan-tier { padding: 14px; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 10px; }
     .plan-tier:last-child { margin-bottom: 0; }
     .plan-tier.featured { background: linear-gradient(135deg,#0d1f17,#071018); border-color: rgba(61,225,158,.3); }
     .plan-tier-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-    .plan-tier-price { font-size: 20px; font-weight: 900; color: var(--green); margin-bottom: 8px; }
-    .plan-tier-price span { font-size: 12px; font-weight: 400; color: var(--muted); }
-    .plan-tier-features { font-size: 11px; color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
+    .plan-tier-price { font-size: 20px; font-weight: 900; color: var(--color-accent); margin-bottom: 8px; }
+    .plan-tier-price span { font-size: 12px; font-weight: 400; color: var(--color-text-secondary); }
+    .plan-tier-features { font-size: 11px; color: var(--color-text-secondary); line-height: 1.9; margin-bottom: 12px; }
     .plan-tier-features li { list-style: none; }
-    .plan-tier-features li::before { content: '✓ '; color: var(--green); font-weight: 700; }
-    .plan-tier-features li.no::before { content: '✗ '; color: var(--dim); }
-    .plan-tier-features li.no { color: var(--dim); }
+    .plan-tier-features li::before { content: '✓ '; color: var(--color-accent); font-weight: 700; }
+    .plan-tier-features li.no::before { content: '✗ '; color: var(--color-text-secondary); opacity: 0.5; }
+    .plan-tier-features li.no { color: var(--color-text-secondary); opacity: 0.5; }
     .plan-tier-btn { display: block; text-align: center; font-weight: 700; font-size: 12px; padding: 8px; border-radius: 7px; transition: opacity .2s; }
     .plan-tier-btn:hover { opacity: .88; }
-    .plan-tier-btn.primary { background: var(--green); color: #071018; }
-    .plan-tier-btn.secondary { background: transparent; border: 1px solid rgba(61,225,158,.4); color: var(--green); }
+    .plan-tier-btn.primary { background: var(--color-accent); color: #071018; }
+    .plan-tier-btn.secondary { background: transparent; border: 1px solid rgba(61,225,158,.4); color: var(--color-accent); }
 
     /* Snackbar */
-    .snack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: 13px; color: var(--text); display: none; z-index: 200; white-space: nowrap; }
-    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .snack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 18px; font-size: 13px; color: var(--color-text-primary); display: none; z-index: 200; white-space: nowrap; }
+    .product-strip { background: var(--color-bg-surface); border-bottom: 1px solid var(--color-border); position: sticky; top: 76px; z-index: 9; }
     .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
     .product-strip-inner::-webkit-scrollbar { display: none; }
     .product-strip-inner::after { content: ""; flex: 0 0 28px; }
     .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
     .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
     .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
-    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--color-text-secondary); border-radius: 2px; transition: all 0.2s; }
     .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .nav-hamburger.open span:nth-child(2) { opacity: 0; }
     .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu { display: none; flex-direction: column; background: var(--color-bg-surface); border-top: 1px solid var(--color-border); padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
     .nav-mobile-menu.open { display: flex; }
-    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a { color: var(--color-text-secondary); text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
     .nav-mobile-menu a:last-child { border-bottom: none; }
-    .nav-mobile-menu a:hover { color: #e8eef7; }
-    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
-    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
-    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+    .nav-mobile-menu a:hover { color: var(--color-text-primary); }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: var(--color-accent); color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-secondary); opacity: 0.6; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav__links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/dashboard/">Dashboard</a>
-    <a href="/pulse/">Pulse</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/account/">My Account</a>
-    <a href="#" class="nav-cta" onclick="document.getElementById('domainInput').focus();return false;" style="background:var(--green);color:#071018;">Free Scan</a>
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="/" class="nav__logo">
+      <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+      EdgeIQ Labs
+    </a>
+    <ul class="nav__links">
+      <li><a href="/" class="nav__link">Home</a></li>
+      <li><a href="/dashboard/" class="nav__link">Dashboard</a></li>
+      <li><a href="/pulse/" class="nav__link">Pulse</a></li>
+      <li><a href="/inbox-shield/" class="nav__link">Inbox Shield</a></li>
+      <li><a href="/account/" class="nav__link">My Account</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+      <a href="#" class="btn btn--primary" onclick="document.getElementById('domainInput').focus();return false;">Free Scan</a>
+      <button class="nav__hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
+    </div>
   </div>
-  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="product-strip">
   <div class="product-strip-inner">
@@ -226,9 +218,9 @@
         <div class="grade-circle" id="gradeCircle">—</div>
         <div class="score-stats">
           <div class="stat"><div class="stat-val" id="statScore">—</div><div class="stat-label">Score</div></div>
-          <div class="stat"><div class="stat-val" style="color:var(--green)" id="statPassed">—</div><div class="stat-label">Passed</div></div>
-          <div class="stat"><div class="stat-val" style="color:var(--yellow)" id="statWarning">—</div><div class="stat-label">Warning</div></div>
-          <div class="stat"><div class="stat-val" style="color:var(--red)" id="statFailed">—</div><div class="stat-label">Failed</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--color-accent)" id="statPassed">—</div><div class="stat-label">Passed</div></div>
+          <div class="stat"><div class="stat-val" style="color:#ffb347" id="statWarning">—</div><div class="stat-label">Warning</div></div>
+          <div class="stat"><div class="stat-val" style="color:#ff6b6b" id="statFailed">—</div><div class="stat-label">Failed</div></div>
         </div>
         <div class="score-meta">
           <strong id="metaDomain">—</strong>
@@ -259,15 +251,15 @@
 
     <!-- Pro upsell (shown after first scan) -->
     <div id="proUpsell" style="display:none;background:linear-gradient(135deg,#071810,#0b1f14);border:1px solid rgba(61,225,158,0.35);border-radius:12px;padding:20px 22px;margin-bottom:20px;position:relative;">
-      <button onclick="dismissProUpsell()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#4a6080;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;" title="Dismiss">×</button>
+      <button onclick="dismissProUpsell()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;" title="Dismiss">×</button>
       <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
         <div style="font-size:1.6rem;line-height:1;flex-shrink:0;">📬</div>
         <div style="flex:1;min-width:200px;">
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Get this emailed every week</div>
-          <p style="font-size:0.9rem;color:#c8d8ea;margin-bottom:12px;line-height:1.6;">You just ran a manual scan. <strong style="color:#e8eef7;">Compliance Pro ($9/mo)</strong> runs this automatically every Monday — sends your grade, score diff, and a prioritised fix list straight to your inbox so you catch regressions before they matter.</p>
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);margin-bottom:6px;">Get this emailed every week</div>
+          <p style="font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:12px;line-height:1.6;">You just ran a manual scan. <strong style="color:var(--color-text-primary);">Compliance Pro ($9/mo)</strong> runs this automatically every Monday — sends your grade, score diff, and a prioritised fix list straight to your inbox so you catch regressions before they matter.</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <button onclick="scrollToProSignup()" style="background:var(--green);color:#071018;font-weight:700;font-size:0.85rem;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">Start Weekly Monitoring — $9/mo →</button>
-            <span style="font-size:0.78rem;color:#4a6080;">No setup · cancel anytime</span>
+            <button onclick="scrollToProSignup()" style="background:var(--color-accent);color:#071018;font-weight:700;font-size:0.85rem;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">Start Weekly Monitoring — $9/mo →</button>
+            <span style="font-size:0.78rem;color:var(--color-text-secondary);opacity:0.6;">No setup · cancel anytime</span>
           </div>
         </div>
       </div>
@@ -293,8 +285,8 @@
     <div class="plans-card" id="plans">
       <div class="sidebar-title">Automated Monitoring</div>
       <div style="background:rgba(61,225,158,0.06);border:1px solid rgba(61,225,158,0.25);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
-        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">✓ Live scans active</p>
-        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0;">Real-time DNS + HTTP checks on every scan — no sample data.</p>
+        <p style="font-size:11px;font-weight:700;color:var(--color-accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">✓ Live scans active</p>
+        <p style="font-size:11px;color:var(--color-text-secondary);line-height:1.5;margin:0;">Real-time DNS + HTTP checks on every scan — no sample data.</p>
       </div>
       <div class="plan-tier">
         <div class="plan-tier-name">Free</div>
@@ -309,7 +301,7 @@
         <a href="#scan" class="plan-tier-btn primary" onclick="document.getElementById('domainInput').focus();return false;">Run Free Scan →</a>
       </div>
       <div class="plan-tier featured">
-        <div class="plan-tier-name" style="color:var(--green);">Pro <span style="font-size:11px;font-weight:400;color:var(--muted);">— $9/mo</span></div>
+        <div class="plan-tier-name" style="color:var(--color-accent);">Pro <span style="font-size:11px;font-weight:400;color:var(--color-text-secondary);">— $9/mo</span></div>
         <div class="plan-tier-price">$9 <span>/ month</span></div>
         <ul class="plan-tier-features">
           <li>Everything in Free</li>
@@ -319,13 +311,13 @@
         </ul>
         <form id="pro-signup-form" onsubmit="startProSignup(event)" style="margin-top:12px;">
           <input type="email" id="pro-email" placeholder="you@company.com" required
-            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
-            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            style="width:100%;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--color-text-primary);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--color-accent)'" onblur="this.style.borderColor='var(--color-border)'">
           <input type="text" id="pro-domain" placeholder="yourdomain.com" required
-            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
-            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            style="width:100%;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--color-text-primary);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--color-accent)'" onblur="this.style.borderColor='var(--color-border)'">
           <button type="submit" id="pro-submit-btn"
-            style="width:100%;background:var(--green);color:#071018;font-weight:700;font-size:12px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;">
+            style="width:100%;background:var(--color-accent);color:#071018;font-weight:700;font-size:12px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;">
             Start Weekly Monitoring →
           </button>
         </form>
@@ -335,15 +327,15 @@
 
     <div class="sidebar-card">
       <div class="sidebar-title">What we check</div>
-      <div id="checksInfo" style="font-size:12px;color:var(--muted);line-height:1.9;">
-        <span style="color:var(--text);font-weight:600;">CC6.1</span> — HTTPS + HSTS + HTTP redirect<br>
-        <span style="color:var(--text);font-weight:600;">CC6.2</span> — X-Frame-Options / CSP framing<br>
-        <span style="color:var(--text);font-weight:600;">CC6.6</span> — Referrer-Policy, Permissions, Cookies<br>
-        <span style="color:var(--text);font-weight:600;">CC7.2</span> — Server / X-Powered-By exposure<br>
-        <span style="color:var(--text);font-weight:600;">CC8.1</span> — SPF + DMARC DNS records<br>
-        <span style="color:var(--text);font-weight:600;">A1</span> — Content-Security-Policy<br>
-        <span style="color:var(--text);font-weight:600;">A3</span> — TLS active + HSTS long-lived<br>
-        <span style="color:var(--text);font-weight:600;">A5</span> — SPF, DMARC policy, MX records
+      <div id="checksInfo" style="font-size:12px;color:var(--color-text-secondary);line-height:1.9;">
+        <span style="color:var(--color-text-primary);font-weight:600;">CC6.1</span> — HTTPS + HSTS + HTTP redirect<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">CC6.2</span> — X-Frame-Options / CSP framing<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">CC6.6</span> — Referrer-Policy, Permissions, Cookies<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">CC7.2</span> — Server / X-Powered-By exposure<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">CC8.1</span> — SPF + DMARC DNS records<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">A1</span> — Content-Security-Policy<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">A3</span> — TLS active + HSTS long-lived<br>
+        <span style="color:var(--color-text-primary);font-weight:600;">A5</span> — SPF, DMARC policy, MX records
       </div>
     </div>
 
@@ -419,7 +411,7 @@ function renderControls(controls) {
           <div class="control-id">${c.id} · ${c.category}</div>
           ${c.action ? `<div class="control-action">${c.action}</div>` : ''}
         </div>
-        <div class="control-score" style="color:${c.score >= 80 ? 'var(--green)' : c.score >= 50 ? 'var(--yellow)' : 'var(--red)'}">${Math.round(c.score)}%</div>
+        <div class="control-score" style="color:${c.score >= 80 ? 'var(--color-accent)' : c.score >= 50 ? '#ffb347' : '#ff6b6b'}">${Math.round(c.score)}%</div>
       </div>`;
   });
   document.getElementById('controlsCard').style.display = 'block';
@@ -560,7 +552,7 @@ async function runScan() {
     .replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
 
   if (!domain || !/^[a-z0-9][a-z0-9\-\.]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
-    document.getElementById('domainInput').style.borderColor = 'var(--red)';
+    document.getElementById('domainInput').style.borderColor = '#ff6b6b';
     setTimeout(() => document.getElementById('domainInput').style.borderColor = '', 1400);
     return;
   }
@@ -694,7 +686,7 @@ async function startProSignup(e) {
       + '&client_reference_id=' + encodeURIComponent(domain);
     window.location.href = url;
   } catch (err) {
-    msg.style.color = 'var(--red)';
+    msg.style.color = '#ff6b6b';
     msg.textContent = 'Something went wrong — please try again.';
     msg.style.display = 'block';
     btn.disabled = false;
@@ -715,9 +707,35 @@ document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(functio
   });
 });
 </script>
-<footer style="text-align:center;padding:28px 20px;border-top:1px solid #1e2e3e;margin-top:48px;font-size:0.82rem;color:#4a6080;">
-  <p><a href="/" style="color:#4a6080;">Home</a> · <a href="/products/" style="color:#4a6080;">All Tools</a> · <a href="/privacy.html" style="color:#4a6080;">Privacy</a> · <a href="mailto:support@edgeiqlabs.com?subject=Finding%20Report" style="color:#4a6080;">Report a Finding</a> · <a href="mailto:billing@edgeiqlabs.com" style="color:#4a6080;">Billing</a></p>
-  <p style="margin-top:8px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+        <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <p>Cybersecurity monitoring and tools</p>
+    </div>
+    <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+      <a href="/">Home</a>
+      <a href="/products/">All Tools</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="mailto:support@edgeiqlabs.com?subject=Finding%20Report">Report a Finding</a>
+      <a href="mailto:billing@edgeiqlabs.com">Billing</a>
+    </div>
+    <div style="text-align:right">
+      <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+      <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+        <a href="/account/">My Account</a>
+        <a href="/docs/">Docs</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="container text-center mt-lg" style="opacity:0.6">
+    © 2026 EdgeIQ Labs. All rights reserved.
+  </div>
 </footer>
 <!-- Relay Affiliate Tracking -->
 <script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>

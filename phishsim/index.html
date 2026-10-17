@@ -1,149 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PhishSim Dashboard · EdgeIQ Labs</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
   <style>
-    :root {
-      --bg:#0b0f14; --card:#121923; --card2:#0f1620; --text:#e8eef7; --muted:#9fb0c7;
-      --accent:#3dd9ff; --border:#1e2d3d; --ok:#70f0a8; --warn:#ffb347;
-      --danger:#ff6b6b; --purple:#c084fc; --pink:#ff6b7a;
+    /* ── PhishSim Page-Specific Styles ── */
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header override for dashboard layout */
+    .phishsim-header {
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      height: 52px;
+      flex-shrink: 0;
     }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+    .phishsim-logo {
+      font-weight: 800;
+      font-size: var(--text-sm);
+      color: var(--color-accent);
+      margin-right: var(--space-lg);
+      white-space: nowrap;
+    }
+    .phishsim-nav { display: flex; gap: 2px; flex: 1; }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-text-secondary);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+    .nav-btn:hover { background: rgba(255,255,255,.05); color: var(--color-text-primary); }
+    .nav-btn.active { background: var(--color-accent-subtle); color: var(--color-accent); font-weight: 700; }
+    .header-right { display: flex; align-items: center; gap: var(--space-md); margin-left: auto; }
+    #customerLabel { font-size: var(--text-xs); color: var(--color-text-secondary); }
+    .refresh-btn {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      padding: 5px 11px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: var(--text-xs);
+    }
+    .refresh-btn:hover { color: var(--color-text-primary); border-color: var(--color-accent); }
 
-    /* ── Header ── */
-    header{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:0;height:52px;flex-shrink:0;}
-    .logo{font-weight:800;font-size:.95rem;color:var(--accent);margin-right:20px;white-space:nowrap;}
-    nav{display:flex;gap:2px;flex:1;}
-    .nav-btn{background:transparent;border:none;color:var(--muted);font-size:.82rem;font-weight:500;padding:6px 14px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;}
-    .nav-btn:hover{background:rgba(255,255,255,.05);color:var(--text);}
-    .nav-btn.active{background:rgba(61,217,255,.12);color:var(--accent);font-weight:700;}
-    .header-right{display:flex;align-items:center;gap:12px;margin-left:auto;}
-    #customerLabel{font-size:.75rem;color:var(--muted);}
-    .refresh-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:.78rem;}
-    .refresh-btn:hover{color:var(--text);border-color:var(--accent);}
+    /* Layout */
+    .page { display: none; flex: 1; padding: var(--space-lg) var(--space-lg); max-width: var(--container-max); margin: 0 auto; width: 100%; }
+    .page.active { display: block; }
 
-    /* ── Layout ── */
-    .page{display:none;flex:1;padding:24px 20px;max-width:1200px;margin:0 auto;width:100%;}
-    .page.active{display:block;}
+    /* Stats grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .stat { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); }
+    .stat .label { font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: 5px; }
+    .stat .value { font-size: 1.7rem; font-weight: 800; color: var(--color-accent); }
+    .stat .sub { font-size: var(--text-xs); color: var(--color-text-secondary); margin-top: 3px; }
 
-    /* ── Stats ── */
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px;}
-    .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
-    .stat .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
-    .stat .value{font-size:1.7rem;font-weight:800;color:var(--accent);}
-    .stat .sub{font-size:.72rem;color:var(--muted);margin-top:3px;}
+    /* Section cards */
+    .section-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin-bottom: var(--space-lg); }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg); }
+    .section-head h2 { font-size: var(--text-sm); font-weight: 700; }
 
-    /* ── Section cards ── */
-    .section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
-    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-    .section-head h2{font-size:.95rem;font-weight:700;}
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-wide); padding: 8px 12px; border-bottom: 1px solid var(--color-border); }
+    td { padding: 10px 12px; font-size: var(--text-sm); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.015); }
 
-    /* ── Tables ── */
-    table{width:100%;border-collapse:collapse;}
-    th{text-align:left;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border-bottom:1px solid var(--border);}
-    td{padding:10px 12px;font-size:.83rem;border-bottom:1px solid rgba(30,45,61,.6);vertical-align:middle;}
-    tr:last-child td{border-bottom:none;}
-    tr:hover td{background:rgba(255,255,255,.015);}
+    /* Badges */
+    .badge { display: inline-block; border-radius: 4px; padding: 2px 7px; font-size: var(--text-xs); font-weight: 600; }
+    .ok { background: rgba(112,240,168,.12); color: #70f0a8; }
+    .warn { background: rgba(255,179,71,.12); color: #ffb347; }
+    .danger { background: rgba(255,107,107,.12); color: #ff6b6b; }
+    .blue { background: var(--color-accent-subtle); color: var(--color-accent); }
+    .grey { background: rgba(159,176,199,.1); color: var(--color-text-secondary); }
+    .purple { background: rgba(192,132,252,.12); color: #c084fc; }
 
-    /* ── Badges ── */
-    .badge{display:inline-block;border-radius:4px;padding:2px 7px;font-size:.7rem;font-weight:600;}
-    .ok{background:rgba(112,240,168,.12);color:var(--ok);}
-    .warn{background:rgba(255,179,71,.12);color:var(--warn);}
-    .danger{background:rgba(255,107,107,.12);color:var(--danger);}
-    .blue{background:rgba(61,217,255,.12);color:var(--accent);}
-    .grey{background:rgba(159,176,199,.1);color:var(--muted);}
-    .purple{background:rgba(192,132,252,.12);color:var(--purple);}
+    /* Buttons (product-specific overrides) */
+    .btn-ps { display: inline-flex; align-items: center; gap: 6px; background: var(--color-accent); color: #071018; font-weight: 700; font-size: var(--text-sm); padding: 8px 16px; border-radius: var(--radius-md); border: none; cursor: pointer; text-decoration: none; transition: opacity var(--transition-fast); }
+    .btn-ps:hover { opacity: .85; }
+    .btn-ps-outline { background: transparent; border: 1px solid var(--color-border); color: var(--color-text-primary); }
+    .btn-ps-outline:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .btn-ps-danger { background: rgba(255,107,107,.12); color: #ff6b6b; border: 1px solid rgba(255,107,107,.25); }
+    .btn-ps-danger:hover { background: rgba(255,107,107,.22); }
+    .btn-ps-sm { padding: 5px 10px; font-size: var(--text-xs); }
+    .btn-ps-green { background: #70f0a8; color: #071018; }
 
-    /* ── Buttons ── */
-    .btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#071018;font-weight:700;font-size:.82rem;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:opacity .15s;}
-    .btn:hover{opacity:.85;}
-    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
-    .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
-    .btn-danger{background:rgba(255,107,107,.12);color:var(--danger);border:1px solid rgba(255,107,107,.25);}
-    .btn-danger:hover{background:rgba(255,107,107,.22);}
-    .btn-sm{padding:5px 10px;font-size:.75rem;}
-    .btn-green{background:var(--ok);color:#071018;}
+    /* Progress bar */
+    .bar-wrap { background: rgba(255,255,255,0.06); border-radius: 4px; height: 5px; overflow: hidden; min-width: 70px; }
+    .bar { height: 100%; border-radius: 4px; background: #ff6b6b; transition: width .4s; }
 
-    /* ── Progress bar ── */
-    .bar-wrap{background:rgba(30,45,61,.9);border-radius:4px;height:5px;overflow:hidden;min-width:70px;}
-    .bar{height:100%;border-radius:4px;background:var(--danger);transition:width .4s;}
+    /* Modals */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200; align-items: center; justify-content: center; padding: var(--space-lg); }
+    .overlay.open { display: flex; }
+    .modal { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 26px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; }
+    .modal.modal-lg { max-width: 860px; }
+    .modal h3 { font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-lg); }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--color-border); }
 
-    /* ── Modals ── */
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px;}
-    .overlay.open{display:flex;}
-    .modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;}
-    .modal.modal-lg{max-width:860px;}
-    .modal h3{font-size:1rem;font-weight:700;margin-bottom:18px;}
-    .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+    /* Forms */
+    .form-row { margin-bottom: 13px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+    label { display: block; font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: 5px; }
+    input, textarea, select {
+      width: 100%;
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      color: var(--color-text-primary);
+      font-size: var(--text-sm);
+      padding: 9px 11px;
+      outline: none;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--color-accent); }
+    textarea { min-height: 110px; resize: vertical; }
+    .hint { font-size: var(--text-xs); color: var(--color-text-secondary); margin-top: 4px; }
+    .hint code { color: var(--color-accent); background: var(--color-accent-subtle); padding: 1px 5px; border-radius: 3px; }
 
-    /* ── Forms ── */
-    .form-row{margin-bottom:13px;}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;}
-    input,textarea,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;padding:9px 11px;outline:none;font-family:inherit;}
-    input:focus,textarea:focus,select:focus{border-color:var(--accent);}
-    textarea{min-height:110px;resize:vertical;}
-    .hint{font-size:.72rem;color:var(--muted);margin-top:4px;}
-    .hint code{color:var(--accent);background:rgba(61,217,255,.08);padding:1px 5px;border-radius:3px;}
+    /* Tabs inside modal */
+    .tabs { display: flex; gap: 3px; background: var(--color-bg-primary); border-radius: var(--radius-md); padding: 3px; border: 1px solid var(--color-border); margin-bottom: var(--space-lg); }
+    .tab { flex: 1; text-align: center; padding: 6px; font-size: var(--text-sm); border-radius: var(--radius-sm); cursor: pointer; color: var(--color-text-secondary); border: none; background: transparent; transition: background var(--transition-fast), color var(--transition-fast); }
+    .tab.active { background: var(--color-bg-surface); color: var(--color-text-primary); font-weight: 600; }
 
-    /* ── Tabs inside modal ── */
-    .tabs{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;border:1px solid var(--border);margin-bottom:16px;}
-    .tab{flex:1;text-align:center;padding:6px;font-size:.8rem;border-radius:6px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:background .15s,color .15s;}
-    .tab.active{background:var(--card);color:var(--text);font-weight:600;}
+    /* Empty state */
+    .empty { text-align: center; padding: 36px 20px; color: var(--color-text-secondary); font-size: var(--text-sm); }
 
-    /* ── Empty state ── */
-    .empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:.85rem;}
+    /* List items */
+    .list-item { display: flex; align-items: center; gap: var(--space-md); padding: 10px 0; border-bottom: 1px solid var(--color-border); }
+    .list-item:last-child { border-bottom: none; }
+    .list-item .info { flex: 1; min-width: 0; }
+    .list-item .name { font-size: var(--text-sm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-item .sub { font-size: var(--text-xs); color: var(--color-text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-item .actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-    /* ── List items (templates / groups / pages) ── */
-    .list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
-    .list-item:last-child{border-bottom:none;}
-    .list-item .info{flex:1;min-width:0;}
-    .list-item .name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .list-item .sub{font-size:.73rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .list-item .actions{display:flex;gap:6px;flex-shrink:0;}
+    /* Results table specifics */
+    .status-sent { color: var(--color-text-secondary); }
+    .status-opened { color: #ffb347; }
+    .status-clicked { color: var(--color-accent); }
+    .status-submitted { color: #ff6b6b; }
 
-    /* ── Results table specifics ── */
-    .status-sent{color:var(--muted);}
-    .status-opened{color:var(--warn);}
-    .status-clicked{color:var(--accent);}
-    .status-submitted{color:var(--danger);}
+    /* Account page */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .info-box { background: var(--color-bg-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 16px; }
+    .info-box .key { font-size: var(--text-xs); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: 5px; }
+    .info-box .val { font-size: var(--text-sm); word-break: break-all; }
+    .info-box .val.mono { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-accent); }
 
-    /* ── Account page ── */
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-    .info-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
-    .info-box .key{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
-    .info-box .val{font-size:.85rem;word-break:break-all;}
-    .info-box .val.mono{font-family:monospace;font-size:.78rem;color:var(--accent);}
+    /* Toast */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 10px 16px; font-size: var(--text-sm); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.4); animation: slideIn .2s ease; }
+    .toast.ok { border-color: rgba(112,240,168,.4); color: #70f0a8; }
+    .toast.err { border-color: rgba(255,107,107,.4); color: #ff6b6b; }
+    .toast.info { border-color: rgba(34,211,238,.3); color: var(--color-accent); }
+    @keyframes slideIn { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* ── Toast ── */
-    #toast-container{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
-    .toast{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.82rem;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideIn .2s ease;}
-    .toast.ok{border-color:rgba(112,240,168,.4);color:var(--ok);}
-    .toast.err{border-color:rgba(255,107,107,.4);color:var(--danger);}
-    .toast.info{border-color:rgba(61,217,255,.3);color:var(--accent);}
-    @keyframes slideIn{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    /* Setup screen */
+    #setupSection { max-width: 440px; margin: 80px auto; }
 
-    /* ── Setup screen ── */
-    #setupSection{max-width:440px;margin:80px auto;}
-
-    /* ── Responsive ── */
-    @media(max-width:640px){
-      .form-grid{grid-template-columns:1fr;}
-      .info-grid{grid-template-columns:1fr;}
-      nav .nav-btn span{display:none;}
-      .grid{grid-template-columns:1fr 1fr;}
+    /* Responsive */
+    @media(max-width:640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .phishsim-nav .nav-btn span { display: none; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
-<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
 
-<header>
-  <span class="logo">🎣 PhishSim</span>
-  <nav id="mainNav" style="display:none;">
+<!-- NAV (design system pattern) -->
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="/" class="nav__logo">
+      <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+      EdgeIQ Labs
+    </a>
+    <ul class="nav__links">
+      <li><a href="/" class="nav__link">Home</a></li>
+      <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+      <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+      <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+      <li><a href="/contact/" class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+      <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+      <button class="nav__hamburger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- PhishSim Dashboard Header -->
+<header class="phishsim-header">
+  <span class="phishsim-logo">🎣 PhishSim</span>
+  <nav id="mainNav" class="phishsim-nav" style="display:none;">
     <button class="nav-btn active" onclick="showPage('campaigns',this)">📋 Campaigns</button>
     <button class="nav-btn" onclick="showPage('templates',this)">✉️ Templates</button>
     <button class="nav-btn" onclick="showPage('pages',this)">🪤 Landing Pages</button>
@@ -160,29 +224,29 @@
 
 <!-- ── Setup ── -->
 <div class="page active" id="page-setup">
-  <div class="section" id="setupSection">
+  <div class="section-card" id="setupSection">
     <h2 style="margin-bottom:8px;">Enter your Customer ID</h2>
-    <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px;">Your Customer ID was shown on the confirmation page after subscribing and emailed to you. It starts with <code style="background:rgba(61,217,255,.1);color:var(--accent);padding:1px 5px;border-radius:4px;">ps_</code></p>
+    <p style="color:var(--color-text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-lg);">Your Customer ID was shown on the confirmation page after subscribing and emailed to you. It starts with <code style="background:var(--color-accent-subtle);color:var(--color-accent);padding:1px 5px;border-radius:4px;">ps_</code></p>
     <div class="form-row">
       <input id="cidInput" type="text" placeholder="ps_ee2db673…" />
     </div>
-    <button class="btn" onclick="saveCustomerId()">Access Dashboard →</button>
-    <p style="margin-top:16px;font-size:.8rem;color:var(--muted);">Don't have an account? <a href="https://edgeiqlabs.com/services.html" style="color:var(--accent);">Subscribe to PhishSim →</a></p>
+    <button class="btn-ps" onclick="saveCustomerId()">Access Dashboard →</button>
+    <p style="margin-top:var(--space-lg);font-size:var(--text-sm);color:var(--color-text-secondary);">Don't have an account? <a href="https://edgeiqlabs.com/services.html" style="color:var(--color-accent);">Subscribe to PhishSim →</a></p>
   </div>
 </div>
 
 <!-- ── Campaigns ── -->
 <div class="page" id="page-campaigns">
-  <div class="grid" id="statsGrid">
+  <div class="stats-grid" id="statsGrid">
     <div class="stat"><div class="label">Campaigns</div><div class="value" id="sTotalCampaigns">—</div><div class="sub">total launched</div></div>
     <div class="stat"><div class="label">Emails Sent</div><div class="value" id="sTotalSent">—</div><div class="sub">across all campaigns</div></div>
     <div class="stat"><div class="label">Avg Click Rate</div><div class="value" id="sClickRate">—</div><div class="sub">of emails sent</div></div>
     <div class="stat"><div class="label">Credentials Captured</div><div class="value" id="sSubmitRate">—</div><div class="sub">avg submission rate</div></div>
   </div>
-  <div class="section">
+  <div class="section-card">
     <div class="section-head">
       <h2>Campaigns</h2>
-      <button class="btn" onclick="openNewCampaign()">+ New Campaign</button>
+      <button class="btn-ps" onclick="openNewCampaign()">+ New Campaign</button>
     </div>
     <div id="campaignsList"><div class="empty">Loading campaigns…</div></div>
   </div>
@@ -190,10 +254,10 @@
 
 <!-- ── Templates ── -->
 <div class="page" id="page-templates">
-  <div class="section">
+  <div class="section-card">
     <div class="section-head">
-      <h2>Email Templates <span id="templateCount" style="color:var(--muted);font-weight:400;font-size:.8rem;"></span></h2>
-      <button class="btn" onclick="openNewTemplate()">+ New Template</button>
+      <h2>Email Templates <span id="templateCount" style="color:var(--color-text-secondary);font-weight:400;font-size:var(--text-sm);"></span></h2>
+      <button class="btn-ps" onclick="openNewTemplate()">+ New Template</button>
     </div>
     <div id="templatesList"><div class="empty">Loading…</div></div>
   </div>
@@ -201,22 +265,22 @@
 
 <!-- ── Landing Pages ── -->
 <div class="page" id="page-pages">
-  <div class="section">
+  <div class="section-card">
     <div class="section-head">
-      <h2>Landing Pages <span id="pagesCount" style="color:var(--muted);font-weight:400;font-size:.8rem;"></span></h2>
-      <button class="btn" onclick="openNewPage()">+ New Page</button>
+      <h2>Landing Pages <span id="pagesCount" style="color:var(--color-text-secondary);font-weight:400;font-size:var(--text-sm);"></span></h2>
+      <button class="btn-ps" onclick="openNewPage()">+ New Page</button>
     </div>
-    <p style="font-size:.8rem;color:var(--muted);margin-bottom:16px;">Landing pages are shown to targets who click your phishing link. Captured credentials are logged in campaign results.</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-lg);">Landing pages are shown to targets who click your phishing link. Captured credentials are logged in campaign results.</p>
     <div id="pagesList"><div class="empty">Loading…</div></div>
   </div>
 </div>
 
 <!-- ── Groups ── -->
 <div class="page" id="page-groups">
-  <div class="section">
+  <div class="section-card">
     <div class="section-head">
-      <h2>Target Groups <span id="groupsCount" style="color:var(--muted);font-weight:400;font-size:.8rem;"></span></h2>
-      <button class="btn" onclick="openNewGroup()">+ New Group</button>
+      <h2>Target Groups <span id="groupsCount" style="color:var(--color-text-secondary);font-weight:400;font-size:var(--text-sm);"></span></h2>
+      <button class="btn-ps" onclick="openNewGroup()">+ New Group</button>
     </div>
     <div id="groupsList"><div class="empty">Loading…</div></div>
   </div>
@@ -224,21 +288,21 @@
 
 <!-- ── Account ── -->
 <div class="page" id="page-account">
-  <div class="section">
+  <div class="section-card">
     <div class="section-head"><h2>Instance Information</h2></div>
     <div class="info-grid" id="accountInfo"><div class="empty">Loading…</div></div>
   </div>
-  <div class="section">
+  <div class="section-card">
     <div class="section-head">
       <h2>Sending Profiles</h2>
-      <button class="btn btn-sm" onclick="openSmtpModal()">+ Add Profile</button>
+      <button class="btn-ps btn-ps-sm" onclick="openSmtpModal()">+ Add Profile</button>
     </div>
     <div id="smtpInfo"><div class="empty">Loading…</div></div>
   </div>
-  <div class="section" style="border-color:rgba(255,107,107,.2);">
-    <div class="section-head"><h2 style="color:var(--danger);">Danger Zone</h2></div>
-    <p style="font-size:.83rem;color:var(--muted);margin-bottom:14px;">Sign out of this dashboard on this device.</p>
-    <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
+  <div class="section-card" style="border-color:rgba(255,107,107,.2);">
+    <div class="section-head"><h2 style="color:#ff6b6b;">Danger Zone</h2></div>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:14px;">Sign out of this dashboard on this device.</p>
+    <button class="btn-ps btn-ps-danger" onclick="signOut()">Sign Out</button>
   </div>
 </div>
 
@@ -271,8 +335,8 @@
       <div class="form-row"><label>Sending Profile (SMTP)</label><select id="cSMTP"></select></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('campaignModal')">Cancel</button>
-      <button class="btn" onclick="createCampaign()">🚀 Launch Campaign</button>
+      <button class="btn-ps btn-ps-outline" onclick="closeModal('campaignModal')">Cancel</button>
+      <button class="btn-ps" onclick="createCampaign()">🚀 Launch Campaign</button>
     </div>
   </div>
 </div>
@@ -291,11 +355,11 @@
     </div>
     <div class="form-row" style="flex-direction:row;align-items:center;gap:10px;">
       <input type="checkbox" id="smtpIgnoreCert" style="width:auto;margin:0;" />
-      <label for="smtpIgnoreCert" style="margin:0;font-size:.85rem;">Ignore TLS certificate errors</label>
+      <label for="smtpIgnoreCert" style="margin:0;font-size:var(--text-sm);">Ignore TLS certificate errors</label>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('smtpModal')">Cancel</button>
-      <button class="btn" onclick="saveSmtp()">Save Profile</button>
+      <button class="btn-ps btn-ps-outline" onclick="closeModal('smtpModal')">Cancel</button>
+      <button class="btn-ps" onclick="saveSmtp()">Save Profile</button>
     </div>
   </div>
 </div>
@@ -304,10 +368,10 @@
 <div class="overlay" id="resultsModal">
   <div class="modal modal-lg">
     <h3 id="resultsTitle">Campaign Results</h3>
-    <div id="resultsSummary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;"></div>
+    <div id="resultsSummary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:var(--space-lg);"></div>
     <div id="resultsBody"><div class="empty">Loading…</div></div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('resultsModal')">Close</button>
+      <button class="btn-ps btn-ps-outline" onclick="closeModal('resultsModal')">Close</button>
     </div>
   </div>
 </div>
@@ -323,12 +387,12 @@
     </div>
     <div class="form-row">
       <label>HTML Body</label>
-      <textarea id="tHtml" style="min-height:160px;font-family:monospace;font-size:.8rem;" placeholder="<p>Hi {{.FirstName}},</p>&#10;<p>Click <a href=&quot;{{.URL}}&quot;>here</a> to reset your password.</p>"></textarea>
+      <textarea id="tHtml" style="min-height:160px;font-family:var(--font-mono);font-size:var(--text-sm);" placeholder="<p>Hi {{.FirstName}},</p>&#10;<p>Click <a href=&quot;{{.URL}}&quot;>here</a> to reset your password.</p>"></textarea>
       <p class="hint">Variables: <code>{{.FirstName}}</code> <code>{{.Email}}</code> <code>{{.URL}}</code> (required — phishing link)</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('templateModal')">Cancel</button>
-      <button class="btn" onclick="createTemplate()">Save Template</button>
+      <button class="btn-ps btn-ps-outline" onclick="closeModal('templateModal')">Cancel</button>
+      <button class="btn-ps" onclick="createTemplate()">Save Template</button>
     </div>
   </div>
 </div>
@@ -342,20 +406,20 @@
       <div class="form-row"><label>Redirect URL after submission</label><input id="pRedirect" placeholder="https://edgeiqlabs.com/phishsim/" /></div>
     </div>
     <div class="form-grid" style="margin-bottom:12px;">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.83rem;color:var(--text);">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:var(--text-sm);color:var(--color-text-primary);">
         <input type="checkbox" id="pCaptureCreds" style="width:auto;" checked /> Capture credentials (username/password)
       </label>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.83rem;color:var(--text);">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:var(--text-sm);color:var(--color-text-primary);">
         <input type="checkbox" id="pCapturePasswords" style="width:auto;" checked /> Capture passwords
       </label>
     </div>
     <div class="form-row">
       <label>HTML (the fake login page shown to targets)</label>
-      <textarea id="pHtml" style="min-height:220px;font-family:monospace;font-size:.78rem;" placeholder="<!DOCTYPE html><html>..."></textarea>
+      <textarea id="pHtml" style="min-height:220px;font-family:var(--font-mono);font-size:var(--text-xs);" placeholder="<!DOCTYPE html><html>..."></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('pageModal')">Cancel</button>
-      <button class="btn" onclick="createPage()">Save Page</button>
+      <button class="btn-ps btn-ps-outline" onclick="closeModal('pageModal')">Cancel</button>
+      <button class="btn-ps" onclick="createPage()">Save Page</button>
     </div>
   </div>
 </div>
@@ -366,13 +430,13 @@
     <h3>New Target Group</h3>
     <div class="form-row"><label>Group Name</label><input id="gName" placeholder="Finance Team Q2" /></div>
     <div class="form-row">
-      <label>Targets — one per line: <code style="color:var(--accent)">FirstName,LastName,Email,Position</code></label>
+      <label>Targets — one per line: <code style="color:var(--color-accent)">FirstName,LastName,Email,Position</code></label>
       <textarea id="gTargets" style="min-height:160px;" placeholder="Alice,Smith,alice@company.com,Finance Manager&#10;Bob,Jones,bob@company.com,CFO&#10;Carol,Lee,carol@company.com,Accountant"></textarea>
       <p class="hint">Position is optional. Email is required.</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('groupModal')">Cancel</button>
-      <button class="btn" onclick="createGroup()">Save Group</button>
+      <button class="btn-ps btn-ps-outline" onclick="closeModal('groupModal')">Cancel</button>
+      <button class="btn-ps" onclick="createGroup()">Save Group</button>
     </div>
   </div>
 </div>
@@ -380,13 +444,45 @@
 <!-- Preview Page -->
 <div class="overlay" id="previewModal">
   <div class="modal modal-lg" style="max-width:700px;padding:0;overflow:hidden;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
-      <span id="previewTitle" style="font-weight:700;font-size:.9rem;"></span>
-      <button class="btn btn-outline btn-sm" onclick="closeModal('previewModal')">✕ Close</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--color-border);">
+      <span id="previewTitle" style="font-weight:700;font-size:var(--text-sm);"></span>
+      <button class="btn-ps btn-ps-outline btn-ps-sm" onclick="closeModal('previewModal')">✕ Close</button>
     </div>
     <iframe id="previewFrame" style="width:100%;height:520px;border:none;background:#fff;"></iframe>
   </div>
 </div>
+
+<!-- FOOTER (design system pattern) -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+        <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <p>Cybersecurity monitoring and tools</p>
+    </div>
+    <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+      <a href="/">Home</a>
+      <a href="/services.html">SMB Monitoring</a>
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/msp/">For MSPs</a>
+      <a href="/contact/">Contact</a>
+    </div>
+    <div style="text-align:right">
+      <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+      <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+        <a href="/account/">My Account</a>
+        <a href="/docs/">Docs</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="container text-center mt-lg" style="opacity:0.6">
+    © 2026 EdgeIQ Labs.
+  </div>
+</footer>
 
 <script>
 const API = '/api/phishsim';
@@ -503,7 +599,7 @@ async function loadCampaigns() {
       const subPct = c.stats?.sent ? Math.round((c.stats.submitted_data||0)/c.stats.sent*100) : 0;
       const badgeCls = {'In progress':'blue','Completed':'ok','Scheduled':'warn','Paused':'grey'}[c.status] || 'grey';
       return `<tr>
-        <td><strong>${esc(c.name)}</strong><br><span style="font-size:.72rem;color:var(--muted);">${fmtDate(c.launch_date)}</span></td>
+        <td><strong>${esc(c.name)}</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-secondary);">${fmtDate(c.launch_date)}</span></td>
         <td><span class="badge ${badgeCls}">${esc(c.status)}</span></td>
         <td>${c.stats?.sent||0}</td>
         <td>${c.stats?.opened||0}</td>
@@ -511,14 +607,14 @@ async function loadCampaigns() {
         <td>${c.stats?.submitted_data||0}</td>
         <td>
           <div style="display:flex;align-items:center;gap:7px;">
-            <div class="bar-wrap"><div class="bar" style="background:${pct>30?'var(--danger)':pct>15?'var(--warn)':'var(--ok)'};width:${pct}%"></div></div>
-            <span style="font-size:.78rem;color:${pct>30?'var(--danger)':pct>15?'var(--warn)':'var(--ok)'}">${pct}%</span>
+            <div class="bar-wrap"><div class="bar" style="background:${pct>30?'#ff6b6b':pct>15?'#ffb347':'#70f0a8'};width:${pct}%"></div></div>
+            <span style="font-size:var(--text-xs);color:${pct>30?'#ff6b6b':pct>15?'#ffb347':'#70f0a8'}">${pct}%</span>
           </div>
-          <div style="font-size:.7rem;color:var(--danger);margin-top:2px;">${subPct}% submitted</div>
+          <div style="font-size:var(--text-xs);color:#ff6b6b;margin-top:2px;">${subPct}% submitted</div>
         </td>
         <td>
-          <button class="btn btn-outline btn-sm" onclick="viewResults(${c.id},'${esc(c.name)}')">Results</button>
-          <button class="btn btn-danger btn-sm" style="margin-left:5px" onclick="deleteCampaign(${c.id})">Delete</button>
+          <button class="btn-ps btn-ps-outline btn-ps-sm" onclick="viewResults(${c.id},'${esc(c.name)}')">Results</button>
+          <button class="btn-ps btn-ps-danger btn-ps-sm" style="margin-left:5px" onclick="deleteCampaign(${c.id})">Delete</button>
         </td>
       </tr>`;
     }).join('');
@@ -570,7 +666,7 @@ async function viewResults(id, name) {
     document.getElementById('resultsSummary').innerHTML = summary.map(([label,val,cls]) =>
       `<div class="stat" style="min-width:130px;padding:12px 14px;">
         <div class="label">${label}</div>
-        <div class="value" style="font-size:1.4rem;color:var(--${cls})">${val}</div>
+        <div class="value" style="font-size:1.4rem;color:var(--color-${cls === 'muted' ? 'text-secondary' : cls === 'warn' ? '#ffb347' : cls === 'blue' ? 'accent' : cls === 'danger' ? '#ff6b6b' : '#70f0a8'})">${val}</div>
       </div>`
     ).join('');
 
@@ -592,11 +688,11 @@ async function viewResults(id, name) {
       const uaShort = ua ? ua.split(' ').slice(0,3).join(' ')+'…' : '—';
       return `<tr>
         <td>${esc(r.first_name)} ${esc(r.last_name)}</td>
-        <td style="color:var(--muted);font-size:.78rem;">${esc(r.email)}</td>
+        <td style="color:var(--color-text-secondary);font-size:var(--text-xs);">${esc(r.email)}</td>
         <td><span class="${cls}" style="font-weight:600;">${esc(r.status)}</span></td>
-        <td style="font-size:.75rem;color:var(--muted);">${ip}</td>
-        <td style="font-size:.72rem;color:var(--muted);" title="${esc(ua)}">${uaShort}</td>
-        <td style="font-size:.75rem;color:var(--muted);">${fmtDate(lastEvent?.time)}</td>
+        <td style="font-size:var(--text-xs);color:var(--color-text-secondary);">${ip}</td>
+        <td style="font-size:var(--text-xs);color:var(--color-text-secondary);" title="${esc(ua)}">${uaShort}</td>
+        <td style="font-size:var(--text-xs);color:var(--color-text-secondary);">${fmtDate(lastEvent?.time)}</td>
       </tr>`;
     }).join('');
 
@@ -628,7 +724,7 @@ async function loadTemplates() {
           <div class="sub">${esc(t.subject||'(no subject)')}</div>
         </div>
         <div class="actions">
-          <button class="btn btn-danger btn-sm" onclick="deleteTemplate(${t.id},'${esc(t.name).replace(/'/g,"\\'")}')">Delete</button>
+          <button class="btn-ps btn-ps-danger btn-ps-sm" onclick="deleteTemplate(${t.id},'${esc(t.name).replace(/'/g,"\\'")}')">Delete</button>
         </div>
       </div>`
     ).join('');
@@ -680,12 +776,12 @@ async function loadPages() {
           <div class="name">${esc(p.name)}</div>
           <div class="sub" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
             ${badges.join('')}
-            <span style="color:var(--muted);">→ ${esc(p.redirect_url||'no redirect')}</span>
+            <span style="color:var(--color-text-secondary);">→ ${esc(p.redirect_url||'no redirect')}</span>
           </div>
         </div>
         <div class="actions">
-          <button class="btn btn-outline btn-sm" onclick="previewPage(${p.id},'${esc(p.name).replace(/'/g,"\\'")}')">Preview</button>
-          <button class="btn btn-danger btn-sm" onclick="deletePage(${p.id},'${esc(p.name).replace(/'/g,"\\'")}')">Delete</button>
+          <button class="btn-ps btn-ps-outline btn-ps-sm" onclick="previewPage(${p.id},'${esc(p.name).replace(/'/g,"\\'")}')">Preview</button>
+          <button class="btn-ps btn-ps-danger btn-ps-sm" onclick="deletePage(${p.id},'${esc(p.name).replace(/'/g,"\\'")}')">Delete</button>
         </div>
       </div>`;
     }).join('');
@@ -745,7 +841,7 @@ async function loadGroups() {
           <div class="sub">${g.targets?.length||0} targets${g.targets?.length ? ': '+g.targets.slice(0,3).map(t=>esc(t.email)).join(', ')+(g.targets.length>3?'…':'') : ''}</div>
         </div>
         <div class="actions">
-          <button class="btn btn-danger btn-sm" onclick="deleteGroup(${g.id},'${esc(g.name).replace(/'/g,"\\'")}')">Delete</button>
+          <button class="btn-ps btn-ps-danger btn-ps-sm" onclick="deleteGroup(${g.id},'${esc(g.name).replace(/'/g,"\\'")}')">Delete</button>
         </div>
       </div>`
     ).join('');
@@ -813,8 +909,8 @@ async function loadAccount() {
             <div class="sub">${esc(p.host||'')} — From: ${esc(p.from_address||'')}</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
-            <button class="btn btn-sm btn-outline" onclick="openSmtpModal(window._smtpProfiles[${i}])">Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteSmtp(${p.id}, '${esc(p.name)}')">Delete</button>
+            <button class="btn-ps btn-ps-sm btn-ps-outline" onclick="openSmtpModal(window._smtpProfiles[${i}])">Edit</button>
+            <button class="btn-ps btn-ps-sm btn-ps-danger" onclick="deleteSmtp(${p.id}, '${esc(p.name)}')">Delete</button>
           </div>
         </div>`
       ).join('');

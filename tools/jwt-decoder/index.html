@@ -11,234 +11,48 @@
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
   <link rel="canonical" href="https://edgeiqlabs.com/tools/jwt-decoder/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
-  <script type="application/ld+json">[{"@context":"https://***@type":"WebApplication","name":"JWT Decoder","url":"https://edgeiqlabs.com/tools/jwt-decoder/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@context":"https://***@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it safe to paste a JWT into this tool?","acceptedAnswer":{"@type":"Answer","text":"Yes. All decoding happens in your browser using JavaScript. No data is sent to any server. You can verify this by opening your browser's Network tab — you'll see zero outbound requests when you decode a token."}},{"@type":"Question","name":"Does this tool verify JWT signatures?","acceptedAnswer":{"@type":"Answer","text":"No. Signature verification requires the signing key, which should never be pasted into a web tool. This tool decodes the header and payload for inspection only. Always verify signatures server-side in your application."}},{"@type":"Question","name":"What JWT claims does this tool show?","acceptedAnswer":{"@type":"Answer","text":"It shows all standard registered claims (iss, sub, aud, exp, nbf, iat, jti) with human-readable descriptions, plus any custom claims in the payload. Expiry and not-before timestamps are converted to local time with a relative countdown."}}]}</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"JWT Decoder","url":"https://edgeiqlabs.com/tools/jwt-decoder/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it safe to paste a JWT into this tool?","acceptedAnswer":{"@type":"Answer","text":"Yes. All decoding happens in your browser using JavaScript. No data is sent to any server. You can verify this by opening your browser Network tab — you will see zero outbound requests when you decode a token."}},{"@type":"Question","name":"Does this tool verify JWT signatures?","acceptedAnswer":{"@type":"Answer","text":"No. Signature verification requires the signing key, which should never be pasted into a web tool. This tool decodes the header and payload for inspection only. Always verify signatures server-side in your application."}},{"@type":"Question","name":"What JWT claims does this tool show?","acceptedAnswer":{"@type":"Answer","text":"It shows all standard registered claims (iss, sub, aud, exp, nbf, iat, jti) with human-readable descriptions, plus any custom claims in the payload. Expiry and not-before timestamps are converted to local time with a relative countdown."}}]}</script>
   <link rel="stylesheet" href="/css/design-system.css?v=10" />
   <script src="/js/theme.js"></script>
   <style>
-    /* Page-specific styles for JWT Decoder tool UI */
-    .jwt-hero {
-      padding: var(--space-3xl) 0 var(--space-xl);
-      text-align: center;
-    }
-    .jwt-hero-badge {
-      display: inline-block;
-      background: var(--color-bg-pale-blue);
-      border: 1px solid rgba(34, 211, 238, 0.25);
-      color: var(--color-accent);
-      font-size: var(--text-xs);
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: var(--space-xs) var(--space-md);
-      border-radius: var(--radius-full);
-      margin-bottom: var(--space-lg);
-      font-family: var(--font-mono);
-    }
-    .jwt-hero h1 {
-      font-size: clamp(var(--text-3xl), 4vw, var(--text-hero));
-      font-weight: 900;
-      line-height: var(--leading-tight);
-      margin-bottom: var(--space-md);
-      color: var(--color-text-primary);
-    }
-    .jwt-hero p {
-      font-size: var(--text-base);
-      color: var(--color-text-secondary);
-      max-width: 560px;
-      margin: 0 auto var(--space-xl);
-    }
-    .tool-card {
-      background: var(--color-bg-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-xl);
-      margin-bottom: var(--space-lg);
-    }
-    textarea#jwt-input {
-      width: 100%;
-      min-height: 120px;
-      background: var(--color-bg-primary);
-      border: 2px solid var(--color-border);
-      border-radius: var(--radius-md);
-      color: var(--color-text-primary);
-      padding: var(--space-md);
-      font-size: var(--text-sm);
-      font-family: var(--font-mono);
-      outline: none;
-      resize: vertical;
-      transition: border-color var(--transition-fast);
-    }
-    textarea#jwt-input:focus {
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 3px var(--color-accent-subtle);
-    }
-    .tool-btn {
-      background: var(--color-accent);
-      color: #000;
-      font-weight: 700;
-      font-size: var(--text-base);
-      padding: 0.8rem 1.5rem;
-      border-radius: var(--radius-md);
-      border: none;
-      cursor: pointer;
-      margin-top: var(--space-md);
-      transition: opacity var(--transition-fast);
-      font-family: var(--font-sans);
-    }
-    .tool-btn:hover {
-      opacity: 0.87;
-    }
-    #output {
-      display: none;
-      margin-top: var(--space-lg);
-    }
-    .section-label {
-      font-size: var(--text-xs);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--color-text-muted);
-      margin-bottom: var(--space-sm);
-      margin-top: var(--space-lg);
-      font-family: var(--font-mono);
-    }
-    .json-block {
-      background: var(--color-bg-primary);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: var(--space-md);
-      font-family: var(--font-mono);
-      font-size: var(--text-sm);
-      line-height: var(--leading-relaxed);
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-      color: var(--color-accent);
-    }
-    .claim-row {
-      display: flex;
-      gap: var(--space-md);
-      padding: var(--space-sm) var(--space-md);
-      border-bottom: 1px solid var(--color-border);
-      font-size: var(--text-sm);
-      align-items: baseline;
-    }
-    .claim-row:last-child {
-      border-bottom: none;
-    }
-    .claim-name {
-      font-weight: 700;
-      color: var(--color-accent);
-      min-width: 60px;
-      font-family: var(--font-mono);
-      font-size: var(--text-xs);
-    }
-    .claim-val {
-      color: var(--color-text-primary);
-      flex: 1;
-      word-break: break-all;
-    }
-    .claim-desc {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      margin-top: 2px;
-    }
-    .status-pill {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: var(--radius-full);
-      font-size: var(--text-xs);
-      font-weight: 700;
-      margin-left: var(--space-sm);
-      font-family: var(--font-mono);
-    }
-    .status-ok {
-      background: rgba(52, 211, 153, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-    .status-warn {
-      background: rgba(245, 158, 11, 0.15);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-    .status-bad {
-      background: rgba(239, 68, 68, 0.15);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    .trust-note {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      margin-top: var(--space-sm);
-    }
-    .cta-box {
-      background: linear-gradient(135deg, var(--color-bg-primary), var(--color-bg-elevated));
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-2xl) var(--space-xl);
-      margin: var(--space-3xl) 0;
-      text-align: center;
-    }
-    .cta-box h3 {
-      font-size: var(--text-xl);
-      font-weight: 800;
-      margin-bottom: var(--space-sm);
-      color: var(--color-text-primary);
-    }
-    .cta-box p {
-      color: var(--color-text-secondary);
-      font-size: var(--text-sm);
-      margin-bottom: var(--space-lg);
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .faq {
-      padding: var(--space-3xl) 0;
-    }
-    .faq-item {
-      border-bottom: 1px solid var(--color-border);
-      padding: var(--space-md) 0;
-    }
-    .faq-q {
-      font-size: var(--text-base);
-      font-weight: 700;
-      color: var(--color-text-primary);
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-    .faq-q::after {
-      content: "＋";
-      color: var(--color-accent);
-      font-size: var(--text-lg);
-      flex-shrink: 0;
-    }
-    .faq-q.open::after {
-      content: "−";
-    }
-    .faq-a {
-      display: none;
-      padding-top: var(--space-sm);
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
-      line-height: var(--leading-relaxed);
-    }
+    .jwt-hero { padding: var(--space-3xl) 0 var(--space-xl); text-align: center; }
+    .jwt-hero-badge { display: inline-block; background: var(--color-bg-pale-blue); border: 1px solid rgba(34,211,238,0.25); color: var(--color-accent); font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); margin-bottom: var(--space-lg); font-family: var(--font-mono); }
+    .jwt-hero h1 { font-size: clamp(var(--text-3xl),4vw,var(--text-hero)); font-weight: 900; line-height: var(--leading-tight); margin-bottom: var(--space-md); color: var(--color-text-primary); }
+    .jwt-hero p { font-size: var(--text-base); color: var(--color-text-secondary); max-width: 560px; margin: 0 auto var(--space-xl); }
+    .tool-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: var(--space-lg); }
+    textarea#jwt-input { width: 100%; min-height: 120px; background: var(--color-bg-primary); border: 2px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); padding: var(--space-md); font-size: var(--text-sm); font-family: var(--font-mono); outline: none; resize: vertical; transition: border-color var(--transition-fast); }
+    textarea#jwt-input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+    .tool-btn { background: var(--color-accent); color: #000; font-weight: 700; font-size: var(--text-base); padding: 0.8rem 1.5rem; border-radius: var(--radius-md); border: none; cursor: pointer; margin-top: var(--space-md); transition: opacity var(--transition-fast); font-family: var(--font-sans); }
+    .tool-btn:hover { opacity: 0.87; }
+    #output { display: none; margin-top: var(--space-lg); }
+    .section-label { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); margin-bottom: var(--space-sm); margin-top: var(--space-lg); font-family: var(--font-mono); }
+    .json-block { background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-md); font-family: var(--font-mono); font-size: var(--text-sm); line-height: var(--leading-relaxed); overflow-x: auto; white-space: pre-wrap; word-break: break-all; color: var(--color-accent); }
+    .claim-row { display: flex; gap: var(--space-md); padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); align-items: baseline; }
+    .claim-row:last-child { border-bottom: none; }
+    .claim-name { font-weight: 700; color: var(--color-accent); min-width: 60px; font-family: var(--font-mono); font-size: var(--text-xs); }
+    .claim-val { color: var(--color-text-primary); flex: 1; word-break: break-all; }
+    .claim-desc { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px; }
+    .status-pill { display: inline-block; padding: 3px 10px; border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 700; margin-left: var(--space-sm); font-family: var(--font-mono); }
+    .status-ok { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .status-warn { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .status-bad { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .trust-note { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-sm); }
+    .cta-box { background: linear-gradient(135deg,var(--color-bg-primary),var(--color-bg-elevated)); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-2xl) var(--space-xl); margin: var(--space-3xl) 0; text-align: center; }
+    .cta-box h3 { font-size: var(--text-xl); font-weight: 800; margin-bottom: var(--space-sm); color: var(--color-text-primary); }
+    .cta-box p { color: var(--color-text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-lg); max-width: 480px; margin-left: auto; margin-right: auto; }
+    .faq { padding: var(--space-3xl) 0; }
+    .faq-item { border-bottom: 1px solid var(--color-border); padding: var(--space-md) 0; }
+    .faq-q { font-size: var(--text-base); font-weight: 700; color: var(--color-text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); }
+    .faq-q::after { content: "＋"; color: var(--color-accent); font-size: var(--text-lg); flex-shrink: 0; }
+    .faq-q.open::after { content: "−"; }
+    .faq-a { display: none; padding-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--leading-relaxed); }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-
-  <!-- NAV -->
   <nav class="nav">
     <div class="container nav__inner">
-      <a href="/" class="nav__logo">
-        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
-        EdgeIQ Labs
-      </a>
+      <a href="/" class="nav__logo"><img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px"/>EdgeIQ Labs</a>
       <ul class="nav__links">
         <li><a href="/" class="nav__link">Home</a></li>
         <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
@@ -253,156 +67,60 @@
       </div>
     </div>
   </nav>
-
 <div class="container">
   <div class="jwt-hero">
     <div class="jwt-hero-badge">🔑 Auth Tool</div>
     <h1>JWT Decoder</h1>
     <p>Decode JWT headers and payloads instantly in your browser. Inspect claims, check expiry, and view token structure — your token never leaves your machine.</p>
   </div>
-
   <div class="tool-card">
     <textarea id="jwt-input" placeholder="Paste your JWT here (eyJhbG...NiIs...)" spellcheck="false"></textarea>
     <button class="tool-btn" onclick="decodeJWT()">Decode Token →</button>
     <p class="trust-note">🔒 100% client-side. Open your Network tab to verify — zero outbound requests.</p>
   </div>
-
   <div id="output">
     <div class="section-label">Header</div>
     <div class="json-block" id="header-json"></div>
-
     <div class="section-label">Payload</div>
     <div id="claims-table"></div>
     <div class="json-block" id="payload-json" style="margin-top:8px;"></div>
-
     <div class="section-label">Signature</div>
     <div class="json-block" id="sig-block" style="color:var(--color-text-muted);"></div>
   </div>
-
   <div class="cta-box">
     <h3>Found a leaked JWT in your codebase?</h3>
     <p>Scan your entire GitHub repo for hardcoded tokens, API keys, and secrets with our free Repo Security Scanner.</p>
     <a href="/free-repo-scanner/" class="btn btn--primary">Scan Your Repo →</a>
   </div>
-
   <div class="faq">
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is it safe to paste a JWT into this tool?</div><div class="faq-a">Yes. All decoding happens in your browser using JavaScript. No data is sent to any server. You can verify this by opening your browser's Network tab — you'll see zero outbound requests when you decode a token.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is it safe to paste a JWT into this tool?</div><div class="faq-a">Yes. All decoding happens in your browser using JavaScript. No data is sent to any server. You can verify this by opening your browser Network tab — you will see zero outbound requests when you decode a token.</div></div>
     <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does this tool verify JWT signatures?</div><div class="faq-a">No. Signature verification requires the signing key, which should never be pasted into a web tool. This tool decodes the header and payload for inspection only. Always verify signatures server-side in your application.</div></div>
     <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What JWT claims does this tool show?</div><div class="faq-a">It shows all standard registered claims (iss, sub, aud, exp, nbf, iat, jti) with human-readable descriptions, plus any custom claims in the payload. Expiry and not-before timestamps are converted to local time with a relative countdown.</div></div>
     <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is a JWT?</div><div class="faq-a">A JSON Web Token (JWT) is a compact, URL-safe token format used to transfer claims between parties. It consists of three Base64URL-encoded parts separated by dots: header (algorithm and type), payload (claims), and signature (integrity verification).</div></div>
   </div>
 </div>
-
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer__inner">
       <div>
-        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
-          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
-          EdgeIQ Labs
-        </a>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)"><img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px"/>EdgeIQ Labs</a>
         <p>Cybersecurity monitoring and tools</p>
       </div>
       <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
-        <a href="/">Home</a>
-        <a href="/services.html">SMB Monitoring</a>
-        <a href="/free-tools/">Free Tools</a>
-        <a href="/msp/">For MSPs</a>
-        <a href="/contact/">Contact</a>
+        <a href="/">Home</a><a href="/services.html">SMB Monitoring</a><a href="/free-tools/">Free Tools</a><a href="/msp/">For MSPs</a><a href="/contact/">Contact</a>
       </div>
       <div style="text-align:right">
         <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
-        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
-          <a href="/account/">My Account</a>
-          <a href="/docs/">Docs</a>
-          <a href="/privacy.html">Privacy</a>
-          <a href="/terms.html">Terms</a>
-        </div>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)"><a href="/account/">My Account</a><a href="/docs/">Docs</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
       </div>
     </div>
-    <div class="container text-center mt-lg" style="opacity:0.6">
-      © 2026 EdgeIQ Labs.
-    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">© 2026 EdgeIQ Labs.</div>
   </footer>
-
 <script>
-var CLAIM_DESC = {
-  iss: 'Issuer — who created and signed this token',
-  sub: 'Subject — the principal (user ID, service account)',
-  aud: 'Audience — intended recipient(s) of this token',
-  exp: 'Expiration — token is invalid after this time',
-  nbf: 'Not Before — token is invalid before this time',
-  iat: 'Issued At — when the token was created',
-  jti: 'JWT ID — unique identifier for this token',
-  typ: 'Type — token type (usually JWT)',
-  alg: 'Algorithm — signing algorithm used',
-  scope: 'Scope — permissions granted by this token',
-  roles: 'Roles — user roles or groups',
-  email: 'Email — user email address',
-  name: 'Name — display name',
-  kid: 'Key ID — identifies the signing key'
-};
-
-function decodeJWT() {
-  var raw = document.getElementById('jwt-input').value.trim();
-  if (!raw) return;
-  // Strip Bearer prefix if present
-  raw = raw.replace(/^[Bb]earer\s+/, '');
-  var parts = raw.split('.');
-  if (parts.length < 2) {
-    alert('Invalid JWT format. Expected at least header.payload.signature separated by dots.');
-    return;
-  }
-  try {
-    var header = JSON.parse(atob(parts[0].replace(/-/g,'+').replace(/_/g,'/')));
-    var payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
-    document.getElementById('header-json').textContent = JSON.stringify(header, null, 2);
-    document.getElementById('payload-json').textContent = JSON.stringify(payload, null, 2);
-    document.getElementById('sig-block').textContent = parts[2] || '(none — unsigned token)';
-
-    // Build claims table
-    var html = '';
-    var keys = Object.keys(payload);
-    keys.forEach(function(k) {
-      var val = payload[k];
-      var desc = CLAIM_DESC[k] || '';
-      var extra = '';
-      // Time claims
-      if ((k === 'exp' || k === 'nbf' || k === 'iat') && typeof val === 'number') {
-        var d = new Date(val * 1000);
-        var now = Math.floor(Date.now() / 1000);
-        var diff = val - now;
-        var timeStr = d.toLocaleString();
-        if (k === 'exp') {
-          if (diff < 0) extra = '<span class="status-pill status-bad">EXPIRED ' + Math.abs(Math.floor(diff/3600)) + 'h ago</span>';
-          else if (diff < 300) extra = '<span class="status-pill status-warn">expires in ' + Math.floor(diff/60) + ' min</span>';
-          else extra = '<span class="status-pill status-ok">valid for ' + Math.floor(diff/3600) + 'h</span>';
-        } else if (k === 'nbf') {
-          if (diff > 0) extra = '<span class="status-pill status-warn">not valid for ' + Math.floor(diff/60) + ' min</span>';
-          else extra = '<span class="status-pill status-ok">active</span>';
-        }
-        val = timeStr + ' (' + val + ')';
-      }
-      // Array values
-      if (Array.isArray(val)) val = val.join(', ');
-      // Objects
-      if (typeof val === 'object' && val !== null) val = JSON.stringify(val);
-      html += '<div class="claim-row"><div><div class="claim-name">' + esc(k) + '</div>' +
-        (desc ? '<div class="claim-desc">' + desc + '</div>' : '') +
-        '</div><div class="claim-val">' + esc(String(val)) + extra + '</div></div>';
-    });
-    document.getElementById('claims-table').innerHTML = html;
-    document.getElementById('output').style.display = 'block';
-    document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'});
-  } catch(e) {
-    alert('Failed to decode JWT: ' + e.message + '. Check that the token is valid Base64URL.');
-  }
-}
-
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function toggleFaq(el) { var a = el.nextElementSibling; var open = el.classList.toggle('open'); a.style.display = open ? 'block' : 'none'; }
-document.getElementById('jwt-input').addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.ctrlKey) decodeJWT(); });
+var CLAIM_DESC={iss:'Issuer — who created and signed this token',sub:'Subject — the principal (user ID, service account)',aud:'Audience — intended recipient(s) of this token',exp:'Expiration — token is invalid after this time',nbf:'Not Before — token is invalid before this time',iat:'Issued At — when the token was created',jti:'JWT ID — unique identifier for this token',typ:'Type — token type (usually JWT)',alg:'Algorithm — signing algorithm used',scope:'Scope — permissions granted by this token',roles:'Roles — user roles or groups',email:'Email — user email address',name:'Name — display name',kid:'Key ID — identifies the signing key'};
+function decodeJWT(){var raw=document.getElementById('jwt-input').value.trim();if(!raw)return;raw=raw.replace(/^[Bb]earer\s+/,'');var parts=raw.split('.');if(parts.length<2){alert('Invalid JWT format. Expected at least header.payload.signature separated by dots.');return;}try{var header=JSON.parse(atob(parts[0].replace(/-/g,'+').replace(/_/g,'/')));var payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));document.getElementById('header-json').textContent=JSON.stringify(header,null,2);document.getElementById('payload-json').textContent=JSON.stringify(payload,null,2);document.getElementById('sig-block').textContent=parts[2]||'(none — unsigned token)';var html='';var keys=Object.keys(payload);keys.forEach(function(k){var val=payload[k];var desc=CLAIM_DESC[k]||'';var extra='';if((k==='exp'||k==='nbf'||k==='iat')&&typeof val==='number'){var d=new Date(val*1000);var now=Math.floor(Date.now()/1000);var diff=val-now;var timeStr=d.toLocaleString();if(k==='exp'){if(diff<0)extra='<span class="status-pill status-bad">EXPIRED '+Math.abs(Math.floor(diff/3600))+'h ago</span>';else if(diff<300)extra='<span class="status-pill status-warn">expires in '+Math.floor(diff/60)+' min</span>';else extra='<span class="status-pill status-ok">valid for '+Math.floor(diff/3600)+'h</span>';}else if(k==='nbf'){if(diff>0)extra='<span class="status-pill status-warn">not valid for '+Math.floor(diff/60)+' min</span>';else extra='<span class="status-pill status-ok">active</span>';}val=timeStr+' ('+val+')';}if(Array.isArray(val))val=val.join(', ');if(typeof val==='object'&&val!==null)val=JSON.stringify(val);html+='<div class="claim-row"><div><div class="claim-name">'+esc(k)+'</div>'+(desc?'<div class="claim-desc">'+desc+'</div>':'')+'</div><div class="claim-val">'+esc(String(val))+extra+'</div></div>';});document.getElementById('claims-table').innerHTML=html;document.getElementById('output').style.display='block';document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){alert('Failed to decode JWT: '+e.message+'. Check that the token is valid Base64URL.');}}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+document.getElementById('jwt-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&e.ctrlKey)decodeJWT();});
 </script>
 </body>
 </html>
-ENDOFFILE"}}]}

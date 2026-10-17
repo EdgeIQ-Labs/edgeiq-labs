@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="canonical" href="https://edgeiqlabs.com/inbox-shield/">
+  <title>EdgeIQ Inbox Shield — Email Security Scanner & Monitor</title>
+  <meta name="description" content="Instantly grade your domain's email security: SPF, DMARC, DKIM, BIMI. Get weekly alerts when anything changes. Free scan, no account needed.">
+  <meta name="theme-color" content="#0b0f14">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="EdgeIQ Labs">
+  <meta property="og:url" content="https://edgeiqlabs.com/inbox-shield/">
+  <meta property="og:title" content="EdgeIQ Inbox Shield — Email Security Scanner & Monitor">
+  <meta property="og:description" content="Get an instant A–F grade for your email security. SPF, DMARC, DKIM, BIMI — checked in seconds. Subscribe for weekly monitoring alerts.">
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="EdgeIQ Inbox Shield — Email Security Monitor">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="EdgeIQ Inbox Shield — Email Security Scanner & Monitor">
+  <meta name="twitter:description" content="Instant A–F email security grade: SPF, DMARC, DKIM, BIMI. Free scan, weekly alerts.">
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0f14;
+      --card: #111820;
+      --border: #1e2e3e;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --green: #3de19e;
+      --blue: #3dd9ff;
+      --yellow: #ffb347;
+      --red: #ff6b6b;
+      --purple: #b47aff;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 20px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; }
+    .nav-cta:hover { opacity: .9; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+
+    /* Hero */
+    .hero { text-align: center; padding: 72px 24px 56px; max-width: 760px; margin: 0 auto; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(61,225,158,.1); border: 1px solid rgba(61,225,158,.3); color: var(--green); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 20px; }
+    .pulse-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+    h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; line-height: 1.1; margin-bottom: 18px; letter-spacing: -.02em; }
+    h1 em { font-style: normal; color: var(--green); }
+    .hero-sub { font-size: 17px; color: var(--muted); line-height: 1.6; max-width: 560px; margin: 0 auto 32px; }
+
+    /* Scanner */
+    .scanner-wrap { max-width: 680px; margin: 0 auto 56px; padding: 0 16px; }
+    .scanner-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .scanner-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .scanner-input { flex: 1; background: #0b0f14; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 15px; color: var(--text); outline: none; font-family: inherit; transition: border-color .2s; }
+    .scanner-input:focus { border-color: var(--green); }
+    .scanner-input::placeholder { color: #5a7a9a; }
+    .scan-btn { background: var(--green); color: #071018; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; white-space: nowrap; transition: opacity .2s; font-family: inherit; }
+    .scan-btn:hover { opacity: .88; }
+    .scan-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .scanner-note { font-size: 12px; color: var(--muted); }
+
+    /* Progress */
+    .progress-wrap { display: none; margin-top: 20px; }
+    .progress-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .progress-bar-outer { background: #0b0f14; border-radius: 6px; height: 6px; overflow: hidden; }
+    .progress-bar-inner { height: 100%; background: var(--green); border-radius: 6px; transition: width .4s ease; width: 0; }
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 8px; margin-top: 16px; }
+    .check-pill { background: #0b0f14; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; transition: border-color .3s, color .3s; }
+    .check-pill.scanning { border-color: var(--yellow); color: var(--yellow); }
+    .check-pill.done { border-color: var(--green); color: var(--green); }
+    .check-pill.fail { border-color: var(--red); color: var(--red); }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    /* Results */
+    .results-wrap { display: none; margin-top: 24px; }
+    .grade-hero { text-align: center; margin-bottom: 24px; }
+    .grade-circle { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 50%; border: 3px solid var(--green); font-size: 48px; font-weight: 900; color: var(--green); background: rgba(61,225,158,.07); line-height: 1; margin-bottom: 10px; }
+    .grade-label { font-size: 13px; color: var(--muted); }
+    .results-summary { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 20px; }
+    .checks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    @media(max-width:480px){ .checks-grid { grid-template-columns: 1fr; } }
+    .check-card { background: #0b0f14; border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .check-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .check-card-name { font-size: 13px; font-weight: 700; }
+    .check-card-grade { font-size: 16px; font-weight: 900; }
+    .check-card-record { font-size: 11px; color: var(--muted); word-break: break-all; line-height: 1.5; }
+    .findings-section { margin-bottom: 20px; }
+    .findings-section h3 { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+    .finding-row { background: #0b0f14; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+    .finding-row.critical { border-left: 3px solid var(--red); }
+    .finding-row.high { border-left: 3px solid var(--yellow); }
+    .finding-row.medium { border-left: 3px solid #ffaa33; }
+    .finding-row.low { border-left: 3px solid #5a9aff; }
+    .finding-row.info { border-left: 3px solid var(--muted); }
+    .finding-sev { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; }
+    .finding-sev.critical { color: var(--red); }
+    .finding-sev.high { color: var(--yellow); }
+    .finding-sev.medium { color: #ffaa33; }
+    .finding-sev.low { color: #5a9aff; }
+    .finding-sev.info { color: var(--muted); }
+    .finding-msg { font-size: 13px; color: #c8d8e8; line-height: 1.5; }
+    .results-footer { display: flex; gap: 10px; flex-wrap: wrap; }
+    .rescan-btn { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; font-size: 13px; padding: 10px; border-radius: 8px; cursor: pointer; font-family: inherit; transition: border-color .2s, color .2s; }
+    .rescan-btn:hover { border-color: var(--green); color: var(--green); }
+    .monitor-btn { flex: 2; background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; transition: opacity .2s; }
+    .monitor-btn:hover { opacity: .88; }
+
+    /* Email capture modal / inline */
+    .capture-panel { display: none; background: linear-gradient(135deg, #0d1f17, #071018); border: 1px solid rgba(61,225,158,.3); border-radius: 12px; padding: 20px; margin-top: 16px; }
+    .capture-panel h3 { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+    .capture-panel p { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .capture-form { display: flex; gap: 8px; flex-wrap: wrap; }
+    .capture-input { flex: 1; min-width: 180px; background: #0b0f14; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; }
+    .capture-input:focus { border-color: var(--green); }
+    .capture-submit { background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .capture-confirm { display: none; font-size: 13px; color: var(--green); margin-top: 10px; }
+
+    /* How it works */
+    .section { max-width: 900px; margin: 0 auto; padding: 56px 24px; }
+    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--green); margin-bottom: 10px; }
+    .section-title { font-size: clamp(1.5rem,3.5vw,2.2rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 14px; }
+    .section-sub { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 560px; margin-bottom: 40px; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 16px; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+    .step-num { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .step-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .step-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* What we check */
+    .checks-explainer { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
+    .check-explainer { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    .check-icon { font-size: 22px; margin-bottom: 10px; }
+    .check-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .check-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* Pricing */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 16px; max-width: 700px; margin: 0 auto; }
+    .pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .pricing-card.featured { border-color: var(--green); background: linear-gradient(135deg, #0d1f17 0%, var(--card) 100%); }
+    .plan-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 9px; border-radius: 20px; margin-bottom: 14px; }
+    .plan-badge.free { background: rgba(159,176,199,.15); color: var(--muted); }
+    .plan-badge.pro { background: rgba(61,225,158,.15); color: var(--green); }
+    .plan-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .plan-price { font-size: 36px; font-weight: 900; margin: 10px 0 4px; }
+    .plan-price span { font-size: 14px; font-weight: 400; color: var(--muted); }
+    .plan-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .plan-features { list-style: none; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
+    .plan-features li { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .plan-features li.no::before { content: '✗'; color: #3a5068; }
+    .plan-features li.no { color: #3a5068; }
+    .plan-btn { display: block; text-align: center; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; font-family: inherit; transition: opacity .2s; }
+    .plan-btn.free-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .plan-btn.free-btn:hover { border-color: var(--green); color: var(--green); }
+    .plan-btn.pro-btn { background: var(--green); color: #071018; }
+    .plan-btn.pro-btn:hover { opacity: .88; }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 10px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+    .faq-q { padding: 14px 18px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .faq-q::after { content: '+'; color: var(--green); font-size: 18px; transition: transform .2s; }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a { display: none; padding: 0 18px 14px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .faq-item.open .faq-a { display: block; }
+
+    /* CTA section */
+    .cta-section { background: linear-gradient(135deg, #0d1f17, #071018); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; padding: 64px 24px; }
+    .cta-section h2 { font-size: clamp(1.6rem,4vw,2.4rem); font-weight: 900; margin-bottom: 14px; }
+    .cta-section p { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .cta-primary { background: var(--green); color: #071018; font-weight: 700; font-size: 15px; padding: 14px 32px; border-radius: 10px; }
+    .cta-primary:hover { opacity: .88; }
+    .cta-secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 15px; padding: 14px 32px; border-radius: 10px; }
+    .cta-secondary:hover { border-color: var(--green); color: var(--green); }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 28px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; max-width: 1200px; margin: 0 auto; }
+    .footer-links { display: flex; gap: 20px; font-size: 12px; color: var(--muted); }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 12px; color: #3a5068; }
+
+    /* Divider */
+    hr.sep { border: none; border-top: 1px solid var(--border); }
+
+    /* Subscribed banner */
+    .subscribed-banner { display: none; background: rgba(61,225,158,.12); border: 1px solid rgba(61,225,158,.35); border-radius: 10px; padding: 14px 18px; font-size: 14px; color: var(--green); margin-bottom: 16px; }
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/account/">My Account</a>
+    <a href="#pricing" class="nav-cta">Get Inbox Shield</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+  <a class="mob-cta" href="/">Get Started →</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge"><div class="pulse-dot"></div> Email Security Monitor</div>
+  <h1>Grade your domain's <em>email security</em> in seconds</h1>
+  <p class="hero-sub">Scan SPF, DMARC, DKIM, and BIMI. Get an A–F grade with actionable findings. Sign up for weekly monitoring and be the first to know when anything changes.</p>
+</section>
+
+<!-- Live Scanner -->
+<div class="scanner-wrap" id="scanner">
+  <div class="scanner-card">
+
+    <div class="subscribed-banner" id="subBanner">
+      ✅ You're now subscribed to Inbox Shield monitoring. Your first report will arrive this Monday.
+    </div>
+
+    <div class="scanner-input-row">
+      <input id="domainInput" class="scanner-input" type="text" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
+      <button id="scanBtn" class="scan-btn" onclick="startScan()">Scan Domain</button>
+    </div>
+    <div class="scanner-note">Free scan — no account required. We check SPF, DMARC, DKIM, MX, and BIMI.</div>
+
+    <!-- Progress -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-label">
+        <span id="progressLabel">Checking DNS records…</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+      <div class="check-grid" id="checkGrid">
+        <div class="check-pill" id="pill-spf"><div class="pill-dot"></div>SPF</div>
+        <div class="check-pill" id="pill-dmarc"><div class="pill-dot"></div>DMARC</div>
+        <div class="check-pill" id="pill-dkim"><div class="pill-dot"></div>DKIM</div>
+        <div class="check-pill" id="pill-mx"><div class="pill-dot"></div>MX Records</div>
+        <div class="check-pill" id="pill-bimi"><div class="pill-dot"></div>BIMI</div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-wrap" id="resultsWrap">
+      <div class="grade-hero">
+        <div class="grade-circle" id="gradeCircle">?</div>
+        <div class="grade-label">Overall Email Security Grade</div>
+      </div>
+      <p class="results-summary" id="resultSummary"></p>
+
+      <div class="checks-grid" id="checksGrid"></div>
+
+      <div class="findings-section" id="findingsSection">
+        <h3>Findings</h3>
+        <div id="findingsList"></div>
+      </div>
+
+      <div class="results-footer">
+        <button class="rescan-btn" onclick="resetScanner()">↩ Scan another domain</button>
+        <button class="monitor-btn" onclick="showCapture()">✉ Monitor this domain weekly →</button>
+      </div>
+
+      <!-- Email capture -->
+      <div class="capture-panel" id="capturePanel">
+        <h3>Get weekly email security alerts</h3>
+        <p>We'll scan <strong id="captureTarget"></strong> every Monday and email you if anything changes. Free plan included.</p>
+        <div class="capture-form">
+          <input id="captureEmail" class="capture-input" type="email" placeholder="you@company.com">
+          <button class="capture-submit" onclick="submitCapture()">Start monitoring →</button>
+        </div>
+        <div class="capture-confirm" id="captureConfirm">✅ Subscribed! First report arrives this Monday.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- How it works -->
+<hr class="sep">
+<section class="section">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">Scan now. Monitor forever.</h2>
+  <p class="section-sub">From zero to a full email security audit in under 10 seconds — then stay protected with weekly change alerts.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">Step 01</div>
+      <div class="step-title">Enter your domain</div>
+      <div class="step-body">Just type your domain name above. No sign-up, no extension, no browser plugin needed. Works for any domain worldwide.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 02</div>
+      <div class="step-title">Get your grade in seconds</div>
+      <div class="step-body">We check 5 DNS-based email security protocols and return an A–F grade with specific, actionable findings for each check.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 03</div>
+      <div class="step-title">Subscribe for weekly monitoring</div>
+      <div class="step-body">Enter your email to get a weekly digest every Monday. We'll alert you the moment your SPF, DMARC, or DKIM configuration changes.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 04</div>
+      <div class="step-title">Fix issues with our guides</div>
+      <div class="step-body">Every finding links to a plain-English remediation guide. Pro subscribers get priority support for complex multi-vendor setups.</div>
+    </div>
+  </div>
+</section>
+
+<!-- What we check -->
+<hr class="sep">
+<section class="section">
+  <div class="section-label">What we check</div>
+  <h2 class="section-title">5 layers of email security</h2>
+  <p class="section-sub">Email spoofing is one of the top attack vectors against businesses. These five protocols form a complete defense stack.</p>
+  <div class="checks-explainer">
+    <div class="check-explainer">
+      <div class="check-icon">🛡️</div>
+      <div class="check-name">SPF</div>
+      <div class="check-desc">Sender Policy Framework. Defines which mail servers are authorized to send email on behalf of your domain. Stops basic spoofing.</div>
+    </div>
+    <div class="check-explainer">
+      <div class="check-icon">📋</div>
+      <div class="check-name">DMARC</div>
+      <div class="check-desc">Domain-based Message Authentication. Tells receiving servers what to do with emails that fail SPF or DKIM — monitor, quarantine, or reject.</div>
+    </div>
+    <div class="check-explainer">
+      <div class="check-icon">🔑</div>
+      <div class="check-name">DKIM</div>
+      <div class="check-desc">DomainKeys Identified Mail. Cryptographically signs outgoing email so recipients can verify it wasn't tampered with in transit.</div>
+    </div>
+    <div class="check-explainer">
+      <div class="check-icon">📬</div>
+      <div class="check-name">MX Records</div>
+      <div class="check-desc">Mail Exchange records. Verifies your domain is properly configured to receive email and detects missing or misconfigured mail routing.</div>
+    </div>
+    <div class="check-explainer">
+      <div class="check-icon">🖼️</div>
+      <div class="check-name">BIMI</div>
+      <div class="check-desc">Brand Indicators for Message Identification. Displays your verified logo in Gmail, Yahoo, and Apple Mail. Requires p=quarantine or p=reject DMARC first.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div style="padding:52px 24px;background:#0d1620;border-top:1px solid #1a2e42;border-bottom:1px solid #1a2e42;">
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid #1e2e3e;">
+      <div style="text-align:center;"><div style="font-size:2rem;font-weight:900;color:#b47aff;">940+</div><div style="font-size:0.78rem;color:#9fb0c7;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:4px;">Domains checked</div></div>
+      <div style="text-align:center;"><div style="font-size:2rem;font-weight:900;color:#b47aff;">73%</div><div style="font-size:0.78rem;color:#9fb0c7;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:4px;">Had DMARC gaps on first scan</div></div>
+      <div style="text-align:center;"><div style="font-size:2rem;font-weight:900;color:#b47aff;">p=reject</div><div style="font-size:0.78rem;color:#9fb0c7;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:4px;">Average target in 14 days</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
+      <div style="background:#121923;border:1px solid #233142;border-radius:12px;padding:22px;">
+        <div style="color:#b47aff;font-size:1.4rem;margin-bottom:10px;">❝</div>
+        <p style="font-size:0.88rem;color:#c8d8ea;line-height:1.65;margin-bottom:14px;">"Inbox Shield showed us that three of our sending subdomains had no DMARC — including our Mailchimp domain. That would have been bad."</p>
+        <div style="font-size:0.8rem;font-weight:700;color:#e8eef7;">David L.</div>
+        <div style="font-size:0.75rem;color:#9fb0c7;">CMO, B2B SaaS (30 employees)</div>
+      </div>
+      <div style="background:#121923;border:1px solid #233142;border-radius:12px;padding:22px;">
+        <div style="color:#b47aff;font-size:1.4rem;margin-bottom:10px;">❝</div>
+        <p style="font-size:0.88rem;color:#c8d8ea;line-height:1.65;margin-bottom:14px;">"We went from p=none to p=reject in 6 days. Most DMARC documentation is incomprehensible — Inbox Shield's setup guide actually made sense."</p>
+        <div style="font-size:0.8rem;font-weight:700;color:#e8eef7;">Tom B.</div>
+        <div style="font-size:0.75rem;color:#9fb0c7;">IT lead, 45-person professional services firm</div>
+      </div>
+      <div style="background:#121923;border:1px solid #233142;border-radius:12px;padding:22px;">
+        <div style="color:#b47aff;font-size:1.4rem;margin-bottom:10px;">❝</div>
+        <p style="font-size:0.88rem;color:#c8d8ea;line-height:1.65;margin-bottom:14px;">"An employee reported a phishing email 'from our CEO'. Inbox Shield had already flagged the spoofing gap. We fixed it that same day."</p>
+        <div style="font-size:0.8rem;font-weight:700;color:#e8eef7;">Elena R.</div>
+        <div style="font-size:0.75rem;color:#9fb0c7;">Operations Manager, 20-person agency</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing -->
+<hr class="sep">
+<section class="section" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple, honest pricing</h2>
+  <p class="section-sub">Start free. Upgrade when you need daily monitoring, key rotation alerts, or dedicated support.</p>
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <div class="plan-badge free">Free</div>
+      <div class="plan-name">Inbox Shield Free</div>
+      <div class="plan-price">$0 <span>forever</span></div>
+      <div class="plan-desc">For individuals and small sites who want visibility into their email security posture.</div>
+      <ul class="plan-features">
+        <li>Instant SPF / DMARC / DKIM scan</li>
+        <li>MX + BIMI detection</li>
+        <li>A–F grade with findings</li>
+        <li>Weekly Monday digest email</li>
+        <li>1 domain</li>
+        <li class="no">Daily monitoring</li>
+        <li class="no">DKIM key rotation alerts</li>
+        <li class="no">Remediation guides</li>
+        <li class="no">Priority support</li>
+      </ul>
+      <button class="plan-btn free-btn" onclick="document.getElementById('domainInput').focus(); document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">Start free scan ↑</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="plan-badge pro">Pro</div>
+      <div class="plan-name">Inbox Shield Pro</div>
+      <div class="plan-price">$15 <span>/ month</span></div>
+      <div class="plan-desc">For teams and businesses that need to know the instant something changes — before attackers exploit it.</div>
+      <ul class="plan-features">
+        <li>Everything in Free</li>
+        <li>Daily monitoring (not just weekly)</li>
+        <li>DKIM key rotation & expiry alerts</li>
+        <li>Up to 5 domains</li>
+        <li>Step-by-step remediation guides</li>
+        <li>SPF flattening analysis</li>
+        <li>DMARC reporting & rua= setup guide</li>
+        <li>Email + chat priority support</li>
+      </ul>
+      <a id="proBuyBtn" href="https://buy.stripe.com/bJeaEZeCn593g6E0487wA3q" class="plan-btn pro-btn">Get Inbox Shield Pro →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<hr class="sep">
+<section class="section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Common questions</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Why does my domain need DMARC?</div>
+      <div class="faq-a">Without DMARC, anyone can send email pretending to be from your domain. This is used for phishing, invoice fraud, and impersonation attacks. DMARC tells receiving mail servers what to do with these fake emails — and gives you visibility via aggregate reports.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">My SPF uses ~all (softfail). Is that bad?</div>
+      <div class="faq-a">Softfail (~all) means unauthorized senders are marked but not rejected. It's better than no SPF, but you should upgrade to -all (hardfail) once you're confident your legitimate senders are all listed. We'll flag this in your findings and explain how to upgrade safely.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What DKIM selectors do you check?</div>
+      <div class="faq-a">We probe 29 common selectors used by Google, Microsoft, Mailchimp, Sendgrid, Mandrill, Mimecast, Proofpoint, Amazon SES, and many others. If your DKIM selector isn't on the common list, it won't be detected by the free scan — Pro subscribers can request custom selector addition.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How often does Pro plan monitor my domain?</div>
+      <div class="faq-a">Pro plan monitors daily — we run a full SPF/DMARC/DKIM/MX check every 24 hours and send an alert email the moment anything changes. The Free plan runs weekly on Monday mornings.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Does this affect my email deliverability?</div>
+      <div class="faq-a">No. We only read your public DNS records — we never send email to or from your domain, and we don't touch your mail servers. It's entirely passive read-only DNS lookups.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
+      <div class="faq-a">Yes. Pro subscriptions are managed through Stripe and can be cancelled at any time from your billing portal. There are no contracts or cancellation fees.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Your domain's email security<br>graded in 10 seconds</h2>
+  <p>Free scan. No account required. Know your exposure before attackers do.</p>
+  <div class="cta-btns">
+    <a href="#scanner" class="cta-primary" onclick="document.getElementById('domainInput').focus()">Scan my domain →</a>
+    <a href="#pricing" class="cta-secondary">View Pro plan</a>
+  </div>
+</div>
+
+<!-- MSP nudge -->
+<div style="background:#0e1621;border-top:1px solid #233142;border-bottom:1px solid #233142;padding:22px 24px;">
+  <div style="max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div>
+      <span style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a78bfa;">For MSPs &amp; IT Agencies</span>
+      <p style="color:#c8d8ea;font-size:0.93rem;margin-top:4px;">Monitoring email security for multiple clients? Our MSP plan covers unlimited tenants with a unified dashboard and white-label reporting.</p>
+    </div>
+    <a href="/msp/" style="white-space:nowrap;background:#a78bfa;color:#071018;font-weight:700;font-size:0.88rem;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;">See MSP Plan →</a>
+  </div>
+</div>
+
+<!-- Free tools cross-sell -->
+<div style="background:#0d1520;border-top:1px solid #233142;padding:44px 24px;">
+  <div style="max-width:1000px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#3de19e;">More free tools</span>
+      <h3 style="font-size:1.25rem;font-weight:800;color:#e8eef7;margin:8px 0 6px;">See your full security picture</h3>
+      <p style="color:#9fb0c7;font-size:0.9rem;max-width:480px;margin:0 auto;">Email authentication is one piece. Here's how to check the rest — all free, no account needed.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;max-width:860px;margin:0 auto;">
+      <a href="/free-domain-security-score/" style="display:block;background:#121923;border:1px solid #233142;border-radius:12px;padding:20px;text-decoration:none;transition:border-color .2s;" onmouseover="this.style.borderColor='#3de19e'" onmouseout="this.style.borderColor='#233142'">
+        <div style="font-size:1.4rem;margin-bottom:10px;">🔒</div>
+        <div style="font-size:0.92rem;font-weight:700;color:#e8eef7;margin-bottom:5px;">Free Domain Security Score</div>
+        <div style="font-size:0.82rem;color:#9fb0c7;line-height:1.5;">A–F grade covering DMARC, SPF, DKIM, SSL, HTTP headers, and MX health — your complete email and infrastructure posture in one report.</div>
+        <div style="margin-top:12px;font-size:0.82rem;font-weight:700;color:#3de19e;">Get your full grade →</div>
+      </a>
+      <a href="/free-blacklist-checker/" style="display:block;background:#121923;border:1px solid #233142;border-radius:12px;padding:20px;text-decoration:none;transition:border-color .2s;" onmouseover="this.style.borderColor='#3de19e'" onmouseout="this.style.borderColor='#233142'">
+        <div style="font-size:1.4rem;margin-bottom:10px;">📋</div>
+        <div style="font-size:0.92rem;font-weight:700;color:#e8eef7;margin-bottom:5px;">Free Blacklist Checker</div>
+        <div style="font-size:0.82rem;color:#9fb0c7;line-height:1.5;">Check your sending IP or domain against 7 major blacklists. See if your email could be getting filtered before it reaches the inbox.</div>
+        <div style="margin-top:12px;font-size:0.82rem;font-weight:700;color:#3de19e;">Check blacklist status →</div>
+      </a>
+      <a href="/dashboard/" style="display:block;background:#121923;border:1px solid #233142;border-radius:12px;padding:20px;text-decoration:none;transition:border-color .2s;" onmouseover="this.style.borderColor='#3de19e'" onmouseout="this.style.borderColor='#233142'">
+        <div style="font-size:1.4rem;margin-bottom:10px;">🛰️</div>
+        <div style="font-size:0.92rem;font-weight:700;color:#e8eef7;margin-bottom:5px;">Free Attack Surface Scan</div>
+        <div style="font-size:0.82rem;color:#9fb0c7;line-height:1.5;">SSL health, security headers, open ports, subdomain exposure, DNS anomalies — a full scan of your domain's attack surface.</div>
+        <div style="margin-top:12px;font-size:0.82rem;font-weight:700;color:#3de19e;">Run a free scan →</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/" class="nav-logo">EdgeIQ<span style="color:var(--green)"> Labs</span></a>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="mailto:support@edgeiqlabs.com">Support</a>
+    <a href="mailto:support@edgeiqlabs.com?subject=Finding%20Report">Report a Finding</a>
+  </div>
+  <div class="footer-copy">© 2026 EdgeIQ Labs</div>
+<p style="text-align:center;font-size:0.82rem;color:#4a5d78;margin:4px 0 0;"><a href="mailto:billing@edgeiqlabs.com" style="color:#4a5d78;">Billing</a></p>
+</footer>
+
+<script>
+const SCANNER_URL = 'https://edgeiq-inbox-shield.gpalmieri21.workers.dev';
+let lastResult = null;
+let lastDomain = null;
+
+const GRADE_COLOR = { A: '#3de19e', B: '#70f0a8', C: '#ffb347', D: '#ff8c42', F: '#ff6b6b' };
+
+function setPill(id, state) {
+  const el = document.getElementById('pill-' + id);
+  if (!el) return;
+  el.className = 'check-pill ' + state;
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  if (label) document.getElementById('progressLabel').textContent = label;
+}
+
+async function startScan() {
+  let raw = document.getElementById('domainInput').value.trim().toLowerCase();
+  raw = raw.replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+  if (!raw || !/^[a-z0-9][a-z0-9\-\.]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(raw)) {
+    document.getElementById('domainInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('domainInput').style.borderColor = '', 1200);
+    return;
+  }
+
+  lastDomain = raw;
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  btn.textContent = 'Scanning…';
+
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('resultsWrap').style.display = 'none';
+  document.getElementById('capturePanel').style.display = 'none';
+
+  ['spf','dmarc','dkim','mx','bimi'].forEach(id => setPill(id, ''));
+  setProgress(10, 'Querying DNS records…');
+
+  const STEPS = [
+    { pct: 25, label: 'Checking SPF…', pill: 'spf' },
+    { pct: 45, label: 'Checking DMARC…', pill: 'dmarc' },
+    { pct: 65, label: 'Checking DKIM selectors…', pill: 'dkim' },
+    { pct: 80, label: 'Checking MX records…', pill: 'mx' },
+    { pct: 90, label: 'Checking BIMI…', pill: 'bimi' },
+  ];
+
+  let stepIdx = 0;
+  const ticker = setInterval(() => {
+    if (stepIdx < STEPS.length) {
+      const s = STEPS[stepIdx];
+      setProgress(s.pct, s.label);
+      setPill(s.pill, 'scanning');
+      stepIdx++;
+    }
+  }, 800);
+
+  let result;
+  try {
+    const resp = await fetch(SCANNER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain: raw }),
+    });
+    result = await resp.json();
+  } catch (e) {
+    clearInterval(ticker);
+    btn.disabled = false;
+    btn.textContent = 'Scan Domain';
+    document.getElementById('progressWrap').style.display = 'none';
+    alert('Scan failed — please try again.');
+    return;
+  }
+
+  clearInterval(ticker);
+  setProgress(100, 'Complete!');
+  ['spf','dmarc','dkim','mx','bimi'].forEach(id => {
+    const present = result.checks?.[id]?.present;
+    setPill(id, present !== false ? 'done' : 'fail');
+  });
+
+  lastResult = result;
+  setTimeout(() => renderResults(result), 300);
+
+  btn.disabled = false;
+  btn.textContent = 'Scan Domain';
+}
+
+function renderResults(r) {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('resultsWrap').style.display = 'block';
+
+  // Grade
+  const grade = r.grade || 'F';
+  const gradeEl = document.getElementById('gradeCircle');
+  gradeEl.textContent = grade;
+  gradeEl.style.color = GRADE_COLOR[grade] || '#9fb0c7';
+  gradeEl.style.borderColor = GRADE_COLOR[grade] || '#9fb0c7';
+
+  document.getElementById('resultSummary').textContent = r.summary || '';
+
+  // Check cards
+  const grid = document.getElementById('checksGrid');
+  grid.innerHTML = '';
+  const checks = [
+    { key: 'spf', label: 'SPF' },
+    { key: 'dmarc', label: 'DMARC' },
+    { key: 'dkim', label: 'DKIM' },
+    { key: 'mx', label: 'MX Records' },
+    { key: 'bimi', label: 'BIMI' },
+  ];
+  checks.forEach(({ key, label }) => {
+    const c = r.checks?.[key];
+    if (!c) return;
+    const g = c.grade || (c.present ? 'A' : 'F');
+    const gColor = GRADE_COLOR[g] || '#9fb0c7';
+    const record = c.record || (c.selectors?.length ? 'selectors: ' + c.selectors.join(', ') : '') || (c.records?.length ? c.records.slice(0,2).join(', ') : '') || (c.present ? '✓' : '—');
+    grid.innerHTML += `
+      <div class="check-card">
+        <div class="check-card-header">
+          <span class="check-card-name">${label}</span>
+          <span class="check-card-grade" style="color:${gColor}">${g}</span>
+        </div>
+        <div class="check-card-record">${record}</div>
+      </div>`;
+  });
+
+  // Findings
+  const findings = (r.findings || []).sort((a, b) => {
+    const order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
+    return (order[a.severity] ?? 5) - (order[b.severity] ?? 5);
+  });
+  const fl = document.getElementById('findingsList');
+  fl.innerHTML = '';
+  findings.forEach(f => {
+    if (f.severity === 'info') return;
+    fl.innerHTML += `
+      <div class="finding-row ${f.severity}">
+        <div class="finding-sev ${f.severity}">${f.severity} · ${f.type.replace(/_/g,' ')}</div>
+        <div class="finding-msg">${f.message}</div>
+      </div>`;
+  });
+  if (fl.innerHTML === '') {
+    fl.innerHTML = '<p style="font-size:13px;color:var(--green)">No high/critical findings — great posture!</p>';
+  }
+
+  document.getElementById('captureTarget').textContent = lastDomain;
+}
+
+function showCapture() {
+  const panel = document.getElementById('capturePanel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  if (panel.style.display === 'block') {
+    document.getElementById('captureEmail').focus();
+    const emailEl = document.getElementById('captureEmail');
+    const proBuyBtn = document.getElementById('proBuyBtn');
+    // Pre-wire Stripe link with email
+    emailEl.addEventListener('input', () => {
+      const e = emailEl.value.trim();
+      if (e.includes('@')) {
+        proBuyBtn.href = `https://buy.stripe.com/bJeaEZeCn593g6E0487wA3q?prefilled_email=${encodeURIComponent(e)}`;
+      }
+    });
+    // Save pending signup so welcome page can register after Stripe payment
+    proBuyBtn.addEventListener('click', () => {
+      const e = emailEl.value.trim();
+      if (e && lastDomain) {
+        try { sessionStorage.setItem('shield_pending', JSON.stringify({ email: e, domain: lastDomain })); } catch (x) {}
+      }
+    }, { once: true });
+  }
+}
+
+async function submitCapture() {
+  const email = document.getElementById('captureEmail').value.trim();
+  if (!email || !email.includes('@')) return;
+
+  const btn = document.querySelector('.capture-submit');
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch('/api/inbox-shield-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, domain: lastDomain, plan: 'free' }),
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      document.getElementById('captureConfirm').style.display = 'block';
+      document.querySelector('.capture-form').style.display = 'none';
+      // Substack
+      try {
+        await fetch('https://edgeiqlabs.substack.com/api/v1/free?nojs=true', {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `email=${encodeURIComponent(email)}&first_url=${encodeURIComponent(window.location.href)}&source=inbox-shield`,
+        });
+      } catch {}
+    }
+  } catch {}
+
+  btn.textContent = 'Start monitoring →';
+  btn.disabled = false;
+}
+
+function resetScanner() {
+  document.getElementById('resultsWrap').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('capturePanel').style.display = 'none';
+  document.getElementById('domainInput').value = '';
+  document.getElementById('domainInput').focus();
+  lastResult = null;
+  lastDomain = null;
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+document.getElementById('domainInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startScan();
+});
+
+// Show subscribed banner if redirected from Stripe
+if (new URLSearchParams(location.search).get('subscribed') === '1') {
+  document.getElementById('subBanner').style.display = 'block';
+  history.replaceState({}, '', location.pathname);
+}
+</script>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<!-- Relay Affiliate Tracking -->
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>RelayIntegration.init({ relayBaseUrl: 'https://relay.edgeiqlabs.com' });</script>
+</body>
+</html>
