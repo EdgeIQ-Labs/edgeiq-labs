@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,110 +22,95 @@
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/docs/" />
   <style>
-    :root { --bg: #0b0f14; --card: #121923; --text: #e8eef7; --muted: #9fb0c7; --accent: #3dd9ff; --border: #233142; --ok: #70f0a8; --warn: #f0a83d; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    /* Page-specific styles — migrated to design system tokens */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+    
     .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
-    nav { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(11,15,20,0.92); backdrop-filter: blur(6px); z-index: 10; }
     .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 20px; }
     .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-    .nav-logo-img { height: 60px; width: auto; border-radius: 10px; }
     .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
-    .nav-brand-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--text); }
-    .nav-brand-name span { color: var(--accent); }
-    .nav-brand-tag { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
-    .nav-links { display: flex; align-items: center; gap: 6px; }
-    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.95rem; border-radius: 8px; }
-    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 8px 16px !important; border-radius: 8px !important; }
-    .nav-cta:hover { opacity: 0.88; }
+    .nav-brand-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--color-text-primary); }
+    .nav-brand-name span { color: var(--color-accent); }
+    .nav-brand-tag { font-size: 0.68rem; color: var(--color-text-secondary); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
     .doc-header { padding: 64px 0 40px; }
     .doc-header h1 { font-size: 2.2rem; margin-bottom: 12px; }
-    .doc-header p { color: var(--muted); font-size: 1.05rem; }
+    .doc-header p { color: var(--color-text-secondary); font-size: 1.05rem; }
     .method-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 32px 0; }
-    .method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s, transform 0.2s; }
-    .method-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .method-card h3 { font-size: 1rem; margin-bottom: 6px; color: var(--text); }
-    .method-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 0; }
-    .method-card .badge { display: inline-block; background: rgba(61,217,255,0.1); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); font-size: 0.68rem; border-radius: 5px; padding: 2px 7px; font-family: monospace; margin-bottom: 6px; }
-    h2 { font-size: 1.45rem; margin: 40px 0 14px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .method-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s, transform 0.2s; }
+    .method-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+    .method-card h3 { font-size: 1rem; margin-bottom: 6px; color: var(--color-text-primary); }
+    .method-card p { color: var(--color-text-secondary); font-size: 0.85rem; margin-bottom: 0; }
+    .method-card .badge { display: inline-block; background: rgba(61,217,255,0.1); border: 1px solid rgba(61,217,255,0.25); color: var(--color-accent); font-size: 0.68rem; border-radius: 5px; padding: 2px 7px; font-family: monospace; margin-bottom: 6px; }
+    h2 { font-size: 1.45rem; margin: 40px 0 14px; padding-top: 40px; border-top: 1px solid var(--color-border); }
     h2:first-of-type { border-top: none; padding-top: 0; }
-    h3 { font-size: 1.05rem; margin: 20px 0 10px; color: var(--accent); }
-    h4 { font-size: 0.95rem; margin: 14px 0 8px; color: var(--text); }
-    p { color: var(--muted); margin-bottom: 12px; }
-    ul, ol { color: var(--muted); margin: 0 0 12px 20px; }
+    h3 { font-size: 1.05rem; margin: 20px 0 10px; color: var(--color-accent); }
+    h4 { font-size: 0.95rem; margin: 14px 0 8px; color: var(--color-text-primary); }
+    p { color: var(--color-text-secondary); margin-bottom: 12px; }
+    ul, ol { color: var(--color-text-secondary); margin: 0 0 12px 20px; }
     li { margin-bottom: 5px; }
-    code { background: rgba(61,217,255,0.08); padding: 2px 5px; border-radius: 4px; font-size: 0.88em; color: var(--accent); }
-    pre { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow-x: auto; margin: 12px 0; }
-    pre code { background: none; padding: 0; color: var(--text); font-size: 0.83rem; }
-    .step-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 12px 0; }
+    code { background: rgba(61,217,255,0.08); padding: 2px 5px; border-radius: 4px; font-size: 0.88em; color: var(--color-accent); }
+    pre { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 14px; overflow-x: auto; margin: 12px 0; }
+    pre code { background: none; padding: 0; color: var(--color-text-primary); font-size: 0.83rem; }
+    .step-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 16px; margin: 12px 0; }
     .step-box h4 { margin-top: 0; }
     .tier-box { border-radius: 10px; padding: 16px; margin: 10px 0; }
     .tier-free { background: rgba(112,240,168,0.06); border: 1px solid rgba(112,240,168,0.2); }
     .tier-pro { background: rgba(61,217,255,0.06); border: 1px solid rgba(61,217,255,0.2); }
     .tier-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
     .tier-free .tier-label { color: var(--ok); }
-    .tier-pro .tier-label { color: var(--accent); }
-    .cta-box { background: var(--card); border: 1px solid var(--accent); border-radius: 14px; padding: 22px; margin: 28px 0; text-align: center; }
-    .cta-box h3 { color: var(--text); margin-bottom: 8px; }
+    .tier-pro .tier-label { color: var(--color-accent); }
+    .cta-box { background: var(--color-bg-surface); border: 1px solid var(--color-accent); border-radius: 14px; padding: 22px; margin: 28px 0; text-align: center; }
+    .cta-box h3 { color: var(--color-text-primary); margin-bottom: 8px; }
     .cta-box p { margin-bottom: 14px; }
-    .cta-btn { display: inline-block; background: var(--accent); color: #071018; font-weight: 700; padding: 10px 20px; border-radius: 10px; text-decoration: none; }
-    .footer-cta { padding: 40px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; }
+    .cta-btn { display: inline-block; background: var(--color-accent); color: #071018; font-weight: 700; padding: 10px 20px; border-radius: 10px; text-decoration: none; }
+    .footer-cta { padding: 40px 0; border-top: 1px solid var(--color-border); margin-top: 40px; text-align: center; }
     .tool-anchor { scroll-margin-top: 80px; }
-    .tool-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 16px 0; }
-    .tool-card h3 { margin-top: 0; color: var(--text); }
+    .tool-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; margin: 16px 0; }
+    .tool-card h3 { margin-top: 0; color: var(--color-text-primary); }
     .checklist { list-style: none; padding: 0; margin: 8px 0; }
     .checklist li { padding-left: 22px; position: relative; }
     .checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 700; }
-    .checklist.pro li::before { color: var(--accent); }
+    .checklist.pro li::before { color: var(--color-accent); }
     .platform-icons { display: flex; gap: 10px; margin: 12px 0; }
-    .platform-icon { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+    .platform-icon { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
     .coming-soon { background: rgba(61,217,255,0.05); border: 1px dashed rgba(61,217,255,0.3); border-radius: 10px; padding: 16px; margin: 16px 0; text-align: center; }
-    .coming-soon p { color: var(--muted); font-size: 0.88rem; margin-bottom: 0; }
-    a { color: var(--accent); }
-  
+    .coming-soon p { color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 0; }
+
     /* Nav override — standardized */
-    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
-    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
-    .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; align-items: center; gap: 6px; }
-    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
-    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
-    .nav-cta:hover { opacity: 0.88; }
     .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
     .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
     .product-strip-inner::-webkit-scrollbar { display: none; }
     .product-strip-inner::after { content: ""; flex: 0 0 28px; }
     .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
     .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
-    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
-    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
-    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
-    .nav-mobile-menu.open { display: flex; }
-    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
-    .nav-mobile-menu a:last-child { border-bottom: none; }
-    .nav-mobile-menu a:hover { color: #e8eef7; }
-    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
-    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
-    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+     .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
-  <nav>
-  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products/">Products</a>
-    <a href="/blog/">Blog</a>
-    <a href="/products/" class="nav-cta">Get Started</a>
-  </div>
-  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
-</nav>
+    <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 <div class="product-strip">
   <div class="product-strip-inner">
     <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
@@ -1196,5 +1181,36 @@ document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(functio
   });
 });
 </script>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 </body>
 </html>

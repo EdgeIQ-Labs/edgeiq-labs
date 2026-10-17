@@ -1,5 +1,61 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Fix-It Engine — EdgeIQ Docs</title><meta name="description" content="Automate remediation steps from EdgeIQ findings."/><style>:root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}.container{max-width:900px;margin:0 auto;padding:0 20px}nav{border-bottom:1px solid var(--border);background:rgba(11,15,20,.92)}.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 0;gap:20px}.brand{font-weight:800;color:var(--text);text-decoration:none}.brand span{color:var(--accent)}.links a{color:var(--muted);text-decoration:none;margin-left:12px}.hero{padding:44px 0 22px}.hero h1{font-size:clamp(1.8rem,5vw,2.5rem)}.hero p{color:var(--muted);margin-top:8px}.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0}.card h2{margin-bottom:10px}.card p,.card li{color:var(--muted)}ul,ol{margin:8px 0 12px 20px}code{background:rgba(61,217,255,.1);color:var(--accent);padding:2px 6px;border-radius:4px}.related a{color:var(--accent);text-decoration:none}.footer{border-top:1px solid var(--border);margin-top:34px;padding:20px 0;color:var(--muted);font-size:.85rem}</style><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
-</head><body><nav><div class="container"><div class="nav-inner"><a href="../" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="../">Tools</a><a href="../blog/">Blog</a><a href="./">Docs</a><a href="../#contact">Contact</a></div></div></div></nav><section class="hero"><div class="container"><h1>Fix-It Engine</h1><p>Automate remediation steps from EdgeIQ findings.</p></div></section><main class="container"><div class="card"><h2>Setup</h2><p>Enable Fix-It with any compatible tool plan and define action policies per severity.</p><ul><li>Auto SSL Renew</li><li>Header Auto-Fix</li><li>GitHub Issue Creator</li></ul></div>
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Fix-It Engine — EdgeIQ Docs</title><meta name="description" content="Automate remediation steps from EdgeIQ findings."/><style>
+    /* Page-specific styles — migrated to design system tokens */
+*{box-sizing:border-box;margin:0;padding:0}.container{max-width:900px;margin:0 auto;padding:0 20px}nav{border-bottom:1px solid var(--color-border);background:rgba(11,15,20,.92)}.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 0;gap:20px}.brand{font-weight:800;color:var(--color-text-primary);text-decoration:none}.brand span{color:var(--color-accent)}.links a{color:var(--color-text-secondary);text-decoration:none;margin-left:12px}.hero{padding:44px 0 22px}.hero h1{font-size:clamp(1.8rem,5vw,2.5rem)}.hero p{color:var(--color-text-secondary);margin-top:8px}.card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:16px;margin:14px 0}.card h2{margin-bottom:10px}.card p,.card li{color:var(--color-text-secondary)}ul,ol{margin:8px 0 12px 20px}code{background:rgba(61,217,255,.1);color:var(--color-accent);padding:2px 6px;border-radius:4px}.related a{color:var(--color-accent);text-decoration:none}.footer{border-top:1px solid var(--color-border);margin-top:34px;padding:20px 0;color:var(--color-text-secondary);font-size:.85rem}
+  </style><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
+</head><body>  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav><section class="hero"><div class="container"><h1>Fix-It Engine</h1><p>Automate remediation steps from EdgeIQ findings.</p></div></section><main class="container"><div class="card"><h2>Setup</h2><p>Enable Fix-It with any compatible tool plan and define action policies per severity.</p><ul><li>Auto SSL Renew</li><li>Header Auto-Fix</li><li>GitHub Issue Creator</li></ul></div>
 <div class="card"><h2>How to Use</h2><ol><li>Set approval mode (auto vs human-review).</li><li>Map findings to actions and cooldown windows.</li><li>Run in dry-run for 7 days before full automation.</li></ol></div>
 <div class="card"><h2>Troubleshooting</h2><ul><li><strong>Too many actions:</strong> raise severity threshold and add dedupe.</li><li><strong>No actions firing:</strong> verify webhook/credential config.</li></ul></div>
-<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div><div class="footer">© 2026 EdgeIQ Labs Docs</div></main></body></html>
+<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div><div class="footer">© 2026 EdgeIQ Labs Docs</div></main>  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
+</body></html>

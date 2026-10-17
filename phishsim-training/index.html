@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,46 +8,20 @@
   <meta name="description" content="Learn to recognize and avoid phishing attacks with EdgeIQ Labs security awareness training." />
   <meta name="robots" content="noindex, nofollow" />
   <style>
-    :root {
-      --bg: #0b0f14;
-      --card: #121923;
-      --card2: #0f1620;
-      --text: #e8eef7;
-      --muted: #9fb0c7;
-      --accent: #3dd9ff;
-      --border: #233142;
-      --ok: #70f0a8;
-      --warn: #ffb347;
-      --danger: #ff6b6b;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
+    /* Page-specific styles — migrated to design system tokens */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* ── Nav ── */
-    nav {
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0;
-      background: rgba(11,15,20,0.95);
-      backdrop-filter: blur(6px);
-      z-index: 10;
-    }
     .container { max-width: 860px; margin: 0 auto; padding: 0 20px; }
     .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
     .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo-img { height: 54px; width: auto; border-radius: 8px; }
     .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
-    .nav-brand-name { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--text); }
-    .nav-brand-name span { color: var(--accent); }
-    .nav-brand-tag { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-brand-name { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--color-text-primary); }
+    .nav-brand-name span { color: var(--color-accent); }
+    .nav-brand-tag { font-size: 0.6rem; color: var(--color-text-secondary); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
     .nav-right { display: flex; align-items: center; gap: 10px; }
-    .nav-right a { color: var(--muted); text-decoration: none; font-size: 0.82rem; padding: 5px 8px; border-radius: 6px; }
-    .nav-right a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-right a { color: var(--color-text-secondary); text-decoration: none; font-size: 0.82rem; padding: 5px 8px; border-radius: 6px; }
+    .nav-right a:hover { color: var(--color-text-primary); background: rgba(255,255,255,0.05); }
 
     /* ── Page shell ── */
     .training-wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
@@ -66,15 +40,14 @@
     .caught-icon { font-size: 2.4rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
     .caught-text h1 { font-size: 1.5rem; font-weight: 800; color: #ff9090; margin-bottom: 6px; }
     .caught-text p { color: #c8a8a8; font-size: 0.95rem; line-height: 1.55; }
-    @media (max-width: 540px) {
-      .caught-banner { flex-direction: column; gap: 12px; padding: 20px; }
+    
       .caught-text h1 { font-size: 1.25rem; }
     }
 
     /* ── Progress indicator ── */
     .progress-bar-wrap {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 14px 20px;
       margin-bottom: 24px;
@@ -82,15 +55,15 @@
       align-items: center;
       gap: 14px;
     }
-    .progress-label { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+    .progress-label { font-size: 0.8rem; color: var(--color-text-secondary); white-space: nowrap; }
     .progress-track { flex: 1; height: 6px; background: rgba(35,49,66,0.8); border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s ease; }
-    .progress-pct { font-size: 0.8rem; color: var(--accent); font-weight: 700; white-space: nowrap; }
+    .progress-fill { height: 100%; background: var(--color-accent); border-radius: 3px; transition: width 0.4s ease; }
+    .progress-pct { font-size: 0.8rem; color: var(--color-accent); font-weight: 700; white-space: nowrap; }
 
     /* ── Section cards ── */
     .section-card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
       border-radius: 14px;
       padding: 24px 28px;
       margin-bottom: 18px;
@@ -100,13 +73,12 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--accent);
+      color: var(--color-accent);
       margin-bottom: 14px;
     }
     .section-card p { font-size: 0.95rem; color: #c8d8ea; line-height: 1.65; }
     .section-card p + p { margin-top: 10px; }
-    @media (max-width: 540px) {
-      .section-card { padding: 18px 16px; }
+    
     }
 
     /* ── Red flags list ── */
@@ -158,7 +130,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 0.68rem;
       font-weight: 800;
-      color: var(--accent);
+      color: var(--color-accent);
       margin-top: 2px;
     }
 
@@ -169,7 +141,7 @@
       gap: 10px;
       margin-top: 4px;
     }
-    @media (max-width: 540px) { .fundamentals-grid { grid-template-columns: 1fr; } }
+     }
     .fund-item {
       background: #0d1620;
       border: 1px solid rgba(35,49,66,0.8);
@@ -179,12 +151,12 @@
     .fund-item .fund-title {
       font-size: 0.78rem;
       font-weight: 700;
-      color: var(--text);
+      color: var(--color-text-primary);
       margin-bottom: 4px;
     }
     .fund-item p {
       font-size: 0.82rem;
-      color: var(--muted);
+      color: var(--color-text-secondary);
       line-height: 1.5;
     }
 
@@ -193,20 +165,20 @@
     .quiz-q {
       margin-bottom: 20px;
       padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--color-border);
     }
     .quiz-q:last-of-type { border-bottom: none; padding-bottom: 0; }
     .quiz-q-text {
       font-size: 0.97rem;
       font-weight: 600;
-      color: var(--text);
+      color: var(--color-text-primary);
       margin-bottom: 12px;
       line-height: 1.5;
     }
     .quiz-q-num {
       display: inline-block;
       background: rgba(61,217,255,0.12);
-      color: var(--accent);
+      color: var(--color-accent);
       font-size: 0.7rem;
       font-weight: 700;
       padding: 2px 7px;
@@ -216,11 +188,11 @@
     .quiz-choices { display: flex; flex-direction: column; gap: 8px; }
     .quiz-choice {
       background: #0d1620;
-      border: 1px solid var(--border);
+      border: 1px solid var(--color-border);
       border-radius: 9px;
       padding: 11px 14px;
       font-size: 0.88rem;
-      color: var(--muted);
+      color: var(--color-text-secondary);
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s, color 0.15s;
       text-align: left;
@@ -229,7 +201,7 @@
     }
     .quiz-choice:hover:not(:disabled) {
       border-color: rgba(61,217,255,0.4);
-      color: var(--text);
+      color: var(--color-text-primary);
     }
     .quiz-choice.correct {
       background: rgba(112,240,168,0.1);
@@ -272,14 +244,14 @@
       display: none;
       margin-top: 18px;
       background: #0d1620;
-      border: 1px solid var(--border);
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 18px 20px;
       text-align: center;
     }
     .quiz-score-wrap.show { display: block; }
-    .quiz-score-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
-    .quiz-score-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+    .quiz-score-num { font-size: 2rem; font-weight: 800; color: var(--color-accent); }
+    .quiz-score-label { font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 4px; }
 
     /* ── Complete button ── */
     .complete-wrap { margin-top: 28px; text-align: center; }
@@ -308,15 +280,15 @@
       cursor: default;
       transform: none;
     }
-    .complete-note { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
+    .complete-note { font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 8px; }
 
     /* ── Unknown scenario ── */
     .unknown-wrap { text-align: center; padding: 60px 20px; }
     .unknown-wrap h2 { font-size: 1.4rem; margin-bottom: 12px; }
-    .unknown-wrap p { color: var(--muted); margin-bottom: 20px; }
+    .unknown-wrap p { color: var(--color-text-secondary); margin-bottom: 20px; }
     .btn-home {
       display: inline-block;
-      background: var(--accent);
+      background: var(--color-accent);
       color: #071018;
       font-weight: 700;
       padding: 10px 22px;
@@ -327,44 +299,78 @@
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--color-border);
       text-align: center;
       padding: 24px 0 36px;
-      color: var(--muted);
+      color: var(--color-text-secondary);
       font-size: 0.82rem;
     }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--text); }
+    footer a { color: var(--color-text-secondary); text-decoration: none; }
+    footer a:hover { color: var(--color-text-primary); }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
 
-<nav>
-  <div class="container nav-inner">
-    <a class="nav-brand" href="/">
-      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" />
-      <div class="nav-wordmark">
-        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
-        <div class="nav-brand-tag">Security Intelligence</div>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
       </div>
-    </a>
-    <div class="nav-right">
-      <a href="/phishsim/">PhishSim Dashboard</a>
-      <a href="/">Home</a>
     </div>
-  </div>
-</nav>
+  </nav>
 
 <div class="training-wrap" id="training-wrap">
   <!-- Rendered by JS -->
 </div>
 
-<footer>
-  <div class="container">
-    <p>PhishSim Security Awareness Training &mdash; <a href="/">EdgeIQ Labs</a></p>
-  </div>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
 // ─────────────────────────────────────────────────────────────────────────────

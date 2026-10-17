@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,63 +21,57 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/blog/ai-phishing-attacks-2026-employee-training.html" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
   <style>
-    :root { --bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--ok:#70f0a8;--warn:#f0a83d; }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
-    .container{max-width:740px;margin:0 auto;padding:0 20px;}
-    nav{position:sticky;top:0;z-index:100;background:rgba(11,15,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;}
-    .nav-logo{font-weight:800;font-size:15px;color:var(--text);text-decoration:none;letter-spacing:-0.02em;flex-shrink:0;}
-    .nav-logo span{color:var(--accent);}
-    .nav-links{display:flex;align-items:center;gap:6px;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.92rem;border-radius:8px;}
-    .nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
-    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;white-space:nowrap;flex-shrink:0;}
-    .nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0;}
-    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;transition:all 0.2s;}
-    .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-    .nav-hamburger.open span:nth-child(2){opacity:0;}
-    .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;position:sticky;top:56px;z-index:8;}
-    .nav-mobile-menu.open{display:flex;}
-    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;font-weight:500;border-bottom:1px solid rgba(35,49,66,0.5);}
-    .nav-mobile-menu a:last-child{border-bottom:none;}
-    .nav-mobile-menu .mob-cta{margin-top:12px;background:#3dd9ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;border-bottom:none !important;}
-    .nav-mobile-menu .mob-section{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4a6080;padding:12px 4px 4px;border-bottom:none !important;}
-    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
-    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
-    .product-strip-inner::-webkit-scrollbar{display:none;}
-    .product-strip-inner::after{content:"";flex:0 0 28px;}
-    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
-    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
-    @media(max-width:720px){.nav-links{display:none !important;}.nav-hamburger{display:flex !important;}.product-strip-inner a{padding:4px 8px;font-size:0.75rem;}}
-    .article-header{padding:64px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;}
-    .article-header h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin-bottom:16px;}
-    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:20px;}
-    .tag{display:inline-block;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
-    .lead{font-size:1.1rem;color:var(--text);margin-bottom:28px;border-left:3px solid var(--accent);padding-left:18px;}
-    h2{font-size:1.5rem;margin:36px 0 14px;}
-    h3{font-size:1.15rem;margin:24px 0 10px;color:var(--accent);}
-    p{color:var(--muted);margin-bottom:18px;}
-    ul,ol{color:var(--muted);margin:0 0 18px 22px;}
-    li{margin-bottom:8px;}
-    .step-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;}
-    .step-card h3{margin-top:0;color:var(--text);}
-    .fact-box{background:rgba(61,217,255,0.05);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:16px 18px;margin:18px 0;}
-    .fact-box p{color:var(--accent);font-size:0.95rem;margin-bottom:0;}
-    .warn-box{background:rgba(240,168,61,0.06);border:1px solid rgba(240,168,61,0.25);border-radius:10px;padding:16px 18px;margin:18px 0;}
-    .warn-box p{color:var(--warn);font-size:0.95rem;margin-bottom:0;}
-    .cta-box{background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:40px 0;text-align:center;}
-    .cta-box h3{color:var(--text);font-size:1.2rem;margin-bottom:10px;}
-    .cta-box p{color:var(--muted);margin-bottom:18px;}
-    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 22px;border-radius:10px;text-decoration:none;}
-    .checklist-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:18px 0;}
-    .checklist-box h3{margin-bottom:14px;}
-    .checklist-box li{margin-bottom:10px;}
-    .tool-tag{display:inline-block;background:rgba(112,240,168,0.08);border:1px solid rgba(112,240,168,0.2);color:var(--ok);font-size:0.7rem;border-radius:4px;padding:2px 7px;font-family:monospace;margin-right:4px;}
-    .footer-cta{padding:48px 0;border-top:1px solid var(--border);margin-top:48px;text-align:center;}
-    footer{background:#0a0e14;border-top:1px solid var(--border);padding:28px 24px;text-align:center;font-size:0.82rem;color:var(--muted);}
-    footer a{color:var(--muted);}
+    /* Blog-specific styles — all values mapped to design system tokens */
+    .container { max-width: 740px; }
+    .article-header { padding: var(--space-3xl) 0 var(--space-2xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2xl); }
+    .article-header h1 { font-size: clamp(1.8rem,5vw,2.6rem); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
+    .article-meta { font-size: var(--text-sm); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: var(--space-lg); }
+    .tag { display:inline-block; background: var(--color-accent-subtle); border:1px solid rgba(34,211,238,0.2); color: var(--color-accent); font-size: var(--text-xs); border-radius: var(--radius-sm); padding:3px 8px; margin-right:6px; font-family: var(--font-mono); }
+    .lead { font-size: var(--text-lg); color: var(--color-text-primary); margin-bottom: var(--space-xl); border-left:3px solid var(--color-accent); padding-left: var(--space-lg); }
+    h2 { font-size: var(--text-2xl); margin: var(--space-2xl) 0 var(--space-md); }
+    h3 { font-size: var(--text-xl); margin: var(--space-xl) 0 var(--space-sm); color: var(--color-accent); }
+    p { color: var(--color-text-secondary); margin-bottom: var(--space-lg); }
+    ul, ol { color: var(--color-text-secondary); margin: 0 0 var(--space-lg) 22px; }
+    li { margin-bottom: var(--space-sm); }
+    .step-card { background: var(--color-bg-surface); border:1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-lg) 0; }
+    .step-card h3 { margin-top:0; color: var(--color-text-primary); }
+    .fact-box { background: var(--color-accent-subtle); border:1px solid rgba(34,211,238,0.2); border-radius: var(--radius-md); padding: var(--space-md) var(--space-lg); margin: var(--space-lg) 0; }
+    .fact-box p { color: var(--color-accent); font-size: var(--text-base); margin-bottom:0; }
+    .warn-box { background: rgba(240,168,61,0.06); border:1px solid rgba(240,168,61,0.25); border-radius: var(--radius-md); padding: var(--space-md) var(--space-lg); margin: var(--space-lg) 0; }
+    .warn-box p { color:#f0a83d; font-size: var(--text-base); margin-bottom:0; }
+    .cta-box { background: var(--color-bg-surface); border:1px solid var(--color-accent); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align:center; }
+    .cta-box h3 { color: var(--color-text-primary); font-size: var(--text-xl); margin-bottom: var(--space-md); }
+    .cta-box p { color: var(--color-text-secondary); margin-bottom: var(--space-lg); }
+    .cta-btn { display:inline-block; background: var(--color-accent); color:#000; font-weight:700; padding:11px 22px; border-radius: var(--radius-md); text-decoration:none; }
+    .checklist-box { background: var(--color-bg-surface); border:1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-lg) 0; }
+    .checklist-box h3 { margin-bottom: var(--space-md); }
+    .checklist-box li { margin-bottom: var(--space-md); }
+    .footer-cta { padding: var(--space-2xl) 0; border-top:1px solid var(--color-border); margin-top: var(--space-2xl); text-align:center; }
+
+    /* Product strip — blog-specific element */
+    .product-strip { background: var(--color-bg-light-band); border-bottom:1px solid var(--color-border); position:sticky; top:68px; z-index:9; }
+    .product-strip-inner { display:flex; align-items:center; gap:2px; padding:5px 0 5px var(--space-lg); overflow-x:auto; scrollbar-width:none; max-width:980px; margin:0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display:none; }
+    .product-strip-inner::after { content:""; flex:0 0 28px; }
+    .product-strip-inner a { display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight:600; text-decoration:none; white-space:nowrap; transition:background var(--transition-fast); }
+    .product-strip-inner a:hover { background:rgba(255,255,255,0.06); }
+
+    /* Mobile menu — blog-specific */
+    .nav-mobile-menu { display:none; flex-direction:column; background: var(--color-bg-surface); border-top:1px solid var(--color-border); padding: var(--space-md) var(--space-lg) var(--space-lg); position:sticky; top:68px; z-index:8; }
+    .nav-mobile-menu.open { display:flex; }
+    .nav-mobile-menu a { color: var(--color-text-secondary); text-decoration:none; padding:10px 4px; font-size: var(--text-sm); font-weight:500; border-bottom:1px solid var(--color-border); }
+    .nav-mobile-menu a:last-child { border-bottom:none; }
+    .nav-mobile-menu .mob-cta { margin-top: var(--space-md); background: var(--color-accent); color:#000 !important; font-weight:700; text-align:center; padding:11px !important; border-radius: var(--radius-md); border-bottom:none !important; }
+    .nav-mobile-menu .mob-section { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color: var(--color-text-muted); padding: var(--space-md) 4px 4px; border-bottom:none !important; }
+
+    @media(max-width:768px) {
+      .nav__links { display:none !important; }
+      .nav__hamburger { display:block !important; }
+      .product-strip-inner a { padding:4px 8px; font-size: var(--text-xs); }
+    }
   </style>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BlogPosting","headline":"Why AI-Generated Phishing Emails Are Impossible to Spot in 2026 — And How to Train Your Team","description":"AI tools now generate personalised phishing emails with perfect grammar, correct branding, and context scraped from LinkedIn. Click rates are 4x higher than traditional templates. Here's what changed and how phishing simulations are the only defence that works.","image":"https://edgeiqlabs.com/og-preview.png","datePublished":"2026-05-17","dateModified":"2026-05-17","author":{"@type":"Organization","name":"EdgeIQ Labs","url":"https://edgeiqlabs.com"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://edgeiqlabs.com/blog/ai-phishing-attacks-2026-employee-training.html"}}
@@ -85,16 +79,29 @@
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav>
-  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products/">Products</a>
-    <a href="/blog/">Blog</a>
-    <a href="/products/" class="nav-cta">Get Started</a>
-  </div>
-  <button class="nav-hamburger" id="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('nav-mobile-menu').classList.toggle('open')" aria-label="Menu"><span></span><span></span><span></span></button>
-</nav>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu" onclick="document.getElementById('nav-mobile-menu').classList.toggle('open')">☰</button>
+      </div>
+    </div>
+  </nav>
+
 <div class="nav-mobile-menu" id="nav-mobile-menu">
   <span class="mob-section">Navigation</span>
   <a href="/">Home</a><a href="/products/">All Products</a><a href="/blog/">Blog</a>
@@ -210,15 +217,15 @@
   <p>None of those technical controls, however, prevent an attacker who has compromised a legitimate email account. When the attack arrives from a real, trusted address — from your actual CFO's email, or from a real supplier's compromised account — technical filters won't catch it. At that point, the only thing standing between your organisation and a successful breach is an employee who has been trained to pause, question the request, and verify through a separate channel. That's what simulation builds.</p>
 
   
-    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
-      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
-      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-xl);margin:var(--space-2xl) 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:var(--space-sm);">📬</div>
+      <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-md);line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
       <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
-        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
-        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+        <input type="email" required placeholder="you@company.com" class="input" style="flex:1;"/>
+        <button type="submit" class="btn btn--primary">Subscribe →</button>
       </form>
-      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:var(--text-sm);margin-top:var(--space-md);">✅ You're in. Check your inbox.</div>
     </div>
     <div class="cta-box">
     <h3>Start Running Phishing Simulations in 60 Seconds</h3>
@@ -228,9 +235,38 @@
 
 </div>
 
-<footer>
-  <p>© 2026 EdgeIQ Labs · <a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Service</a> · <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
+
 <script>
 function blogEmailSignup(e,form){
   e.preventDefault();

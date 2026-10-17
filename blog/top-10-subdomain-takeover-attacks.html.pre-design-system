@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top 10 Subdomain Takeover Attacks and How to Prevent Them — EdgeIQ Labs</title>
+  <meta name="description" content="Subdomain takeovers are an overlooked but critical attack vector. Learn how attackers find them, why they're dangerous, and how to prevent them from happening to your domains." />
+  <meta property="og:title" content="Top 10 Subdomain Takeover Attacks and How to Prevent Them" />
+  <meta property="og:description" content="Subdomain takeovers are an overlooked but critical attack vector. Learn how attackers find them, why they're dangerous, and how to prevent them." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/top-10-subdomain-takeover-attacks.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Top 10 Subdomain Takeover Attacks and How to Prevent Them" />
+  <meta name="twitter:description" content="Subdomain takeovers are an overlooked but critical attack vector. Learn how attackers find them, why they're dangerous, and how to prevent them." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/top-10-subdomain-takeover-attacks.html" />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #f0a83d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container { max-width: 740px; margin: 0 auto; padding: 0 20px; }
+    nav {
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(11,15,20,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 20px; }
+    .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-logo-img { height: 60px; width: auto; border-radius: 10px; }
+    .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+    .nav-brand-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-brand-name span { color: var(--accent); }
+    .nav-brand-tag { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.95rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 8px 16px !important; border-radius: 8px !important; }
+    .nav-cta:hover { opacity: 0.88; }
+    .article-header { padding: 64px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+    .article-header h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin-bottom: 16px; }
+    .article-meta { font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 20px; }
+    .tag { display: inline-block; background: rgba(61,217,255,0.08); border: 1px solid rgba(61,217,255,0.2); color: var(--accent); font-size: 0.7rem; border-radius: 5px; padding: 3px 8px; margin-right: 6px; font-family: monospace; }
+    .lead { font-size: 1.1rem; color: var(--text); margin-bottom: 28px; border-left: 3px solid var(--accent); padding-left: 18px; }
+    h2 { font-size: 1.5rem; margin: 36px 0 14px; }
+    h3 { font-size: 1.15rem; margin: 24px 0 10px; color: var(--accent); }
+    p { color: var(--muted); margin-bottom: 18px; }
+    ul, ol { color: var(--muted); margin: 0 0 18px 22px; }
+    li { margin-bottom: 8px; }
+    .attack-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      margin: 20px 0;
+    }
+    .attack-card .number { font-size: 0.75rem; color: var(--warn); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+    .attack-card h3 { margin-top: 0; }
+    .attack-card .severity { display: inline-block; background: rgba(240,168,61,0.12); border: 1px solid rgba(240,168,61,0.3); color: var(--warn); font-size: 0.72rem; border-radius: 5px; padding: 3px 8px; font-family: monospace; margin-bottom: 10px; }
+    .cta-box {
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 28px;
+      margin: 40px 0;
+      text-align: center;
+    }
+    .cta-box h3 { color: var(--text); font-size: 1.2rem; margin-bottom: 10px; }
+    .cta-box p { color: var(--muted); margin-bottom: 18px; }
+    .cta-btn { display: inline-block; background: var(--accent); color: #071018; font-weight: 700; padding: 11px 22px; border-radius: 10px; text-decoration: none; }
+    code { background: rgba(61,217,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; color: var(--accent); }
+    pre { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; overflow-x: auto; margin: 18px 0; }
+    pre code { background: none; padding: 0; color: var(--text); font-size: 0.85rem; }
+    .footer-cta { padding: 48px 0; border-top: 1px solid var(--border); margin-top: 48px; text-align: center; }
+
+    /* Nav override — standardized */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Top 10 Subdomain Takeover Attacks and How to Prevent Them",
+    "description": "Subdomain takeovers are an overlooked but critical attack vector. Learn how attackers find them, why they're dangerous, and how to prevent them.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-04-27",
+    "dateModified": "2026-04-27",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/top-10-subdomain-takeover-attacks.html"
+    }
+  }
+  </script>
+
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+  <nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/blog/">Blog</a>
+    <a href="/products/" class="nav-cta">Get Started</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">April 27, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Subdomain Takeover</span><span class="tag">Attack Surface</span><span class="tag">DNS</span></div>
+      <h1>Top 10 Subdomain Takeover Attacks and How to Prevent Them</h1>
+      <p class="lead">Subdomain takeovers are one of the most overlooked — and most exploited — attack vectors on the web today. They're easy to find, easy to exploit, and small businesses and enterprises alike leave themselves wide open.</p>
+    </div>
+
+    <p>Here's the unsettling truth: when you register a domain, you're not just responsible for the main site. Every subdomain you create — <code>api.yoursite.com</code>, <code>staging.yoursite.com</code>, <code>docs.yoursite.com</code> — is your responsibility too. And attackers know it.</p>
+
+    <p>A subdomain takeover happens when a DNS record (usually a CNAME) points to a service you've abandoned — like a GitHub Pages site you deleted, a Heroku app you let expire, or an AWS S3 bucket you removed. An attacker notices the dangling DNS record, claims the target service, and now <em>your</em> subdomain points to <em>their</em> content.</p>
+
+    <p>The consequences range from phishing campaigns that abuse your brand reputation to full cookie-based session hijacking. Here's what this attack looks like in practice.</p>
+
+    <div class="attack-card">
+      <div class="number">Attack #1 — Abandoned GitHub Pages</div>
+      <span class="severity">Severity: HIGH</span>
+      <h3>The Classic</h3>
+      <p>A CNAME record points to <code>yoursite.github.io</code>, but the GitHub Pages site was deleted. Attacker creates a new GitHub Pages site at that same URL and serves malicious content under your subdomain. Your users see <code>secure.yoursite.com</code> — but it's not your server.</p>
+      <p><strong>Real example:</strong> A financial services firm had <code>portal.yoursite.com</code> pointing to a GitHub Pages site that hadn't been maintained in 2 years. Security researchers found it, claimed the GitHub Pages, and demonstrated full credential capture.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #2 — Expired Heroku App</div>
+      <span class="severity">Severity: HIGH</span>
+      <h3>The "It's Just a Staging Site" Trap</h3>
+      <p>Dev teams spin up Heroku apps for testing, then forget to take them down or remove the DNS entry. The CNAME still points to <code>yourapp.herokuapp.com</code>. Attacker deploys a fake login portal there. Your subdomain — which users trust — becomes a credential harvesting tool.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #3 — AWS S3 Bucket That No Longer Exists</div>
+      <span class="severity">Severity: MEDIUM-HIGH</span>
+      <h3>The Accidental Brand Impersonator</h3>
+      <p>DNS points <code>assets.yoursite.com</code> → <code>yoursite-assets.s3.amazonaws.com</code>. You deleted the bucket. Attacker creates a new bucket with that exact name and hosts phishing content. Your users get served malicious files from what appears to be your domain.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #4 — Shopify App After Cancellation</div>
+      <span class="severity">Severity: MEDIUM</span>
+      <h3>The Subscription That Bounces</h3>
+      <p>A CNAME like <code>store.yoursite.com</code> points to your Shopify store. You cancel Shopify. The subdomain still resolves — but now points to a default Shopify placeholder. Attackers have claimed abandoned Shopify store subdomains and used them for phishing campaigns.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #5 — Abandoned WordPress.com Site</div>
+      <span class="severity">Severity: MEDIUM</span>
+      <h3>WordPress.com Is Not Free Forever</h3>
+      <p>If you used WordPress.com's custom domain feature and then let the site expire, your CNAME still points there. Claiming the subdomain is as simple as creating a new free WordPress.com account and claiming the URL.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #6 — Discontinued CloudFront Distribution</div>
+      <span class="severity">Severity: MEDIUM</span>
+      <h3>The CDN Ghost</h3>
+      <p>CloudFront distributions get deleted but the DNS record remains. Attacker creates a distribution with the same domain — or uses a different domain that CloudFront accepts — and your subdomain now serves their content through AWS's infrastructure.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #7 — Unclaimed Azure App Service</div>
+      <span class="severity">Severity: MEDIUM-HIGH</span>
+      <h3>Enterprise Attack Surface</h3>
+      <p>Enterprise environments often have dozens of Azure App Service instances that get decommissioned without cleaning DNS. Azure's default domain (<code>yourapp.azurewebsites.net</code>) is claimable after the service is deleted.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #8 — Discontinued Pantheon Site</div>
+      <span class="severity">Severity: LOW-MEDIUM</span>
+      <h3>Pantheon Drupal/WordPress Hosting</h3>
+      <p>Pantheon hosts Drupal and WordPress sites with a predictable domain structure. When sites are migrated or deleted, the subdomain remains pointing to a no-longer-owned Pantheon domain.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #9 — Abandoned Tumblr Blog</div>
+      <span class="severity">Severity: LOW</span>
+      <h3>Social Media Ghosts</h3>
+      <p>Custom domain pointed to a Tumblr blog that's been deleted. Attacker creates a Tumblr account and reassigns that custom domain. Lower risk, but used in targeted phishing campaigns.</p>
+    </div>
+
+    <div class="attack-card">
+      <div class="number">Attack #10 — Ghost CNAMEs From Migrations</div>
+      <span class="severity">Severity: VARIABLE</span>
+      <h3>The "We Moved to CloudFlare" Problem</h3>
+      <p>DNS CNAMEs that were set up for A/B testing tools, analytics platforms, or CDN validations that are no longer in use. They linger indefinitely because no one knows who owns them. Each one is a potential takeover.</p>
+    </div>
+
+    <h2>How Attackers Find These — In Minutes</h2>
+    <p>Here's the scary part: finding vulnerable subdomains takes less than 10 minutes with free tools. The process:</p>
+
+    <ol>
+      <li><strong>Certificate Transparency logs</strong> — Services like crt.sh and CertSpotter log every SSL certificate issued for your domain. These are public. Attackers download all subdomains ever issued for <code>yoursite.com</code> in seconds.</li>
+      <li><strong>DNS enumeration</strong> — Passive CT scans plus active DNS queries find resolved subdomains.</li>
+      <li><strong>CNAME resolution</strong> — Each subdomain is checked for a CNAME pointing to external services (github.io, herokuapp.com, s3.amazonaws.com, etc.)</li>
+      <li><strong>Service probing</strong> — Does the CNAME target resolve? Does the service respond? Does it return a 404, a default page, or a "claim this" prompt?</li>
+      <li><strong>Takeover</strong> — Attacker creates an account at the target service, claims the subdomain URL, and serves malicious content.</li>
+    </ol>
+
+    <h2>How to Prevent Subdomain Takeovers</h2>
+
+    <h3>Audit Your DNS Regularly</h3>
+    <p>Run a Certificate Transparency scan of your domain every month. Any subdomain pointing to an abandoned or decommissioned service is a risk. Tools like EdgeIQ's Subdomain Hunter make this fast — free tier covers most small business needs.</p>
+
+    <h3>Clean Up DNS Records When You Deprecate Services</h3>
+    <p>This sounds obvious, but it's almost never done. DNS cleanup is a release step — it should happen every time you take down a service. Document your DNS records and assign ownership.</p>
+
+    <h3>Use CAA Records for Certificate Issuance</h3>
+    <p>A Certificate Authority Authorization (CAA) record limits which CAs can issue certificates for your domain. This reduces the CT log exposure problem somewhat — but doesn't eliminate it entirely.</p>
+
+    <h3>Monitor for New Subdomains Continuously</h3>
+    <p>Set up alerts for new subdomains appearing in CT logs for your domain. New subdomains = new attack surface. If you didn't create it, investigate immediately.</p>
+
+    <h3>Enable HSTS and Preloading</h3>
+    <p>HSTS (HTTP Strict Transport Security) with preloading tells browsers to only connect to your domain over HTTPS — and tells them to reject invalid certificates. It doesn't prevent takeover, but it limits what an attacker can do after a successful takeover.</p>
+
+    
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+    <div class="cta-box">
+      <h3>Scan Your Domains for Subdomain Takeovers</h3>
+      <p>EdgeIQ's Subdomain Hunter checks your domains via Certificate Transparency logs and flags potential takeover vulnerabilities — free, no signup required.</p>
+      <a href="../" class="cta-btn">Try the free scanner →</a>
+    </div>
+
+    <h2>The Business Impact</h2>
+    <p>Subdomain takeovers aren't theoretical. They've been used in real breaches at major companies and are actively exploited in the wild. For small businesses, the reputational damage from being associated with a phishing campaign — even one launched from an "abandoned" subdomain you forgot about — can be devastating.</p>
+
+    <p>The fix is simple: know your DNS, audit regularly, and close the gaps before someone else finds them.</p>
+
+    <div class="footer-cta">
+      <p style="color: var(--muted); margin-bottom: 14px;">Stay on top of your attack surface with EdgeIQ's free subdomain and SSL monitoring tools.</p>
+      <a href="../" class="cta-btn">Get started free →</a>
+    </div>
+
+  </div>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>

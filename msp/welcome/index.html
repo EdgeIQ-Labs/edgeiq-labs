@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,13 +7,8 @@
   <title>Welcome to MSP Essentials · EdgeIQ Labs</title>
   <meta name="robots" content="noindex,nofollow" />
   <style>
-    :root {
-      --bg: #0b0f14; --card: #121923; --text: #e8eef7;
-      --muted: #9fb0c7; --accent: #c084fc; --accent2: #3dd9ff;
-      --border: #1e2e3e; --ok: #70f0a8;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+    /* Page-specific styles — migrated to design system tokens */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
     .wrap { max-width: 520px; width: 100%; text-align: center; }
     .check-circle {
@@ -23,47 +18,70 @@
       font-size: 2rem; margin: 0 auto 24px;
     }
     h1 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
-    .subtitle { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; }
+    .subtitle { color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; }
 
     .next-steps {
-      background: var(--card); border: 1px solid var(--border);
+      background: var(--color-bg-surface); border: 1px solid var(--color-border);
       border-radius: 16px; padding: 28px; text-align: left; margin-bottom: 24px;
     }
-    .next-steps h2 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--accent); }
+    .next-steps h2 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--color-accent); }
     .step-row { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
     .step-row:last-child { margin-bottom: 0; }
     .step-num {
       width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
       background: rgba(192,132,252,0.15); border: 1px solid rgba(192,132,252,0.3);
-      color: var(--accent); font-weight: 800; font-size: 0.82rem;
+      color: var(--color-accent); font-weight: 800; font-size: 0.82rem;
       display: flex; align-items: center; justify-content: center;
     }
     .step-text h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; }
-    .step-text p { color: var(--muted); font-size: 0.83rem; line-height: 1.45; }
+    .step-text p { color: var(--color-text-secondary); font-size: 0.83rem; line-height: 1.45; }
 
     .magic-note {
       background: rgba(192,132,252,0.07); border: 1px solid rgba(192,132,252,0.25);
       border-radius: 12px; padding: 16px 20px; margin-bottom: 22px;
-      font-size: 0.88rem; color: var(--muted); text-align: left;
+      font-size: 0.88rem; color: var(--color-text-secondary); text-align: left;
     }
-    .magic-note strong { color: var(--accent); }
+    .magic-note strong { color: var(--color-accent); }
 
     .btn-go {
       display: block; width: 100%;
-      background: var(--accent); color: #1a0033;
+      background: var(--color-accent); color: #1a0033;
       font-weight: 800; font-size: 1rem;
       padding: 14px; border-radius: 11px;
       text-decoration: none; text-align: center;
       transition: opacity 0.2s;
     }
     .btn-go:hover { opacity: 0.88; }
-    .or-note { color: var(--muted); font-size: 0.82rem; margin-top: 14px; }
+    .or-note { color: var(--color-text-secondary); font-size: 0.82rem; margin-top: 14px; }
     .or-note a { color: var(--accent2); text-decoration: none; }
     .or-note a:hover { text-decoration: underline; }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 
 <div class="wrap">
   <div class="check-circle">✅</div>
@@ -108,5 +126,36 @@
   <p class="or-note">Questions? Email <a href="mailto:hello@edgeiqlabs.com">hello@edgeiqlabs.com</a></p>
 </div>
 
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 </body>
 </html>

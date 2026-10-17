@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,41 +20,57 @@
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/terms.html" />
   <style>
-    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    /* Page-specific styles — migrated to design system tokens */
+* { box-sizing:border-box; margin:0; padding:0; }
+    
     .container { max-width:740px; margin:0 auto; padding:0 20px; }
-    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); }
     .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
     .nav-brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
-    .nav-logo-img { height:60px; width:auto; border-radius:8px; }
     .nav-wordmark { display:flex; flex-direction:column; line-height:1.1; }
-    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--text); }
-    .nav-brand-name span { color:var(--accent); }
-    .nav-brand-tag { font-size:0.68rem; color:var(--muted); text-transform:uppercase; margin-top:2px; }
-    .nav-links { display:flex; align-items:center; gap:6px; }
-    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; font-size:0.95rem; }
-    .nav-links a:hover { color:var(--text); }
-    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:8px 16px !important; border-radius:8px !important; }
-    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--color-text-primary); }
+    .nav-brand-name span { color:var(--color-accent); }
+    .nav-brand-tag { font-size:0.68rem; color:var(--color-text-secondary); text-transform:uppercase; margin-top:2px; }
+    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--color-border); margin-bottom:40px; }
     h1 { font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.2; margin-bottom:16px; }
-    .lead { font-size:1.05rem; color:var(--muted); border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; }
-    h2 { font-size:1.5rem; margin:34px 0 14px; color:var(--text); }
-    h3 { font-size:1.15rem; margin:22px 0 10px; color:var(--text); }
-    p { color:var(--muted); margin-bottom:16px; }
-    ul, ol { color:var(--muted); margin:0 0 18px 22px; }
+    .lead { font-size:1.05rem; color:var(--color-text-secondary); border-left:3px solid var(--color-accent); padding-left:18px; margin-bottom:24px; }
+    h2 { font-size:1.5rem; margin:34px 0 14px; color:var(--color-text-primary); }
+    h3 { font-size:1.15rem; margin:22px 0 10px; color:var(--color-text-primary); }
+    p { color:var(--color-text-secondary); margin-bottom:16px; }
+    ul, ol { color:var(--color-text-secondary); margin:0 0 18px 22px; }
     li { margin-bottom:8px; }
-    a { color:var(--accent); }
-    .last-updated { font-size:0.85rem; color:var(--muted); margin-bottom:32px; }
-    .section { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; }
-    .footer-links { display:flex; gap:20px; justify-content:center; margin-top:48px; padding-top:24px; border-top:1px solid var(--border); }
-    .footer-links a { color:var(--muted); font-size:0.88rem; text-decoration:none; }
-    .footer-links a:hover { color:var(--accent); }
+
+    .last-updated { font-size:0.85rem; color:var(--color-text-secondary); margin-bottom:32px; }
+    .section { background:var(--color-bg-surface); border:1px solid var(--color-border); border-radius:12px; padding:24px; margin-bottom:20px; }
+    .footer-links { display:flex; gap:20px; justify-content:center; margin-top:48px; padding-top:24px; border-top:1px solid var(--color-border); }
+    .footer-links a { color:var(--color-text-secondary); font-size:0.88rem; text-decoration:none; }
+    .footer-links a:hover { color:var(--color-accent); }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
-  <nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="logo-edgeiq-selected.png" alt="EdgeIQ Labs" class="nav-logo-img" /><div class="nav-wordmark"><div class="nav-brand-name">Edge<span>IQ</span> Labs</div><div class="nav-brand-tag">Security Intelligence</div></div></a><div class="nav-links"><a href="/">Tools</a><a href="/#pricing">Pricing</a><a href="/blog/">Blog</a><a href="/contact.html">Contact</a></div></div></div></nav>
+    <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
   <div class="container">
     <div class="article-header">
       <p class="last-updated">Last updated: May 2, 2026</p>
@@ -176,9 +192,35 @@
       <a href="/">← Back to EdgeIQ Labs</a>
     </div>
   </div>
-  <footer style="border-top:1px solid var(--border);padding:24px 0;text-align:center;color:var(--muted);font-size:0.82rem;">
-    <div class="container">
-      <p>© 2026 EdgeIQ Labs · <a href="/" style="color:var(--accent);">edgeiqlabs.com</a></p>
+    <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
     </div>
   </footer>
 </body>

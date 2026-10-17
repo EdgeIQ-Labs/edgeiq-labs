@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,71 +17,59 @@
   <meta name="twitter:title" content="Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap" />
   <meta name="twitter:description" content="Most small business domains can be spoofed in under 60 seconds. Here's how to check and fix it." />
   <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
-  <meta name="theme-color" content="#0b0f14" />
+  <meta name="theme-color" content="#0A1628" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/blog/email-spoofing-small-business-domain-check-2026.html" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
   <style>
-    :root { --bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--ok:#70f0a8;--warn:#f0a83d; }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
-    .container{max-width:740px;margin:0 auto;padding:0 20px;}
-    nav{position:sticky;top:0;z-index:100;background:rgba(11,15,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;}
-    .nav-logo{font-weight:800;font-size:15px;color:var(--text);text-decoration:none;letter-spacing:-0.02em;flex-shrink:0;}
-    .nav-logo span{color:var(--accent);}
-    .nav-links{display:flex;align-items:center;gap:6px;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.92rem;border-radius:8px;}
-    .nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
-    .nav-cta{background:var(--accent);color:#071018!important;font-weight:700;padding:7px 14px!important;border-radius:8px!important;white-space:nowrap;flex-shrink:0;}
-    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
-    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
-    .product-strip-inner::-webkit-scrollbar{display:none;}
-    .product-strip-inner::after{content:"";flex:0 0 28px;}
-    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
-    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
-    .nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0;}
-    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;transition:all 0.2s;}
-    .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-    .nav-hamburger.open span:nth-child(2){opacity:0;}
-    .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;position:sticky;top:56px;z-index:8;}
-    .nav-mobile-menu.open{display:flex;}
-    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;font-weight:500;border-bottom:1px solid rgba(35,49,66,0.5);}
-    .nav-mobile-menu a:last-child{border-bottom:none;}
-    .nav-mobile-menu .mob-cta{margin-top:12px;background:#3dd9ff;color:#071018!important;font-weight:700;text-align:center;padding:11px!important;border-radius:8px;border-bottom:none!important;}
-    .nav-mobile-menu .mob-section{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4a6080;padding:12px 4px 4px;border-bottom:none!important;}
-    @media(max-width:720px){.nav-links{display:none!important;}.nav-hamburger{display:flex!important;}.product-strip-inner a{padding:4px 8px;font-size:0.75rem;}}
-    .article-header{padding:64px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;}
-    .article-header h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin-bottom:16px;}
-    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:20px;}
-    .tag{display:inline-block;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
-    .lead{font-size:1.1rem;color:var(--text);margin-bottom:28px;border-left:3px solid var(--accent);padding-left:18px;}
-    h2{font-size:1.5rem;margin:36px 0 14px;}
-    h3{font-size:1.15rem;margin:24px 0 10px;color:var(--accent);}
-    p{color:var(--muted);margin-bottom:18px;}
-    ul,ol{color:var(--muted);margin:0 0 18px 22px;}
-    li{margin-bottom:8px;}
-    .step-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;}
-    .step-card h3{margin-top:0;color:var(--text);}
-    .fact-box{background:rgba(61,217,255,0.05);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:16px 18px;margin:18px 0;}
-    .fact-box p{color:var(--accent);font-size:0.95rem;margin-bottom:0;}
-    .warn-box{background:rgba(240,168,61,0.07);border:1px solid rgba(240,168,61,0.25);border-radius:10px;padding:16px 18px;margin:18px 0;}
-    .warn-box p{color:var(--warn);font-size:0.95rem;margin-bottom:0;}
-    .cta-box{background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:40px 0;text-align:center;}
-    .cta-box h3{color:var(--text);font-size:1.2rem;margin-bottom:10px;}
-    .cta-box p{color:var(--muted);margin-bottom:18px;}
-    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 22px;border-radius:10px;text-decoration:none;}
-    .checklist-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:18px 0;}
-    .checklist-box h3{margin-bottom:14px;}
-    .checklist-box li{margin-bottom:10px;}
-    .grade-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
-    .grade-row:last-child{border-bottom:none;}
-    .grade-badge{font-family:monospace;font-size:1.1rem;font-weight:800;width:32px;text-align:center;flex-shrink:0;}
-    .footer-cta{padding:48px 0;border-top:1px solid var(--border);margin-top:48px;text-align:center;}
+    /* Blog-specific overrides using design system tokens */
+    .article-header { padding: var(--space-3xl) 0 var(--space-2xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2xl); }
+    .article-header h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
+    .article-meta { font-size: var(--text-sm); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: var(--space-lg); }
+    .tag { display: inline-block; background: var(--color-accent-subtle); border: 1px solid rgba(34,211,238,0.2); color: var(--color-accent); font-size: var(--text-xs); border-radius: var(--radius-sm); padding: 3px 8px; margin-right: 6px; font-family: var(--font-mono); }
+    .lead { font-size: var(--text-lg); color: var(--color-text-primary); margin-bottom: var(--space-xl); border-left: 3px solid var(--color-accent); padding-left: var(--space-lg); }
+    h2 { font-size: var(--text-3xl); margin: var(--space-2xl) 0 var(--space-md); }
+    h3 { font-size: var(--text-xl); margin: var(--space-xl) 0 var(--space-sm); color: var(--color-accent); }
+    p { color: var(--color-text-secondary); margin-bottom: var(--space-md); }
+    ul, ol { color: var(--color-text-secondary); margin: 0 0 var(--space-md) 22px; }
+    li { margin-bottom: var(--space-sm); }
+    .step-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-lg) 0; }
+    .step-card h3 { margin-top: 0; color: var(--color-text-primary); }
+    .fact-box { background: var(--color-bg-pale-blue); border: 1px solid rgba(34,211,238,0.2); border-radius: var(--radius-md); padding: var(--space-md) var(--space-lg); margin: var(--space-md) 0; }
+    .fact-box p { color: var(--color-accent); font-size: var(--text-base); margin-bottom: 0; }
+    .warn-box { background: rgba(240,168,61,0.07); border: 1px solid rgba(240,168,61,0.25); border-radius: var(--radius-md); padding: var(--space-md) var(--space-lg); margin: var(--space-md) 0; }
+    .warn-box p { color: #f0a83d; font-size: var(--text-base); margin-bottom: 0; }
+    .cta-box { background: var(--color-bg-surface); border: 1px solid var(--color-accent); border-radius: var(--radius-lg); padding: var(--space-2xl); margin: var(--space-2xl) 0; text-align: center; }
+    .cta-box h3 { color: var(--color-text-primary); font-size: var(--text-xl); margin-bottom: var(--space-sm); }
+    .cta-box p { color: var(--color-text-secondary); margin-bottom: var(--space-md); }
+    .cta-btn { display: inline-block; background: var(--color-accent); color: #000; font-weight: 700; padding: 11px 22px; border-radius: var(--radius-md); text-decoration: none; }
+    .checklist-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-md) 0; }
+    .checklist-box h3 { margin-bottom: var(--space-md); }
+    .checklist-box li { margin-bottom: var(--space-sm); }
+    .grade-row { display: flex; align-items: center; gap: 14px; padding: var(--space-md) 0; border-bottom: 1px solid var(--color-border); }
+    .grade-row:last-child { border-bottom: none; }
+    .grade-badge { font-family: var(--font-mono); font-size: var(--text-lg); font-weight: 800; width: 32px; text-align: center; flex-shrink: 0; }
+    .footer-cta { padding: var(--space-2xl) 0; border-top: 1px solid var(--color-border); margin-top: var(--space-2xl); text-align: center; }
+    .product-strip { background: var(--color-bg-light-band); border-bottom: 1px solid var(--color-border); position: sticky; top: 60px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px var(--space-lg); overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background var(--transition-fast); }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: var(--color-bg-surface); border-top: 1px solid var(--color-border); padding: var(--space-md) var(--space-lg); position: sticky; top: 60px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: var(--color-text-secondary); text-decoration: none; padding: 10px 4px; font-size: var(--text-base); font-weight: 500; border-bottom: 1px solid var(--color-border); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu .mob-cta { margin-top: var(--space-md); background: var(--color-accent); color: #000 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: var(--radius-md); border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-text-muted); padding: var(--space-md) 4px 4px; border-bottom: none !important; }
+    @media(max-width:768px){ .product-strip-inner a { padding: 4px 8px; font-size: var(--text-xs); } }
   </style>
   <script type="application/ld+json">
   {
-    "@context":"https://schema.org","@type":"BlogPosting",
+    "@context":"https://schema.org",
+    "@type":"BlogPosting",
     "headline":"Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap",
     "description":"Most small business domains can be spoofed in under 60 seconds. Here's how email spoofing works and how to fix it.",
     "image":"https://edgeiqlabs.com/og-preview.png",
@@ -94,19 +82,32 @@
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav>
-  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products/">Products</a>
-    <a href="/blog/">Blog</a>
-    <a href="/products/" class="nav-cta">Get Started</a>
-  </div>
-  <button class="nav-hamburger" id="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('nav-mobile-menu').classList.toggle('open')" aria-label="Menu"><span></span><span></span><span></span></button>
-</nav>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" id="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('nav-mobile-menu').classList.toggle('open')" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
 <div class="product-strip">
   <div class="product-strip-inner">
-    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/dashboard/" style="color:#22D3EE;">&#x1F4CA; Dashboard</a>
     <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
     <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
     <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
@@ -118,19 +119,19 @@
 </div>
 <div class="nav-mobile-menu" id="nav-mobile-menu">
   <span class="mob-section">Navigation</span>
-  <a href="/">Home</a><a href="/products/">All Products</a><a href="/blog/">Blog</a>
+  <a href="/">Home</a><a href="/services.html">SMB Monitoring</a><a href="/free-tools/">Free Tools</a><a href="/msp/">For MSPs</a><a href="/contact/">Contact</a>
   <span class="mob-section">Products</span>
-  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/dashboard/" style="color:#22D3EE;">&#x1F4CA; Dashboard</a>
   <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
   <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
   <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
   <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
   <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
   <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
-  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+  <a class="mob-cta" href="/free-tools/">Explore Tools &#x2192;</a>
 </div>
 
-<div class="container">
+<div class="container container--narrow">
   <div class="article-header">
     <div class="article-meta">May 17, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">email security</span><span class="tag">DMARC</span><span class="tag">spoofing</span></div>
     <h1>Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap</h1>
@@ -151,17 +152,17 @@
 
   <div class="step-card">
     <h3>SPF — Sender Policy Framework</h3>
-    <p style="color:var(--muted);margin-bottom:0;">A DNS TXT record that lists the IP addresses and servers authorized to send email for your domain. When a receiving mail server gets an email claiming to be from yourdomain.com, it checks whether the sending server is on your SPF list. If not, it can flag or reject the email. <strong style="color:var(--text);">Problem:</strong> SPF alone doesn't prevent spoofing of the visible "From" address — it only checks the technical envelope sender, which most users never see.</p>
+    <p style="color:var(--color-text-secondary);margin-bottom:0;">A DNS TXT record that lists the IP addresses and servers authorized to send email for your domain. When a receiving mail server gets an email claiming to be from yourdomain.com, it checks whether the sending server is on your SPF list. If not, it can flag or reject the email. <strong style="color:var(--color-text-primary);">Problem:</strong> SPF alone doesn't prevent spoofing of the visible "From" address — it only checks the technical envelope sender, which most users never see.</p>
   </div>
 
   <div class="step-card">
     <h3>DKIM — DomainKeys Identified Mail</h3>
-    <p style="color:var(--muted);margin-bottom:0;">A cryptographic signature added to outgoing emails, verified using a public key published in DNS. If the email is tampered with in transit, the signature breaks. DKIM proves the email came from a server holding your private key and wasn't modified. <strong style="color:var(--text);">Problem:</strong> DKIM alone also doesn't stop a spoofed "From" address — an attacker can sign emails with their own key from their own domain while showing yours in the From field.</p>
+    <p style="color:var(--color-text-secondary);margin-bottom:0;">A cryptographic signature added to outgoing emails, verified using a public key published in DNS. If the email is tampered with in transit, the signature breaks. DKIM proves the email came from a server holding your private key and wasn't modified. <strong style="color:var(--color-text-primary);">Problem:</strong> DKIM alone also doesn't stop a spoofed "From" address — an attacker can sign emails with their own key from their own domain while showing yours in the From field.</p>
   </div>
 
   <div class="step-card">
     <h3>DMARC — Domain-based Message Authentication, Reporting &amp; Conformance</h3>
-    <p style="color:var(--muted);margin-bottom:0;">DMARC is the policy layer that ties SPF and DKIM together. It tells receiving mail servers what to do when an email fails authentication — and crucially, it checks that the authenticated domain aligns with the visible "From" address. DMARC has three policy levels: <code style="color:var(--ok);">p=none</code> (monitor only — take no action), <code style="color:var(--warn);">p=quarantine</code> (send to spam), and <code style="color:var(--ok);">p=reject</code> (block completely). Without DMARC at quarantine or reject, spoofed emails land in inboxes.</p>
+    <p style="color:var(--color-text-secondary);margin-bottom:0;">DMARC is the policy layer that ties SPF and DKIM together. It tells receiving mail servers what to do when an email fails authentication — and crucially, it checks that the authenticated domain aligns with the visible "From" address. DMARC has three policy levels: <code style="color:#70f0a8;">p=none</code> (monitor only — take no action), <code style="color:#f0a83d;">p=quarantine</code> (send to spam), and <code style="color:#70f0a8;">p=reject</code> (block completely). Without DMARC at quarantine or reject, spoofed emails land in inboxes.</p>
   </div>
 
   <h2>The Real-World State of SMB Email Security in 2026</h2>
@@ -195,7 +196,7 @@
   <div class="checklist-box">
     <h3>Close the email spoofing gap</h3>
     <ul>
-      <li>&#x2705; <strong>Step 1 — Check your current state:</strong> Scan your domain at <a href="/inbox-shield/" style="color:var(--accent);">EdgeIQ Inbox Shield</a> to get an instant A–F grade across SPF, DKIM, DMARC, MX, and BIMI. Free, no account needed.</li>
+      <li>&#x2705; <strong>Step 1 — Check your current state:</strong> Scan your domain at <a href="/inbox-shield/" style="color:var(--color-accent);">EdgeIQ Inbox Shield</a> to get an instant A–F grade across SPF, DKIM, DMARC, MX, and BIMI. Free, no account needed.</li>
       <li>&#x2705; <strong>Step 2 — Fix or add SPF:</strong> Ensure your SPF record lists all legitimate sending sources (your email provider, CRM, marketing tools) and ends with <code>-all</code> not <code>~all</code>. Use a SPF flattening tool if you have many includes.</li>
       <li>&#x2705; <strong>Step 3 — Enable DKIM:</strong> Your email provider (Google Workspace, Microsoft 365, etc.) will have a DKIM setup page. Generate a key pair and publish the public key as a DNS TXT record. Most providers automate this.</li>
       <li>&#x2705; <strong>Step 4 — Add DMARC at p=none first:</strong> Start with <code>v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com</code> to begin receiving reports about who is sending email using your domain.</li>
@@ -208,19 +209,19 @@
   <div class="step-card">
     <div class="grade-row">
       <span class="grade-badge" style="color:#3de19e;">A</span>
-      <div><strong style="color:var(--text);">p=reject + SPF -all + DKIM active</strong><br/><span style="color:var(--muted);font-size:0.9rem;">Your domain is fully protected. Spoofed emails are blocked before they reach any inbox.</span></div>
+      <div><strong style="color:var(--color-text-primary);">p=reject + SPF -all + DKIM active</strong><br/><span style="color:var(--color-text-secondary);font-size:var(--text-sm);">Your domain is fully protected. Spoofed emails are blocked before they reach any inbox.</span></div>
     </div>
     <div class="grade-row">
       <span class="grade-badge" style="color:#70f0a8;">B</span>
-      <div><strong style="color:var(--text);">p=quarantine + SPF configured</strong><br/><span style="color:var(--muted);font-size:0.9rem;">Good protection. Spoofed emails go to spam rather than inbox. Upgrade to p=reject to fully close the gap.</span></div>
+      <div><strong style="color:var(--color-text-primary);">p=quarantine + SPF configured</strong><br/><span style="color:var(--color-text-secondary);font-size:var(--text-sm);">Good protection. Spoofed emails go to spam rather than inbox. Upgrade to p=reject to fully close the gap.</span></div>
     </div>
     <div class="grade-row">
       <span class="grade-badge" style="color:#ffb347;">C</span>
-      <div><strong style="color:var(--text);">p=none (monitoring only)</strong><br/><span style="color:var(--muted);font-size:0.9rem;">DMARC exists but provides no protection. You're collecting data but not blocking anything. Tighten to quarantine or reject.</span></div>
+      <div><strong style="color:var(--color-text-primary);">p=none (monitoring only)</strong><br/><span style="color:var(--color-text-secondary);font-size:var(--text-sm);">DMARC exists but provides no protection. You're collecting data but not blocking anything. Tighten to quarantine or reject.</span></div>
     </div>
     <div class="grade-row">
       <span class="grade-badge" style="color:#ff6b6b;">F</span>
-      <div><strong style="color:var(--text);">No DMARC record</strong><br/><span style="color:var(--muted);font-size:0.9rem;">Your domain can be spoofed freely. Any attacker can send email appearing to come from you with no technical barriers.</span></div>
+      <div><strong style="color:var(--color-text-primary);">No DMARC record</strong><br/><span style="color:var(--color-text-secondary);font-size:var(--text-sm);">Your domain can be spoofed freely. Any attacker can send email appearing to come from you with no technical barriers.</span></div>
     </div>
   </div>
 
@@ -231,15 +232,15 @@
   <p>Weekly automated monitoring of your email authentication configuration catches drift before it creates a window for attackers. DMARC report analysis tells you when new, unauthorized senders start using your domain — sometimes the first sign of a phishing campaign targeting your customers or partners using your brand.</p>
 
   
-    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
-      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
-      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
-      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
-        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
-        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-xl);margin:var(--space-2xl) 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:var(--space-sm);">📬</div>
+      <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-md);line-height:var(--leading-relaxed);">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:var(--space-sm);max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" class="input" style="flex:1;font-size:var(--text-sm);"/>
+        <button type="submit" class="btn btn--primary" style="font-size:var(--text-sm);white-space:nowrap;">Subscribe →</button>
       </form>
-      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:var(--text-sm);margin-top:var(--space-sm);">✅ You're in. Check your inbox.</div>
     </div>
     <div class="cta-box">
     <h3>✉️ Grade your email security in 10 seconds</h3>
@@ -258,16 +259,45 @@
   </ul>
 
   <div class="footer-cta">
-    <p style="color:var(--muted);margin-bottom:16px;">More from EdgeIQ Labs</p>
-    <a href="/blog/" style="color:var(--accent);text-decoration:none;font-weight:600;">← Back to Blog</a>
+    <p style="color:var(--color-text-secondary);margin-bottom:var(--space-md);">More from EdgeIQ Labs</p>
+    <a href="/blog/" style="color:var(--color-accent);text-decoration:none;font-weight:600;">← Back to Blog</a>
     &nbsp;&nbsp;
-    <a href="/inbox-shield/" style="color:var(--ok);text-decoration:none;font-weight:600;">Scan Your Domain Free →</a>
+    <a href="/inbox-shield/" style="color:#70f0a8;text-decoration:none;font-weight:600;">Scan Your Domain Free →</a>
   </div>
 </div>
 
-<footer style="border-top:1px solid #233142;padding:24px;text-align:center;font-size:0.82rem;color:#4a6080;">
-  <p>© 2026 EdgeIQ Labs · <a href="/privacy.html" style="color:#4a6080;">Privacy Policy</a> · <a href="/terms.html" style="color:#4a6080;">Terms of Service</a> · <a href="mailto:support@edgeiqlabs.com" style="color:#4a6080;">support@edgeiqlabs.com</a></p>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
+
 <script>
 function blogEmailSignup(e,form){
   e.preventDefault();

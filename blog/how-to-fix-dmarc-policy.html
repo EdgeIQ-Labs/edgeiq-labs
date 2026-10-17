@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -17,9 +17,11 @@
   <meta name="twitter:title" content="How to Fix Your DMARC Policy (p=none → p=reject)"/>
   <meta name="twitter:description" content="DMARC p=none does nothing. Here's how to fix it and move to enforcement — step by step."/>
   <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png"/>
-  <meta name="theme-color" content="#0b0f14"/>
+  <meta name="theme-color" content="#0A1628"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-fix-dmarc-policy.html"/>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <script src="/js/theme.js"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -39,97 +41,102 @@
   }
   </script>
   <style>
-    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; --green:#3de19e; --yellow:#fbbf24; --red:#ef4444; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
-    .container { max-width:740px; margin:0 auto; padding:0 20px; }
-    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); z-index:100; padding:0 24px; display:flex; align-items:center; justify-content:space-between; height:64px; }
-    .nav-logo { font-weight:800; font-size:1rem; color:var(--text); text-decoration:none; }
-    .nav-logo span { color:var(--accent); }
-    .nav-links { display:flex; align-items:center; gap:6px; }
-    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; font-size:0.88rem; }
-    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:7px 14px !important; border-radius:8px !important; }
-    @media(max-width:620px) { .nav-links a:not(.nav-cta) { display:none; } }
-    .product-strip { background:#0e1621; border-bottom:1px solid #233142; overflow-x:auto; scrollbar-width:none; }
-    .product-strip::-webkit-scrollbar { display:none; }
-    .product-strip-inner { display:flex; align-items:center; gap:2px; padding:5px 24px; white-space:nowrap; max-width:980px; margin:0 auto; }
-    .product-strip-inner a { padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:600; text-decoration:none; transition:background .15s; }
-    .product-strip-inner a:hover { background:rgba(255,255,255,.06); }
-    .article-header { padding:64px 0 36px; border-bottom:1px solid var(--border); margin-bottom:36px; }
-    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:20px; }
-    .tag { display:inline-block; background:rgba(61,217,255,.08); border:1px solid rgba(61,217,255,.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
-    h1 { font-size:clamp(1.8rem,5vw,2.5rem); line-height:1.2; margin-bottom:16px; }
-    h2 { font-size:1.4rem; font-weight:800; margin:40px 0 14px; color:var(--text); }
-    h3 { font-size:1.05rem; font-weight:700; margin:24px 0 10px; color:var(--text); }
-    p { color:#d0dce9; margin-bottom:16px; }
-    ul, ol { margin:0 0 18px 22px; color:#d0dce9; }
-    li { margin-bottom:8px; }
-    strong { color:var(--text); }
-    a { color:var(--accent); text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    .lead { font-size:1.05rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; color:#c8daea; }
-    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:#1a2535; color:#7dd3fc; padding:1px 6px; border-radius:4px; font-size:0.88em; }
-    pre { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px; overflow-x:auto; margin:16px 0 20px; }
-    pre code { background:none; color:#e8eef7; padding:0; font-size:0.9rem; }
-    .cta-box { background:var(--card); border:1px solid var(--accent); border-radius:14px; padding:26px; margin:36px 0; text-align:center; }
-    .cta-box h3 { margin-bottom:8px; }
-    .cta-box p { color:var(--muted); margin-bottom:20px; font-size:0.92rem; }
-    .cta-btn { display:inline-block; background:var(--accent); color:#071018; font-weight:700; padding:11px 22px; border-radius:9px; text-decoration:none; }
-    .cta-btn-secondary { display:inline-block; background:transparent; color:var(--accent); font-weight:600; padding:10px 20px; border-radius:9px; text-decoration:none; border:1px solid var(--accent); margin-left:10px; }
-    .callout { background:#0d1925; border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:14px 18px; margin:20px 0; color:#c8daea; font-size:0.92rem; }
-    .callout strong { color:var(--accent); }
-    .warn-callout { background:#1a1207; border-left:3px solid var(--yellow); border-radius:0 10px 10px 0; padding:14px 18px; margin:20px 0; color:#fed7aa; font-size:0.92rem; }
-    .warn-callout strong { color:var(--yellow); }
-    .danger-callout { background:#1a0b0b; border-left:3px solid var(--red); border-radius:0 10px 10px 0; padding:14px 18px; margin:20px 0; color:#fca5a5; font-size:0.92rem; }
-    .danger-callout strong { color:var(--red); }
-    .step-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin:20px 0; }
-    .step-num { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:6px; }
-    .step-box h3 { margin-top:0; }
-    .policy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:20px 0 28px; }
-    .policy-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; }
-    .policy-card .policy-name { font-weight:700; font-size:0.95rem; margin-bottom:6px; }
-    .policy-card .policy-effect { font-size:0.85rem; color:var(--muted); line-height:1.5; }
-    .policy-card.danger { border-color:rgba(239,68,68,.4); }
-    .policy-card.danger .policy-name { color:var(--red); }
-    .policy-card.warn { border-color:rgba(251,191,36,.4); }
-    .policy-card.warn .policy-name { color:var(--yellow); }
-    .policy-card.good { border-color:rgba(61,225,158,.4); }
-    .policy-card.good .policy-name { color:var(--green); }
-    .toc { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:24px 0 36px; }
-    .toc h3 { font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:12px; margin-top:0; }
-    .toc ol { margin:0 0 0 18px; color:var(--accent); font-size:0.9rem; }
-    .toc ol li { margin-bottom:5px; }
-    .toc ol li a { color:var(--accent); text-decoration:none; }
-    footer { border-top:1px solid var(--border); padding:28px 0; margin-top:60px; text-align:center; color:var(--muted); font-size:0.85rem; }
-    footer a { color:var(--muted); text-decoration:none; margin:0 10px; }
+    /* Blog-specific styles mapped to design system tokens */
+    .blog-container { max-width: var(--container-narrow); margin: 0 auto; padding: 0 var(--space-lg); }
+    .article-header { padding: var(--space-3xl) 0 var(--space-2xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2xl); }
+    .article-meta { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: var(--space-lg); }
+    .tag { display: inline-block; background: var(--color-accent-subtle); border: 1px solid rgba(34,211,238,.2); color: var(--color-accent); font-size: var(--text-xs); border-radius: var(--radius-sm); padding: var(--space-xs) var(--space-sm); margin-right: var(--space-xs); font-family: var(--font-mono); }
+    h1.article-title { font-size: clamp(var(--text-3xl), 5vw, var(--text-hero)); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
+    .article-content h2 { font-size: var(--text-2xl); font-weight: 700; margin: var(--space-2xl) 0 var(--space-md); color: var(--color-text-primary); }
+    .article-content h3 { font-size: var(--text-lg); font-weight: 700; margin: var(--space-xl) 0 var(--space-sm); color: var(--color-text-primary); }
+    .article-content p { color: var(--color-text-secondary); margin-bottom: var(--space-md); line-height: var(--leading-relaxed); }
+    .article-content ul, .article-content ol { margin: 0 0 var(--space-lg) var(--space-xl); color: var(--color-text-secondary); }
+    .article-content li { margin-bottom: var(--space-sm); }
+    .article-content strong { color: var(--color-text-primary); }
+    .article-content a { color: var(--color-accent); text-decoration: none; }
+    .article-content a:hover { text-decoration: underline; color: var(--color-accent-hover); }
+    .lead { font-size: var(--text-lg); border-left: 3px solid var(--color-accent); padding-left: var(--space-lg); margin-bottom: var(--space-xl); color: var(--color-text-secondary); line-height: var(--leading-relaxed); }
+    .article-content code { font-family: var(--font-mono); background: var(--color-bg-elevated); color: var(--color-accent); padding: 2px var(--space-xs); border-radius: var(--radius-sm); font-size: 0.9em; }
+    .article-content pre { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); overflow-x: auto; margin: var(--space-md) 0 var(--space-lg); }
+    .article-content pre code { background: none; color: var(--color-text-primary); padding: 0; font-size: var(--text-sm); }
+    .cta-box { background: var(--color-bg-surface); border: 1px solid var(--color-accent); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
+    .cta-box h3 { margin-bottom: var(--space-sm); font-size: var(--text-xl); }
+    .cta-box p { color: var(--color-text-muted); margin-bottom: var(--space-lg); font-size: var(--text-sm); }
+    .cta-btn { display: inline-block; background: var(--color-accent); color: #000; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); text-decoration: none; transition: all var(--transition-fast); }
+    .cta-btn:hover { background: var(--color-accent-hover); text-decoration: none; }
+    .cta-btn-secondary { display: inline-block; background: transparent; color: var(--color-accent); font-weight: 600; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); text-decoration: none; border: 2px solid var(--color-accent); margin-left: var(--space-sm); transition: all var(--transition-fast); }
+    .cta-btn-secondary:hover { background: var(--color-accent-subtle); border-color: var(--color-accent-hover); color: var(--color-accent-hover); text-decoration: none; }
+    .callout { background: var(--color-bg-pale-blue); border-left: 3px solid var(--color-accent); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: var(--space-md) var(--space-lg); margin: var(--space-lg) 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
+    .callout strong { color: var(--color-accent); }
+    .warn-callout { background: rgba(251,191,36,.06); border-left: 3px solid #fbbf24; border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: var(--space-md) var(--space-lg); margin: var(--space-lg) 0; color: #fed7aa; font-size: var(--text-sm); }
+    .warn-callout strong { color: #fbbf24; }
+    [data-theme="light"] .warn-callout { color: #92400e; }
+    .danger-callout { background: rgba(239,68,68,.06); border-left: 3px solid #ef4444; border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: var(--space-md) var(--space-lg); margin: var(--space-lg) 0; color: #fca5a5; font-size: var(--text-sm); }
+    .danger-callout strong { color: #ef4444; }
+    [data-theme="light"] .danger-callout { color: #991b1b; }
+    .step-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-lg) 0; }
+    .step-num { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-accent); margin-bottom: var(--space-xs); }
+    .step-box h3 { margin-top: 0; }
+    .policy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md); margin: var(--space-lg) 0 var(--space-xl); }
+    .policy-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-md); }
+    .policy-card .policy-name { font-weight: 700; font-size: var(--text-base); margin-bottom: var(--space-xs); }
+    .policy-card .policy-effect { font-size: var(--text-sm); color: var(--color-text-muted); line-height: var(--leading-normal); }
+    .policy-card.danger { border-color: rgba(239,68,68,.4); }
+    .policy-card.danger .policy-name { color: #ef4444; }
+    .policy-card.warn { border-color: rgba(251,191,36,.4); }
+    .policy-card.warn .policy-name { color: #fbbf24; }
+    .policy-card.good { border-color: rgba(52,211,153,.4); }
+    .policy-card.good .policy-name { color: #34d399; }
+    .toc { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-xl) 0 var(--space-2xl); }
+    .toc h3 { font-size: var(--text-sm); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-text-muted); margin-bottom: var(--space-md); margin-top: 0; }
+    .toc ol { margin: 0 0 0 var(--space-lg); color: var(--color-accent); font-size: var(--text-sm); }
+    .toc ol li { margin-bottom: var(--space-xs); }
+    .toc ol li a { color: var(--color-accent); text-decoration: none; }
+    .toc ol li a:hover { text-decoration: underline; }
+    .newsletter-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
+    .newsletter-box h3 { font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-sm); color: var(--color-text-primary); }
+    .newsletter-box p { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-md); line-height: var(--leading-relaxed); }
+    .newsletter-form { display: flex; gap: var(--space-sm); max-width: 420px; margin: 0 auto; flex-wrap: wrap; }
+    .newsletter-form input[type="email"] { flex: 1; min-width: 180px; padding: 0.75rem 1rem; background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-size: var(--text-sm); outline: none; font-family: var(--font-sans); }
+    .newsletter-form input[type="email"]:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+    .newsletter-form button { background: var(--color-accent); color: #000; font-weight: 700; padding: 0.75rem 1rem; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-sm); white-space: nowrap; font-family: var(--font-sans); transition: background var(--transition-fast); }
+    .newsletter-form button:hover { background: var(--color-accent-hover); }
+    .blog-sub-ok { display: none; color: #34d399; font-size: var(--text-sm); margin-top: var(--space-sm); }
+    @media (max-width: 768px) {
+      .article-header { padding: var(--space-2xl) 0 var(--space-xl); }
+      h1.article-title { font-size: var(--text-3xl); }
+    }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav>
-  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/blog/">Blog</a>
-    <a href="/free-domain-security-score/" class="nav-cta">Free Security Score →</a>
-  </div>
-</nav>
-<div class="product-strip">
-  <div class="product-strip-inner">
-    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
-    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
-    <a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a>
-    <a href="/free-domain-security-score/" style="color:#3dd9ff;">🔒 Security Score</a>
-    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
-    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
-  </div>
-</div>
 
-<div class="container">
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+<div class="blog-container">
   <div class="article-header">
     <div class="article-meta">May 21, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">DMARC</span><span class="tag">Email Security</span><span class="tag">Phishing</span></div>
-    <h1>How to Fix Your DMARC Policy (And Move to p=reject Without Breaking Email)</h1>
+    <h1 class="article-title">How to Fix Your DMARC Policy (And Move to p=reject Without Breaking Email)</h1>
     <p class="lead">If your DMARC record says <code>p=none</code>, you have monitoring data but zero protection. Attackers can still spoof email from your domain. Here's the step-by-step path to enforcement — without accidentally blocking your own mail.</p>
   </div>
 
@@ -146,204 +153,228 @@
     </ol>
   </div>
 
-  <h2 id="whats-wrong">Why p=none Is (Effectively) Broken</h2>
+  <div class="article-content">
+    <h2 id="whats-wrong">Why p=none Is (Effectively) Broken</h2>
 
-  <p>DMARC has three enforcement policies. Understanding what each one actually does — and doesn't do — is the first step to fixing yours.</p>
+    <p>DMARC has three enforcement policies. Understanding what each one actually does — and doesn't do — is the first step to fixing yours.</p>
 
-  <div class="policy-grid">
-    <div class="policy-card danger">
-      <div class="policy-name">p=none</div>
-      <div class="policy-effect">Monitoring-only. Spoofed emails are <strong>delivered</strong> normally. You get reports, but recipients have no protection.</div>
+    <div class="policy-grid">
+      <div class="policy-card danger">
+        <div class="policy-name">p=none</div>
+        <div class="policy-effect">Monitoring-only. Spoofed emails are <strong>delivered</strong> normally. You get reports, but recipients have no protection.</div>
+      </div>
+      <div class="policy-card warn">
+        <div class="policy-name">p=quarantine</div>
+        <div class="policy-effect">Emails that fail DMARC alignment go to <strong>spam/junk</strong>. Partial protection — most spoofing attempts are filtered.</div>
+      </div>
+      <div class="policy-card good">
+        <div class="policy-name">p=reject</div>
+        <div class="policy-effect">Emails that fail DMARC alignment are <strong>rejected outright</strong>. The attacker's spoof never reaches the inbox.</div>
+      </div>
     </div>
-    <div class="policy-card warn">
-      <div class="policy-name">p=quarantine</div>
-      <div class="policy-effect">Emails that fail DMARC alignment go to <strong>spam/junk</strong>. Partial protection — most spoofing attempts are filtered.</div>
+
+    <div class="danger-callout"><strong>The problem:</strong> Most domains that "have DMARC" are stuck at p=none. This means their DMARC record exists, they might be collecting reports, but there is literally zero enforcement. An attacker right now can send an email from <code>ceo@yourdomain.com</code> and it will land in the recipient's inbox with no warning.</div>
+
+    <p>The good news: most domains can reach <code>p=reject</code> within 2–4 weeks if SPF and DKIM are already configured. The risk of "breaking email" comes from rushing — not from the process itself.</p>
+
+    <h2 id="check-status">Step 1: Check Your Current DMARC Status</h2>
+
+    <p>Before changing anything, you need to know exactly what you're working with. Run your domain through a free check to see your current DMARC policy, whether SPF and DKIM are aligned, and what your email security grade is.</p>
+
+    <div class="cta-box">
+      <h3>Check your DMARC status in 10 seconds</h3>
+      <p>See your current DMARC policy, SPF configuration, and DKIM selectors — plus a full A–F grade for your domain's email security.</p>
+      <a href="/inbox-shield/" class="cta-btn">Check your domain free →</a>
+      <a href="/free-domain-security-score/" class="cta-btn-secondary">Full security score →</a>
     </div>
-    <div class="policy-card good">
-      <div class="policy-name">p=reject</div>
-      <div class="policy-effect">Emails that fail DMARC alignment are <strong>rejected outright</strong>. The attacker's spoof never reaches the inbox.</div>
+
+    <p>Once you have your current status, you'll know:</p>
+    <ul>
+      <li>Your current DMARC policy (<code>p=none</code>, <code>p=quarantine</code>, or <code>p=reject</code>)</li>
+      <li>Whether SPF passes for your sending IPs</li>
+      <li>Whether DKIM is signing outgoing mail correctly</li>
+      <li>Whether SPF and DKIM alignment is configured correctly for DMARC</li>
+    </ul>
+
+    <p>If you don't have a DMARC record at all, the fix is simpler — see our <a href="/blog/spf-dkim-dmarc-setup-guide.html">DMARC setup guide</a> to add one from scratch. This guide focuses on domains that already have a DMARC record at <code>p=none</code>.</p>
+
+    <h2 id="fix-spf-dkim">Step 2: Fix SPF and DKIM Before Tightening DMARC</h2>
+
+    <p>This is the most important step that most guides skip. <strong>Do not move your DMARC to p=quarantine or p=reject until your SPF and DKIM are passing correctly for all your legitimate sending services.</strong> If you enforce DMARC before your own legitimate mail is authenticated, you'll filter or reject your own emails.</p>
+
+    <h3>What DMARC alignment requires</h3>
+    <p>For an email to pass DMARC, it must pass either:</p>
+    <ul>
+      <li><strong>SPF alignment</strong>: the domain in the <code>Return-Path</code> (envelope sender) matches your <code>From:</code> domain, AND the IP is in your SPF record</li>
+      <li><strong>DKIM alignment</strong>: the DKIM signature's <code>d=</code> tag matches your <code>From:</code> domain</li>
+    </ul>
+    <p>Passing DMARC requires alignment — not just passing SPF or DKIM in isolation. A common mistake is having SPF and DKIM both "pass" individually, but failing DMARC alignment because the domains don't match.</p>
+
+    <h3>Audit every service that sends email as your domain</h3>
+    <p>Make a list of every service that sends email appearing to come from your domain. Common ones that get missed:</p>
+    <ul>
+      <li>Marketing email (Mailchimp, HubSpot, Klaviyo, Brevo)</li>
+      <li>CRM outbound (Salesforce, Pipedrive, HubSpot Sales)</li>
+      <li>Transactional email (SendGrid, Postmark, Mailgun, AWS SES)</li>
+      <li>Support tools (Zendesk, Intercom, Freshdesk)</li>
+      <li>Invoicing and billing (QuickBooks, FreshBooks, Stripe billing)</li>
+      <li>Calendar/scheduling tools (Calendly, Acuity)</li>
+      <li>HR systems (BambooHR, Workday)</li>
+      <li>Your own mail server (if self-hosted)</li>
+    </ul>
+
+    <p>Each of these needs to either:</p>
+    <ol>
+      <li>Be listed in your SPF record as an authorized sender, <em>and</em> use your domain as the envelope sender (SPF alignment)</li>
+      <li>Sign outgoing emails with a DKIM key where <code>d=yourdomain.com</code> (DKIM alignment)</li>
+    </ol>
+
+    <div class="callout"><strong>Tip:</strong> Most email platforms (HubSpot, SendGrid, Mailchimp) support custom DKIM signing — set this up in each platform's domain authentication settings. This is the most reliable path to DMARC alignment for third-party senders.</div>
+
+    <h3>SPF record checklist</h3>
+    <p>Your SPF record at <code>yourdomain.com</code> should include all authorized sending sources. A basic example:</p>
+    <pre><code>v=spf1 include:_spf.google.com include:sendgrid.net include:mailgun.org ip4:203.0.113.10 ~all</code></pre>
+
+    <p>Key rules:</p>
+    <ul>
+      <li>Stay under <strong>10 DNS lookup mechanisms</strong> (each <code>include:</code> counts as one). Use an <a href="/free-tools/">SPF flattening tool</a> if you're close to the limit.</li>
+      <li>End with <code>~all</code> (softfail) while testing, switch to <code>-all</code> (hardfail) once enforced</li>
+      <li>Use <code>ip4:</code> or <code>ip6:</code> for static server IPs (these don't count toward lookup limit)</li>
+    </ul>
+
+    <h2 id="quarantine">Step 3: Move to p=quarantine (Safe Intermediate Step)</h2>
+
+    <p>Once you've confirmed your SPF and DKIM are aligned for all legitimate senders, update your DMARC record to <code>p=quarantine</code>. Start with a low percentage (<code>pct=10</code>) to apply the policy to only 10% of failing mail — this lets you catch unexpected problems before full rollout.</p>
+
+    <pre><code>_dmarc.yourdomain.com TXT "v=DMARC1; p=quarantine; pct=10; rua=mailto:dmarc@yourdomain.com; fo=1"</code></pre>
+
+    <p>Monitor your DMARC reports for 3–7 days. If you see legitimate email being quarantined (showing up in spam), investigate immediately before increasing the percentage. Common causes:</p>
+    <ul>
+      <li>A sending service you forgot to add to SPF/DKIM</li>
+      <li>A forwarding configuration that breaks SPF alignment</li>
+      <li>An automated system (cron job, monitoring alert) sending email as your domain</li>
+    </ul>
+
+    <p>Once the quarantine reports show no unexpected filtering, increase <code>pct</code> gradually: 10 → 25 → 50 → 100, over a week or two.</p>
+
+    <div class="warn-callout"><strong>Watch out for email forwarding:</strong> When someone auto-forwards email sent to your domain to another address (common with distribution lists and some mailing configurations), SPF will fail because the forwarding server isn't in your SPF record. DKIM should survive forwarding intact. This is why DKIM alignment is more reliable than SPF alignment for forwarded mail — make sure DKIM is set up for all your sending services.</div>
+
+    <h2 id="reject">Step 4: Move to p=reject (Full Enforcement)</h2>
+
+    <p>Once you've been at <code>p=quarantine; pct=100</code> for at least a week with no unexpected issues, you're ready for <code>p=reject</code>. This is the only policy that actually prevents spoofing — at quarantine, spoofed emails still reach the recipient (in spam), and some users will open spam. At reject, the attack fails entirely.</p>
+
+    <pre><code>_dmarc.yourdomain.com TXT "v=DMARC1; p=reject; rua=mailto:dmarc@yourdomain.com; ruf=mailto:dmarc@yourdomain.com; fo=1"</code></pre>
+
+    <p>The full parameter breakdown:</p>
+    <ul>
+      <li><code>p=reject</code> — reject emails that fail DMARC alignment</li>
+      <li><code>rua=</code> — where aggregate reports go (summary of all mail sources, daily)</li>
+      <li><code>ruf=</code> — where forensic reports go (individual failure details, if supported)</li>
+      <li><code>fo=1</code> — generate failure reports for any alignment failure (recommended for monitoring)</li>
+      <li><code>adkim=r</code> / <code>aspf=r</code> — relaxed alignment mode (default; allows subdomain matches)</li>
+    </ul>
+
+    <div class="callout"><strong>Optional: add subdomain policy.</strong> By default, DMARC applies to subdomains too. If you send email from subdomains (e.g., <code>noreply@marketing.yourdomain.com</code>), make sure those subdomains are also authenticated. You can set a separate subdomain policy with <code>sp=quarantine</code> or <code>sp=reject</code> to control subdomain treatment independently.</div>
+
+    <h2 id="common-problems">Common Problems and How to Fix Them</h2>
+
+    <h3>Problem: DMARC failing for a specific sender I can't identify</h3>
+    <p>Check your DMARC aggregate reports (<code>rua</code> inbox or a report processor). Look at the IP addresses that are failing. Use a reverse DNS lookup or IP geolocation tool to identify the service. If it's a legitimate service you forgot, add it. If it's an unknown sender — it might be a phishing attempt, and that's exactly what p=reject is designed to block.</p>
+
+    <h3>Problem: My newsletter tool's emails are failing DMARC</h3>
+    <p>Your newsletter tool is probably sending with its own domain as the envelope sender (common with Mailchimp, Brevo). Set up custom domain authentication in your email platform's settings — this configures DKIM signing with your domain. Most platforms have a guide for this. Once set up, your newsletter emails will pass DMARC via DKIM alignment.</p>
+
+    <h3>Problem: Google Workspace (formerly G Suite) failing</h3>
+    <p>If you're on Google Workspace, make sure <code>include:_spf.google.com</code> is in your SPF record. Also verify that DKIM is enabled in Google Workspace Admin → Apps → Google Workspace → Gmail → Authenticate email. Google can take up to 48 hours to start signing after enabling.</p>
+
+    <h3>Problem: Microsoft 365 failing</h3>
+    <p>Add <code>include:spf.protection.outlook.com</code> to your SPF. For DKIM, go to Microsoft 365 Defender (security.microsoft.com) → Email &amp; Collaboration → Policies → DKIM — enable signing for your domain. Like Google, it takes time to propagate.</p>
+
+    <h3>Problem: SPF is over the 10-lookup limit</h3>
+    <p>SPF has a hard limit of 10 DNS mechanisms that require additional lookups (<code>include:</code>, <code>a</code>, <code>mx</code>). If you exceed this, some receivers will reject or ignore your SPF record entirely. The fix is SPF macro flattening — resolving all the includes to static IP lists. Services like dmarcian's SPF Surveyor, or EasyDMARC's SPF flattener, can help. Or remove sending services you no longer use.</p>
+
+    <h3>Problem: I have multiple DMARC records</h3>
+    <p>Only one TXT record is allowed at <code>_dmarc.yourdomain.com</code>. If you have multiple, DMARC evaluation fails. Delete the extras and keep only the authoritative one. Check with: <code>nslookup -type=TXT _dmarc.yourdomain.com</code></p>
+
+    <h2 id="monitor">Step 5: Monitor Your DMARC After Enforcement</h2>
+
+    <p>Reaching <code>p=reject</code> is not a one-time task. DMARC can break silently when:</p>
+    <ul>
+      <li>You onboard a new SaaS tool that sends email as your domain (and forget to authenticate it)</li>
+      <li>Someone changes your DNS records (intentionally or accidentally)</li>
+      <li>A third-party service updates its sending infrastructure and your SPF <code>include:</code> points to an outdated record</li>
+      <li>A DKIM key gets rotated without updating DNS</li>
+      <li>Someone "helpfully" adds a second DMARC record</li>
+    </ul>
+
+    <p>Any of these can silently break DMARC — causing legitimate email to fail, or weakening your spoofing protection. The only way to know when this happens is continuous monitoring with alerts.</p>
+
+    <div class="cta-box">
+      <h3>Get alerted the moment your DMARC changes</h3>
+      <p>EdgeIQ Inbox Shield monitors your DMARC, SPF, and DKIM records continuously and sends you an immediate email alert when anything changes. Free to check, $9/month to monitor.</p>
+      <a href="/inbox-shield/" class="cta-btn">Start monitoring free →</a>
+      <a href="/free-domain-security-score/" class="cta-btn-secondary">Check your grade →</a>
     </div>
-  </div>
 
-  <div class="danger-callout"><strong>The problem:</strong> Most domains that "have DMARC" are stuck at p=none. This means their DMARC record exists, they might be collecting reports, but there is literally zero enforcement. An attacker right now can send an email from <code>ceo@yourdomain.com</code> and it will land in the recipient's inbox with no warning.</div>
+    <h2>The 4-Week DMARC Fix Timeline</h2>
 
-  <p>The good news: most domains can reach <code>p=reject</code> within 2–4 weeks if SPF and DKIM are already configured. The risk of "breaking email" comes from rushing — not from the process itself.</p>
+    <p>To summarize the complete path from <code>p=none</code> to <code>p=reject</code>:</p>
+    <ol>
+      <li><strong>Week 1:</strong> Audit all sending services. Configure DKIM signing for each. Update SPF to include all senders. Add <code>rua=</code> reporting if not already configured.</li>
+      <li><strong>Week 2:</strong> Move to <code>p=quarantine; pct=10</code>. Monitor reports for unexpected filtering. Fix any discovered authentication gaps.</li>
+      <li><strong>Week 3:</strong> Increase to <code>p=quarantine; pct=100</code>. Confirm no legitimate mail is being filtered.</li>
+      <li><strong>Week 4:</strong> Move to <code>p=reject</code>. Set up continuous monitoring. Done.</li>
+    </ol>
 
-  <h2 id="check-status">Step 1: Check Your Current DMARC Status</h2>
+    <div class="callout"><strong>Most businesses find they can complete this faster</strong> — if SPF and DKIM are already properly configured, moving from p=none to p=reject can sometimes be done in a week. The multi-week timeline is there as a safety buffer to catch authentication gaps before enforcement.</div>
 
-  <p>Before changing anything, you need to know exactly what you're working with. Run your domain through a free check to see your current DMARC policy, whether SPF and DKIM are aligned, and what your email security grade is.</p>
+    <p>DMARC enforcement is one of the most effective, cheapest security controls a business can implement. The worst phishing attacks — the ones that impersonate your CEO to request wire transfers — become impossible when the attacker can't make email appear to come from your actual domain. Get to <code>p=reject</code> and stay there.</p>
 
-  <div class="cta-box">
-    <h3>Check your DMARC status in 10 seconds</h3>
-    <p>See your current DMARC policy, SPF configuration, and DKIM selectors — plus a full A–F grade for your domain's email security.</p>
-    <a href="/inbox-shield/" class="cta-btn">Check your domain free →</a>
-    <a href="/free-domain-security-score/" class="cta-btn-secondary">Full security score →</a>
-  </div>
-
-  <p>Once you have your current status, you'll know:</p>
-  <ul>
-    <li>Your current DMARC policy (<code>p=none</code>, <code>p=quarantine</code>, or <code>p=reject</code>)</li>
-    <li>Whether SPF passes for your sending IPs</li>
-    <li>Whether DKIM is signing outgoing mail correctly</li>
-    <li>Whether SPF and DKIM alignment is configured correctly for DMARC</li>
-  </ul>
-
-  <p>If you don't have a DMARC record at all, the fix is simpler — see our <a href="/blog/spf-dkim-dmarc-setup-guide.html">DMARC setup guide</a> to add one from scratch. This guide focuses on domains that already have a DMARC record at <code>p=none</code>.</p>
-
-  <h2 id="fix-spf-dkim">Step 2: Fix SPF and DKIM Before Tightening DMARC</h2>
-
-  <p>This is the most important step that most guides skip. <strong>Do not move your DMARC to p=quarantine or p=reject until your SPF and DKIM are passing correctly for all your legitimate sending services.</strong> If you enforce DMARC before your own legitimate mail is authenticated, you'll filter or reject your own emails.</p>
-
-  <h3>What DMARC alignment requires</h3>
-  <p>For an email to pass DMARC, it must pass either:</p>
-  <ul>
-    <li><strong>SPF alignment</strong>: the domain in the <code>Return-Path</code> (envelope sender) matches your <code>From:</code> domain, AND the IP is in your SPF record</li>
-    <li><strong>DKIM alignment</strong>: the DKIM signature's <code>d=</code> tag matches your <code>From:</code> domain</li>
-  </ul>
-  <p>Passing DMARC requires alignment — not just passing SPF or DKIM in isolation. A common mistake is having SPF and DKIM both "pass" individually, but failing DMARC alignment because the domains don't match.</p>
-
-  <h3>Audit every service that sends email as your domain</h3>
-  <p>Make a list of every service that sends email appearing to come from your domain. Common ones that get missed:</p>
-  <ul>
-    <li>Marketing email (Mailchimp, HubSpot, Klaviyo, Brevo)</li>
-    <li>CRM outbound (Salesforce, Pipedrive, HubSpot Sales)</li>
-    <li>Transactional email (SendGrid, Postmark, Mailgun, AWS SES)</li>
-    <li>Support tools (Zendesk, Intercom, Freshdesk)</li>
-    <li>Invoicing and billing (QuickBooks, FreshBooks, Stripe billing)</li>
-    <li>Calendar/scheduling tools (Calendly, Acuity)</li>
-    <li>HR systems (BambooHR, Workday)</li>
-    <li>Your own mail server (if self-hosted)</li>
-  </ul>
-
-  <p>Each of these needs to either:</p>
-  <ol>
-    <li>Be listed in your SPF record as an authorized sender, <em>and</em> use your domain as the envelope sender (SPF alignment)</li>
-    <li>Sign outgoing emails with a DKIM key where <code>d=yourdomain.com</code> (DKIM alignment)</li>
-  </ol>
-
-  <div class="callout"><strong>Tip:</strong> Most email platforms (HubSpot, SendGrid, Mailchimp) support custom DKIM signing — set this up in each platform's domain authentication settings. This is the most reliable path to DMARC alignment for third-party senders.</div>
-
-  <h3>SPF record checklist</h3>
-  <p>Your SPF record at <code>yourdomain.com</code> should include all authorized sending sources. A basic example:</p>
-  <pre><code>v=spf1 include:_spf.google.com include:sendgrid.net include:mailgun.org ip4:203.0.113.10 ~all</code></pre>
-
-  <p>Key rules:</p>
-  <ul>
-    <li>Stay under <strong>10 DNS lookup mechanisms</strong> (each <code>include:</code> counts as one). Use an <a href="/free-tools/">SPF flattening tool</a> if you're close to the limit.</li>
-    <li>End with <code>~all</code> (softfail) while testing, switch to <code>-all</code> (hardfail) once enforced</li>
-    <li>Use <code>ip4:</code> or <code>ip6:</code> for static server IPs (these don't count toward lookup limit)</li>
-  </ul>
-
-  <h2 id="quarantine">Step 3: Move to p=quarantine (Safe Intermediate Step)</h2>
-
-  <p>Once you've confirmed your SPF and DKIM are aligned for all legitimate senders, update your DMARC record to <code>p=quarantine</code>. Start with a low percentage (<code>pct=10</code>) to apply the policy to only 10% of failing mail — this lets you catch unexpected problems before full rollout.</p>
-
-  <pre><code>_dmarc.yourdomain.com TXT "v=DMARC1; p=quarantine; pct=10; rua=mailto:dmarc@yourdomain.com; fo=1"</code></pre>
-
-  <p>Monitor your DMARC reports for 3–7 days. If you see legitimate email being quarantined (showing up in spam), investigate immediately before increasing the percentage. Common causes:</p>
-  <ul>
-    <li>A sending service you forgot to add to SPF/DKIM</li>
-    <li>A forwarding configuration that breaks SPF alignment</li>
-    <li>An automated system (cron job, monitoring alert) sending email as your domain</li>
-  </ul>
-
-  <p>Once the quarantine reports show no unexpected filtering, increase <code>pct</code> gradually: 10 → 25 → 50 → 100, over a week or two.</p>
-
-  <div class="warn-callout"><strong>Watch out for email forwarding:</strong> When someone auto-forwards email sent to your domain to another address (common with distribution lists and some mailing configurations), SPF will fail because the forwarding server isn't in your SPF record. DKIM should survive forwarding intact. This is why DKIM alignment is more reliable than SPF alignment for forwarded mail — make sure DKIM is set up for all your sending services.</div>
-
-  <h2 id="reject">Step 4: Move to p=reject (Full Enforcement)</h2>
-
-  <p>Once you've been at <code>p=quarantine; pct=100</code> for at least a week with no unexpected issues, you're ready for <code>p=reject</code>. This is the only policy that actually prevents spoofing — at quarantine, spoofed emails still reach the recipient (in spam), and some users will open spam. At reject, the attack fails entirely.</p>
-
-  <pre><code>_dmarc.yourdomain.com TXT "v=DMARC1; p=reject; rua=mailto:dmarc@yourdomain.com; ruf=mailto:dmarc@yourdomain.com; fo=1"</code></pre>
-
-  <p>The full parameter breakdown:</p>
-  <ul>
-    <li><code>p=reject</code> — reject emails that fail DMARC alignment</li>
-    <li><code>rua=</code> — where aggregate reports go (summary of all mail sources, daily)</li>
-    <li><code>ruf=</code> — where forensic reports go (individual failure details, if supported)</li>
-    <li><code>fo=1</code> — generate failure reports for any alignment failure (recommended for monitoring)</li>
-    <li><code>adkim=r</code> / <code>aspf=r</code> — relaxed alignment mode (default; allows subdomain matches)</li>
-  </ul>
-
-  <div class="callout"><strong>Optional: add subdomain policy.</strong> By default, DMARC applies to subdomains too. If you send email from subdomains (e.g., <code>noreply@marketing.yourdomain.com</code>), make sure those subdomains are also authenticated. You can set a separate subdomain policy with <code>sp=quarantine</code> or <code>sp=reject</code> to control subdomain treatment independently.</div>
-
-  <h2 id="common-problems">Common Problems and How to Fix Them</h2>
-
-  <h3>Problem: DMARC failing for a specific sender I can't identify</h3>
-  <p>Check your DMARC aggregate reports (<code>rua</code> inbox or a report processor). Look at the IP addresses that are failing. Use a reverse DNS lookup or IP geolocation tool to identify the service. If it's a legitimate service you forgot, add it. If it's an unknown sender — it might be a phishing attempt, and that's exactly what p=reject is designed to block.</p>
-
-  <h3>Problem: My newsletter tool's emails are failing DMARC</h3>
-  <p>Your newsletter tool is probably sending with its own domain as the envelope sender (common with Mailchimp, Brevo). Set up custom domain authentication in your email platform's settings — this configures DKIM signing with your domain. Most platforms have a guide for this. Once set up, your newsletter emails will pass DMARC via DKIM alignment.</p>
-
-  <h3>Problem: Google Workspace (formerly G Suite) failing</h3>
-  <p>If you're on Google Workspace, make sure <code>include:_spf.google.com</code> is in your SPF record. Also verify that DKIM is enabled in Google Workspace Admin → Apps → Google Workspace → Gmail → Authenticate email. Google can take up to 48 hours to start signing after enabling.</p>
-
-  <h3>Problem: Microsoft 365 failing</h3>
-  <p>Add <code>include:spf.protection.outlook.com</code> to your SPF. For DKIM, go to Microsoft 365 Defender (security.microsoft.com) → Email &amp; Collaboration → Policies → DKIM — enable signing for your domain. Like Google, it takes time to propagate.</p>
-
-  <h3>Problem: SPF is over the 10-lookup limit</h3>
-  <p>SPF has a hard limit of 10 DNS mechanisms that require additional lookups (<code>include:</code>, <code>a</code>, <code>mx</code>). If you exceed this, some receivers will reject or ignore your SPF record entirely. The fix is SPF macro flattening — resolving all the includes to static IP lists. Services like dmarcian's SPF Surveyor, or EasyDMARC's SPF flattener, can help. Or remove sending services you no longer use.</p>
-
-  <h3>Problem: I have multiple DMARC records</h3>
-  <p>Only one TXT record is allowed at <code>_dmarc.yourdomain.com</code>. If you have multiple, DMARC evaluation fails. Delete the extras and keep only the authoritative one. Check with: <code>nslookup -type=TXT _dmarc.yourdomain.com</code></p>
-
-  <h2 id="monitor">Step 5: Monitor Your DMARC After Enforcement</h2>
-
-  <p>Reaching <code>p=reject</code> is not a one-time task. DMARC can break silently when:</p>
-  <ul>
-    <li>You onboard a new SaaS tool that sends email as your domain (and forget to authenticate it)</li>
-    <li>Someone changes your DNS records (intentionally or accidentally)</li>
-    <li>A third-party service updates its sending infrastructure and your SPF <code>include:</code> points to an outdated record</li>
-    <li>A DKIM key gets rotated without updating DNS</li>
-    <li>Someone "helpfully" adds a second DMARC record</li>
-  </ul>
-
-  <p>Any of these can silently break DMARC — causing legitimate email to fail, or weakening your spoofing protection. The only way to know when this happens is continuous monitoring with alerts.</p>
-
-  <div class="cta-box">
-    <h3>Get alerted the moment your DMARC changes</h3>
-    <p>EdgeIQ Inbox Shield monitors your DMARC, SPF, and DKIM records continuously and sends you an immediate email alert when anything changes. Free to check, $9/month to monitor.</p>
-    <a href="/inbox-shield/" class="cta-btn">Start monitoring free →</a>
-    <a href="/free-domain-security-score/" class="cta-btn-secondary">Check your grade →</a>
-  </div>
-
-  <h2>The 4-Week DMARC Fix Timeline</h2>
-
-  <p>To summarize the complete path from <code>p=none</code> to <code>p=reject</code>:</p>
-  <ol>
-    <li><strong>Week 1:</strong> Audit all sending services. Configure DKIM signing for each. Update SPF to include all senders. Add <code>rua=</code> reporting if not already configured.</li>
-    <li><strong>Week 2:</strong> Move to <code>p=quarantine; pct=10</code>. Monitor reports for unexpected filtering. Fix any discovered authentication gaps.</li>
-    <li><strong>Week 3:</strong> Increase to <code>p=quarantine; pct=100</code>. Confirm no legitimate mail is being filtered.</li>
-    <li><strong>Week 4:</strong> Move to <code>p=reject</code>. Set up continuous monitoring. Done.</li>
-  </ol>
-
-  <div class="callout"><strong>Most businesses find they can complete this faster</strong> — if SPF and DKIM are already properly configured, moving from p=none to p=reject can sometimes be done in a week. The multi-week timeline is there as a safety buffer to catch authentication gaps before enforcement.</div>
-
-  <p>DMARC enforcement is one of the most effective, cheapest security controls a business can implement. The worst phishing attacks — the ones that impersonate your CEO to request wire transfers — become impossible when the attacker can't make email appear to come from your actual domain. Get to <code>p=reject</code> and stay there.</p>
-
-  <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
-    <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
-    <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
-    <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
-    <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;flex-wrap:wrap;">
-      <input type="email" required placeholder="you@company.com" style="flex:1;min-width:180px;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
-      <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
-    </form>
-    <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    <div class="newsletter-box">
+      <div style="font-size:1.6rem;margin-bottom:var(--space-sm);">📬</div>
+      <h3>Get the EdgeIQ weekly security digest</h3>
+      <p>Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" class="newsletter-form">
+        <input type="email" required placeholder="you@company.com"/>
+        <button type="submit">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
+    </div>
   </div>
 
 </div>
 
-<footer>
-  <div class="container">
-    <a href="/">Home</a>
-    <a href="/blog/">Blog</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/free-domain-security-score/">Free Security Score</a>
-    <a href="/pricing/">Pricing</a>
-  </div>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
 async function blogEmailSignup(e, form) {
@@ -359,12 +390,6 @@ async function blogEmailSignup(e, form) {
   } catch(_) {}
   form.style.display = 'none';
   form.closest('div').querySelector('.blog-sub-ok').style.display = 'block';
-}
-function toggleMobileMenu() {
-  const m = document.getElementById('nav-mobile-menu');
-  const b = document.getElementById('nav-hamburger');
-  if (m) m.classList.toggle('open');
-  if (b) b.classList.toggle('open');
 }
 </script>
 </body>

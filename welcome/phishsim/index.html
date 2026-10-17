@@ -1,71 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PhishSim Activated · EdgeIQ Labs</title>
   <style>
-    :root {
-      --bg: #0b0f14; --card: #121923; --text: #e8eef7;
-      --muted: #9fb0c7; --accent: #3dd9ff; --border: #233142; --ok: #70f0a8;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Inter, system-ui, sans-serif;
-      background: var(--bg); color: var(--text);
-      min-height: 100vh; display: flex;
-      align-items: center; justify-content: center; padding: 20px;
-    }
+    /* Page-specific styles — migrated to design system tokens */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+    
     @keyframes glow {
       0%,100% { box-shadow: 0 0 20px rgba(61,217,255,.15),0 0 60px rgba(61,217,255,.05); }
       50%      { box-shadow: 0 0 30px rgba(61,217,255,.25),0 0 80px rgba(61,217,255,.10); }
     }
     @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
     .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 20px;
       padding: 52px 44px; text-align: center; max-width: 540px; width: 100%;
       animation: glow 3s ease-in-out infinite;
     }
     .emoji { font-size: 4rem; display: inline-block; animation: float 3s ease-in-out infinite; margin-bottom: 24px; }
     h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 12px; }
-    p.sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px; }
+    p.sub { color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px; }
 
     /* Customer ID box */
     .cid-box {
-      background: var(--bg); border: 1px solid var(--accent);
+      background: var(--color-bg-primary); border: 1px solid var(--color-accent);
       border-radius: 12px; padding: 18px 20px; margin-bottom: 28px;
     }
-    .cid-label { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .cid-label { font-size: 0.72rem; font-weight: 700; color: var(--color-accent); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
     .cid-row { display: flex; align-items: center; gap: 10px; }
     .cid-value {
-      flex: 1; background: #0b0f14; border: 1px solid var(--border);
+      flex: 1; background: #0b0f14; border: 1px solid var(--color-border);
       border-radius: 7px; padding: 9px 12px; font-family: monospace;
-      font-size: 0.82rem; color: var(--text); white-space: nowrap;
+      font-size: 0.82rem; color: var(--color-text-primary); white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis; text-align: left;
     }
     .copy-btn {
-      background: rgba(61,217,255,.12); border: 1px solid var(--accent);
-      color: var(--accent); font-size: 0.75rem; font-weight: 700;
+      background: rgba(61,217,255,.12); border: 1px solid var(--color-accent);
+      color: var(--color-accent); font-size: 0.75rem; font-weight: 700;
       padding: 8px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap;
       transition: background .15s;
     }
     .copy-btn:hover { background: rgba(61,217,255,.22); }
-    .cid-note { font-size: 0.75rem; color: var(--muted); margin-top: 10px; text-align: left; }
+    .cid-note { font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 10px; text-align: left; }
 
     /* Steps */
     .steps {
-      text-align: left; background: var(--bg); border: 1px solid var(--border);
+      text-align: left; background: var(--color-bg-primary); border: 1px solid var(--color-border);
       border-radius: 12px; padding: 24px; margin-bottom: 28px;
     }
     .step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
     .step:last-child { margin-bottom: 0; }
     .step-num {
-      background: rgba(61,217,255,.15); color: var(--accent); font-size: .75rem;
+      background: rgba(61,217,255,.15); color: var(--color-accent); font-size: .75rem;
       font-weight: 700; width: 24px; height: 24px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .step-text { font-size: .88rem; color: var(--muted); line-height: 1.5; }
-    .step-text strong { color: var(--text); }
+    .step-text { font-size: .88rem; color: var(--color-text-secondary); line-height: 1.5; }
+    .step-text strong { color: var(--color-text-primary); }
 
     /* Features */
     .features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; text-align: left; }
@@ -73,29 +65,51 @@
       background: rgba(112,240,168,.07); border: 1px solid rgba(112,240,168,.2);
       border-radius: 8px; padding: 12px 14px; font-size: .82rem; color: var(--ok);
     }
-    .feat span { display: block; font-size: .7rem; color: var(--muted); margin-top: 2px; }
+    .feat span { display: block; font-size: .7rem; color: var(--color-text-secondary); margin-top: 2px; }
 
     .cta {
-      display: inline-block; background: var(--accent); color: #071018;
+      display: inline-block; background: var(--color-accent); color: #071018;
       font-weight: 700; font-size: .9rem; padding: 12px 28px; border-radius: 8px;
       text-decoration: none; margin-bottom: 16px; transition: opacity .15s;
     }
     .cta:hover { opacity: .85; }
     .footer { font-size: .75rem; color: #4a6080; margin-top: 24px; }
-    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a { color: var(--color-accent); text-decoration: none; }
 
     /* Loading / error states */
-    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 20px; }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--color-border); border-top-color: var(--color-accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 20px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .err-box { background: rgba(255,80,80,.08); border: 1px solid rgba(255,80,80,.3); border-radius: 12px; padding: 20px; color: #ff8080; font-size: .88rem; line-height: 1.6; }
-    @media (max-width: 480px) {
-      .card { padding: 36px 24px; }
+    
       .features { grid-template-columns: 1fr; }
     }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 <div class="card" id="card">
   <!-- Loading state -->
   <div id="stateLoading">
@@ -216,5 +230,36 @@ function copyId() {
   });
 }
 </script>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 </body>
 </html>

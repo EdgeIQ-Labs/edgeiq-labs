@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,113 +16,94 @@
   <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/blog/business-email-compromise-bec-prevention-2026.html" />
   <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="theme-color" content="#0A1628" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026","description":"BEC attacks cost businesses $2.9 billion last year. Learn how attackers impersonate executives and the 9 controls that stop them.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
   <style>
-    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--border:#233142;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
-    .container{max-width:740px;margin:0 auto;padding:0 20px;}
-    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
-    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
-    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
-    .nav-brand span{color:var(--accent);}
-    .nav-links{display:flex;align-items:center;gap:6px;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
-    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
-    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
-    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
-    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
-    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
-    .product-strip-inner::-webkit-scrollbar{display:none;}
-    .product-strip-inner::after{content:"";flex:0 0 28px;}
-    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
-    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
-    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
-    .nav-mobile-menu a{color:var(--muted);text-decoration:none;padding:9px 0;font-size:0.95rem;border-bottom:1px solid #1a2535;}
-    .nav-mobile-menu a:last-child{border-bottom:none;}
-    @media(max-width:700px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
-    article{padding:48px 0 80px;}
-    .post-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
-    .post-eyebrow .tag{background:#1a2535;color:var(--muted);padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:0.04em;}
-    .post-meta-line{color:var(--muted);font-size:0.82rem;}
-    h1{font-size:clamp(1.55rem,3.5vw,2.1rem);font-weight:800;line-height:1.25;margin-bottom:16px;color:#fff;}
-    .post-lead{font-size:1.08rem;color:#b8cce0;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--border);}
-    h2{font-size:1.28rem;font-weight:700;margin:38px 0 12px;color:#d4e6ff;}
-    h3{font-size:1.05rem;font-weight:700;margin:26px 0 8px;color:#c0d4ee;}
-    p{margin-bottom:16px;color:#c8d8ea;}
-    ul,ol{margin:0 0 18px 22px;}
-    li{margin-bottom:7px;color:#c8d8ea;}
-    strong{color:#e8f0f8;}
-    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.9em;font-family:'Fira Mono',monospace;}
-    table{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.9rem;}
-    th{background:#1a2535;color:#d4e6ff;padding:10px 14px;text-align:left;border:1px solid #2a3c52;font-weight:700;}
-    td{padding:9px 14px;border:1px solid #1e3347;color:#b8cce0;}
-    tr:nth-child(even) td{background:#0f1820;}
-    .callout{background:#12202e;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;}
-    .callout p{margin:0;color:#b8cce0;}
-    .bec-type{background:#0e1621;border:1px solid #233142;border-radius:10px;padding:20px;margin-bottom:14px;}
-    .bec-type-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-    .bec-type-icon{font-size:1.4rem;}
-    .bec-type-title{font-weight:700;color:#d4e6ff;font-size:1rem;}
-    .bec-type-subtitle{color:var(--muted);font-size:0.82rem;margin-top:2px;}
-    .warning-badge{display:inline-block;background:#2d1a0e;color:#ff9f43;border:1px solid #5c3010;padding:2px 9px;border-radius:4px;font-size:0.75rem;font-weight:700;margin-left:8px;}
-    .control-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:20px 0;}
-    .control-card{background:#0e1621;border:1px solid #233142;border-radius:10px;padding:18px 20px;}
-    .control-num{font-size:0.78rem;font-weight:700;color:var(--accent);letter-spacing:0.06em;margin-bottom:6px;}
-    .control-card h3{font-size:0.97rem;margin:0 0 6px;color:#d4e6ff;}
-    .control-card p{font-size:0.87rem;margin:0;color:var(--muted);}
-    .red-flag-list{list-style:none;margin:0 0 18px;padding:0;}
-    .red-flag-list li{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:#150f0f;border:1px solid #3a1a1a;border-radius:8px;margin-bottom:8px;color:#e8d5d5;}
-    .red-flag-list li::before{content:"🚩";flex-shrink:0;}
-    .checklist{list-style:none;padding:0;margin:0 0 18px;}
-    .checklist li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #1a2535;color:#c8d8ea;font-size:0.93rem;}
-    .checklist li:last-child{border-bottom:none;}
-    .checklist li::before{content:"☐";color:var(--accent);flex-shrink:0;margin-top:1px;}
-    .cta-box{background:linear-gradient(135deg,#100820,#160d2a);border:1px solid rgba(180,122,255,0.35);border-radius:14px;padding:32px 28px;margin:48px 0 24px;text-align:center;}
-    .cta-box h3{font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:10px;}
-    .cta-box p{color:#b8aad0;margin-bottom:20px;font-size:0.95rem;}
-    .cta-btn{display:inline-block;background:#b47aff;color:#0a0516;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:0.95rem;transition:opacity 0.2s;}
-    .cta-btn:hover{opacity:0.88;}
-    .email-signup{background:#0e1621;border:1px solid #233142;border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
-    .email-signup h3{font-size:1rem;font-weight:700;margin-bottom:6px;}
-    .email-signup p{color:var(--muted);font-size:0.88rem;margin-bottom:16px;}
-    .email-row{display:flex;gap:8px;max-width:420px;margin:0 auto;}
-    .email-row input{flex:1;background:#121923;border:1px solid #2a3c52;border-radius:8px;padding:10px 14px;color:#e8eef7;font-size:0.92rem;outline:none;}
-    .email-row input:focus{border-color:var(--accent);}
-    .email-row button{background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-size:0.9rem;}
-    .sub-ok{display:none;color:#b47aff;font-size:0.9rem;margin-top:8px;}
-    footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--muted);font-size:0.85rem;}
-    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+    /* Blog-specific styles mapped to design system tokens */
+    article { padding: var(--space-3xl) 0 var(--space-section); }
+    .post-eyebrow { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-lg); flex-wrap: wrap; }
+    .post-eyebrow .tag { background: var(--color-bg-elevated); color: var(--color-text-secondary); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 600; letter-spacing: var(--tracking-wide); }
+    .post-meta-line { color: var(--color-text-muted); font-size: var(--text-sm); }
+    h1 { font-size: clamp(1.55rem, 3.5vw, 2.1rem); font-weight: 800; line-height: var(--leading-tight); margin-bottom: var(--space-md); color: var(--color-text-primary); }
+    .post-lead { font-size: var(--text-lg); color: var(--color-text-secondary); margin-bottom: var(--space-2xl); padding-bottom: var(--space-xl); border-bottom: 1px solid var(--color-border); }
+    h2 { font-size: var(--text-2xl); font-weight: 700; margin: var(--space-2xl) 0 var(--space-md); color: var(--color-text-primary); }
+    h3 { font-size: var(--text-xl); font-weight: 700; margin: var(--space-xl) 0 var(--space-sm); color: var(--color-text-primary); }
+    p { margin-bottom: var(--space-md); color: var(--color-text-secondary); }
+    ul, ol { margin: 0 0 var(--space-lg) var(--space-xl); }
+    li { margin-bottom: var(--space-xs); color: var(--color-text-secondary); }
+    strong { color: var(--color-text-primary); }
+    code { background: var(--color-bg-elevated); color: var(--color-accent); padding: 2px 7px; border-radius: var(--radius-sm); font-size: 0.9em; font-family: var(--font-mono); }
+    table { width: 100%; border-collapse: collapse; margin: var(--space-xl) 0; font-size: var(--text-sm); }
+    th { background: var(--color-bg-elevated); color: var(--color-text-primary); padding: 10px 14px; text-align: left; border: 1px solid var(--color-border); font-weight: 700; }
+    td { padding: 9px 14px; border: 1px solid var(--color-border); color: var(--color-text-secondary); }
+    tr:nth-child(even) td { background: var(--color-bg-light-band); }
+    .callout { background: var(--color-bg-surface); border-left: 3px solid var(--color-accent); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: var(--space-md) var(--space-lg); margin: var(--space-xl) 0; }
+    .callout p { margin: 0; color: var(--color-text-secondary); }
+    .bec-type { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin-bottom: var(--space-md); }
+    .bec-type-header { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm); }
+    .bec-type-icon { font-size: 1.4rem; }
+    .bec-type-title { font-weight: 700; color: var(--color-text-primary); font-size: var(--text-base); }
+    .bec-type-subtitle { color: var(--color-text-muted); font-size: var(--text-sm); margin-top: 2px; }
+    .warning-badge { display: inline-block; background: rgba(255, 159, 67, 0.15); color: #ff9f43; border: 1px solid rgba(255, 159, 67, 0.3); padding: 2px 9px; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 700; margin-left: var(--space-sm); }
+    .control-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-md); margin: var(--space-lg) 0; }
+    .control-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); }
+    .control-num { font-size: var(--text-xs); font-weight: 700; color: var(--color-accent); letter-spacing: var(--tracking-wide); margin-bottom: var(--space-xs); }
+    .control-card h3 { font-size: var(--text-base); margin: 0 0 var(--space-xs); color: var(--color-text-primary); }
+    .control-card p { font-size: var(--text-sm); margin: 0; color: var(--color-text-muted); }
+    .red-flag-list { list-style: none; margin: 0 0 var(--space-lg); padding: 0; }
+    .red-flag-list li { display: flex; gap: var(--space-md); align-items: flex-start; padding: var(--space-md); background: rgba(255, 107, 122, 0.06); border: 1px solid rgba(255, 107, 122, 0.15); border-radius: var(--radius-md); margin-bottom: var(--space-sm); color: var(--color-text-secondary); }
+    .red-flag-list li::before { content: "🚩"; flex-shrink: 0; }
+    .checklist { list-style: none; padding: 0; margin: 0 0 var(--space-lg); }
+    .checklist li { display: flex; gap: var(--space-md); align-items: flex-start; padding: var(--space-sm) 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: var(--text-sm); }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before { content: "☐"; color: var(--color-accent); flex-shrink: 0; margin-top: 1px; }
+    .cta-box { background: linear-gradient(135deg, var(--color-bg-surface), var(--color-bg-elevated)); border: 1px solid var(--color-accent-subtle); border-radius: var(--radius-lg); padding: var(--space-2xl) var(--space-xl); margin: var(--space-3xl) 0 var(--space-xl); text-align: center; }
+    .cta-box h3 { font-size: var(--text-2xl); font-weight: 800; color: var(--color-text-primary); margin-bottom: var(--space-md); }
+    .cta-box p { color: var(--color-text-secondary); margin-bottom: var(--space-lg); font-size: var(--text-base); }
+    .cta-btn { display: inline-block; background: var(--color-accent); color: #000; font-weight: 700; padding: 13px 28px; border-radius: var(--radius-full); text-decoration: none; font-size: var(--text-base); transition: opacity var(--transition-fast); }
+    .cta-btn:hover { opacity: 0.88; color: #000; }
+    .email-signup { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
+    .email-signup h3 { font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-sm); }
+    .email-signup p { color: var(--color-text-muted); font-size: var(--text-sm); margin-bottom: var(--space-md); }
+    .email-row { display: flex; gap: var(--space-sm); max-width: 420px; margin: 0 auto; }
+    .email-row input { flex: 1; background: var(--color-bg-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 10px 14px; color: var(--color-text-primary); font-size: var(--text-sm); outline: none; font-family: var(--font-sans); }
+    .email-row input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+    .email-row button { background: var(--color-accent); color: #000; font-weight: 700; border: none; border-radius: var(--radius-md); padding: 10px 18px; cursor: pointer; font-size: var(--text-sm); font-family: var(--font-sans); }
+    .sub-ok { display: none; color: var(--color-accent); font-size: var(--text-sm); margin-top: var(--space-sm); }
+
+    /* Product strip */
+    .product-strip { background: var(--color-bg-light-band); border-bottom: 1px solid var(--color-border); position: sticky; top: 56px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px var(--space-xl); overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background var(--transition-fast); color: var(--color-accent); }
+    .product-strip-inner a:hover { background: var(--color-accent-subtle); }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
 
-<nav>
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
-      <div class="nav-links">
-        <a href="/dashboard/">Dashboard</a>
-        <a href="/pulse/">Pulse</a>
-        <a href="/inbox-shield/">Inbox Shield</a>
-        <a href="/blog/">Blog</a>
-        <a href="/dashboard/" class="nav-cta">Free Scan →</a>
-      </div>
-      <button class="nav-hamburger" onclick="document.querySelector('.nav-mobile-menu').style.display=document.querySelector('.nav-mobile-menu').style.display==='flex'?'none':'flex'" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
+<!-- NAV -->
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="/" class="nav__logo">
+      <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+      EdgeIQ Labs
+    </a>
+    <ul class="nav__links">
+      <li><a href="/" class="nav__link">Home</a></li>
+      <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+      <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+      <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+      <li><a href="/contact/" class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+      <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+      <button class="nav__hamburger" aria-label="Menu">☰</button>
     </div>
-  </div>
-  <div class="nav-mobile-menu">
-    <a href="/dashboard/">Dashboard</a>
-    <a href="/pulse/">Pulse</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/brandguard/">BrandGuard</a>
-    <a href="/workspace-posture/">Workspace Posture</a>
-    <a href="/compliance/">Compliance</a>
-    <a href="/blog/">Blog</a>
-    <a href="/dashboard/">Free Scan →</a>
   </div>
 </nav>
 
@@ -140,7 +121,7 @@
   </div>
 </div>
 
-<div class="container">
+<div class="container container--narrow">
 <article>
 
   <div class="post-eyebrow">
@@ -175,7 +156,7 @@
         <div class="bec-type-subtitle">Attacker impersonates the CEO or CFO, urgently requesting a wire transfer</div>
       </div>
     </div>
-    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">A finance employee receives an email appearing to come from the CEO: <em>"I'm in a board meeting. Need you to process an urgent wire to our new vendor — $47,500. I'll explain the details later, keep this quiet for now."</em> The from address is either a lookalike domain (<code>ceo@company-corp.com</code>) or a compromised real account.</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin:0;">A finance employee receives an email appearing to come from the CEO: <em>"I'm in a board meeting. Need you to process an urgent wire to our new vendor — $47,500. I'll explain the details later, keep this quiet for now."</em> The from address is either a lookalike domain (<code>ceo@company-corp.com</code>) or a compromised real account.</p>
   </div>
 
   <div class="bec-type">
@@ -186,7 +167,7 @@
         <div class="bec-type-subtitle">Attacker intercepts or spoofs supplier emails to redirect payments</div>
       </div>
     </div>
-    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">An email arrives that looks like your regular supplier's invoice, but the bank account details have changed. "Please use our new account effective immediately — reply to confirm." Attackers either compromise the supplier's email or spoof their domain.</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin:0;">An email arrives that looks like your regular supplier's invoice, but the bank account details have changed. "Please use our new account effective immediately — reply to confirm." Attackers either compromise the supplier's email or spoof their domain.</p>
   </div>
 
   <div class="bec-type">
@@ -197,7 +178,7 @@
         <div class="bec-type-subtitle">Attacker impersonates an employee to redirect their salary</div>
       </div>
     </div>
-    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">Before payroll runs, an attacker posing as an employee emails HR: "Hi, I recently changed banks. Can you update my direct deposit to [new account] before the next pay run?" The employee doesn't know until they check their bank statement.</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin:0;">Before payroll runs, an attacker posing as an employee emails HR: "Hi, I recently changed banks. Can you update my direct deposit to [new account] before the next pay run?" The employee doesn't know until they check their bank statement.</p>
   </div>
 
   <div class="bec-type">
@@ -208,7 +189,7 @@
         <div class="bec-type-subtitle">Attacker poses as legal counsel to create urgency and secrecy</div>
       </div>
     </div>
-    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">A recipient gets an email purportedly from the company's law firm: "We're handling a confidential acquisition. The CEO has authorized a $130,000 escrow transfer. Due to the sensitive nature, do not discuss with colleagues." The urgency and confidentiality both serve to bypass normal approval processes.</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin:0;">A recipient gets an email purportedly from the company's law firm: "We're handling a confidential acquisition. The CEO has authorized a $130,000 escrow transfer. Due to the sensitive nature, do not discuss with colleagues." The urgency and confidentiality both serve to bypass normal approval processes.</p>
   </div>
 
   <div class="bec-type">
@@ -219,7 +200,7 @@
         <div class="bec-type-subtitle">Attacker requests gift card purchases with codes sent via email</div>
       </div>
     </div>
-    <p style="font-size:0.9rem;color:#b8cce0;margin:0;">Often targeting small businesses, the "CEO" requests an employee buy $500–$2,000 in Amazon or iTunes gift cards for "client gifts" or an "employee appreciation event," then asks for photos of the codes. Quick, irreversible, and surprisingly common.</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin:0;">Often targeting small businesses, the "CEO" requests an employee buy $500–$2,000 in Amazon or iTunes gift cards for "client gifts" or an "employee appreciation event," then asks for photos of the codes. Quick, irreversible, and surprisingly common.</p>
   </div>
 
   <h2>How Attackers Prepare a BEC Attack</h2>
@@ -255,7 +236,7 @@
     <div class="control-card">
       <div class="control-num">CONTROL 01</div>
       <h3>Enforce DMARC p=reject</h3>
-      <p>Prevents attackers from spoofing your domain. Without it, anyone can send email appearing to come from ceo@yourdomain.com. Check your record at <a href="/inbox-shield/" style="color:var(--accent);">Inbox Shield</a>.</p>
+      <p>Prevents attackers from spoofing your domain. Without it, anyone can send email appearing to come from ceo@yourdomain.com. Check your record at <a href="/inbox-shield/">Inbox Shield</a>.</p>
     </div>
     <div class="control-card">
       <div class="control-num">CONTROL 02</div>
@@ -275,7 +256,7 @@
     <div class="control-card">
       <div class="control-num">CONTROL 05</div>
       <h3>Monitor lookalike domain registrations</h3>
-      <p>Attackers register typosquatted domains weeks before the attack. Real-time monitoring catches <code>company-corp.com</code>, <code>cornpany.com</code>, and homoglyph variants before they're used. <a href="/brandguard/" style="color:var(--accent);">BrandGuard</a> does this automatically.</p>
+      <p>Attackers register typosquatted domains weeks before the attack. Real-time monitoring catches <code>company-corp.com</code>, <code>cornpany.com</code>, and homoglyph variants before they're used. <a href="/brandguard/">BrandGuard</a> does this automatically.</p>
     </div>
     <div class="control-card">
       <div class="control-num">CONTROL 06</div>
@@ -290,7 +271,7 @@
     <div class="control-card">
       <div class="control-num">CONTROL 08</div>
       <h3>BEC-specific employee training</h3>
-      <p>Run tabletop BEC simulations — not just generic phishing drills. Finance and HR teams need specific scenarios around wire fraud, payroll diversion, and W-2 requests. <a href="https://phishsim.edgeiqlabs.com/" style="color:var(--accent);">PhishSim</a> covers BEC scenarios.</p>
+      <p>Run tabletop BEC simulations — not just generic phishing drills. Finance and HR teams need specific scenarios around wire fraud, payroll diversion, and W-2 requests. <a href="https://phishsim.edgeiqlabs.com/">PhishSim</a> covers BEC scenarios.</p>
     </div>
     <div class="control-card">
       <div class="control-num">CONTROL 09</div>
@@ -329,7 +310,7 @@
     </tbody>
   </table>
 
-  <p>The transition from <code>p=none</code> → <code>p=quarantine</code> → <code>p=reject</code> should be gradual, monitoring reports at each stage to ensure legitimate senders aren't accidentally blocked. See our full guide: <a href="/blog/dmarc-reject-vs-quarantine.html" style="color:var(--accent);">DMARC p=reject vs p=quarantine — which policy should you set?</a></p>
+  <p>The transition from <code>p=none</code> → <code>p=quarantine</code> → <code>p=reject</code> should be gradual, monitoring reports at each stage to ensure legitimate senders aren't accidentally blocked. See our full guide: <a href="/blog/dmarc-reject-vs-quarantine.html">DMARC p=reject vs p=quarantine — which policy should you set?</a></p>
 
   <h2>What to Do If You Receive a Suspicious Email</h2>
 
@@ -357,7 +338,7 @@
     <li>Create inbox rules that hide their own sent emails and delete replies</li>
     <li>Access calendar invites to time wire fraud requests when key approvers are unavailable</li>
   </ul>
-  <p>This is why account security in M365 and Google Workspace is inseparable from BEC prevention. Weekly audits of forwarding rules, OAuth app access, and unusual sign-in locations catch compromised accounts before attackers can do damage. <a href="/workspace-posture/" style="color:#4da6ff;">Workspace Posture Pro</a> runs these checks automatically every Monday and alerts you to anything suspicious.</p>
+  <p>This is why account security in M365 and Google Workspace is inseparable from BEC prevention. Weekly audits of forwarding rules, OAuth app access, and unusual sign-in locations catch compromised accounts before attackers can do damage. <a href="/workspace-posture/">Workspace Posture Pro</a> runs these checks automatically every Monday and alerts you to anything suspicious.</p>
 
   <h2>BEC Prevention Checklist</h2>
 
@@ -393,16 +374,35 @@
 </article>
 </div>
 
-<footer>
-  <div class="container">
-    <a href="/">Home</a>
-    <a href="/blog/">Blog</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/brandguard/">BrandGuard</a>
-    <a href="/workspace-posture/">Workspace Posture</a>
-    <a href="/dashboard/">Dashboard</a>
-    <a href="/privacy/">Privacy</a>
-    <p style="margin-top:16px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+        <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <p>Cybersecurity monitoring and tools</p>
+    </div>
+    <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+      <a href="/">Home</a>
+      <a href="/services.html">SMB Monitoring</a>
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/msp/">For MSPs</a>
+      <a href="/contact/">Contact</a>
+    </div>
+    <div style="text-align:right">
+      <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+      <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+        <a href="/account/">My Account</a>
+        <a href="/docs/">Docs</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="container text-center mt-lg" style="opacity:0.6">
+    © 2026 EdgeIQ Labs.
   </div>
 </footer>
 

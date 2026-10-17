@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,51 +20,12 @@
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/report.html" />
   <style>
-    :root {
-      --bg: #0a0e17;
-      --bg2: #111827;
-      --bg3: #1a2235;
-      --accent: #00ff88;
-      --accent2: #7c3aed;
-      --text: #e2e8f0;
-      --text-dim: #94a3b8;
-      --border: #1e293b;
-      --card-bg: #111827;
-      --red: #ef4444;
-      --orange: #f97316;
-      --yellow: #eab308;
-      --green: #22c55e;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    /* Page-specific styles — migrated to design system tokens */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 32px;
-      background: rgba(10,14,23,0.95);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
-    }
+    a:hover { text-decoration: underline; }
     .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
     .nav-brand img { height: 32px; width: 32px; border-radius: 8px; }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--accent); text-decoration: none; }
-    .nav-cta { background: var(--accent); color: #000 !important; padding: 6px 16px; border-radius: 6px; font-weight: 600; font-size: 0.88rem; }
-    .nav-cta:hover { background: #00e07a; text-decoration: none !important; }
 
     .hero {
       text-align: center;
@@ -86,48 +47,47 @@
       gap: 32px;
       align-items: start;
     }
-    @media (max-width: 860px) {
-      .layout { grid-template-columns: 1fr; }
+    
     }
 
     /* FORM */
     .form-card {
       background: var(--card-bg);
-      border: 1px solid var(--border);
+      border: 1px solid var(--color-border);
       border-radius: 16px;
       overflow: hidden;
     }
     .form-header {
       background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
       padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--color-border);
     }
     .form-header h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
     .form-header p { font-size: 0.82rem; color: var(--text-dim); }
-    .form-body { padding: 24px; }
+    .form-
     .form-group { margin-bottom: 18px; }
     .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
     .form-group input, .form-group textarea, .form-group select {
       width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-border);
       border-radius: 8px;
       padding: 10px 12px;
       font-size: 0.88rem;
-      color: var(--text);
+      color: var(--color-text-primary);
       font-family: inherit;
       transition: border-color 0.2s;
       outline: none;
     }
     .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-      border-color: var(--accent);
+      border-color: var(--color-accent);
     }
     .form-group textarea { min-height: 160px; resize: vertical; font-family: 'Courier New', monospace; font-size: 0.82rem; }
     .form-group .hint { font-size: 0.75rem; color: #64748b; margin-top: 4px; }
     .btn-primary {
       display: block;
       width: 100%;
-      background: var(--accent);
+      background: var(--color-accent);
       color: #000;
       font-weight: 700;
       font-size: 0.95rem;
@@ -161,7 +121,7 @@
     .pricing-sidebar { position: sticky; top: 80px; }
     .pricing-card {
       background: var(--card-bg);
-      border: 1px solid var(--border);
+      border: 1px solid var(--color-border);
       border-radius: 16px;
       overflow: hidden;
     }
@@ -169,20 +129,20 @@
     .pricing-card-header {
       background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
       padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--color-border);
     }
     .pricing-card-header h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #a78bfa; margin-bottom: 4px; }
     .pricing-card-header .price { font-size: 2rem; font-weight: 800; }
     .pricing-card-header .per { font-size: 0.82rem; color: var(--text-dim); }
-    .pricing-card-body { padding: 20px 24px; }
+    .pricing-card-
     .pricing-card-body h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 10px; }
     .pricing-features { list-style: none; }
     .pricing-features li { font-size: 0.82rem; color: var(--text-dim); padding: 4px 0; display: flex; gap: 8px; }
-    .pricing-features li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+    .pricing-features li::before { content: '✓'; color: var(--color-accent); font-weight: 700; }
     .btn-stripe {
       display: block;
       text-align: center;
-      background: var(--accent);
+      background: var(--color-accent);
       color: #000;
       font-weight: 700;
       font-size: 0.92rem;
@@ -201,11 +161,11 @@
     .preview-section {
       margin-top: 48px;
       padding-top: 48px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--color-border);
     }
     .preview-section h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; text-align: center; }
-    .report-preview { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-    .report-cover { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); padding: 40px 40px 32px; border-bottom: 1px solid var(--border); }
+    .report-preview { background: var(--card-bg); border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .report-cover { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); padding: 40px 40px 32px; border-bottom: 1px solid var(--color-border); }
     .report-cover-inner { position: relative; z-index: 1; }
     .report-cover-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
     .report-cover-logo img { height: 44px; width: 44px; border-radius: 10px; }
@@ -216,13 +176,13 @@
     .report-meta-item label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 3px; }
     .report-meta-item span { font-size: 0.85rem; font-weight: 500; }
     .classification { display: inline-block; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 4px; }
-    .report-body { padding: 28px 40px; }
+    .report-
     .report-body h3 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 12px; }
     .sev-grid { display: flex; gap: 10px; flex-wrap: wrap; }
-    .sev-card { flex: 1; min-width: 70px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 10px; text-align: center; }
+    .sev-card { flex: 1; min-width: 70px; background: var(--bg2); border: 1px solid var(--color-border); border-radius: 8px; padding: 14px 10px; text-align: center; }
     .sev-num { font-size: 1.8rem; font-weight: 800; }
     .sev-name { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
-    .finding-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+    .finding-item { background: var(--bg2); border: 1px solid var(--color-border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
     .finding-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
     .finding-name { font-size: 0.85rem; font-weight: 600; }
     .severity-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
@@ -236,17 +196,17 @@
     .features-section { max-width: 900px; margin: 0 auto; padding: 64px 24px; }
     .features-section h2 { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 32px; }
     .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--color-border); border-radius: 12px; padding: 18px; }
     .feature-item h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 5px; }
     .feature-item p { font-size: 0.82rem; color: var(--text-dim); }
 
     /* CTA */
-    .cta-section { background: var(--bg2); border-top: 1px solid var(--border); padding: 56px 24px; text-align: center; }
+    .cta-section { background: var(--bg2); border-top: 1px solid var(--color-border); padding: 56px 24px; text-align: center; }
     .cta-section h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
     .cta-section p { color: var(--text-dim); margin-bottom: 24px; }
 
     /* FOOTER */
-    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 0.8rem; color: var(--text-dim); }
+    footer { border-top: 1px solid var(--color-border); padding: 24px; text-align: center; font-size: 0.8rem; color: var(--text-dim); }
 
     /* STATUS BANNER */
     .status-banner {
@@ -257,7 +217,7 @@
       padding: 14px 20px;
       margin-bottom: 20px;
       font-size: 0.88rem;
-      color: var(--accent);
+      color: var(--color-accent);
     }
     .status-banner.error { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #f87171; }
     .status-banner.processing { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.3); color: #a78bfa; }
@@ -266,21 +226,32 @@
     .anim { animation: fadeInUp 0.4s ease forwards; }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
 
-<nav>
-  <div class="nav-brand">
-    <img src="/logo-report.png" alt="EdgeIQ" onerror="this.style.display='none'">
-    <span>EdgeIQ Labs</span>
-  </div>
-  <div class="nav-links">
-    <a href="/">Free Scanners</a>
-    <a href="/docs/">Docs</a>
-    <a href="https://github.com/EdgeIQ-Labs" target="_blank">Browser Extension</a>
-    <a href="https://github.com/EdgeIQ-Labs" target="_blank" class="nav-cta">View on GitHub</a>
-  </div>
-</nav>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 
 <section class="hero">
   <div class="hero-badge">🛡️ Pentest-Grade Reports</div>
@@ -405,10 +376,37 @@
   <div class="report-preview" id="reportPreview"></div>
 </div>
 
-<footer>
-  <p style="margin-bottom:8px;">☕ If this saved you time, show some love: <a href="https://buy.stripe.com/fZu9AVgKvfNHaMkdUY7wA1m" target="_blank" rel="noopener" style="color:#00ff88;text-decoration:none;font-weight:600;">$3</a> · <a href="https://buy.stripe.com/cNiaEZdyjcBv3jScQU7wA1n" target="_blank" rel="noopener" style="color:#00ff88;text-decoration:none;font-weight:600;">$5</a> · <a href="https://buy.stripe.com/6oUaEZ1PB0SN8EcdUY7wA1o" target="_blank" rel="noopener" style="color:#00ff88;text-decoration:none;font-weight:600;">$10</a> — every tip helps keep these tools free.</p>
-  <p>© 2026 EdgeIQ Labs · <a href="https://github.com/EdgeIQ-Labs" target="_blank">GitHub</a></p>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
 const sevColors = { Critical: '#ef4444', High: '#f97316', Medium: '#eab308', Low: '#22c55e', Info: '#64748b' };

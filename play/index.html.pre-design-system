@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/play/" />
+  <title>Game Server Hosting — EdgeIQ Play</title>
+  <meta name="description" content="Game server hosting for Minecraft, Valheim, Rust, CS:GO, ARK & 24 more games. Real hardware, all games auto-provisioned, from $5/mo. 3-day free trial." />
+  <meta name="theme-color" content="#0b0f14" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0b0f14;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid #1e2a38;
+      position: sticky;
+      top: 0;
+      background: rgba(11,15,20,0.97);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: -0.3px; }
+    .nav-logo span { color: #4ade80; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta { background: #4ade80; color: #0b0f14 !important; padding: 8px 18px; border-radius: 6px; font-weight: 700; font-size: 0.85rem !important; transition: opacity 0.2s; }
+    .nav-cta:hover { opacity: 0.88; }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 40px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0f1e10;
+      border: 1px solid #1a4a2a;
+      color: #4ade80;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+    }
+    .hero h1 span { color: #4ade80; }
+    .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 580px; margin: 0 auto 14px; }
+    .hero-sub { font-size: 0.85rem !important; color: #4ade80 !important; font-weight: 600; margin-bottom: 36px !important; }
+
+    /* TRUST BAR */
+    .trust-bar {
+      background: #0d1520;
+      border-top: 1px solid #1e2a38;
+      border-bottom: 1px solid #1e2a38;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #94a3b8; }
+    .trust-item strong { color: #e2e8f0; font-weight: 700; }
+
+    /* GAMES MARQUEE */
+    .games-section { padding: 36px 0 28px; overflow: hidden; border-bottom: 1px solid #1e2a38; }
+    .games-label { text-align: center; font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; }
+    .marquee-track { display: flex; width: max-content; animation: marquee 36s linear infinite; }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .game-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0d1520;
+      border: 1px solid #1e2a38;
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin: 0 8px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .game-chip:hover { border-color: #4ade80; color: #e2e8f0; }
+    .game-chip .icon { font-size: 1.1rem; }
+
+    /* PRICING */
+    .pricing-section { padding: 60px 24px 40px; max-width: 1100px; margin: 0 auto; }
+    .section-label { text-align: center; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; color: #4ade80; text-transform: uppercase; margin-bottom: 10px; }
+    .section-title { text-align: center; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .section-sub { text-align: center; color: #64748b; margin-bottom: 44px; font-size: 0.95rem; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; }
+    .plan {
+      background: #0d1520;
+      border: 1px solid #1e2a38;
+      border-radius: 16px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .plan:hover { border-color: #2a4a6a; transform: translateY(-2px); }
+    .plan.featured { border-color: #4ade80; background: #0a1a0f; }
+    .plan.featured:hover { transform: translateY(-3px); }
+    .popular-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: #4ade80; color: #0b0f14;
+      font-size: 0.7rem; font-weight: 800; padding: 3px 14px;
+      border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .trial-badge {
+      display: inline-block;
+      background: #1a3a60; color: #60b4ff;
+      border: 1px solid #1e4a80;
+      font-size: 0.7rem; font-weight: 700; padding: 2px 10px;
+      border-radius: 12px; letter-spacing: 0.3px;
+      margin-bottom: 10px;
+    }
+    .plan-name { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 6px; }
+    .plan.featured .plan-name { color: #4ade80; }
+    .plan-price { font-size: 3rem; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: #64748b; letter-spacing: 0; }
+    .plan-tagline { color: #64748b; font-size: 0.85rem; margin-bottom: 26px; }
+    .plan-features { list-style: none; margin-bottom: 30px; flex: 1; }
+    .plan-features li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.88rem; color: #94a3b8; margin-bottom: 9px;
+    }
+    .plan-features li::before { content: '✓'; color: #4ade80; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .plan-btn {
+      display: block; text-align: center;
+      padding: 13px 24px; border-radius: 8px;
+      font-weight: 700; font-size: 0.95rem;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .plan-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .plan-btn.primary { background: #4ade80; color: #0b0f14; }
+    .plan-btn.secondary { background: #1a2535; color: #e2e8f0; }
+    .plan-btn.trial-btn { background: #1a3a60; color: #60b4ff; }
+    .plan-btn.trial-btn:hover { background: #1e4a80; }
+
+    /* HOW IT WORKS */
+    .how-section { padding: 60px 24px; max-width: 900px; margin: 0 auto; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-top: 40px; }
+    .step { background: #0d1520; border: 1px solid #1e2a38; border-radius: 12px; padding: 28px 24px; text-align: center; }
+    .step-num { width: 40px; height: 40px; background: #0f2a1a; border: 1px solid #1a4a2a; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-weight: 800; font-size: 1rem; color: #4ade80; }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 0.85rem; color: #64748b; }
+
+    /* FAQ */
+    .faq-section { padding: 60px 24px; max-width: 700px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid #1e2a38; padding: 20px 0; }
+    .faq-item h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+    .faq-item p { font-size: 0.875rem; color: #64748b; }
+    .faq-item a { color: #4ade80; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: #0a1a0f; border: 1px solid #1a4a2a;
+      border-radius: 16px; padding: 52px 40px;
+      text-align: center; margin: 20px 24px 80px;
+      max-width: 820px; margin-left: auto; margin-right: auto;
+    }
+    .cta-banner h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+    .cta-banner p { color: #64748b; margin-bottom: 28px; }
+    .cta-banner a {
+      display: inline-block; background: #4ade80; color: #0b0f14;
+      padding: 14px 36px; border-radius: 8px;
+      font-weight: 700; text-decoration: none; font-size: 1rem;
+      transition: opacity 0.2s;
+    }
+    .cta-banner a:hover { opacity: 0.88; }
+    .cta-trial-note { font-size: 0.8rem; color: #4ade80; margin-top: 12px; margin-bottom: 0 !important; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid #1e2a38; padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    footer p { font-size: 0.8rem; color: #475569; }
+    footer a { color: #475569; text-decoration: none; font-size: 0.8rem; }
+    footer a:hover { color: #94a3b8; }
+
+    @media (max-width: 700px) {
+      nav { padding: 16px 20px; }
+      .nav-links { gap: 14px; }
+      .hero { padding: 48px 20px 32px; }
+      .trust-bar { gap: 20px; }
+      .cta-banner { padding: 36px 24px; margin: 20px 16px 60px; }
+      footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">EdgeIQ <span>Play</span></a>
+    <div class="nav-links">
+      <a href="#games">Games</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://edgeiqlabs.com">EdgeIQ Labs</a>
+      <a href="https://buy.stripe.com/bJe8wR2TFcBv7A86sw7wA3G" target="_blank" rel="noopener" class="nav-cta">Free Trial</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="live-dot"></span>
+      <span id="live-counter">14 servers online now</span>
+    </div>
+    <h1>Game Server Hosting<br><span>Built on Real Iron</span></h1>
+    <p>Minecraft, Valheim, Rust, CS:GO, ARK & more — running on our own dedicated Dell PowerEdge hardware. Pick your game at checkout and your server auto-provisions the moment you pay.</p>
+    <p class="hero-sub">⚡ All 24 games auto-provisioned &nbsp;·&nbsp; Pick your game at checkout &nbsp;·&nbsp; 3-day free trial on Starter</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://buy.stripe.com/bJe8wR2TFcBv7A86sw7wA3G" target="_blank" rel="noopener"
+         style="display:inline-block;background:#4ade80;color:#0b0f14;padding:13px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+        Start Free Trial →
+      </a>
+      <a href="#pricing"
+         style="display:inline-block;background:#1a2535;color:#e2e8f0;padding:13px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+        See Pricing
+      </a>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item"><strong>27 games</strong> available</div>
+    <div class="trust-item"><strong>All 24 games</strong> auto-provisioned</div>
+    <div class="trust-item"><strong>Full console</strong> &amp; SFTP access</div>
+    <div class="trust-item"><strong>Dell PowerEdge</strong> hardware</div>
+    <div class="trust-item"><strong>$5/mo</strong> starting price</div>
+    <div class="trust-item"><strong>3-day free trial</strong> on Starter</div>
+  </div>
+
+  <!-- GAMES MARQUEE -->
+  <section class="games-section" id="games">
+    <div class="games-label">Supported Games</div>
+    <div class="marquee-track">
+      <!-- Set 1 -->
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Java (Paper)</div>
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Vanilla</div>
+      <div class="game-chip"><span class="icon">🔨</span> Minecraft Forge</div>
+      <div class="game-chip"><span class="icon">📱</span> Minecraft Bedrock</div>
+      <div class="game-chip"><span class="icon">🛡️</span> Valheim</div>
+      <div class="game-chip"><span class="icon">🦎</span> Palworld</div>
+      <div class="game-chip"><span class="icon">🧟</span> 7 Days to Die</div>
+      <div class="game-chip"><span class="icon">🌿</span> Terraria (tShock)</div>
+      <div class="game-chip"><span class="icon">🌍</span> Eco</div>
+      <div class="game-chip"><span class="icon">🚀</span> Space Engineers</div>
+      <div class="game-chip"><span class="icon">⚔️</span> Conan Exiles</div>
+      <div class="game-chip"><span class="icon">🔩</span> Rust</div>
+      <div class="game-chip"><span class="icon">🔫</span> CS:GO</div>
+      <div class="game-chip"><span class="icon">🚗</span> Garry's Mod</div>
+      <div class="game-chip"><span class="icon">🎯</span> Team Fortress 2</div>
+      <div class="game-chip"><span class="icon">🦕</span> ARK: Survival Evolved</div>
+      <div class="game-chip"><span class="icon">💥</span> Insurgency</div>
+      <div class="game-chip"><span class="icon">🧱</span> Minecraft Sponge</div>
+      <div class="game-chip"><span class="icon">🔗</span> Minecraft BungeeCord</div>
+      <div class="game-chip"><span class="icon">🧟</span> Project Zomboid</div>
+      <div class="game-chip"><span class="icon">🧛</span> V Rising</div>
+      <div class="game-chip"><span class="icon">🌑</span> Don't Starve Together</div>
+      <div class="game-chip"><span class="icon">🏭</span> Satisfactory</div>
+      <div class="game-chip"><span class="icon">☣️</span> DayZ</div>
+      <div class="game-chip"><span class="icon">🌲</span> Sons of the Forest</div>
+      <div class="game-chip"><span class="icon">💂</span> Squad</div>
+      <div class="game-chip"><span class="icon">🚙</span> FiveM</div>
+      <!-- Set 2 (duplicate for seamless loop) -->
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Java (Paper)</div>
+      <div class="game-chip"><span class="icon">⛏️</span> Minecraft Vanilla</div>
+      <div class="game-chip"><span class="icon">🔨</span> Minecraft Forge</div>
+      <div class="game-chip"><span class="icon">📱</span> Minecraft Bedrock</div>
+      <div class="game-chip"><span class="icon">🛡️</span> Valheim</div>
+      <div class="game-chip"><span class="icon">🦎</span> Palworld</div>
+      <div class="game-chip"><span class="icon">🧟</span> 7 Days to Die</div>
+      <div class="game-chip"><span class="icon">🌿</span> Terraria (tShock)</div>
+      <div class="game-chip"><span class="icon">🌍</span> Eco</div>
+      <div class="game-chip"><span class="icon">🚀</span> Space Engineers</div>
+      <div class="game-chip"><span class="icon">⚔️</span> Conan Exiles</div>
+      <div class="game-chip"><span class="icon">🔩</span> Rust</div>
+      <div class="game-chip"><span class="icon">🔫</span> CS:GO</div>
+      <div class="game-chip"><span class="icon">🚗</span> Garry's Mod</div>
+      <div class="game-chip"><span class="icon">🎯</span> Team Fortress 2</div>
+      <div class="game-chip"><span class="icon">🦕</span> ARK: Survival Evolved</div>
+      <div class="game-chip"><span class="icon">💥</span> Insurgency</div>
+      <div class="game-chip"><span class="icon">🧱</span> Minecraft Sponge</div>
+      <div class="game-chip"><span class="icon">🔗</span> Minecraft BungeeCord</div>
+      <div class="game-chip"><span class="icon">🧟</span> Project Zomboid</div>
+      <div class="game-chip"><span class="icon">🧛</span> V Rising</div>
+      <div class="game-chip"><span class="icon">🌑</span> Don't Starve Together</div>
+      <div class="game-chip"><span class="icon">🏭</span> Satisfactory</div>
+      <div class="game-chip"><span class="icon">☣️</span> DayZ</div>
+      <div class="game-chip"><span class="icon">🌲</span> Sons of the Forest</div>
+      <div class="game-chip"><span class="icon">💂</span> Squad</div>
+      <div class="game-chip"><span class="icon">🚙</span> FiveM</div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing-section" id="pricing">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, Honest Pricing</h2>
+    <p class="section-sub">No contracts. No hidden fees. Cancel anytime. All 24 games auto-provision instantly — pick your game at checkout and your server is ready within minutes.</p>
+
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="plan">
+        <div class="trial-badge">3-DAY FREE TRIAL</div>
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$5<span>/mo</span></div>
+        <div class="plan-tagline">Small friend group, just getting started</div>
+        <ul class="plan-features">
+          <li>2 GB RAM</li>
+          <li>10 GB SSD storage</li>
+          <li>All 24 games (auto-provisioned)</li>
+          <li>Other games available on request</li>
+          <li>Full console access</li>
+          <li>SFTP file access</li>
+          <li>Pterodactyl web panel</li>
+        </ul>
+        <a href="https://buy.stripe.com/bJe8wR2TFcBv7A86sw7wA3G" target="_blank" rel="noopener" class="plan-btn trial-btn">Start Free Trial →</a>
+      </div>
+
+      <!-- Standard (featured) -->
+      <div class="plan featured">
+        <div class="popular-badge">Most Popular</div>
+        <div class="plan-name">Standard</div>
+        <div class="plan-price">$10<span>/mo</span></div>
+        <div class="plan-tagline">More RAM, more players, more plugins</div>
+        <ul class="plan-features">
+          <li>4 GB RAM</li>
+          <li>20 GB SSD storage</li>
+          <li>All 24 games (auto-provisioned)</li>
+          <li>Other games available on request</li>
+          <li>Full console access</li>
+          <li>SFTP file access</li>
+          <li>Pterodactyl web panel</li>
+          <li>Plugin &amp; mod support</li>
+        </ul>
+        <a href="https://buy.stripe.com/8x2fZjdyjdFz8EcaIM7wA3D" target="_blank" rel="noopener" class="plan-btn primary">Get Started →</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$20<span>/mo</span></div>
+        <div class="plan-tagline">Large communities, modpacks &amp; heavy games</div>
+        <ul class="plan-features">
+          <li>8 GB RAM</li>
+          <li>40 GB SSD storage</li>
+          <li>All 24 games (auto-provisioned)</li>
+          <li>Other games available on request</li>
+          <li>Full console access</li>
+          <li>SFTP file access</li>
+          <li>Pterodactyl web panel</li>
+          <li>Modpack support (Forge / Fabric)</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://buy.stripe.com/bJefZjbqbeJDf2A7wA7wA3E" target="_blank" rel="noopener" class="plan-btn secondary">Get Started →</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;color:#475569;font-size:0.82rem;margin-top:24px;">Want Valheim, Rust, CS:GO or another game? <a href="mailto:support@edgeiqlabs.com" style="color:#4ade80;">Email us after purchase</a> and we'll set it up.</p>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">Up and running fast</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Pick your plan &amp; game</h3>
+        <p>Choose a plan and select your game from the dropdown at checkout. Try Starter free for 3 days — no charge until day 4.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Auto-provisioned instantly</h3>
+        <p>The moment payment goes through, your game server is created automatically on our hardware — no waiting, no manual setup.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Start playing</h3>
+        <p>Your Pterodactyl panel login and server IP arrive by email within minutes. Invite your friends and go.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title" style="margin-bottom:32px;">Common questions</h2>
+    <div class="faq-item">
+      <h3>Which games do you support?</h3>
+      <p>We have eggs installed for 27 games: Minecraft Java (Paper, Vanilla, Forge, Sponge, BungeeCord), Minecraft Bedrock, Valheim, Palworld, 7 Days to Die, Terraria (tShock), Eco, Space Engineers, Conan Exiles, Rust, CS:GO, Garry's Mod, Team Fortress 2, ARK: Survival Evolved, Insurgency, Project Zomboid, V Rising, Don't Starve Together, Satisfactory, DayZ, Sons of the Forest, Squad, and FiveM.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Which games are automatically provisioned?</h3>
+      <p>All 24 games are fully automated. You pick your game from a dropdown at checkout — the moment payment goes through, your server is created and your login details are emailed to you. No waiting, no manual steps.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How does the free trial work?</h3>
+      <p>The Starter plan includes a 3-day free trial via Stripe. You'll enter your card at signup but won't be charged until day 4. Cancel before then and you owe nothing.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do I manage my server?</h3>
+      <p>You get full access to a Pterodactyl web panel — start/stop, live console, file manager, and SFTP file access. No command line knowledge required.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I switch games after signing up?</h3>
+      <p>Yes. Email us at <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> and we'll reinstall the server with the game of your choice.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I upgrade my plan?</h3>
+      <p>Yes. Email us and we'll migrate your server data and move you to the new plan.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Where are the servers located?</h3>
+      <p>Our servers run on dedicated Dell PowerEdge hardware in the northeastern United States.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is there a contract?</h3>
+      <p>None. Month-to-month billing. Cancel anytime, no questions asked.</p>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <h2>Ready to play?</h2>
+    <p>24 games available. Pick your game at checkout — auto-provisioned instantly. Try Starter free for 3 days.</p>
+    <a href="https://buy.stripe.com/bJe8wR2TFcBv7A86sw7wA3G" target="_blank" rel="noopener">Start Free Trial →</a>
+    <p class="cta-trial-note">No charge for 3 days · Cancel anytime · Real hardware, not cloud VMs</p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 EdgeIQ Labs · Game Server Hosting</p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <a href="/">EdgeIQ Labs</a>
+      <a href="#games">Games</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="mailto:support@edgeiqlabs.com">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const el = document.getElementById('live-counter');
+      let count = 14;
+      setInterval(function() {
+        const delta = Math.random() > 0.45 ? 1 : -1;
+        count = Math.min(22, Math.max(10, count + delta));
+        el.textContent = count + ' servers online now';
+      }, 8000);
+    })();
+  </script>
+
+<!-- Relay Affiliate Tracking -->
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>RelayIntegration.init({ relayBaseUrl: 'https://relay.edgeiqlabs.com' });</script>
+</body>
+</html>

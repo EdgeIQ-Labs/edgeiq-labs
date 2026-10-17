@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,40 +16,8 @@
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --accent: #f97316;
-      --accent-dark: #1a0e05;
-      --accent-border: #3a1e0a;
-      --accent-mid: #1f1208;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0b0f14;
-      color: #e2e8f0;
-      line-height: 1.6;
-    }
-
-    /* NAV */
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 40px;
-      border-bottom: 1px solid #1e2a38;
-      position: sticky;
-      top: 0;
-      background: rgba(11,15,20,0.97);
-      backdrop-filter: blur(8px);
-      z-index: 100;
-    }
-    .nav-logo { font-size: 1.1rem; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: -0.3px; }
-    .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 28px; align-items: center; }
-    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta { background: var(--accent); color: #0b0f14 !important; padding: 8px 18px; border-radius: 6px; font-weight: 700; font-size: 0.85rem !important; transition: opacity 0.2s; }
-    .nav-cta:hover { opacity: 0.88; }
+    /* Page-specific styles — migrated to design system tokens */
+/* NAV */
 
     /* HERO */
     .hero {
@@ -64,7 +32,7 @@
       gap: 8px;
       background: var(--accent-dark);
       border: 1px solid var(--accent-border);
-      color: var(--accent);
+      color: var(--color-accent);
       padding: 5px 14px;
       border-radius: 20px;
       font-size: 0.8rem;
@@ -78,9 +46,9 @@
       letter-spacing: -1.5px;
       margin-bottom: 18px;
     }
-    .hero h1 span { color: var(--accent); }
+    .hero h1 span { color: var(--color-accent); }
     .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 580px; margin: 0 auto 14px; }
-    .hero-sub { font-size: 0.85rem !important; color: var(--accent) !important; font-weight: 600; margin-bottom: 36px !important; }
+    .hero-sub { font-size: 0.85rem !important; color: var(--color-accent) !important; font-weight: 600; margin-bottom: 36px !important; }
 
     /* HONEST NOTICE */
     .honest-box {
@@ -120,7 +88,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--accent);
+      color: var(--color-accent);
       background: var(--accent-dark);
       border: 1px solid var(--accent-border);
       padding: 3px 12px;
@@ -151,7 +119,7 @@
       margin-bottom: -1px;
       transition: all 0.15s;
     }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-btn.active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
     .tab-btn:hover { color: #e2e8f0; }
 
     /* PLANS GRID */
@@ -170,9 +138,9 @@
       flex-direction: column;
       transition: border-color 0.2s;
     }
-    .plan-card:hover { border-color: var(--accent); }
+    .plan-card:hover { border-color: var(--color-accent); }
     .plan-card.popular {
-      border-color: var(--accent);
+      border-color: var(--color-accent);
       box-shadow: 0 0 0 1px rgba(249,115,22,0.15) inset;
       position: relative;
     }
@@ -180,7 +148,7 @@
       position: absolute;
       top: -11px;
       right: 14px;
-      background: var(--accent);
+      background: var(--color-accent);
       color: #0b0f14;
       font-size: 0.68rem;
       font-weight: 800;
@@ -188,7 +156,7 @@
       border-radius: 999px;
     }
     .plan-name { font-size: 1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
-    .plan-price { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .plan-price { font-size: 2rem; font-weight: 800; color: var(--color-accent); line-height: 1; margin-bottom: 4px; }
     .plan-price span { font-size: 0.9rem; font-weight: 500; color: #64748b; }
     .plan-desc { font-size: 0.82rem; color: #64748b; margin-bottom: 20px; }
     .plan-features { list-style: none; margin-bottom: 24px; flex: 1; }
@@ -201,7 +169,7 @@
       align-items: flex-start;
       gap: 8px;
     }
-    .plan-features li::before { content: "✓"; color: var(--accent); flex-shrink: 0; font-weight: 700; }
+    .plan-features li::before { content: "✓"; color: var(--color-accent); flex-shrink: 0; font-weight: 700; }
     .plan-features li:last-child { border-bottom: none; }
     .btn {
       display: block;
@@ -215,7 +183,7 @@
       margin-top: auto;
     }
     .btn:hover { opacity: 0.88; }
-    .btn-primary { background: var(--accent); color: #0b0f14; }
+    .btn-primary { background: var(--color-accent); color: #0b0f14; }
     .btn-secondary { background: #1a2535; color: #94a3b8; border: 1px solid #1e2a38; }
 
     /* FEATURES GRID */
@@ -260,7 +228,7 @@
       justify-content: center;
       font-size: 0.85rem;
       font-weight: 800;
-      color: var(--accent);
+      color: var(--color-accent);
       margin-bottom: 12px;
     }
     .step h3 { font-size: 0.95rem; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
@@ -332,27 +300,36 @@
     footer a { color: #475569; text-decoration: none; }
     footer a:hover { color: #94a3b8; }
 
-    @media (max-width: 640px) {
-      nav { padding: 14px 20px; }
-      .hero { padding: 44px 20px 28px; }
       .tab-bar { overflow-x: auto; }
     }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="/">EdgeIQ<span>.</span>Labs</a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/play/">Game Servers</a>
-    <a href="/bots/">Bots</a>
-    <a href="/vps/">VPS</a>
-    <a href="https://discord.gg/PaP7nsFUJT" target="_blank" rel="noopener">Discord</a>
-    <a class="nav-cta" href="#plans">Get Started</a>
-  </div>
-</nav>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 
 <!-- HERO -->
 <div class="hero">
@@ -692,16 +669,37 @@
   </div>
 </section>
 
-<footer>
-  <p style="margin-bottom:8px;">
-    <a href="/">EdgeIQ Labs</a> ·
-    <a href="/play/">Game Servers</a> ·
-    <a href="/bots/">Bot Hosting</a> ·
-    <a href="/vps/">VPS</a> ·
-    <a href="/web/">Web Hosting</a>
-  </p>
-  <p>© 2026 EdgeIQ Labs · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
   function switchTab(tab, btn) {

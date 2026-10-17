@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>EdgeIQ Labs vs dmarcian: DMARC Monitoring Comparison (2026)</title>
@@ -13,104 +13,114 @@
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"EdgeIQ Labs vs dmarcian","description":"Detailed comparison of EdgeIQ Labs and dmarcian for DMARC monitoring.","url":"https://edgeiqlabs.com/compare/edgeiq-vs-dmarcian/"}</script>
   <style>
-    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--border:#233142;--green:#34d399;--red:#f87171;--blue:#3dd9ff;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    /* Page-specific styles — migrated to design system tokens */
+*{box-sizing:border-box;margin:0;padding:0;}
+    
     .container{max-width:860px;margin:0 auto;padding:0 20px;}
-    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
-    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--color-text-primary);text-decoration:none;}
     .nav-brand span{color:var(--blue);}
-    .nav-links{display:flex;gap:6px;align-items:center;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
-    .nav-cta{background:var(--blue);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
-    @media(max-width:620px){.nav-links a:not(.nav-cta){display:none;}}
+    }
     .hero{padding:60px 0 40px;text-align:center;}
-    .breadcrumb{font-size:0.8rem;color:var(--muted);margin-bottom:20px;}
-    .breadcrumb a{color:var(--muted);text-decoration:none;}
-    .breadcrumb a:hover{color:var(--accent);}
-    .verdict-badge{display:inline-block;background:#1a0e2a;border:1px solid var(--accent);color:var(--accent);font-size:0.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px;}
+    .breadcrumb{font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:20px;}
+    .breadcrumb a{color:var(--color-text-secondary);text-decoration:none;}
+    .breadcrumb a:hover{color:var(--color-accent);}
+    .verdict-badge{display:inline-block;background:#1a0e2a;border:1px solid var(--color-accent);color:var(--color-accent);font-size:0.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px;}
     h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
-    .hero-sub{color:var(--muted);font-size:1.05rem;max-width:620px;margin:0 auto 32px;}
+    .hero-sub{color:var(--color-text-secondary);font-size:1.05rem;max-width:620px;margin:0 auto 32px;}
     .vs-logos{display:flex;align-items:center;justify-content:center;gap:28px;margin:32px 0;}
-    .vs-logo-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 28px;text-align:center;min-width:160px;}
+    .vs-logo-box{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:18px 28px;text-align:center;min-width:160px;}
     .vs-logo-box .name{font-weight:800;font-size:1.15rem;}
-    .vs-logo-box .tagline{font-size:0.78rem;color:var(--muted);margin-top:4px;}
-    .vs-logo-box.winner{border-color:var(--accent);background:#150e22;}
-    .vs-logo-box.winner .name{color:var(--accent);}
-    .vs-sep{font-size:1.4rem;font-weight:800;color:var(--muted);}
-    .toc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:32px 0;}
-    .toc h3{font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;}
-    .toc ol{margin-left:18px;color:var(--accent);font-size:0.92rem;}
+    .vs-logo-box .tagline{font-size:0.78rem;color:var(--color-text-secondary);margin-top:4px;}
+    .vs-logo-box.winner{border-color:var(--color-accent);background:#150e22;}
+    .vs-logo-box.winner .name{color:var(--color-accent);}
+    .vs-sep{font-size:1.4rem;font-weight:800;color:var(--color-text-secondary);}
+    .toc{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:20px 24px;margin:32px 0;}
+    .toc h3{font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-secondary);margin-bottom:12px;}
+    .toc ol{margin-left:18px;color:var(--color-accent);font-size:0.92rem;}
     .toc ol li{margin-bottom:6px;}
-    .toc ol li a{color:var(--accent);text-decoration:none;}
+    .toc ol li a{color:var(--color-accent);text-decoration:none;}
     .toc ol li a:hover{text-decoration:underline;}
-    .prose h2{font-size:1.4rem;font-weight:800;margin:48px 0 16px;color:var(--text);}
-    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose h2{font-size:1.4rem;font-weight:800;margin:48px 0 16px;color:var(--color-text-primary);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--color-text-primary);}
     .prose p{margin-bottom:16px;color:#d0dce9;}
     .prose ul,.prose ol{margin:0 0 18px 22px;color:#d0dce9;}
     .prose li{margin-bottom:8px;}
-    .prose strong{color:var(--text);}
-    .prose a{color:var(--accent);text-decoration:none;}
+    .prose strong{color:var(--color-text-primary);}
+    .prose a{color:var(--color-accent);text-decoration:none;}
     .prose a:hover{text-decoration:underline;}
     .comp-table{width:100%;border-collapse:collapse;margin:24px 0 32px;font-size:0.9rem;}
-    .comp-table th{padding:12px 14px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);}
-    .comp-table th:first-child{color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:.05em;}
-    .comp-table th.edgeiq{color:var(--accent);background:#150e22;}
+    .comp-table th{padding:12px 14px;text-align:left;font-weight:700;border-bottom:2px solid var(--color-border);}
+    .comp-table th:first-child{color:var(--color-text-secondary);font-size:0.8rem;text-transform:uppercase;letter-spacing:.05em;}
+    .comp-table th.edgeiq{color:var(--color-accent);background:#150e22;}
     .comp-table th.competitor{color:#9fb0c7;background:#0e1621;}
     .comp-table td{padding:11px 14px;border-bottom:1px solid #1a2535;vertical-align:top;}
-    .comp-table td:first-child{color:var(--muted);font-size:0.85rem;font-weight:600;}
+    .comp-table td:first-child{color:var(--color-text-secondary);font-size:0.85rem;font-weight:600;}
     .comp-table td.edgeiq{background:#150e22;}
     .comp-table td.competitor{background:#0e1621;}
     .comp-table tr:last-child td{border-bottom:none;}
-    .yes{color:var(--green);font-weight:700;}
-    .no{color:var(--red);font-weight:700;}
+    .yes{color:var(--color-accent);font-weight:700;}
+    .no{color:var(#ff6b6b);font-weight:700;}
     .partial{color:#fbbf24;font-weight:700;}
     .score-row{display:flex;gap:16px;margin:28px 0;flex-wrap:wrap;}
-    .score-card{flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
-    .score-card.winner{border-color:var(--accent);background:#150e22;}
+    .score-card{flex:1;min-width:180px;background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:18px;text-align:center;}
+    .score-card.winner{border-color:var(--color-accent);background:#150e22;}
     .score-card .score-num{font-size:2.4rem;font-weight:800;line-height:1;}
-    .score-card.winner .score-num{color:var(--accent);}
-    .score-card .score-label{font-size:0.78rem;color:var(--muted);margin-top:6px;font-weight:600;}
-    .score-card .score-for{font-size:0.72rem;color:var(--muted);margin-top:8px;}
-    .callout{background:#150e22;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
-    .callout strong{color:var(--accent);}
+    .score-card.winner .score-num{color:var(--color-accent);}
+    .score-card .score-label{font-size:0.78rem;color:var(--color-text-secondary);margin-top:6px;font-weight:600;}
+    .score-card .score-for{font-size:0.72rem;color:var(--color-text-secondary);margin-top:8px;}
+    .callout{background:#150e22;border-left:3px solid var(--color-accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
+    .callout strong{color:var(--color-accent);}
     .warn{background:#1a1207;border-left:3px solid #f97316;border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#fed7aa;}
     .warn strong{color:#f97316;}
     .note{background:#0d1925;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:20px 0;font-size:0.92rem;color:#c8daea;}
     .note strong{color:var(--blue);}
     .use-case-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0 32px;}
-    @media(max-width:560px){.use-case-grid{grid-template-columns:1fr;}}
-    .use-case-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+    }
+    .use-case-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:10px;padding:18px;}
     .use-case-card h4{font-size:0.95rem;font-weight:700;margin-bottom:8px;}
-    .use-case-card p{font-size:0.85rem;color:var(--muted);margin:0;}
+    .use-case-card p{font-size:0.85rem;color:var(--color-text-secondary);margin:0;}
     .use-case-card.for-edgeiq{border-color:rgba(180,122,255,0.3);}
-    .use-case-card.for-edgeiq h4{color:var(--accent);}
+    .use-case-card.for-edgeiq h4{color:var(--color-accent);}
     .use-case-card.for-other{border-color:rgba(159,176,199,0.2);}
-    .use-case-card.for-other h4{color:var(--muted);}
-    .cta-block{background:linear-gradient(135deg,#150e22 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:16px;padding:36px;margin:48px 0;text-align:center;}
+    .use-case-card.for-other h4{color:var(--color-text-secondary);}
+    .cta-block{background:linear-gradient(135deg,#150e22 0%,#0b0f14 100%);border:1px solid var(--color-accent);border-radius:16px;padding:36px;margin:48px 0;text-align:center;}
     .cta-block h3{font-size:1.4rem;font-weight:800;margin-bottom:10px;}
-    .cta-block p{color:var(--muted);margin-bottom:24px;font-size:0.95rem;}
+    .cta-block p{color:var(--color-text-secondary);margin-bottom:24px;font-size:0.95rem;}
     .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:1rem;}
-    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:12px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;border:1px solid var(--accent);}
-    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .btn-primary{display:inline-block;background:var(--color-accent);color:#071018;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:1rem;}
+    .btn-secondary{display:inline-block;background:transparent;color:var(--color-accent);font-weight:600;padding:12px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;border:1px solid var(--color-accent);}
+    .faq-item{border-bottom:1px solid var(--color-border);padding:18px 0;}
     .faq-q{font-weight:700;font-size:0.98rem;margin-bottom:8px;}
-    .faq-a{color:var(--muted);font-size:0.9rem;}
-    footer{border-top:1px solid var(--border);padding:28px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.85rem;}
-    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+    .faq-a{color:var(--color-text-secondary);font-size:0.9rem;}
+    footer{border-top:1px solid var(--color-border);padding:28px 0;margin-top:60px;text-align:center;color:var(--color-text-secondary);font-size:0.85rem;}
+    footer a{color:var(--color-text-secondary);text-decoration:none;margin:0 10px;}
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
 </head>
 <body>
-<nav>
-  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
-  <div class="nav-links">
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/pricing/">Pricing</a>
-    <a href="/blog/">Blog</a>
-    <a href="/pricing/" class="nav-cta">Start Free →</a>
-  </div>
-</nav>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 
 <div class="container">
   <div class="hero">
@@ -380,8 +390,36 @@
     </div>
   </div>
 
-  <footer>
-    <div>© 2026 EdgeIQ Labs · <a href="/compare/">Compare</a> · <a href="/pricing/">Pricing</a> · <a href="/blog/">Blog</a> · <a href="/privacy.html">Privacy</a></div>
+    <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
   </footer>
 </div>
 </body>
