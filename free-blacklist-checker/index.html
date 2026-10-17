@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Free Email Blacklist Checker — Check Domain &amp; IP Against 7 DNSBLs</title>
@@ -12,136 +12,135 @@
   <link rel="canonical" href="https://edgeiqlabs.com/free-blacklist-checker/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Free Email Blacklist Checker","url":"https://edgeiqlabs.com/free-blacklist-checker/","description":"Check domain or IP against 15 major email blacklists (DNSBLs) including Barracuda, SpamCop, and SORBS.","applicationCategory":"SecurityApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
   <style>
-    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;--purple:#b47aff;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
-    .container{max-width:800px;margin:0 auto;padding:0 20px;}
-    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
-    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
-    .nav-brand span{color:var(--accent);}
-    .nav-links{display:flex;gap:6px;align-items:center;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
-    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
-    @media(max-width:600px){.nav-links a:not(.nav-cta){display:none;}}
+    /* Page-specific styles for tool UI not covered by design system */
+    .bl-hero{padding:var(--space-3xl) 0 var(--space-xl);text-align:center;}
+    .bl-hero-tag{display:inline-block;background:var(--color-bg-pale-blue);border:1px solid var(--color-accent);color:var(--color-accent);font-size:var(--text-xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:var(--radius-full);margin-bottom:var(--space-lg);}
+    .bl-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:var(--space-md);letter-spacing:-.02em;}
+    .bl-hero h1 span{color:var(--color-accent);}
+    .bl-hero-sub{color:var(--color-text-secondary);font-size:var(--text-base);max-width:520px;margin:0 auto var(--space-xl);}
+    .dnsbl-count{display:inline-flex;align-items:center;gap:8px;background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:7px 16px;font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-xl);}
+    .dnsbl-count strong{color:var(--color-text-primary);}
 
-    .hero{padding:56px 0 36px;text-align:center;}
-    .hero-tag{display:inline-block;background:#0d1c2e;border:1px solid var(--accent);color:var(--accent);font-size:0.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
-    h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:14px;letter-spacing:-.02em;}
-    h1 span{color:var(--accent);}
-    .hero-sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 32px;}
-    .dnsbl-count{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 16px;font-size:0.85rem;color:var(--muted);margin-bottom:32px;}
-    .dnsbl-count strong{color:var(--text);}
-
-    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;}
-    .input-tabs{display:flex;gap:2px;background:#071018;border-radius:8px;padding:3px;margin-bottom:16px;width:fit-content;}
-    .input-tab{padding:6px 14px;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:inherit;}
-    .input-tab.active{background:var(--card);color:var(--text);}
+    .tool-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-xl);margin-bottom:var(--space-xl);}
+    .input-tabs{display:flex;gap:2px;background:var(--color-bg-primary);border-radius:var(--radius-md);padding:3px;margin-bottom:var(--space-md);width:fit-content;}
+    .input-tab{padding:6px 14px;border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:600;cursor:pointer;color:var(--color-text-secondary);background:transparent;border:none;font-family:inherit;}
+    .input-tab.active{background:var(--color-bg-surface);color:var(--color-text-primary);}
     .domain-form{display:flex;gap:10px;}
-    .domain-form input{flex:1;background:#0b1422;border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:10px;font-size:1rem;outline:none;font-family:inherit;transition:border-color .2s;min-width:0;}
-    .domain-form input:focus{border-color:var(--accent);}
-    .domain-form input::placeholder{color:var(--muted);}
-    .domain-form button{background:var(--accent);color:#071018;font-weight:800;border:none;cursor:pointer;padding:13px 24px;border-radius:10px;font-size:0.95rem;white-space:nowrap;font-family:inherit;transition:opacity .15s;}
+    .domain-form input{flex:1;background:var(--color-bg-primary);border:1px solid var(--color-border);color:var(--color-text-primary);padding:13px 16px;border-radius:var(--radius-md);font-size:var(--text-base);outline:none;font-family:inherit;transition:border-color .2s;min-width:0;}
+    .domain-form input:focus{border-color:var(--color-accent);}
+    .domain-form input::placeholder{color:var(--color-text-secondary);}
+    .domain-form button{background:var(--color-accent);color:#071018;font-weight:800;border:none;cursor:pointer;padding:13px 24px;border-radius:var(--radius-md);font-size:var(--text-base);white-space:nowrap;font-family:inherit;transition:opacity .15s;}
     .domain-form button:hover{opacity:.88;}
     .domain-form button:disabled{opacity:.5;cursor:not-allowed;}
-    .form-hint{font-size:0.8rem;color:var(--muted);margin-top:8px;}
+    .form-hint{font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-sm);}
 
-    .loading{display:none;text-align:center;padding:28px 0;}
+    .loading{display:none;text-align:center;padding:var(--space-xl) 0;}
     .spin{animation:spin 1s linear infinite;display:inline-block;font-size:1.4rem;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .loading p{color:var(--muted);margin-top:8px;font-size:0.9rem;}
-    .loading .checking-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;max-width:500px;margin-left:auto;margin-right:auto;}
-    .checking-pill{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:0.75rem;color:var(--muted);}
+    .loading p{color:var(--color-text-secondary);margin-top:var(--space-sm);font-size:var(--text-sm);}
+    .loading .checking-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:var(--space-md);max-width:500px;margin-left:auto;margin-right:auto;}
+    .checking-pill{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:3px 10px;font-size:var(--text-xs);color:var(--color-text-secondary);}
 
-    .result-error{display:none;background:#1a0808;border:1px solid var(--red);border-radius:12px;padding:18px 20px;color:var(--red);font-size:0.92rem;}
+    .result-error{display:none;background:rgba(248,113,113,.07);border:1px solid #f87171;border-radius:var(--radius-lg);padding:18px 20px;color:#f87171;font-size:var(--text-sm);}
 
     #results{display:none;}
 
     /* Risk banner */
-    .risk-banner{border-radius:14px;padding:22px 24px;margin-bottom:24px;display:flex;gap:16px;align-items:flex-start;}
+    .risk-banner{border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:var(--space-lg);display:flex;gap:16px;align-items:flex-start;}
     .risk-banner.clean{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.3);}
     .risk-banner.medium{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.3);}
     .risk-banner.high{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.3);}
     .risk-banner.critical{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.3);}
     .risk-icon{font-size:2rem;flex-shrink:0;}
-    .risk-title{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
-    .risk-banner.clean .risk-title{color:var(--green);}
-    .risk-banner.medium .risk-title{color:var(--yellow);}
-    .risk-banner.high .risk-title{color:var(--orange);}
-    .risk-banner.critical .risk-title{color:var(--red);}
-    .risk-sub{font-size:0.9rem;color:var(--muted);}
-    .risk-meta{font-size:0.8rem;color:var(--muted);margin-top:8px;}
-    .risk-meta strong{color:var(--text);}
+    .risk-title{font-size:var(--text-lg);font-weight:800;margin-bottom:4px;}
+    .risk-banner.clean .risk-title{color:#34d399;}
+    .risk-banner.medium .risk-title{color:#fbbf24;}
+    .risk-banner.high .risk-title{color:#fb923c;}
+    .risk-banner.critical .risk-title{color:#f87171;}
+    .risk-sub{font-size:var(--text-sm);color:var(--color-text-secondary);}
+    .risk-meta{font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-sm);}
+    .risk-meta strong{color:var(--color-text-primary);}
 
     /* Score row */
-    .score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+    .score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:var(--space-lg);}
     @media(max-width:480px){.score-row{grid-template-columns:1fr 1fr;}}
-    .score-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+    .score-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px;text-align:center;}
     .score-num{font-size:1.8rem;font-weight:800;line-height:1;}
-    .score-lbl{font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;}
-    .clean-num{color:var(--green);}
-    .listed-num{color:var(--red);}
+    .score-lbl{font-size:var(--text-xs);color:var(--color-text-secondary);margin-top:4px;font-weight:600;text-transform:uppercase;}
+    .clean-num{color:#34d399;}
+    .listed-num{color:#f87171;}
 
     /* Listed section */
-    .section-header{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
-    .listed-card{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:16px 20px;margin-bottom:10px;}
-    .listed-name{font-weight:800;font-size:0.95rem;color:var(--red);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .section-header{font-size:var(--text-sm);font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-secondary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+    .listed-card{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:10px;}
+    .listed-name{font-weight:800;font-size:var(--text-base);color:#f87171;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
     .tier-badge{display:inline-block;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;}
-    .tier-critical{background:rgba(248,113,113,.15);color:var(--red);}
-    .tier-high{background:rgba(249,115,22,.15);color:var(--orange);}
-    .tier-medium{background:rgba(251,191,36,.15);color:var(--yellow);}
-    .listed-detail{font-size:0.82rem;color:var(--muted);}
-    .removal-link{display:inline-block;margin-top:8px;font-size:0.82rem;font-weight:700;color:var(--accent);text-decoration:none;background:#0d1c2e;padding:5px 12px;border-radius:6px;}
+    .tier-critical{background:rgba(248,113,113,.15);color:#f87171;}
+    .tier-high{background:rgba(249,115,22,.15);color:#fb923c;}
+    .tier-medium{background:rgba(251,191,36,.15);color:#fbbf24;}
+    .listed-detail{font-size:var(--text-sm);color:var(--color-text-secondary);}
+    .removal-link{display:inline-block;margin-top:8px;font-size:var(--text-sm);font-weight:700;color:var(--color-accent);text-decoration:none;background:var(--color-bg-pale-blue);padding:5px 12px;border-radius:var(--radius-sm);}
     .removal-link:hover{text-decoration:underline;}
 
     /* Clean grid */
-    .clean-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;}
+    .clean-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:var(--space-lg);}
     @media(max-width:480px){.clean-grid{grid-template-columns:1fr;}}
-    .clean-item{background:var(--card);border:1px solid rgba(52,211,153,.15);border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted);}
-    .clean-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .clean-item{background:var(--color-bg-surface);border:1px solid rgba(52,211,153,.15);border-radius:var(--radius-md);padding:9px 13px;display:flex;align-items:center;gap:8px;font-size:var(--text-sm);color:var(--color-text-secondary);}
+    .clean-dot{width:8px;height:8px;border-radius:50%;background:#34d399;flex-shrink:0;}
 
     /* CTA */
-    .cta-block{background:linear-gradient(135deg,#0d1c2e 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:24px 0;text-align:center;}
-    .cta-block h3{font-size:1.15rem;font-weight:800;margin-bottom:8px;}
-    .cta-block p{color:var(--muted);margin-bottom:18px;font-size:0.9rem;}
+    .cta-block{background:linear-gradient(135deg,var(--color-bg-pale-blue) 0%,var(--color-bg-primary) 100%);border:1px solid var(--color-accent);border-radius:var(--radius-lg);padding:var(--space-xl);margin:var(--space-lg) 0;text-align:center;}
+    .cta-block h3{font-size:var(--text-lg);font-weight:800;margin-bottom:var(--space-sm);}
+    .cta-block p{color:var(--color-text-secondary);margin-bottom:var(--space-lg);font-size:var(--text-sm);}
     .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;}
-    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:10px 20px;border-radius:9px;text-decoration:none;font-size:0.9rem;border:1px solid var(--accent);}
-    .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
-    .capture-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:0.9rem;width:230px;font-family:inherit;}
-    .capture-form input::placeholder{color:var(--muted);}
-    .capture-form button{background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:0.9rem;font-family:inherit;}
-    .capture-msg{font-size:0.82rem;color:var(--green);margin-top:8px;text-align:center;display:none;}
+    .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:var(--space-md);}
+    .capture-form input{background:var(--color-bg-primary);border:1px solid var(--color-border);color:var(--color-text-primary);padding:10px 14px;border-radius:var(--radius-md);font-size:var(--text-sm);width:230px;font-family:inherit;}
+    .capture-form input::placeholder{color:var(--color-text-secondary);}
+    .capture-form button{background:var(--color-accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:var(--radius-md);border:none;cursor:pointer;font-size:var(--text-sm);font-family:inherit;}
+    .capture-msg{font-size:var(--text-sm);color:#34d399;margin-top:var(--space-sm);text-align:center;display:none;}
 
     /* FAQ */
-    .faq-section{margin:40px 0 60px;}
-    .faq-section h2{font-size:1.3rem;font-weight:800;margin-bottom:22px;}
-    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
-    .faq-q{font-weight:700;font-size:0.95rem;margin-bottom:6px;}
-    .faq-a{color:var(--muted);font-size:0.88rem;line-height:1.65;}
-    .faq-a a{color:var(--accent);text-decoration:none;}
-
-    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
-    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    .faq-section{margin:var(--space-3xl) 0 var(--space-section);}
+    .faq-section h2{font-size:var(--text-2xl);font-weight:800;margin-bottom:var(--space-xl);}
+    .faq-item{border-bottom:1px solid var(--color-border);padding:var(--space-md) 0;}
+    .faq-q{font-weight:700;font-size:var(--text-base);margin-bottom:6px;}
+    .faq-a{color:var(--color-text-secondary);font-size:var(--text-sm);line-height:1.65;}
+    .faq-a a{color:var(--color-accent);text-decoration:none;}
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav>
-  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
-  <div class="nav-links">
-    <a href="/free-dmarc-checker/">DMARC</a>
-    <a href="/free-domain-security-score/">Security Score</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/inbox-shield/" class="nav-cta">Monitor Free →</a>
-  </div>
-</nav>
 
-<div class="container">
-  <div class="hero">
-    <div class="hero-tag">Free · 15 blacklists · No account needed</div>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link nav__link--active">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/inbox-shield/" class="btn btn--primary">Monitor Free →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+<div class="container container--narrow">
+  <div class="bl-hero">
+    <div class="bl-hero-tag">Free · 15 blacklists · No account needed</div>
     <h1>Free <span>Email Blacklist</span> Checker</h1>
-    <p class="hero-sub">Check if your domain or IP is listed on major email blacklists. We check 7 DNSBLs in seconds — including Barracuda, SpamCop, SORBS, and more.</p>
+    <p class="bl-hero-sub">Check if your domain or IP is listed on major email blacklists. We check 7 DNSBLs in seconds — including Barracuda, SpamCop, SORBS, and more.</p>
     <div class="dnsbl-count"><strong>15 blacklists checked</strong> — including Spamhaus SBL, XBL, PBL, DBL · Barracuda BRBL · SpamCop · SORBS · SURBL · URIBL</div>
   </div>
 
@@ -203,17 +202,37 @@
   </div>
 </div>
 
-<footer>
-  <a href="/">Home</a>
-  <a href="/free-domain-security-score/">Security Score</a>
-  <a href="/free-dmarc-checker/">DMARC Checker</a>
-  <a href="/free-spf-checker/">SPF Checker</a>
-  <a href="/free-ssl-checker/">SSL Checker</a>
-  <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
-  <a href="/inbox-shield/">Inbox Shield</a>
-  <a href="/blog/email-blacklist-check-domain-removal.html">Blacklist removal guide</a>
-  <a href="/privacy.html">Privacy</a>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
 let activeTab = 'domain';
@@ -300,7 +319,7 @@ function renderResults(data) {
     <div class="score-row">
       <div class="score-card"><div class="score-num clean-num">${data.cleanCount}</div><div class="score-lbl">Clean</div></div>
       <div class="score-card"><div class="score-num listed-num">${data.listedCount}</div><div class="score-lbl">Listed</div></div>
-      <div class="score-card"><div class="score-num" style="color:var(--muted)">${data.checked}</div><div class="score-lbl">Total checked</div></div>
+      <div class="score-card"><div class="score-num" style="color:var(--color-text-secondary)">${data.checked}</div><div class="score-lbl">Total checked</div></div>
     </div>`;
 
   // Listed entries
@@ -310,7 +329,7 @@ function renderResults(data) {
       html += `
         <div class="listed-card">
           <div class="listed-name">${l.name} <span class="tier-badge tier-${l.tier}">${l.tier}</span></div>
-          <div class="listed-detail">Return code: <code style="background:#102035;padding:1px 6px;border-radius:4px;font-family:monospace;">${l.returnCode || 'listed'}</code></div>
+          <div class="listed-detail">Return code: <code style="background:var(--color-bg-elevated);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);">${l.returnCode || 'listed'}</code></div>
           <a href="${l.removal}" target="_blank" rel="noopener noreferrer" class="removal-link">Request removal →</a>
         </div>`;
     });
@@ -334,8 +353,8 @@ function renderResults(data) {
         ? 'Blacklisting often follows weak email authentication. Inbox Shield monitors your DMARC, SPF, and DKIM 24/7 and alerts you when anything changes.'
         : 'Inbox Shield monitors your email authentication records continuously — alerting you before misconfiguration leads to blacklisting.'}</p>
       <div class="cta-row">
-        <a href="/inbox-shield/" class="btn-primary">Start Monitoring Free →</a>
-        <a href="/blog/email-blacklist-check-domain-removal.html" class="btn-secondary">Removal guide</a>
+        <a href="/inbox-shield/" class="btn btn--primary">Start Monitoring Free →</a>
+        <a href="/blog/email-blacklist-check-domain-removal.html" class="btn btn--outline">Removal guide</a>
       </div>
       <div class="capture-form">
         <input type="email" id="captureEmail" placeholder="you@company.com" autocomplete="email"/>

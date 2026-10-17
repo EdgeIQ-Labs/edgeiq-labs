@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — EdgeIQ Labs</title>
+  <meta name="description" content="Security insights, technique breakdowns, and practical guides from the EdgeIQ Labs team." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/" />
+  <meta property="og:title" content="Blog — EdgeIQ Labs" />
+  <meta property="og:description" content="Security insights, technique breakdowns, and practical guides from the EdgeIQ Labs team." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Blog — EdgeIQ Labs" />
+  <meta name="twitter:description" content="Security insights, technique breakdowns, and practical guides from the EdgeIQ Labs team." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "EdgeIQ Labs — Security Intelligence Blog",
+    "url": "https://edgeiqlabs.com/blog/",
+    "description": "Security insights, technique breakdowns, and practical guides from the EdgeIQ Labs team.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {"@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png"}
+    }
+  }
+  </script>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+    nav {
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(11,15,20,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 20px; }
+    .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-logo-img { height: 60px; width: auto; border-radius: 10px; }
+    .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+    .nav-brand-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-brand-name span { color: var(--accent); }
+    .nav-brand-tag { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.95rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 8px 16px !important; border-radius: 8px !important; }
+    .nav-cta:hover { opacity: 0.88; }
+    .nav-active { color: var(--accent) !important; }
+
+    .blog-header { padding: 64px 0 48px; }
+    .blog-header h1 { font-size: 2.4rem; margin-bottom: 12px; }
+    .blog-header p { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+
+    .post-list { display: flex; flex-direction: column; gap: 24px; padding-bottom: 80px; }
+    .post-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .post-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .post-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .post-card h2 { font-size: 1.35rem; margin-bottom: 10px; color: var(--text); }
+    .post-card .excerpt { color: var(--muted); font-size: 0.93rem; margin-bottom: 16px; }
+    .post-card .read-more { color: var(--accent); font-size: 0.88rem; font-weight: 700; }
+    .tag { display: inline-block; background: rgba(61,217,255,0.08); border: 1px solid rgba(61,217,255,0.2); color: var(--accent); font-size: 0.7rem; border-radius: 5px; padding: 3px 8px; margin-right: 6px; font-family: monospace; }
+
+    /* Nav override — standardized */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+  <nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/blog/">Blog</a>
+    <a href="/products/" class="nav-cta">Get Started</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+
+  <div class="container">
+    <div class="blog-header">
+      <h1>Security Intelligence Blog</h1>
+      <p>Practical guides, attack technique breakdowns, and security insights for developers, pentesters, and small security teams.</p>
+    </div>
+
+    <div class="post-list">
+
+      <a href="best-dmarc-monitoring-tools-2026.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">DMARC</span><span class="tag">Buyers Guide</span><span class="tag">Email Security</span></div>
+        <h2>Best DMARC Monitoring Tools 2026: Tested and Compared</h2>
+        <p class="excerpt">The 7 best DMARC monitoring tools compared — features, pricing, free tiers, and who each is best for. Includes EdgeIQ, dmarcian, MXToolbox, EasyDMARC, Valimail, and Postmark. With a disclosure: we're on this list and we tell you when a competitor is the better fit.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="mxtoolbox-alternatives.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Tools</span><span class="tag">Comparison</span><span class="tag">Email Security</span></div>
+        <h2>MXToolbox Alternatives in 2026: 5 Tools That Do More Than One-Off Checks</h2>
+        <p class="excerpt">MXToolbox is great for manual diagnostics — but it doesn't alert you when something breaks. These 5 alternatives monitor continuously, automate alerts, and most start free. Covers EdgeIQ, dmarcian, EasyDMARC, Postmark Digests, and SecurityTrails.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="zero-trust-security-small-business-guide.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Security Strategy</span><span class="tag">Zero Trust</span><span class="tag">SMB</span></div>
+        <h2>Zero Trust Security for Small Businesses: A Practical Guide</h2>
+        <p class="excerpt">Zero trust isn't just for enterprises. This practical guide shows small businesses how to implement zero trust principles — strong MFA, least privilege, device management, continuous monitoring — without a dedicated security team or six-figure budget.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="phishing-email-examples-2026.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Email Security</span><span class="tag">Phishing</span><span class="tag">Threat Intelligence</span></div>
+        <h2>Phishing Email Examples 2026: What to Look For</h2>
+        <p class="excerpt">Real phishing email examples from 2026 — Microsoft sign-in alerts, DocuSign envelopes, CEO wire fraud, payroll redirect, and shared file lures. The typos are gone; here's how to spot every pattern and the technical controls that stop them.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="email-blacklist-check-domain-removal.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">Email Deliverability</span><span class="tag">Blacklist</span><span class="tag">Domain Reputation</span></div>
+        <h2>How to Check If Your Domain Is on an Email Blacklist (and Get Removed)</h2>
+        <p class="excerpt">If your emails are landing in spam, your domain may be blacklisted. Here's how to check every major blacklist — Spamhaus, Barracuda, Google Postmaster — why domains get listed, and the exact steps to get removed and stay off.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="saas-app-permission-audit-guide.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Google Workspace</span><span class="tag">Microsoft 365</span><span class="tag">OAuth Security</span></div>
+        <h2>SaaS App Permission Audit: How to Find and Remove Risky OAuth Access in Google Workspace and M365</h2>
+        <p class="excerpt">The average company has 200+ OAuth apps connected to Google Workspace or M365 — and most were never explicitly approved. Here's how to audit every connected app in both platforms, which high-risk scopes to revoke, and how to prevent unauthorized connections going forward.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="what-is-dkim-email-authentication.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Email Security</span><span class="tag">DKIM</span><span class="tag">Authentication</span></div>
+        <h2>What Is DKIM? How Email Authentication Actually Works</h2>
+        <p class="excerpt">DKIM adds a cryptographic signature to outgoing emails so recipient mail servers can verify the message wasn't tampered with in transit. Here's how it works, how to check your current selectors, and how to set it up for Google Workspace, Microsoft 365, and third-party senders.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="business-email-compromise-bec-prevention-2026.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Email Security</span><span class="tag">BEC</span><span class="tag">Social Engineering</span></div>
+        <h2>Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026</h2>
+        <p class="excerpt">BEC attacks cost businesses $2.9 billion last year — more than ransomware. No malware, no links, just a convincing email and a wire transfer. Here are the 5 attack types, the red flags your team needs to know, and 9 controls that stop them.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="what-is-attack-surface-management.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Attack Surface</span><span class="tag">ASM</span><span class="tag">Security Monitoring</span></div>
+        <h2>What Is Attack Surface Management? (And How to Do It for Free)</h2>
+        <p class="excerpt">Attack surface management sounds like an enterprise term — but every small business has an attack surface, and most of it is invisible to them. Here's what ASM actually covers, which assets matter most, and how to build a free monitoring stack that runs automatically.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="mfa-fatigue-attack-prevention.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">MFA</span><span class="tag">Authentication</span><span class="tag">Account Security</span></div>
+        <h2>MFA Fatigue Attacks: What They Are and How to Stop Them</h2>
+        <p class="excerpt">Attackers have a simple answer to MFA: flood you with push notifications until you tap "approve" just to make them stop. This works. Here's how MFA fatigue attacks operate, how to configure number matching in M365 and Google Workspace, and which MFA types are actually phishing-resistant.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="microsoft-365-account-compromised-signs.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Microsoft 365</span><span class="tag">Account Security</span><span class="tag">Incident Response</span></div>
+        <h2>How to Tell If Your Microsoft 365 Account Has Been Compromised</h2>
+        <p class="excerpt">M365 account compromises are often silent for weeks. Attackers set up forwarding rules, add OAuth apps, and wait. These 7 signs reveal an active intrusion — plus an 8-step response checklist to lock down a compromised account before data leaves your org.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="how-to-fix-dmarc-policy.html" class="post-card">
+        <div class="post-meta">May 21, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">DMARC</span><span class="tag">Email Security</span><span class="tag">Phishing</span></div>
+        <h2>How to Fix Your DMARC Policy (And Move to p=reject Without Breaking Email)</h2>
+        <p class="excerpt">If your DMARC is set to p=none, attackers can still spoof your domain. Here's the step-by-step path from p=none to p=reject — auditing sending services, fixing SPF and DKIM alignment, and avoiding the mistakes that block your own legitimate mail.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="dmarc-reject-vs-quarantine.html" class="post-card">
+        <div class="post-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">DMARC</span><span class="tag">Email Security</span><span class="tag">Email Authentication</span></div>
+        <h2>DMARC p=reject vs p=quarantine: Which Policy Should You Set?</h2>
+        <p class="excerpt">Most businesses that have a DMARC record are still on p=quarantine — or worse, p=none. Only p=reject actually blocks spoofed email from reaching inboxes. Here's the difference, the right migration path, and the 5 mistakes that break legitimate email when you move too fast.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="m365-security-audit-checklist-2026.html" class="post-card">
+        <div class="post-meta">May 19, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">M365</span><span class="tag">Security Audit</span><span class="tag">Microsoft 365</span></div>
+        <h2>M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run</h2>
+        <p class="excerpt">Most Microsoft 365 breaches exploit the same misconfigurations: MFA disabled for a few accounts, legacy auth left open, a stale admin who left six months ago still has Global Admin rights. This checklist closes those gaps in under an hour.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="google-workspace-security-audit-checklist.html" class="post-card">
+        <div class="post-meta">May 19, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Google Workspace</span><span class="tag">Security Audit</span><span class="tag">GWS</span></div>
+        <h2>Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026</h2>
+        <p class="excerpt">Google Workspace defaults optimise for collaboration, not security. These 8 checks — covering 2-step verification enforcement, external Drive sharing, OAuth app access, and more — take under an hour and close the gaps most commonly exploited in GWS breaches.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="domain-impersonation-detection-guide.html" class="post-card">
+        <div class="post-meta">May 19, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Brand Protection</span><span class="tag">Typosquatting</span><span class="tag">Phishing</span></div>
+        <h2>How to Detect Domain Impersonation Before Your Customers Get Scammed</h2>
+        <p class="excerpt">Right now, someone may have registered a domain that looks almost exactly like yours. Typosquatting, homoglyph attacks, keyword-append domains — here's how attackers build and use lookalike domains, how to find existing ones, and how to catch new impostors automatically.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="ai-phishing-attacks-2026-employee-training.html" class="post-card">
+        <div class="post-meta">May 17, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Phishing</span><span class="tag">AI Security</span><span class="tag">Social Engineering</span></div>
+        <h2>AI-Generated Phishing in 2026: Why Your Employees Can't Spot It Anymore</h2>
+        <p class="excerpt">AI tools now generate flawless, personalized phishing emails at scale — click rates are 4x higher than traditional templates. Traditional awareness training is no longer enough. Here's what changed and how to actually prepare your team.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="vendor-supply-chain-security-smb-2026.html" class="post-card">
+        <div class="post-meta">May 17, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Supply Chain</span><span class="tag">Vendor Risk</span><span class="tag">Third-Party Security</span></div>
+        <h2>Your Vendors Are the New Attack Surface: Supply Chain Security for SMBs in 2026</h2>
+        <p class="excerpt">62% of breaches now involve a third-party vendor. Attackers have learned that targeting a small supplier is easier than breaching the larger company directly. Here's how to monitor your vendor risk before it becomes your incident.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="email-spoofing-small-business-domain-check-2026.html" class="post-card">
+        <div class="post-meta">May 17, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Email Security</span><span class="tag">DMARC</span><span class="tag">Spoofing</span></div>
+        <h2>Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap</h2>
+        <p class="excerpt">Attackers can send emails appearing to come from your domain with no account compromise required. ~90% of SMB domains have no DMARC enforcement. Here's how to check yours and close the gap in five steps.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="how-to-check-email-dmarc-compliance.html" class="post-card">
+        <div class="post-meta">May 13, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">DMARC</span><span class="tag">Email Security</span><span class="tag">Compliance</span></div>
+        <h2>How to Check If Your Email Is DMARC Compliant</h2>
+        <p class="excerpt">Your emails are spoofable right now — and you probably don't even know it. Here's how to check your DMARC record, understand p=reject vs p=quarantine, and run through a 10-point compliance checklist.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="stripe-outage-checklist-saas.html" class="post-card">
+        <div class="post-meta">May 13, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Payments</span><span class="tag">SRE</span><span class="tag">Reliability</span></div>
+        <h2>Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down</h2>
+        <p class="excerpt">Most SaaS teams don't find out their webhook retry logic is broken until payments actually fail. Here's the pre-outage checklist, during-outage playbook, and recovery runbook that keeps you operational when Stripe goes dark.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="subdomain-takeover-overlooked-attack-vector.html" class="post-card">
+        <div class="post-meta">May 13, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Subdomain Takeover</span><span class="tag">DNS</span><span class="tag">Attack Surface</span></div>
+        <h2>Why Subdomain Takeovers Are the Forgotten Attack Vector</h2>
+        <p class="excerpt">Expired S3 buckets. Abandoned GitHub Pages. Forgotten SaaS trials. Dangling DNS records are how attackers hijack your subdomain and serve phishing from your own domain — here's how to check if you're exposed.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="sql-injection-scanner-for-small-business.html" class="post-card">
+        <div class="post-meta">May 6, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">SQLi</span><span class="tag">Web App Security</span><span class="tag">SMB</span></div>
+        <h2>SQL Injection Scanner for Small Business: Find SQLi Before It Hits Production</h2>
+        <p class="excerpt">A practical, low-noise SQL injection testing workflow for forms, URL params, and APIs — plus what to fix first.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="oauth-security-checker-best-practices.html" class="post-card">
+        <div class="post-meta">May 6, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">OAuth 2.0</span><span class="tag">Auth Security</span><span class="tag">AppSec</span></div>
+        <h2>OAuth Security Checker: Common Login Flow Weaknesses and How to Test Them</h2>
+        <p class="excerpt">How to validate redirect URI controls, state, PKCE, and token handling without breaking your auth flow.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="email-header-analyzer-phishing-guide.html" class="post-card">
+        <div class="post-meta">May 6, 2026 &nbsp;·&nbsp; 5 min read &nbsp;·&nbsp; <span class="tag">Phishing Defense</span><span class="tag">Email Security</span><span class="tag">DMARC</span></div>
+        <h2>Email Header Analyzer: Spot Spoofed Senders in 5 Minutes</h2>
+        <p class="excerpt">Fast phishing triage with SPF, DKIM, DMARC, source IP checks, and reply-path mismatch detection.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="ransomware-readiness-checklist-small-business.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Ransomware</span><span class="tag">Small Business</span><span class="tag">Preparedness</span></div>
+        <h2>Ransomware Readiness Checklist for Small Businesses</h2>
+        <p class="excerpt">A practical ransomware prep checklist for small teams: backup validation, MFA coverage, endpoint hardening, and first-day response readiness.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="exposed-admin-panels-how-attackers-find-them.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">Recon</span><span class="tag">Admin Security</span><span class="tag">Attack Surface</span></div>
+        <h2>Exposed Admin Panels: How Attackers Find Them Fast</h2>
+        <p class="excerpt">How admin portals get discovered in minutes and the controls that shut down the easiest attack paths.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="cloud-storage-misconfig-checklist.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">Cloud Security</span><span class="tag">Storage</span><span class="tag">Hardening</span></div>
+        <h2>Cloud Storage Misconfiguration Checklist</h2>
+        <p class="excerpt">The object storage mistakes that cause preventable data leaks—and the weekly checks that catch drift early.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+
+      <a href="api-authentication-mistakes-2026.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">API Security</span><span class="tag">Authentication</span><span class="tag">Hardening</span></div>
+        <h2>API Authentication Mistakes Teams Still Make in 2026</h2>
+        <p class="excerpt">The auth and authorization mistakes that still cause most API breaches—and the short hardening sequence to close them fast.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="vulnerability-triage-workflow-small-teams.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Vulnerability Mgmt</span><span class="tag">Triage</span><span class="tag">Ops</span></div>
+        <h2>Vulnerability Triage Workflow for Small Teams</h2>
+        <p class="excerpt">A practical triage model for small teams: exploitability, exposure, impact, and controls—with clear SLA targets.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="incident-response-checklist-first-24-hours.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Incident Response</span><span class="tag">Playbook</span><span class="tag">Ops</span></div>
+        <h2>Incident Response Checklist: The First 24 Hours</h2>
+        <p class="excerpt">A first-day incident response checklist for small teams: contain, preserve evidence, scope impact, and recover cleanly.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+
+      <a href="smb-security-monitoring-weekly-routine.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Small Business</span><span class="tag">Monitoring</span><span class="tag">Security Ops</span></div>
+        <h2>Small Business Security Monitoring: A 30-Minute Weekly Routine</h2>
+        <p class="excerpt">A practical 30-minute routine to reduce risk every week: what to check, what to escalate, and how to prioritize fixes that actually matter.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="spf-dkim-dmarc-setup-guide.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Email Security</span><span class="tag">DMARC</span><span class="tag">Phishing</span></div>
+        <h2>SPF, DKIM, DMARC: A Real-World Setup Guide</h2>
+        <p class="excerpt">Stop domain spoofing without wrecking deliverability. The practical setup and rollout path for SPF, DKIM, and DMARC.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="dns-misconfigurations-attack-surface.html" class="post-card">
+        <div class="post-meta">April 28, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">DNS</span><span class="tag">Attack Surface</span><span class="tag">Hardening</span></div>
+        <h2>DNS Misconfigurations That Leak Attack Surface</h2>
+        <p class="excerpt">Dangling CNAMEs, stale DNS records, permissive AXFR, and TXT leakage — the DNS mistakes attackers love and how to fix them fast.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+
+      <a href="top-10-subdomain-takeover-attacks.html" class="post-card">
+        <div class="post-meta">April 27, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Subdomain Takeover</span><span class="tag">Attack Surface</span></div>
+        <h2>Top 10 Subdomain Takeover Attacks and How to Prevent Them</h2>
+        <p class="excerpt">Subdomain takeovers are one of the most overlooked — and most exploitable — attack vectors targeting small businesses and enterprise alike. Here's what they are, how attackers find them, and how to lock yours down.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="how-to-find-exposed-api-endpoints.html" class="post-card">
+        <div class="post-meta">April 27, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">API Security</span><span class="tag">OSINT</span></div>
+        <h2>How to Find Exposed API Endpoints: A Practical Guide</h2>
+        <p class="excerpt">Misconfigured APIs leak data, expose admin panels, and create attack surfaces that scanners miss. Here's the reconnaissance workflow security researchers use to find them — and how you can protect yours.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="subdomain-enumeration-techniques-2026.html" class="post-card">
+        <div class="post-meta">April 27, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">Subdomain Enumeration</span><span class="tag">Recon</span><span class="tag">OSINT</span></div>
+        <h2>Subdomain Enumeration: The 5 Techniques That Actually Work in 2026</h2>
+        <p class="excerpt">CT logs, AXFR zone transfers, NSLOOKUP enumeration, permutation fuzzing, and OWASP Amass chaining — the modern recon playbook security researchers actually use to map entire attack surfaces.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="http-security-headers-what-sites-get-wrong.html" class="post-card">
+        <div class="post-meta">April 27, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">HTTP Headers</span><span class="tag">CSP</span><span class="tag">HSTS</span></div>
+        <h2>HTTP Security Headers: What Most Sites Get Wrong in 2026</h2>
+        <p class="excerpt">CSP too permissive, HSTS max-age too short, nosniff missing, Referrer-Policy leaking data — the 8 security headers that stop entire attack classes, and why so few sites get them right.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="what-attackers-recon-your-business.html" class="post-card">
+        <div class="post-meta">April 27, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">OSINT</span><span class="tag">Small Business</span><span class="tag">Attack Surface</span></div>
+        <h2>What Attackers See When They Recon Your Business</h2>
+        <p class="excerpt">DNS records, CT logs, exposed dev servers, LinkedIn org charts, leaked credentials — the reconnaissance phase is public, automatic, and faster than most businesses realize. Here's what attackers find and how to take control of your exposure.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+    
+      <a href="what-is-phishing-simulation.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Phishing</span><span class="tag">Security Training</span></div>
+        <h2>What Is a Phishing Simulation and Why Does Your Business Need One?</h2>
+        <p class="excerpt">Your employees are the first line of defense — and the most likely point of failure. Here's how phishing simulations fix that.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="dark-web-monitoring-data-leakage.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Dark Web</span><span class="tag">Data Breaches</span></div>
+        <h2>Dark Web Monitoring Explained: How to Know If Your Data Has Been Leaked</h2>
+        <p class="excerpt">Your company's data is likely already on the dark web. Here's what that means, how to find out, and what to do about it.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="how-attackers-find-subdomains-you-didnt-know-about.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Subdomain Enumeration</span><span class="tag">Recon</span></div>
+        <h2>How Attackers Find Subdomains You Didn't Know You Had</h2>
+        <p class="excerpt">Your forgotten dev servers, test environments, and old staging sites are low-hanging fruit for attackers. Here's how they find them.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+    
+      <a href="security-monitoring-routine-small-team.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Security Monitoring</span></div>
+        <h2>How to Build a Security Monitoring Routine Without a Dedicated Team</h2>
+        <p class="excerpt"></p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="security-scans-how-often-small-business.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Security Scanning</span></div>
+        <h2>How Often Should Small Businesses Run Security Scans?</h2>
+        <p class="excerpt"></p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="ssl-certificate-warnings-explained.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">SSL/TLS</span></div>
+        <h2>SSL Certificate Warnings: What They Actually Mean</h2>
+        <p class="excerpt"></p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="security-misconfiguration-exploits.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Hardening</span></div>
+        <h2>What Is a Security Misconfiguration and How Do Attackers Exploit Them?</h2>
+        <p class="excerpt"></p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="domain-spoofing-check-guide.html" class="post-card">
+        <div class="post-meta">April 30, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Email Security</span></div>
+        <h2>How to Check If Your Domain Is Being Spoofed: A Practical Guide</h2>
+        <p class="excerpt"></p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="small-business-cybersecurity-checklist-2026.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">SMB</span><span class="tag">Checklist</span><span class="tag">Hardening</span></div>
+        <h2>Small Business Cybersecurity Checklist for 2026: The Complete Guide</h2>
+        <p class="excerpt">You don't need a dedicated security team to stay significantly more secure than the average small business. Here's the prioritized checklist that covers what actually matters in 2026 — without the noise.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="ssl-certificate-expired-check.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">TLS</span><span class="tag">Certificates</span><span class="tag">Monitoring</span></div>
+        <h2>How to Check If Your SSL Certificate Has Expired (And What Happens If It Does)</h2>
+        <p class="excerpt">SSL certificates silently expire and cost you customers before you even know it. Here's how to check yours right now.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="free-website-security-checker-small-business.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">SMB</span><span class="tag">Security Tools</span><span class="tag">Vulnerability</span></div>
+        <h2>Free Website Security Checker for Small Business: What Actually Works in 2026</h2>
+        <p class="excerpt">Most free security scanners either miss everything or cry wolf on nothing. Here's what actually works.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="dark-web-monitoring-free-tools.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Dark Web</span><span class="tag">OSINT</span><span class="tag">Data Breach</span></div>
+        <h2>Dark Web Monitoring: Free Tools vs Paid Services for Small Business</h2>
+        <p class="excerpt">Your company data could already be on the dark web and you wouldn't know it. Here's how dark web monitoring works.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="free-xss-vulnerability-scanner.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">XSS</span><span class="tag">Web Security</span><span class="tag">Scanner</span></div>
+        <h2>Free XSS Vulnerability Scanner: How to Find Cross-Site Scripting Before Attackers Do</h2>
+        <p class="excerpt">XSS is the most common web vulnerability and most scanners miss it in dynamic, JavaScript-heavy apps. Here's how to find it.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="free-subdomain-finder-tool.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Subdomain</span><span class="tag">Recon</span><span class="tag">Attack Surface</span></div>
+        <h2>Free Subdomain Finder: How to Map Your Entire Attack Surface Before Attackers Do</h2>
+        <p class="excerpt">Every forgotten subdomain is a potential entry point. Here's how to find all of yours before attackers do.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="api-endpoint-security-testing-free.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 9 min read &nbsp;·&nbsp; <span class="tag">API</span><span class="tag">Security Testing</span><span class="tag">Bug Bounty</span></div>
+        <h2>API Endpoint Security Testing: Free Tools and Techniques That Actually Work</h2>
+        <p class="excerpt">APIs are the most exposed attack surface in modern web apps. Here's how to find and test them for free.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="detect-phishing-kit-on-my-domain.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Phishing</span><span class="tag">Brand Protection</span><span class="tag">DMARC</span></div>
+        <h2>How to Detect a Phishing Kit Using Your Domain (Before It Costs You Customers)</h2>
+        <p class="excerpt">Brand impersonation phishing uses your own domain to betray your customers' trust. Here's how to find out.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+      <a href="smb-cybersecurity-compliance-hipaa-pci-checklist.html" class="post-card">
+        <div class="post-meta">May 2, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">Compliance</span><span class="tag">HIPAA</span><span class="tag">PCI-DSS</span></div>
+        <h2>SMB Cybersecurity Compliance: HIPAA and PCI-DSS Without the Enterprise Budget</h2>
+        <p class="excerpt">HIPAA and PCI-DSS compliance for small business — practical path without the enterprise budget.</p>
+        <span class="read-more">Read article →</span>
+      </a>
+
+    </div>
+
+    <!-- Newsletter Signup -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:0 auto 48px;max-width:580px;">
+      <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+      <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">Get attack technique breakdowns, tool releases, and practical guides. No fluff, unsubscribe anytime.</p>
+      <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+        <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+        <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+      </form>
+      <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+      <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+      <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+    </div>
+  
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+  </div>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>

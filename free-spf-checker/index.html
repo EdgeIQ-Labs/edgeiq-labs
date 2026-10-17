@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Free SPF Record Checker — Validate & Analyze Your SPF Instantly</title>
@@ -12,154 +12,153 @@
   <link rel="canonical" href="https://edgeiqlabs.com/free-spf-checker/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Free SPF Record Checker","url":"https://edgeiqlabs.com/free-spf-checker/","description":"Free SPF record validator and analyzer. Check mechanism breakdown, DNS lookups, and get fix recommendations.","applicationCategory":"SecurityApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
   <style>
-    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#b47aff;--blue:#3dd9ff;--border:#233142;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
-    .container{max-width:800px;margin:0 auto;padding:0 20px;}
-    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
-    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
-    .nav-brand span{color:var(--blue);}
-    .nav-links{display:flex;gap:6px;align-items:center;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
-    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
-    @media(max-width:600px){.nav-links a:not(.nav-cta){display:none;}}
+    /* Page-specific styles for SPF Checker tool UI */
+    .spf-hero{padding:56px 0 36px;text-align:center;}
+    .spf-hero-tag{display:inline-block;background:var(--color-accent-subtle);border:1px solid var(--color-accent);color:var(--color-accent);font-size:0.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+    .spf-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:14px;letter-spacing:-.02em;}
+    .spf-hero h1 span{color:var(--color-accent);}
+    .spf-hero-sub{color:var(--color-text-secondary);font-size:1rem;max-width:520px;margin:0 auto 32px;}
 
-    .hero{padding:56px 0 36px;text-align:center;}
-    .hero-tag{display:inline-block;background:#1a0e2a;border:1px solid var(--accent);color:var(--accent);font-size:0.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
-    h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:14px;letter-spacing:-.02em;}
-    h1 span{color:var(--accent);}
-    .hero-sub{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 32px;}
-
-    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;}
+    .tool-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:28px;margin-bottom:28px;}
     .domain-form{display:flex;gap:10px;margin-bottom:8px;}
-    .domain-form input{flex:1;background:#0b1422;border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:10px;font-size:1rem;outline:none;font-family:inherit;transition:border-color .2s;min-width:0;}
-    .domain-form input:focus{border-color:var(--accent);}
-    .domain-form input::placeholder{color:var(--muted);}
-    .domain-form button{background:var(--accent);color:#071018;font-weight:800;border:none;cursor:pointer;padding:13px 24px;border-radius:10px;font-size:0.95rem;white-space:nowrap;font-family:inherit;transition:opacity .15s;}
+    .domain-form input{flex:1;background:var(--color-bg-primary);border:1px solid var(--color-border);color:var(--color-text-primary);padding:13px 16px;border-radius:var(--radius-md);font-size:1rem;outline:none;font-family:inherit;transition:border-color .2s;min-width:0;}
+    .domain-form input:focus{border-color:var(--color-accent);}
+    .domain-form input::placeholder{color:var(--color-text-muted);}
+    .domain-form button{background:var(--color-accent);color:#000;font-weight:800;border:none;cursor:pointer;padding:13px 24px;border-radius:var(--radius-md);font-size:0.95rem;white-space:nowrap;font-family:inherit;transition:opacity .15s;}
     .domain-form button:hover{opacity:.88;}
     .domain-form button:disabled{opacity:.5;cursor:not-allowed;}
-    .form-hint{font-size:0.8rem;color:var(--muted);}
+    .form-hint{font-size:0.8rem;color:var(--color-text-muted);}
 
     /* Loading */
     .loading{display:none;text-align:center;padding:32px 0;}
     .spin{animation:spin 1s linear infinite;display:inline-block;font-size:1.4rem;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .loading p{color:var(--muted);margin-top:10px;font-size:0.9rem;}
+    .loading p{color:var(--color-text-secondary);margin-top:10px;font-size:0.9rem;}
 
     /* Error */
-    .result-error{display:none;background:#1a0808;border:1px solid var(--red);border-radius:12px;padding:18px 20px;color:var(--red);font-size:0.92rem;}
+    .result-error{display:none;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:var(--radius-lg);padding:18px 20px;color:#f87171;font-size:0.92rem;}
 
     /* Results */
     #results{display:none;}
 
     /* Status banner */
-    .status-banner{border-radius:12px;padding:18px 22px;margin-bottom:22px;display:flex;align-items:flex-start;gap:14px;}
+    .status-banner{border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:22px;display:flex;align-items:flex-start;gap:14px;}
     .status-banner.pass{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);}
     .status-banner.warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);}
     .status-banner.fail{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);}
     .status-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
     .status-title{font-weight:800;font-size:1rem;margin-bottom:4px;}
-    .status-banner.pass .status-title{color:var(--green);}
-    .status-banner.warn .status-title{color:var(--yellow);}
-    .status-banner.fail .status-title{color:var(--red);}
-    .status-sub{font-size:0.88rem;color:var(--muted);}
+    .status-banner.pass .status-title{color:#34d399;}
+    .status-banner.warn .status-title{color:#fbbf24;}
+    .status-banner.fail .status-title{color:#f87171;}
+    .status-sub{font-size:0.88rem;color:var(--color-text-secondary);}
 
     /* Metrics row */
     .metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
     @media(max-width:520px){.metrics-row{grid-template-columns:1fr 1fr;}}
-    .metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center;}
+    .metric{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px 16px;text-align:center;}
     .metric .val{font-size:1.6rem;font-weight:800;line-height:1;}
-    .metric .lbl{font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
-    .metric.ok .val{color:var(--green);}
-    .metric.warn .val{color:var(--yellow);}
-    .metric.bad .val{color:var(--red);}
+    .metric .lbl{font-size:0.75rem;color:var(--color-text-muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+    .metric.ok .val{color:#34d399;}
+    .metric.warn .val{color:#fbbf24;}
+    .metric.bad .val{color:#f87171;}
 
     /* Record display */
     .record-section{margin-bottom:22px;}
-    .section-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;}
-    .record-raw{background:#071018;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-family:monospace;font-size:0.88rem;color:#b8d4f0;word-break:break-all;line-height:1.7;}
+    .section-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-muted);margin-bottom:10px;}
+    .record-raw{background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:0.88rem;color:var(--color-text-secondary);word-break:break-all;line-height:1.7;}
 
     /* Mechanism table */
     .mech-table{width:100%;border-collapse:collapse;font-size:0.88rem;margin-bottom:22px;}
-    .mech-table th{background:#102035;color:var(--blue);text-align:left;padding:8px 12px;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:.04em;}
-    .mech-table td{border-bottom:1px solid #1a2535;padding:9px 12px;color:#c8daea;vertical-align:top;}
+    .mech-table th{background:var(--color-bg-elevated);color:var(--color-accent);text-align:left;padding:8px 12px;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:.04em;}
+    .mech-table td{border-bottom:1px solid var(--color-border);padding:9px 12px;color:var(--color-text-secondary);vertical-align:top;}
     .mech-table tr:last-child td{border-bottom:none;}
-    .mech-type{font-family:monospace;font-weight:700;}
-    .mech-val{font-family:monospace;color:var(--muted);}
-    .qual-pass{color:var(--green);font-weight:700;}
-    .qual-fail{color:var(--red);font-weight:700;}
-    .qual-soft{color:var(--yellow);font-weight:700;}
-    .qual-neutral{color:var(--muted);font-weight:700;}
+    .mech-type{font-family:var(--font-mono);font-weight:700;}
+    .mech-val{font-family:var(--font-mono);color:var(--color-text-muted);}
+    .qual-pass{color:#34d399;font-weight:700;}
+    .qual-fail{color:#f87171;font-weight:700;}
+    .qual-soft{color:#fbbf24;font-weight:700;}
+    .qual-neutral{color:var(--color-text-muted);font-weight:700;}
     .qual-all-good{background:rgba(52,211,153,.1);border-radius:4px;padding:1px 6px;}
     .qual-all-warn{background:rgba(251,191,36,.1);border-radius:4px;padding:1px 6px;}
     .qual-all-bad{background:rgba(248,113,113,.1);border-radius:4px;padding:1px 6px;}
-    .dns-badge{display:inline-block;background:#0d1c2e;border:1px solid #1e3a5a;color:var(--blue);font-size:0.7rem;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+    .dns-badge{display:inline-block;background:var(--color-bg-pale-blue);border:1px solid rgba(34,211,238,.2);color:var(--color-accent);font-size:0.7rem;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
 
     /* Lookup bar */
-    .lookup-bar-wrap{background:#0d1421;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:22px;}
+    .lookup-bar-wrap{background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:22px;}
     .lookup-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
     .lookup-label{font-size:0.85rem;font-weight:700;}
     .lookup-count{font-size:0.85rem;font-weight:800;}
-    .lookup-track{background:#1a2535;border-radius:999px;height:8px;overflow:hidden;}
+    .lookup-track{background:var(--color-bg-elevated);border-radius:999px;height:8px;overflow:hidden;}
     .lookup-fill{height:100%;border-radius:999px;transition:width .6s ease;}
-    .lookup-note{font-size:0.78rem;color:var(--muted);margin-top:8px;}
+    .lookup-note{font-size:0.78rem;color:var(--color-text-muted);margin-top:8px;}
 
     /* Issues */
     .issues-section{margin-bottom:22px;}
-    .issue{border-radius:10px;padding:14px 18px;margin-bottom:10px;}
+    .issue{border-radius:var(--radius-md);padding:14px 18px;margin-bottom:10px;}
     .issue.fail{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);}
     .issue.warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);}
     .issue-title{font-weight:700;font-size:0.92rem;margin-bottom:6px;}
-    .issue.fail .issue-title{color:var(--red);}
-    .issue.warn .issue-title{color:var(--yellow);}
-    .issue-detail{font-size:0.85rem;color:var(--muted);margin-bottom:8px;}
-    .issue-fix{font-size:0.85rem;color:#c8daea;}
-    .issue-fix strong{color:var(--text);}
+    .issue.fail .issue-title{color:#f87171;}
+    .issue.warn .issue-title{color:#fbbf24;}
+    .issue-detail{font-size:0.85rem;color:var(--color-text-muted);margin-bottom:8px;}
+    .issue-fix{font-size:0.85rem;color:var(--color-text-secondary);}
+    .issue-fix strong{color:var(--color-text-primary);}
 
     /* CTA */
-    .cta-block{background:linear-gradient(135deg,#1a0e2a 0%,#0b0f14 100%);border:1px solid var(--accent);border-radius:14px;padding:28px;margin:28px 0;text-align:center;}
+    .cta-block{background:linear-gradient(135deg,var(--color-accent-subtle) 0%,var(--color-bg-primary) 100%);border:1px solid var(--color-accent);border-radius:var(--radius-lg);padding:28px;margin:28px 0;text-align:center;}
     .cta-block h3{font-size:1.15rem;font-weight:800;margin-bottom:8px;}
-    .cta-block p{color:var(--muted);margin-bottom:18px;font-size:0.9rem;}
+    .cta-block p{color:var(--color-text-secondary);margin-bottom:18px;font-size:0.9rem;}
     .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-    .btn-primary{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:9px;text-decoration:none;font-size:0.95rem;}
-    .btn-secondary{display:inline-block;background:transparent;color:var(--accent);font-weight:600;padding:10px 20px;border-radius:9px;text-decoration:none;font-size:0.9rem;border:1px solid var(--accent);}
     .capture-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
-    .capture-form input{background:#0b1422;border:1px solid #2a4a6a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:0.9rem;width:230px;font-family:inherit;}
-    .capture-form input::placeholder{color:var(--muted);}
-    .capture-form button{background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:0.9rem;font-family:inherit;}
-    .capture-msg{font-size:0.82rem;color:var(--green);margin-top:8px;text-align:center;display:none;}
+    .capture-form input{background:var(--color-bg-primary);border:1px solid var(--color-border);color:var(--color-text-primary);padding:10px 14px;border-radius:var(--radius-md);font-size:0.9rem;width:230px;font-family:inherit;}
+    .capture-form input::placeholder{color:var(--color-text-muted);}
+    .capture-form button{background:var(--color-accent);color:#000;font-weight:700;padding:10px 18px;border-radius:var(--radius-md);border:none;cursor:pointer;font-size:0.9rem;font-family:inherit;}
+    .capture-msg{font-size:0.82rem;color:#34d399;margin-top:8px;text-align:center;display:none;}
 
     /* FAQ */
     .faq-section{margin:40px 0 60px;}
     .faq-section h2{font-size:1.3rem;font-weight:800;margin-bottom:22px;}
-    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-item{border-bottom:1px solid var(--color-border);padding:16px 0;}
     .faq-q{font-weight:700;font-size:0.95rem;margin-bottom:6px;}
-    .faq-a{color:var(--muted);font-size:0.88rem;line-height:1.65;}
-    .faq-a a{color:var(--accent);text-decoration:none;}
-    .faq-a code{background:#102035;padding:1px 6px;border-radius:4px;font-size:0.85em;}
-
-    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
-    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    .faq-a{color:var(--color-text-secondary);font-size:0.88rem;line-height:1.65;}
+    .faq-a a{color:var(--color-accent);text-decoration:none;}
+    .faq-a code{background:var(--color-bg-elevated);padding:1px 6px;border-radius:4px;font-size:0.85em;}
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav>
-  <a href="/" class="nav-brand">EdgeIQ <span>Labs</span></a>
-  <div class="nav-links">
-    <a href="/free-dmarc-checker/">DMARC</a>
-    <a href="/free-domain-security-score/">Security Score</a>
-    <a href="/inbox-shield/">Inbox Shield</a>
-    <a href="/inbox-shield/" class="nav-cta">Monitor Free →</a>
-  </div>
-</nav>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link nav__link--active">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
 
 <div class="container">
-  <div class="hero">
-    <div class="hero-tag">Free · Instant · No account needed</div>
+  <div class="spf-hero">
+    <div class="spf-hero-tag">Free · Instant · No account needed</div>
     <h1>Free <span>SPF Record</span> Checker</h1>
-    <p class="hero-sub">Validate your SPF record, see the full mechanism breakdown, check the DNS lookup count, and get specific fix recommendations — in seconds.</p>
+    <p class="spf-hero-sub">Validate your SPF record, see the full mechanism breakdown, check the DNS lookup count, and get specific fix recommendations — in seconds.</p>
   </div>
 
   <div class="tool-card">
@@ -196,8 +195,8 @@
       <h3>Monitor your SPF — and everything else — automatically</h3>
       <p>Inbox Shield watches your SPF, DMARC, and DKIM records 24/7 and alerts you the moment anything changes. Free for one domain.</p>
       <div class="cta-row">
-        <a href="/inbox-shield/" class="btn-primary">Start Monitoring Free →</a>
-        <a href="/free-dmarc-checker/" class="btn-secondary">Check DMARC</a>
+        <a href="/inbox-shield/" class="btn btn--primary">Start Monitoring Free →</a>
+        <a href="/free-dmarc-checker/" class="btn btn--outline">Check DMARC</a>
       </div>
       <div class="capture-form">
         <input type="email" id="captureEmail" placeholder="you@company.com" autocomplete="email"/>
@@ -236,17 +235,37 @@
   </div>
 </div>
 
-<footer>
-  <a href="/">Home</a>
-  <a href="/free-domain-security-score/">Security Score</a>
-  <a href="/free-dmarc-checker/">DMARC Checker</a>
-  <a href="/free-ssl-checker/">SSL Checker</a>
-  <a href="/free-blacklist-checker/">Blacklist Checker</a>
-  <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
-  <a href="/inbox-shield/">Inbox Shield</a>
-  <a href="/blog/">Blog</a>
-  <a href="/privacy.html">Privacy</a>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
 document.getElementById('domainInput').addEventListener('keydown', e => { if (e.key === 'Enter') runCheck(); });
@@ -350,7 +369,7 @@ function renderResults(data, domain) {
 
   // Lookup bar
   const pct = Math.min(100, Math.round((data.dnsLookups / 10) * 100));
-  const barColor = data.dnsLookups > 10 ? 'var(--red)' : data.dnsLookups >= 8 ? 'var(--yellow)' : 'var(--green)';
+  const barColor = data.dnsLookups > 10 ? '#f87171' : data.dnsLookups >= 8 ? '#fbbf24' : '#34d399';
   const note = data.dnsLookups > 10
     ? `⚠ Over limit! ${data.dnsLookups}/10 lookups — SPF will return PermError`
     : data.dnsLookups >= 8
@@ -390,7 +409,7 @@ function renderResults(data, domain) {
       <td><span class="mech-type">${m.type}</span>${dnsTag}</td>
       <td>${qualHtml}</td>
       <td><span class="mech-val">${m.value || ''}</span></td>
-      <td style="color:var(--muted);font-size:0.82rem;">${notes.join(' · ')}</td>`;
+      <td style="color:var(--color-text-muted);font-size:0.82rem;">${notes.join(' · ')}</td>`;
     tbody.appendChild(tr);
   });
 
