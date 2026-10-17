@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free CDN Cache Warmer — Pre-warm Cloudflare, Fastly, Akamai | EdgeIQ Labs</title>
+  <meta name="description" content="Warm your CDN cache by pre-fetching URLs from your sitemap. See cache status (HIT/MISS), response times, and warming progress. 100% client-side."/>
+  <meta property="og:title" content="Free CDN Cache Warmer — Pre-warm Your Edge Cache"/>
+  <meta property="og:description" content="Fetch URLs from your sitemap to warm CDN caches. See HIT/MISS status per URL. Runs in your browser."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/tools/cache-warmer/"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/tools/cache-warmer/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"CDN Cache Warmer","url":"https://edgeiqlabs.com/tools/cache-warmer/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does CDN cache warming work?","acceptedAnswer":{"@type":"Answer","text":"When you deploy or purge a CDN, edge caches are empty. The first visitor to each page triggers a slow origin fetch. Cache warming pre-fetches your URLs so the edge has cached copies ready before real visitors arrive, eliminating cold-cache latency."}},{"@type":"Question","name":"Does this tool upload my sitemap?","acceptedAnswer":{"@type":"Answer","text":"No. Your sitemap is fetched directly from your browser using fetch(). The XML is parsed locally and URLs are requested from your machine. No data is sent to any third-party server. Open DevTools → Network to verify."}},{"@type":"Question","name":"What CDNs does this work with?","acceptedAnswer":{"@type":"Answer","text":"Any CDN that serves cache-status headers: Cloudflare (cf-cache-status), Fastly (x-cache), Akamai (x-cache), CloudFront (x-cache), bunny.net (bunnycdn-cache-status). The tool auto-detects the CDN from response headers and displays HIT/MISS/EXPIRED status per URL."}},{"@type":"Question","name":"Why not just use a WordPress preload plugin?","acceptedAnswer":{"@type":"Answer","text":"Preload plugins fill your origin server cache, not the CDN edge cache. Edge caches are per-location — a page cached in Frankfurt is still cold in Tokyo. This tool warms the CDN layer itself by making real HTTP requests that populate edge caches."}}]}</script>
+  <style>
+    :root{--bg:#0b0f14;--surface:#111720;--border:#1e2a38;--text:#e2e8f0;--muted:#64748b;--accent:#3dd9ff;--ok:#3de19e;--warn:#f59e0b;--bad:#ef4444;--indigo:#6366f1;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;line-height:1.65;}
+    a{color:inherit;text-decoration:none;}
+    .container{max-width:900px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);background:rgba(11,15,20,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent)!important;color:#071018!important;font-weight:700;padding:7px 14px!important;border-radius:8px!important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .hero{padding:48px 0 32px;text-align:center;}
+    .hero-badge{display:inline-block;background:rgba(61,217,255,0.1);border:1px solid rgba(61,217,255,0.25);color:var(--accent);font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:18px;}
+    .hero h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;line-height:1.15;margin-bottom:14px;color:#fff;}
+    .hero p{font-size:1rem;color:var(--muted);max-width:600px;margin:0 auto 24px;}
+    .comparison{display:flex;gap:16px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
+    .comp-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 24px;text-align:center;min-width:160px;}
+    .comp-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+    .comp-value{font-size:1.5rem;font-weight:900;}
+    .comp-cold .comp-value{color:var(--bad);}
+    .comp-warm .comp-value{color:var(--ok);}
+    .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;}
+    .input-group{margin-bottom:16px;}
+    .input-group label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:6px;font-weight:600;}
+    input[type="text"],input[type="number"]{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.9rem;font-family:'Fira Mono',monospace;outline:none;transition:border-color 0.2s;}
+    input:focus{border-color:var(--accent);}
+    .options-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+    .options-row .input-group{flex:1;min-width:120px;margin-bottom:0;}
+    .tool-btn{background:var(--accent);color:#071018;font-weight:700;font-size:1rem;padding:13px 24px;border-radius:10px;border:none;cursor:pointer;transition:opacity 0.2s;font-family:inherit;width:100%;}
+    .tool-btn:hover{opacity:0.87;}
+    .tool-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .tool-btn.stop{background:var(--bad);color:#fff;margin-top:8px;}
+    #progress-section{display:none;margin-top:20px;}
+    .progress-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;margin-bottom:8px;}
+    .progress-fill{height:100%;border-radius:4px;background:var(--accent);transition:width 0.3s;}
+    .progress-text{font-size:0.82rem;color:var(--muted);display:flex;justify-content:space-between;}
+    #results-table{display:none;margin-top:20px;}
+    .results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+    .results-title{font-size:0.95rem;font-weight:700;}
+    .results-stats{display:flex;gap:16px;font-size:0.82rem;}
+    .stat-pill{padding:3px 10px;border-radius:12px;font-weight:700;font-size:0.75rem;}
+    .stat-hit{background:rgba(61,225,158,0.15);color:var(--ok);border:1px solid rgba(61,225,158,0.3);}
+    .stat-miss{background:rgba(245,158,11,0.15);color:var(--warn);border:1px solid rgba(245,158,11,0.3);}
+    .stat-err{background:rgba(239,68,68,0.15);color:var(--bad);border:1px solid rgba(239,68,68,0.3);}
+    .url-list{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;}
+    .url-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);font-size:0.82rem;}
+    .url-row:last-child{border-bottom:none;}
+    .url-row.pending{opacity:0.5;}
+    .url-status{width:60px;text-align:center;font-weight:700;font-size:0.72rem;padding:2px 8px;border-radius:6px;flex-shrink:0;}
+    .status-HIT{background:rgba(61,225,158,0.15);color:var(--ok);}
+    .status-MISS,.status-EXPIRED,.status-WARM,.status-DYNAMIC,.status-BYPASS{background:rgba(245,158,11,0.15);color:var(--warn);}
+    .status-REVALIDATED{background:rgba(61,225,158,0.15);color:var(--ok);}
+    .status-ERR,.status-CORS{background:rgba(239,68,68,0.15);color:var(--bad);}
+    .status-WAIT{background:rgba(100,116,139,0.15);color:var(--muted);}
+    .url-path{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Fira Mono',monospace;font-size:0.78rem;}
+    .url-time{width:60px;text-align:right;color:var(--muted);font-family:'Fira Mono',monospace;font-size:0.75rem;flex-shrink:0;}
+    .cdn-badge{font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(99,102,241,0.15);color:var(--indigo);border:1px solid rgba(99,102,241,0.3);margin-left:auto;flex-shrink:0;}
+    .trust-note{font-size:0.78rem;color:#4a6080;margin-top:10px;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:32px 24px;margin:40px 0;text-align:center;}
+    .cta-box h3{font-size:1.1rem;font-weight:800;margin-bottom:8px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.88rem;margin-bottom:18px;max-width:520px;margin-left:auto;margin-right:auto;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 24px;border-radius:9px;font-size:0.9rem;}
+    .faq{padding:40px 0;}
+    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-q{font-size:0.95rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .faq-q::after{content:"＋";color:var(--accent);font-size:1.1rem;flex-shrink:0;}
+    .faq-q.open::after{content:"−";}
+    .faq-a{display:none;padding-top:10px;font-size:0.88rem;color:var(--muted);line-height:1.65;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);margin:0 10px;}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/tools/">Dev Tools</a>
+      <a href="/free-tools/">Scanners</a>
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/dashboard/" class="nav-cta">Free Full Scan →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge">🚀 Performance Tool</div>
+    <h1>CDN Cache Warmer</h1>
+    <p>Pre-warm your CDN edge cache by fetching URLs from your sitemap. See cache status, response times, and warming progress — all from your browser.</p>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-card comp-cold">
+      <div class="comp-label">Cold Cache</div>
+      <div class="comp-value">~3s</div>
+      <div class="comp-label">Origin fetch + DB</div>
+    </div>
+    <div class="comp-card comp-warm">
+      <div class="comp-label">Warm Cache</div>
+      <div class="comp-value">~50ms</div>
+      <div class="comp-label">Served from edge</div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="input-group">
+      <label for="sitemap-url">Sitemap URL</label>
+      <input type="text" id="sitemap-url" placeholder="https://example.com/sitemap.xml" spellcheck="false"/>
+    </div>
+    <div class="options-row">
+      <div class="input-group">
+        <label for="concurrency">Concurrency</label>
+        <input type="number" id="concurrency" value="3" min="1" max="10"/>
+      </div>
+      <div class="input-group">
+        <label for="delay">Delay (ms)</label>
+        <input type="number" id="delay" value="200" min="0" max="5000" step="50"/>
+      </div>
+      <div class="input-group">
+        <label for="max-urls">Max URLs</label>
+        <input type="number" id="max-urls" value="50" min="1" max="500"/>
+      </div>
+    </div>
+    <button class="tool-btn" id="start-btn" onclick="startWarming()">Start Warming →</button>
+    <button class="tool-btn stop" id="stop-btn" onclick="stopWarming()" style="display:none;">Stop Warming</button>
+    <p class="trust-note">🔒 Sitemap fetched and parsed locally. URLs requested from your browser to warm edge caches. Cache status uses timing heuristics when CORS blocks headers. Open DevTools → Network to verify.</p>
+  </div>
+
+  <div id="progress-section">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text">
+      <span id="progress-count">0 / 0 URLs</span>
+      <span id="progress-rate">—</span>
+    </div>
+  </div>
+
+  <div id="results-table">
+    <div class="results-header">
+      <div class="results-title">Warming Results</div>
+      <div class="results-stats" id="results-stats"></div>
+    </div>
+    <div class="url-list" id="url-list"></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Want automated cache warming after every deploy?</h3>
+    <p>The free tool warms from your browser (one location). Cache Warmer Pro runs from Cloudflare's edge network with CI/CD webhooks, scheduled runs, and per-colo cache analytics.</p>
+    <a href="https://buy.stripe.com/5kQ9AV2TF0SN8Ec7wA7wA47" class="cta-btn">Get Cache Warmer Pro — $9/mo →</a>
+  </div>
+
+  <div class="faq">
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How does CDN cache warming work?</div><div class="faq-a">When you deploy or purge a CDN, edge caches are empty. The first visitor to each page triggers a slow origin fetch. Cache warming pre-fetches your URLs so the edge has cached copies ready before real visitors arrive, eliminating cold-cache latency.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does this tool upload my sitemap?</div><div class="faq-a">No. Your sitemap is fetched directly from your browser using fetch(). The XML is parsed locally and URLs are requested from your machine. No data is sent to any third-party server. Open DevTools → Network to verify.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What CDNs does this work with?</div><div class="faq-a">Any CDN that serves cache-status headers: Cloudflare (cf-cache-status), Fastly (x-cache), Akamai (x-cache), CloudFront (x-cache), bunny.net (bunnycdn-cache-status). The tool auto-detects the CDN from response headers and displays HIT/MISS/EXPIRED status per URL.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why not just use a WordPress preload plugin?</div><div class="faq-a">Preload plugins fill your origin server cache, not the CDN edge cache. Edge caches are per-location — a page cached in Frankfurt is still cold in Tokyo. This tool warms the CDN layer itself by making real HTTP requests that populate edge caches.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Will this affect my analytics?</div><div class="faq-a">Client-side analytics (Umami, Plausible, GA) won't see these requests because no JavaScript executes during warming. Server-side logs will show the requests — they come from your IP with a standard browser user agent.</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/tools/">All Dev Tools</a>
+    <a href="/free-tools/">Scanners</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p>
+  </div>
+</footer>
+
+<script>
+var abortController = null;
+var isRunning = false;
+
+function toggleFaq(el) {
+  var a = el.nextElementSibling;
+  var open = el.classList.toggle('open');
+  a.style.display = open ? 'block' : 'none';
+}
+
+function stopWarming() {
+  if (abortController) abortController.abort();
+  isRunning = false;
+  document.getElementById('start-btn').style.display = 'block';
+  document.getElementById('start-btn').disabled = false;
+  document.getElementById('stop-btn').style.display = 'none';
+}
+
+async function startWarming() {
+  var sitemapUrl = document.getElementById('sitemap-url').value.trim();
+  if (!sitemapUrl) { alert('Enter a sitemap URL'); return; }
+  if (!sitemapUrl.startsWith('http')) { alert('URL must start with http:// or https://'); return; }
+
+  var concurrency = Math.min(10, Math.max(1, parseInt(document.getElementById('concurrency').value) || 3));
+  var delay = Math.min(5000, Math.max(0, parseInt(document.getElementById('delay').value) || 200));
+  var maxUrls = Math.min(500, Math.max(1, parseInt(document.getElementById('max-urls').value) || 50));
+
+  // Premium mode: use server-side API
+  if (window.__premiumMode) {
+    var licenseKey = document.getElementById('license-key')?.value?.trim();
+    if (!licenseKey) { alert('Enter your license key to use Cache Warmer Pro'); return; }
+    await startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls);
+    return;
+  }
+
+  // Reset UI
+  isRunning = true;
+  abortController = new AbortController();
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'block';
+  document.getElementById('progress-section').style.display = 'block';
+  document.getElementById('results-table').style.display = 'block';
+  document.getElementById('url-list').innerHTML = '';
+  document.getElementById('results-stats').innerHTML = '';
+  updateProgress(0, 0);
+
+  // Step 1: Fetch and parse sitemap
+  var urls = [];
+  try {
+    var resp = await fetch(sitemapUrl, { signal: abortController.signal });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var xml = await resp.text();
+    urls = parseSitemap(xml);
+    if (urls.length === 0) throw new Error('No URLs found in sitemap');
+    urls = urls.slice(0, maxUrls);
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+    alert('Failed to fetch sitemap: ' + e.message + '\n\nMake sure the URL is correct and CORS allows browser access. Many servers block cross-origin sitemap requests.');
+    stopWarming();
+    return;
+  }
+
+  // Render initial rows
+  var listEl = document.getElementById('url-list');
+  var rowEls = [];
+  urls.forEach(function(url, i) {
+    var shortPath = url.replace(/^https?:\/\/[^\/]+/, '') || '/';
+    var row = document.createElement('div');
+    row.className = 'url-row pending';
+    row.innerHTML = '<div class="url-status status-WAIT">WAIT</div><div class="url-path" title="' + esc(url) + '">' + esc(shortPath) + '</div><div class="url-time">—</div>';
+    listEl.appendChild(row);
+    rowEls.push(row);
+  });
+
+  // Step 2: Warm URLs with concurrency control
+  var completed = 0;
+  var hits = 0, misses = 0, errors = 0;
+  var cdnDetected = '';
+  var startTime = Date.now();
+
+  async function warmUrl(index) {
+    if (!isRunning) return;
+    var url = urls[index];
+    var row = rowEls[index];
+    var t0 = performance.now();
+
+    try {
+      var r = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'reload',
+        signal: abortController.signal
+      });
+      var elapsed = Math.round(performance.now() - t0);
+
+      // Check if response is opaque (CORS blocked headers)
+      var isOpaque = r.type === 'opaque';
+      var cacheStatus, cdn;
+
+      if (isOpaque) {
+        // Request succeeded and warmed the cache, but headers are hidden by CORS.
+        // Use timing heuristic: <200ms likely HIT, else WARM
+        if (elapsed < 200) { cacheStatus = 'HIT'; hits++; }
+        else { cacheStatus = 'WARM'; misses++; }
+        cdn = '';
+      } else {
+        cacheStatus = getCacheStatus(r.headers);
+        cdn = detectCdn(r.headers);
+        if (cdn && !cdnDetected) cdnDetected = cdn;
+        // Map CDN-specific statuses to our display categories
+        if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { hits++; }
+        else if (cacheStatus === 'MISS' || cacheStatus === 'EXPIRED' || cacheStatus === 'WARM' || cacheStatus === 'DYNAMIC' || cacheStatus === 'BYPASS') { misses++; }
+        else { errors++; }
+      }
+
+      var statusClass = 'status-' + cacheStatus;
+      if (cacheStatus === 'WARM' || cacheStatus === 'DYNAMIC' || cacheStatus === 'BYPASS') statusClass = 'status-MISS';
+      if (cacheStatus === 'REVALIDATED') statusClass = 'status-HIT';
+
+      row.className = 'url-row';
+      row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div><div class="url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="url-time">' + elapsed + 'ms</div>' + (cdn ? '<div class="cdn-badge">' + cdn + '</div>' : '');
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      var elapsed = Math.round(performance.now() - t0);
+      errors++;
+      var errMsg = e.message.includes('Failed to fetch') ? 'CORS' : 'ERR';
+      row.className = 'url-row';
+      row.innerHTML = '<div class="url-status status-' + errMsg + '">' + errMsg + '</div><div class="url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="url-time">' + elapsed + 'ms</div>';
+    }
+
+    completed++;
+    updateProgress(completed, urls.length);
+    updateStats(hits, misses, errors, cdnDetected);
+
+    // Auto-scroll to keep latest visible
+    if (completed % 5 === 0) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  // Concurrency pool
+  var queue = urls.map(function(_, i) { return i; });
+  var active = 0;
+
+  async function processQueue() {
+    while (queue.length > 0 && isRunning) {
+      while (active < concurrency && queue.length > 0 && isRunning) {
+        var idx = queue.shift();
+        active++;
+        warmUrl(idx).then(function() {
+          active--;
+          if (queue.length > 0 && isRunning) processQueue();
+        });
+        // Stagger starts
+        if (delay > 0 && queue.length > 0) {
+          await new Promise(function(r) { setTimeout(r, delay); });
+        }
+      }
+      // Wait for at least one to finish before continuing
+      if (active >= concurrency) {
+        await new Promise(function(r) { setTimeout(r, 50); });
+      }
+    }
+  }
+
+  await processQueue();
+
+  // Wait for remaining active requests
+  while (active > 0 && isRunning) {
+    await new Promise(function(r) { setTimeout(r, 100); });
+  }
+
+  if (isRunning) {
+    stopWarming();
+    var totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+    document.getElementById('progress-rate').textContent = 'Completed in ' + totalTime + 's';
+  }
+}
+
+function parseSitemap(xml) {
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(xml, 'text/xml');
+  var urls = [];
+
+  // Standard sitemap
+  var locs = doc.querySelectorAll('url > loc');
+  locs.forEach(function(loc) {
+    var u = loc.textContent.trim();
+    if (u && u.startsWith('http')) urls.push(u);
+  });
+
+  // Sitemap index (nested sitemaps)
+  if (urls.length === 0) {
+    var sitemapLocs = doc.querySelectorAll('sitemap > loc');
+    // We can't recursively fetch nested sitemaps client-side due to CORS,
+    // but we note it for the user
+    if (sitemapLocs.length > 0) {
+      console.log('Sitemap index detected with ' + sitemapLocs.length + ' sub-sitemaps. Only direct URLs are supported in client-side mode.');
+    }
+  }
+
+  // Deduplicate
+  return [...new Set(urls)];
+}
+
+function getCacheStatus(headers) {
+  // Cloudflare
+  var cf = headers.get('cf-cache-status');
+  if (cf) return cf.toUpperCase();
+  // Fastly / Akamai / generic
+  var xc = headers.get('x-cache');
+  if (xc) {
+    if (/hit/i.test(xc)) return 'HIT';
+    if (/miss/i.test(xc)) return 'MISS';
+    if (/expired/i.test(xc)) return 'EXPIRED';
+    return xc.split(/[,;]/)[0].trim().toUpperCase();
+  }
+  // CloudFront
+  var cfx = headers.get('x-cache');
+  if (cfx) return cfx.toUpperCase();
+  // bunny.net
+  var bunny = headers.get('bunnycdn-cache-status');
+  if (bunny) return bunny.toUpperCase();
+  // Age header presence suggests cache
+  var age = headers.get('age');
+  if (age && parseInt(age) > 0) return 'HIT';
+  return 'MISS';
+}
+
+function detectCdn(headers) {
+  if (headers.get('cf-cache-status') || headers.get('cf-ray')) return 'Cloudflare';
+  if (headers.get('x-served-by') && /fastly/i.test(headers.get('x-served-by'))) return 'Fastly';
+  if (headers.get('x-amz-cf-id')) return 'CloudFront';
+  if (headers.get('x-akamai-request-id')) return 'Akamai';
+  if (headers.get('bunnycdn-cache-status')) return 'bunny.net';
+  if (headers.get('server') && /cloudflare/i.test(headers.get('server'))) return 'Cloudflare';
+  return '';
+}
+
+function updateProgress(done, total) {
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-count').textContent = done + ' / ' + total + ' URLs';
+}
+
+function updateStats(hits, misses, errors, cdn) {
+  var html = '';
+  if (hits > 0) html += '<span class="stat-pill stat-hit">HIT: ' + hits + '</span>';
+  if (misses > 0) html += '<span class="stat-pill stat-miss">MISS: ' + misses + '</span>';
+  if (errors > 0) html += '<span class="stat-pill stat-err">ERR: ' + errors + '</span>';
+  if (cdn) html += '<span class="cdn-badge">' + cdn + '</span>';
+  document.getElementById('results-stats').innerHTML = html;
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Premium mode: server-side warming via CF Pages Function
+async function startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls) {
+  isRunning = true;
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'block';
+  document.getElementById('progress-section').style.display = 'block';
+  document.getElementById('results-table').style.display = 'block';
+  document.getElementById('url-list').innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">⚡ Warming from Cloudflare edge network...</div>';
+  document.getElementById('results-stats').innerHTML = '';
+  updateProgress(0, 0);
+
+  try {
+    var resp = await fetch('/api/cache-warmup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-License-Key': licenseKey,
+      },
+      body: JSON.stringify({ sitemapUrl: sitemapUrl, concurrency: concurrency, maxUrls: maxUrls }),
+    });
+
+    var data = await resp.json();
+
+    if (!resp.ok || !data.success) {
+      alert(data.error || 'Premium warming failed: ' + resp.status);
+      stopWarming();
+      return;
+    }
+
+    // Render results from server response
+    var listEl = document.getElementById('url-list');
+    listEl.innerHTML = '';
+    var hits = 0, misses = 0, errors = 0;
+
+    data.results.forEach(function(r) {
+      var row = document.createElement('div');
+      row.className = 'url-row';
+      var cacheStatus = r.cacheStatus || 'WARM';
+      var statusClass = 'status-MISS';
+      if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { statusClass = 'status-HIT'; hits++; }
+      else if (cacheStatus === 'ERROR') { statusClass = 'status-ERR'; errors++; }
+      else { misses++; } // WARM, MISS, DYNAMIC, BYPASS, UNKNOWN all count as misses
+
+      var shortPath = (r.url || '').replace(/^https?:\/\/[^\/]+/, '') || '/';
+      var timeDisplay = (r.elapsed || 0) + 'ms';
+      if (cacheStatus === 'ERROR' && r.error) timeDisplay = '<span title="' + esc(r.error) + '" style="cursor:help;border-bottom:1px dotted var(--bad);">' + timeDisplay + '</span>';
+      row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div>' +
+        '<div class="url-path" title="' + esc(r.url) + '">' + esc(shortPath) + '</div>' +
+        '<div class="url-time">' + timeDisplay + '</div>' +
+        (r.cdn ? '<div class="cdn-badge">' + r.cdn + '</div>' : '');
+      listEl.appendChild(row);
+    });
+
+    updateProgress(data.warmed, data.totalFound);
+    var statsHtml = '';
+    if (hits > 0) statsHtml += '<span class="stat-pill stat-hit">HIT: ' + hits + '</span>';
+    if (misses > 0) statsHtml += '<span class="stat-pill stat-miss">MISS: ' + misses + '</span>';
+    if (errors > 0) statsHtml += '<span class="stat-pill stat-err">ERR: ' + errors + '</span>';
+    if (data.cdnDetected) statsHtml += '<span class="cdn-badge">' + data.cdnDetected + '</span>';
+    if (data.truncated) statsHtml += '<span style="color:#f59e0b;font-size:0.75rem;margin-left:8px;">(truncated to ' + maxUrls + ')</span>';
+    document.getElementById('results-stats').innerHTML = statsHtml;
+    document.getElementById('progress-rate').textContent = 'Server-side: ' + data.warmed + ' URLs in ' + (data.avgResponseMs || 0) + 'ms avg';
+
+  } catch (e) {
+    alert('Premium warming failed: ' + e.message);
+  }
+
+  stopWarming();
+}
+
+// Handle Enter key
+document.getElementById('sitemap-url').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') startWarming();
+});
+
+// Premium mode: check for ?upgraded=true in URL
+(function checkPremium() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('upgraded') === 'true') {
+    // Show premium banner and license key input
+    var hero = document.querySelector('.hero');
+    var banner = document.createElement('div');
+    banner.style.cssText = 'background:rgba(61,225,158,0.1);border:1px solid rgba(61,225,158,0.3);border-radius:12px;padding:16px 24px;margin-bottom:24px;text-align:center;';
+    banner.innerHTML = '<div style="color:#3de19e;font-weight:700;font-size:1.1rem;margin-bottom:8px;">🚀 Cache Warmer Pro Activated</div>' +
+      '<div style="color:#94a3b8;font-size:0.88rem;margin-bottom:12px;">Server-side warming from Cloudflare\'s edge network. No CORS limits, full cache-status headers, up to 500 URLs.</div>' +
+      '<input type="text" id="license-key" placeholder="Paste your license key" style="max-width:320px;margin:0 auto;display:block;background:#0b0f14;border:2px solid #1e2a38;border-radius:8px;color:#e2e8f0;padding:10px 16px;font-family:\'Fira Mono\',monospace;font-size:0.85rem;text-align:center;" />';
+    hero.insertBefore(banner, hero.querySelector('.comparison'));
+
+    // Store premium flag
+    window.__premiumMode = true;
+
+    // Auto-focus license key
+    setTimeout(function() { document.getElementById('license-key')?.focus(); }, 100);
+  }
+})();
+</script>
+</body>
+</html>"}}]}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -8,32 +8,237 @@
   <link rel="canonical" href="https://edgeiqlabs.com/tools/log-anonymizer/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Log Anonymizer","url":"https://edgeiqlabs.com/tools/log-anonymizer/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-  <style>:root{--bg:#0b0f14;--surface:#111720;--border:#1e2a38;--text:#e2e8f0;--muted:#64748b;--accent:#ef4444;--ok:#3de19e;}*{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;line-height:1.65;}a{color:inherit;text-decoration:none;}.container{max-width:820px;margin:0 auto;padding:0 20px;}nav{border-bottom:1px solid var(--border);background:rgba(11,15,20,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}.nav-brand{font-weight:800;font-size:1rem;}.nav-brand span{color:#3dd9ff;}.nav-links{display:flex;gap:6px;align-items:center;}.nav-links a{color:var(--muted);padding:6px 12px;border-radius:8px;font-size:0.88rem;}.nav-cta{background:#3dd9ff!important;color:#071018!important;font-weight:700;padding:7px 14px!important;border-radius:8px!important;}@media(max-width:600px){.nav-links{display:none;}}.hero{padding:48px 0 32px;text-align:center;}.hero-badge{display:inline-block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:var(--accent);font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:18px;}.hero h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;line-height:1.15;margin-bottom:14px;color:#fff;}.hero p{font-size:1rem;color:var(--muted);max-width:560px;margin:0 auto 24px;}.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;}textarea{width:100%;min-height:160px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:14px 16px;font-size:0.82rem;font-family:'Fira Mono',monospace;outline:none;resize:vertical;transition:border-color 0.2s;}textarea:focus{border-color:var(--accent);}.tool-btn{background:var(--accent);color:#fff;font-weight:700;font-size:0.95rem;padding:12px 22px;border-radius:10px;border:none;cursor:pointer;transition:opacity 0.2s;font-family:inherit;margin-top:12px;}.tool-btn:hover{opacity:0.87;}.options{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:0.85rem;}.options label{display:flex;align-items:center;gap:6px;color:var(--muted);cursor:pointer;}.options input{accent-color:var(--accent);}#output{display:none;margin-top:20px;}.result-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'Fira Mono',monospace;font-size:0.8rem;line-height:1.7;white-space:pre-wrap;word-break:break-all;position:relative;max-height:400px;overflow-y:auto;}.copy-corner{position:absolute;top:8px;right:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:0.72rem;cursor:pointer;font-family:inherit;z-index:1;}.copy-corner:hover{border-color:var(--accent);color:var(--accent);}.stats{font-size:0.82rem;color:var(--muted);margin-top:10px;}.trust-note{font-size:0.78rem;color:#4a6080;margin-top:10px;}footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.82rem;}footer a{color:var(--muted);margin:0 10px;}</style>
-<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
+  <style>
+    /* Page-specific styles for tool UI elements not covered by design system */
+    .tool-hero {
+      padding: var(--space-3xl) 0 var(--space-xl);
+      text-align: center;
+    }
+    .tool-hero-badge {
+      display: inline-block;
+      background: var(--color-accent-subtle);
+      border: 1px solid var(--color-accent);
+      color: var(--color-accent);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--radius-full);
+      margin-bottom: var(--space-lg);
+    }
+    .tool-hero h1 {
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: var(--space-md);
+      color: var(--color-text-primary);
+    }
+    .tool-hero p {
+      font-size: var(--text-base);
+      color: var(--color-text-secondary);
+      max-width: 560px;
+      margin: 0 auto var(--space-xl);
+    }
+    .tool-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+    textarea#log-input {
+      width: 100%;
+      min-height: 160px;
+      background: var(--color-bg-primary);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      color: var(--color-text-primary);
+      padding: var(--space-md);
+      font-size: var(--text-sm);
+      font-family: var(--font-mono);
+      outline: none;
+      resize: vertical;
+      transition: border-color var(--transition-fast);
+    }
+    textarea#log-input:focus {
+      border-color: var(--color-accent);
+    }
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+    }
+    .options input[type="checkbox"] {
+      accent-color: var(--color-accent);
+    }
+    .tool-btn {
+      background: var(--color-accent);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: var(--text-sm);
+      transition: all var(--transition-fast);
+    }
+    .tool-btn:hover {
+      background: var(--color-accent-hover);
+    }
+    .trust-note {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-top: var(--space-md);
+    }
+    #output {
+      display: none;
+      margin-top: var(--space-xl);
+    }
+    .output-label {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-sm);
+    }
+    .result-box {
+      position: relative;
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--color-text-primary);
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 120px;
+    }
+    .copy-corner {
+      position: absolute;
+      top: var(--space-sm);
+      right: var(--space-sm);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      font-size: var(--text-xs);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .copy-corner:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+    .stats {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      margin-top: var(--space-sm);
+    }
+  </style>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/dashboard/" class="nav-cta">Free Full Scan →</a></div></div></nav>
-<div class="container">
-  <div class="hero"><div class="hero-badge">🧹 Privacy Tool</div><h1>Log Anonymizer</h1><p>Strip IPs, emails, API keys, and PII from server logs before sharing. Regex-based scrubbing runs entirely in your browser.</p></div>
-  <div class="tool-card">
-    <textarea id="log-input" placeholder="Paste log output here..." spellcheck="false"></textarea>
-    <div class="options">
-      <label><input type="checkbox" checked data-pattern="ip"/> IP Addresses</label>
-      <label><input type="checkbox" checked data-pattern="email"/> Emails</label>
-      <label><input type="checkbox" checked data-pattern="apikey"/> API Keys</label>
-      <label><input type="checkbox" checked data-pattern="jwt"/> JWT Tokens</label>
-      <label><input type="checkbox" data-pattern="ssn"/> SSNs</label>
-      <label><input type="checkbox" data-pattern="creditcard"/> Credit Cards</label>
-      <label><input type="checkbox" data-pattern="phone"/> Phone Numbers</label>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link nav__link--active">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
     </div>
-    <button class="tool-btn" onclick="anonymize()">Anonymize Logs →</button>
-    <p class="trust-note">🔒 All scrubbing runs locally. Your logs never leave your browser.</p>
+  </nav>
+
+  <div class="container">
+    <div class="tool-hero">
+      <div class="tool-hero-badge">🧹 Privacy Tool</div>
+      <h1>Log Anonymizer</h1>
+      <p>Strip IPs, emails, API keys, and PII from server logs before sharing. Regex-based scrubbing runs entirely in your browser.</p>
+    </div>
+
+    <div class="tool-card">
+      <textarea id="log-input" placeholder="Paste log output here..." spellcheck="false"></textarea>
+      <div class="options">
+        <label><input type="checkbox" checked data-pattern="ip"/> IP Addresses</label>
+        <label><input type="checkbox" checked data-pattern="email"/> Emails</label>
+        <label><input type="checkbox" checked data-pattern="apikey"/> API Keys</label>
+        <label><input type="checkbox" checked data-pattern="jwt"/> JWT Tokens</label>
+        <label><input type="checkbox" data-pattern="ssn"/> SSNs</label>
+        <label><input type="checkbox" data-pattern="creditcard"/> Credit Cards</label>
+        <label><input type="checkbox" data-pattern="phone"/> Phone Numbers</label>
+      </div>
+      <button class="tool-btn" onclick="anonymize()">Anonymize Logs →</button>
+      <p class="trust-note">🔒 All scrubbing runs locally. Your logs never leave your browser.</p>
+    </div>
+
+    <div id="output">
+      <div class="output-label">Anonymized Output</div>
+      <div class="result-box" id="result-text"><button class="copy-corner" onclick="copyResult()">Copy</button></div>
+      <div class="stats" id="stats"></div>
+    </div>
   </div>
-  <div id="output"><div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Anonymized Output</div><div class="result-box" id="result-text"><button class="copy-corner" onclick="copyResult()">Copy</button></div><div class="stats" id="stats"></div></div>
-</div>
-<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
+
 <script>
-var PATTERNS={ip:{regex:/\b(?:\d{1,3}\.){3}\d{1,3}\b/g,label:'[IP_REDACTED]'},email:{regex:/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g,label:'[EMAIL_REDACTED]'},apikey:{regex:/(?:sk_live_|sk_test_|ghp_|AKIA|xox[baprs]-|AIza)[a-zA-Z0-9_\-]{8,}/g,label:'[KEY_REDACTED]'},ssn:{regex:/\b\d{3}-\d{2}-\d{4}\b/g,label:'[SSN_REDACTED]'},creditcard:{regex:/\b(?:\d{4}[\s-]?){3}\d{4}\b/g,label:'[CC_REDACTED]'},phone:{regex:/\b(?:\+?1[-.]?)?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}\b/g,label:'[PHONE_REDACTED]'},jwt:{regex:/eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,label:'[JWT_REDACTED]'}};
+var PATTERNS={ip:{regex:/\b(?:\d{1,3}\.){3}\d{1,3}\b/g,label:'[IP_REDACTED]'},email:{regex:/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g,label:'[EMAIL_REDACTED]'},apikey:{regex:/['"]?(?:api[_-]?key|apikey|token|secret)['"]?\s*[:=]\s*['"]?[A-Za-z0-9_\-]{16,}['"]?/gi,label:'[API_KEY_REDACTED]'},jwt:{regex:/eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*/g,label:'[JWT_REDACTED]'},ssn:{regex:/\b\d{3}-\d{2}-\d{4}\b/g,label:'[SSN_REDACTED]'},creditcard:{regex:/\b(?:\d{4}[- ]?){3}\d{4}\b/g,label:'[CC_REDACTED]'},phone:{regex:/\b(?:\+?1[-.]?)?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}\b/g,label:'[PHONE_REDACTED]'}};
 function anonymize(){var text=document.getElementById('log-input').value;if(!text.trim())return;var totalReplacements=0;var checkboxes=document.querySelectorAll('.options input:checked');checkboxes.forEach(function(cb){var p=PATTERNS[cb.dataset.pattern];if(p){var count=(text.match(p.regex)||[]).length;totalReplacements+=count;text=text.replace(p.regex,p.label);}});document.getElementById('result-text').innerHTML='<button class="copy-corner" onclick="copyResult()">Copy</button>'+esc(text);document.getElementById('stats').textContent=totalReplacements+' item(s) redacted across '+checkboxes.length+' pattern type(s).';document.getElementById('output').style.display='block';document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'});}
 function copyResult(){var t=document.getElementById('result-text').textContent.replace('Copy','').trim();navigator.clipboard.writeText(t);var b=document.querySelector('.copy-corner');b.textContent='Copied!';setTimeout(function(){b.textContent='Copy'},1500);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}

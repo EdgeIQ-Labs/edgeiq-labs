@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -10,183 +10,218 @@
   <meta property="og:url" content="https://edgeiqlabs.com/tools/cache-warmer/"/>
   <link rel="canonical" href="https://edgeiqlabs.com/tools/cache-warmer/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"CDN Cache Warmer","url":"https://edgeiqlabs.com/tools/cache-warmer/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does CDN cache warming work?","acceptedAnswer":{"@type":"Answer","text":"When you deploy or purge a CDN, edge caches are empty. The first visitor to each page triggers a slow origin fetch. Cache warming pre-fetches your URLs so the edge has cached copies ready before real visitors arrive, eliminating cold-cache latency."}},{"@type":"Question","name":"Does this tool upload my sitemap?","acceptedAnswer":{"@type":"Answer","text":"No. Your sitemap is fetched directly from your browser using fetch(). The XML is parsed locally and URLs are requested from your machine. No data is sent to any third-party server. Open DevTools → Network to verify."}},{"@type":"Question","name":"What CDNs does this work with?","acceptedAnswer":{"@type":"Answer","text":"Any CDN that serves cache-status headers: Cloudflare (cf-cache-status), Fastly (x-cache), Akamai (x-cache), CloudFront (x-cache), bunny.net (bunnycdn-cache-status). The tool auto-detects the CDN from response headers and displays HIT/MISS/EXPIRED status per URL."}},{"@type":"Question","name":"Why not just use a WordPress preload plugin?","acceptedAnswer":{"@type":"Answer","text":"Preload plugins fill your origin server cache, not the CDN edge cache. Edge caches are per-location — a page cached in Frankfurt is still cold in Tokyo. This tool warms the CDN layer itself by making real HTTP requests that populate edge caches."}}]}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"CDN Cache Warmer","url":"https://edgeiqlabs.com/tools/cache-warmer/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does CDN cache warming work?","acceptedAnswer":{"@type":"Answer","text":"When you deploy or purge a CDN, edge caches are empty. The first visitor to each page triggers a slow origin fetch. Cache warming pre-fetches your URLs so the edge has cached copies ready before real visitors arrive, eliminating cold-cache latency."}},{"@type":"Question","name":"Does this tool upload my sitemap?","acceptedAnswer":{"@type":"Answer","text":"No. Your sitemap is fetched directly from your browser using fetch(). The XML is parsed locally and URLs are requested from your machine. No data is sent to any third-party server. Open DevTools → Network to verify."}},{"@type":"Question","name":"What CDNs does this work with?","acceptedAnswer":{"@type":"Answer","text":"Any CDN that serves cache-status headers: Cloudflare (cf-cache-status), Fastly (x-cache), Akamai (x-cache), CloudFront (x-cache), bunny.net (bunnycdn-cache-status). The tool auto-detects the CDN from response headers and displays HIT/MISS/EXPIRED status per URL."}},{"@type":"Question","name":"Why not just use a WordPress preload plugin?","acceptedAnswer":{"@type":"Answer","text":"Preload plugins fill your origin server cache, not the CDN edge cache. Edge caches are per-location — a page cached in Frankfurt is still cold in Tokyo. This tool warms the CDN layer itself by making real HTTP requests that populate edge caches."}}]}]</script>
   <style>
-    :root{--bg:#0b0f14;--surface:#111720;--border:#1e2a38;--text:#e2e8f0;--muted:#64748b;--accent:#3dd9ff;--ok:#3de19e;--warn:#f59e0b;--bad:#ef4444;--indigo:#6366f1;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;line-height:1.65;}
-    a{color:inherit;text-decoration:none;}
-    .container{max-width:900px;margin:0 auto;padding:0 20px;}
-    nav{border-bottom:1px solid var(--border);background:rgba(11,15,20,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
-    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
-    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);}
-    .nav-brand span{color:var(--accent);}
-    .nav-links{display:flex;gap:6px;align-items:center;}
-    .nav-links a{color:var(--muted);padding:6px 12px;border-radius:8px;font-size:0.88rem;}
-    .nav-cta{background:var(--accent)!important;color:#071018!important;font-weight:700;padding:7px 14px!important;border-radius:8px!important;}
-    @media(max-width:600px){.nav-links{display:none;}}
-    .hero{padding:48px 0 32px;text-align:center;}
-    .hero-badge{display:inline-block;background:rgba(61,217,255,0.1);border:1px solid rgba(61,217,255,0.25);color:var(--accent);font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:18px;}
-    .hero h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;line-height:1.15;margin-bottom:14px;color:#fff;}
-    .hero p{font-size:1rem;color:var(--muted);max-width:600px;margin:0 auto 24px;}
-    .comparison{display:flex;gap:16px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
-    .comp-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 24px;text-align:center;min-width:160px;}
-    .comp-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
-    .comp-value{font-size:1.5rem;font-weight:900;}
-    .comp-cold .comp-value{color:var(--bad);}
-    .comp-warm .comp-value{color:var(--ok);}
-    .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;}
-    .input-group{margin-bottom:16px;}
-    .input-group label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:6px;font-weight:600;}
-    input[type="text"],input[type="number"]{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:0.9rem;font-family:'Fira Mono',monospace;outline:none;transition:border-color 0.2s;}
-    input:focus{border-color:var(--accent);}
-    .options-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
-    .options-row .input-group{flex:1;min-width:120px;margin-bottom:0;}
-    .tool-btn{background:var(--accent);color:#071018;font-weight:700;font-size:1rem;padding:13px 24px;border-radius:10px;border:none;cursor:pointer;transition:opacity 0.2s;font-family:inherit;width:100%;}
-    .tool-btn:hover{opacity:0.87;}
-    .tool-btn:disabled{opacity:0.5;cursor:not-allowed;}
-    .tool-btn.stop{background:var(--bad);color:#fff;margin-top:8px;}
-    #progress-section{display:none;margin-top:20px;}
-    .progress-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;margin-bottom:8px;}
-    .progress-fill{height:100%;border-radius:4px;background:var(--accent);transition:width 0.3s;}
-    .progress-text{font-size:0.82rem;color:var(--muted);display:flex;justify-content:space-between;}
-    #results-table{display:none;margin-top:20px;}
-    .results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-    .results-title{font-size:0.95rem;font-weight:700;}
-    .results-stats{display:flex;gap:16px;font-size:0.82rem;}
-    .stat-pill{padding:3px 10px;border-radius:12px;font-weight:700;font-size:0.75rem;}
-    .stat-hit{background:rgba(61,225,158,0.15);color:var(--ok);border:1px solid rgba(61,225,158,0.3);}
-    .stat-miss{background:rgba(245,158,11,0.15);color:var(--warn);border:1px solid rgba(245,158,11,0.3);}
-    .stat-err{background:rgba(239,68,68,0.15);color:var(--bad);border:1px solid rgba(239,68,68,0.3);}
-    .url-list{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;}
-    .url-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);font-size:0.82rem;}
-    .url-row:last-child{border-bottom:none;}
-    .url-row.pending{opacity:0.5;}
-    .url-status{width:60px;text-align:center;font-weight:700;font-size:0.72rem;padding:2px 8px;border-radius:6px;flex-shrink:0;}
-    .status-HIT{background:rgba(61,225,158,0.15);color:var(--ok);}
-    .status-MISS,.status-EXPIRED,.status-WARM,.status-DYNAMIC,.status-BYPASS{background:rgba(245,158,11,0.15);color:var(--warn);}
-    .status-REVALIDATED{background:rgba(61,225,158,0.15);color:var(--ok);}
-    .status-ERR,.status-CORS{background:rgba(239,68,68,0.15);color:var(--bad);}
-    .status-WAIT{background:rgba(100,116,139,0.15);color:var(--muted);}
-    .url-path{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Fira Mono',monospace;font-size:0.78rem;}
-    .url-time{width:60px;text-align:right;color:var(--muted);font-family:'Fira Mono',monospace;font-size:0.75rem;flex-shrink:0;}
-    .cdn-badge{font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(99,102,241,0.15);color:var(--indigo);border:1px solid rgba(99,102,241,0.3);margin-left:auto;flex-shrink:0;}
-    .trust-note{font-size:0.78rem;color:#4a6080;margin-top:10px;}
-    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:32px 24px;margin:40px 0;text-align:center;}
-    .cta-box h3{font-size:1.1rem;font-weight:800;margin-bottom:8px;color:#fff;}
-    .cta-box p{color:#9fb8cc;font-size:0.88rem;margin-bottom:18px;max-width:520px;margin-left:auto;margin-right:auto;}
-    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 24px;border-radius:9px;font-size:0.9rem;}
-    .faq{padding:40px 0;}
-    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
-    .faq-q{font-size:0.95rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;}
-    .faq-q::after{content:"＋";color:var(--accent);font-size:1.1rem;flex-shrink:0;}
-    .faq-q.open::after{content:"−";}
-    .faq-a{display:none;padding-top:10px;font-size:0.88rem;color:var(--muted);line-height:1.65;}
-    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.82rem;}
-    footer a{color:var(--muted);margin:0 10px;}
+    /* Page-specific styles for tool UI elements not covered by design system */
+    .cw-hero { padding: var(--space-3xl) 0 var(--space-xl); text-align: center; }
+    .cw-hero-badge { display: inline-block; background: var(--color-accent-subtle); border: 1px solid rgba(34,211,238,0.25); color: var(--color-accent); font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); margin-bottom: var(--space-lg); font-family: var(--font-mono); }
+    .cw-hero h1 { font-size: clamp(1.7rem, 4vw, var(--text-4xl)); font-weight: 900; line-height: var(--leading-tight); margin-bottom: var(--space-md); color: var(--color-text-primary); }
+    .cw-hero p { font-size: var(--text-base); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto var(--space-xl); }
+
+    .cw-comparison { display: flex; gap: var(--space-md); justify-content: center; margin-bottom: var(--space-xl); flex-wrap: wrap; }
+    .cw-comp-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg) var(--space-xl); text-align: center; min-width: 160px; }
+    .cw-comp-label { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-xs); font-family: var(--font-mono); }
+    .cw-comp-value { font-size: var(--text-3xl); font-weight: 900; }
+    .cw-comp-cold .cw-comp-value { color: #ef4444; }
+    .cw-comp-warm .cw-comp-value { color: #3de19e; }
+
+    .cw-tool-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: var(--space-lg); }
+    .cw-input-group { margin-bottom: var(--space-md); }
+    .cw-input-group label { display: block; font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-xs); font-weight: 600; }
+    .cw-tool-card input[type="text"],
+    .cw-tool-card input[type="number"] { width: 100%; background: var(--color-bg-primary); border: 2px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); padding: 0.75rem 1rem; font-size: var(--text-sm); font-family: var(--font-mono); outline: none; transition: border-color var(--transition-fast); }
+    .cw-tool-card input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+    .cw-options-row { display: flex; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-md); }
+    .cw-options-row .cw-input-group { flex: 1; min-width: 120px; margin-bottom: 0; }
+
+    .cw-btn { background: var(--color-accent); color: #000; font-weight: 700; font-size: var(--text-base); padding: 0.8rem 1.5rem; border-radius: var(--radius-md); border: none; cursor: pointer; transition: opacity var(--transition-fast); font-family: var(--font-sans); width: 100%; }
+    .cw-btn:hover { opacity: 0.87; }
+    .cw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .cw-btn.stop { background: #ef4444; color: #fff; margin-top: var(--space-sm); }
+
+    #progress-section { display: none; margin-top: var(--space-lg); }
+    .cw-progress-bar { height: 8px; border-radius: var(--radius-sm); background: var(--color-border); overflow: hidden; margin-bottom: var(--space-sm); }
+    .cw-progress-fill { height: 100%; border-radius: var(--radius-sm); background: var(--color-accent); transition: width 0.3s; }
+    .cw-progress-text { font-size: var(--text-sm); color: var(--color-text-secondary); display: flex; justify-content: space-between; font-family: var(--font-mono); }
+
+    #results-table { display: none; margin-top: var(--space-lg); }
+    .cw-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); }
+    .cw-results-title { font-size: var(--text-base); font-weight: 700; color: var(--color-text-primary); }
+    .cw-results-stats { display: flex; gap: var(--space-md); font-size: var(--text-sm); align-items: center; flex-wrap: wrap; }
+    .cw-stat-pill { padding: 2px 10px; border-radius: var(--radius-full); font-weight: 700; font-size: var(--text-xs); font-family: var(--font-mono); }
+    .cw-stat-hit { background: rgba(61,225,158,0.15); color: #3de19e; border: 1px solid rgba(61,225,158,0.3); }
+    .cw-stat-miss { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .cw-stat-err { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+    .cw-url-list { max-height: 400px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+    .cw-url-row { display: flex; align-items: center; gap: 10px; padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+    .cw-url-row:last-child { border-bottom: none; }
+    .cw-url-row.pending { opacity: 0.5; }
+    .cw-url-status { width: 60px; text-align: center; font-weight: 700; font-size: var(--text-xs); padding: 2px 8px; border-radius: var(--radius-sm); flex-shrink: 0; font-family: var(--font-mono); }
+    .cw-status-HIT, .cw-status-REVALIDATED { background: rgba(61,225,158,0.15); color: #3de19e; }
+    .cw-status-MISS, .cw-status-EXPIRED, .cw-status-WARM, .cw-status-DYNAMIC, .cw-status-BYPASS { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .cw-status-ERR, .cw-status-CORS { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .cw-status-WAIT { background: rgba(100,116,139,0.15); color: var(--color-text-muted); }
+    .cw-url-path { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); }
+    .cw-url-time { width: 60px; text-align: right; color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--text-xs); flex-shrink: 0; }
+    .cw-cdn-badge { font-size: var(--text-xs); font-weight: 700; padding: 2px 8px; border-radius: var(--radius-sm); background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); margin-left: auto; flex-shrink: 0; font-family: var(--font-mono); }
+
+    .cw-trust-note { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-md); line-height: var(--leading-relaxed); }
+
+    .cw-cta-box { background: linear-gradient(135deg, var(--color-bg-elevated), var(--color-bg-surface)); border: 1px solid var(--color-accent-subtle); border-radius: var(--radius-lg); padding: var(--space-2xl) var(--space-xl); margin: var(--space-3xl) 0; text-align: center; }
+    .cw-cta-box h3 { font-size: var(--text-xl); font-weight: 800; margin-bottom: var(--space-sm); color: var(--color-text-primary); }
+    .cw-cta-box p { color: var(--color-text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-lg); max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cw-cta-btn { display: inline-block; background: var(--color-accent); color: #000; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); font-size: var(--text-sm); text-decoration: none; transition: background var(--transition-fast); }
+    .cw-cta-btn:hover { background: var(--color-accent-hover); }
+
+    .cw-faq { padding: var(--space-3xl) 0; }
+    .cw-faq-item { border-bottom: 1px solid var(--color-border); padding: var(--space-md) 0; }
+    .cw-faq-q { font-size: var(--text-base); font-weight: 700; color: var(--color-text-primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .cw-faq-q::after { content: "＋"; color: var(--color-accent); font-size: var(--text-lg); flex-shrink: 0; }
+    .cw-faq-q.open::after { content: "−"; }
+    .cw-faq-a { display: none; padding-top: var(--space-md); font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--leading-relaxed); }
+
+    @media (max-width: 768px) {
+      .cw-comparison { flex-direction: column; align-items: stretch; }
+      .cw-comp-card { min-width: auto; }
+      .cw-options-row { flex-direction: column; }
+      .cw-options-row .cw-input-group { min-width: auto; }
+    }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
-    <div class="nav-links">
-      <a href="/tools/">Dev Tools</a>
-      <a href="/free-tools/">Scanners</a>
-      <a href="/dashboard/">Dashboard</a>
-      <a href="/pulse/">Pulse</a>
-      <a href="/dashboard/" class="nav-cta">Free Full Scan →</a>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link nav__link--active">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
 <div class="container">
-  <div class="hero">
-    <div class="hero-badge">🚀 Performance Tool</div>
+  <div class="cw-hero">
+    <div class="cw-hero-badge">🚀 Performance Tool</div>
     <h1>CDN Cache Warmer</h1>
     <p>Pre-warm your CDN edge cache by fetching URLs from your sitemap. See cache status, response times, and warming progress — all from your browser.</p>
   </div>
 
-  <div class="comparison">
-    <div class="comp-card comp-cold">
-      <div class="comp-label">Cold Cache</div>
-      <div class="comp-value">~3s</div>
-      <div class="comp-label">Origin fetch + DB</div>
+  <div class="cw-comparison">
+    <div class="cw-comp-card cw-comp-cold">
+      <div class="cw-comp-label">Cold Cache</div>
+      <div class="cw-comp-value">~3s</div>
+      <div class="cw-comp-label">Origin fetch + DB</div>
     </div>
-    <div class="comp-card comp-warm">
-      <div class="comp-label">Warm Cache</div>
-      <div class="comp-value">~50ms</div>
-      <div class="comp-label">Served from edge</div>
+    <div class="cw-comp-card cw-comp-warm">
+      <div class="cw-comp-label">Warm Cache</div>
+      <div class="cw-comp-value">~50ms</div>
+      <div class="cw-comp-label">Served from edge</div>
     </div>
   </div>
 
-  <div class="tool-card">
-    <div class="input-group">
+  <div class="cw-tool-card">
+    <div class="cw-input-group">
       <label for="sitemap-url">Sitemap URL</label>
       <input type="text" id="sitemap-url" placeholder="https://example.com/sitemap.xml" spellcheck="false"/>
     </div>
-    <div class="options-row">
-      <div class="input-group">
+    <div class="cw-options-row">
+      <div class="cw-input-group">
         <label for="concurrency">Concurrency</label>
         <input type="number" id="concurrency" value="3" min="1" max="10"/>
       </div>
-      <div class="input-group">
+      <div class="cw-input-group">
         <label for="delay">Delay (ms)</label>
         <input type="number" id="delay" value="200" min="0" max="5000" step="50"/>
       </div>
-      <div class="input-group">
+      <div class="cw-input-group">
         <label for="max-urls">Max URLs</label>
         <input type="number" id="max-urls" value="50" min="1" max="500"/>
       </div>
     </div>
-    <button class="tool-btn" id="start-btn" onclick="startWarming()">Start Warming →</button>
-    <button class="tool-btn stop" id="stop-btn" onclick="stopWarming()" style="display:none;">Stop Warming</button>
-    <p class="trust-note">🔒 Sitemap fetched and parsed locally. URLs requested from your browser to warm edge caches. Cache status uses timing heuristics when CORS blocks headers. Open DevTools → Network to verify.</p>
+    <button class="cw-btn" id="start-btn" onclick="startWarming()">Start Warming →</button>
+    <button class="cw-btn stop" id="stop-btn" onclick="stopWarming()" style="display:none;">Stop Warming</button>
+    <p class="cw-trust-note">🔒 Sitemap fetched and parsed locally. URLs requested from your browser to warm edge caches. Cache status uses timing heuristics when CORS blocks headers. Open DevTools → Network to verify.</p>
   </div>
 
   <div id="progress-section">
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="progress-text">
+    <div class="cw-progress-bar"><div class="cw-progress-fill" id="progress-fill"></div></div>
+    <div class="cw-progress-text">
       <span id="progress-count">0 / 0 URLs</span>
       <span id="progress-rate">—</span>
     </div>
   </div>
 
   <div id="results-table">
-    <div class="results-header">
-      <div class="results-title">Warming Results</div>
-      <div class="results-stats" id="results-stats"></div>
+    <div class="cw-results-header">
+      <div class="cw-results-title">Warming Results</div>
+      <div class="cw-results-stats" id="results-stats"></div>
     </div>
-    <div class="url-list" id="url-list"></div>
+    <div class="cw-url-list" id="url-list"></div>
   </div>
 
-  <div class="cta-box">
+  <div class="cw-cta-box">
     <h3>Want automated cache warming after every deploy?</h3>
     <p>The free tool warms from your browser (one location). Cache Warmer Pro runs from Cloudflare's edge network with CI/CD webhooks, scheduled runs, and per-colo cache analytics.</p>
-    <a href="https://buy.stripe.com/5kQ9AV2TF0SN8Ec7wA7wA47" class="cta-btn">Get Cache Warmer Pro — $9/mo →</a>
+    <a href="https://buy.stripe.com/5kQ9AV2TF0SN8Ec7wA7wA47" class="cw-cta-btn">Get Cache Warmer Pro — $9/mo →</a>
   </div>
 
-  <div class="faq">
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How does CDN cache warming work?</div><div class="faq-a">When you deploy or purge a CDN, edge caches are empty. The first visitor to each page triggers a slow origin fetch. Cache warming pre-fetches your URLs so the edge has cached copies ready before real visitors arrive, eliminating cold-cache latency.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does this tool upload my sitemap?</div><div class="faq-a">No. Your sitemap is fetched directly from your browser using fetch(). The XML is parsed locally and URLs are requested from your machine. No data is sent to any third-party server. Open DevTools → Network to verify.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What CDNs does this work with?</div><div class="faq-a">Any CDN that serves cache-status headers: Cloudflare (cf-cache-status), Fastly (x-cache), Akamai (x-cache), CloudFront (x-cache), bunny.net (bunnycdn-cache-status). The tool auto-detects the CDN from response headers and displays HIT/MISS/EXPIRED status per URL.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why not just use a WordPress preload plugin?</div><div class="faq-a">Preload plugins fill your origin server cache, not the CDN edge cache. Edge caches are per-location — a page cached in Frankfurt is still cold in Tokyo. This tool warms the CDN layer itself by making real HTTP requests that populate edge caches.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Will this affect my analytics?</div><div class="faq-a">Client-side analytics (Umami, Plausible, GA) won't see these requests because no JavaScript executes during warming. Server-side logs will show the requests — they come from your IP with a standard browser user agent.</div></div>
+  <div class="cw-faq">
+    <div class="cw-faq-item"><div class="cw-faq-q" onclick="toggleFaq(this)">How does CDN cache warming work?</div><div class="cw-faq-a">When you deploy or purge a CDN, edge caches are empty. The first visitor to each page triggers a slow origin fetch. Cache warming pre-fetches your URLs so the edge has cached copies ready before real visitors arrive, eliminating cold-cache latency.</div></div>
+    <div class="cw-faq-item"><div class="cw-faq-q" onclick="toggleFaq(this)">Does this tool upload my sitemap?</div><div class="cw-faq-a">No. Your sitemap is fetched directly from your browser using fetch(). The XML is parsed locally and URLs are requested from your machine. No data is sent to any third-party server. Open DevTools → Network to verify.</div></div>
+    <div class="cw-faq-item"><div class="cw-faq-q" onclick="toggleFaq(this)">What CDNs does this work with?</div><div class="cw-faq-a">Any CDN that serves cache-status headers: Cloudflare (cf-cache-status), Fastly (x-cache), Akamai (x-cache), CloudFront (x-cache), bunny.net (bunnycdn-cache-status). The tool auto-detects the CDN from response headers and displays HIT/MISS/EXPIRED status per URL.</div></div>
+    <div class="cw-faq-item"><div class="cw-faq-q" onclick="toggleFaq(this)">Why not just use a WordPress preload plugin?</div><div class="cw-faq-a">Preload plugins fill your origin server cache, not the CDN edge cache. Edge caches are per-location — a page cached in Frankfurt is still cold in Tokyo. This tool warms the CDN layer itself by making real HTTP requests that populate edge caches.</div></div>
+    <div class="cw-faq-item"><div class="cw-faq-q" onclick="toggleFaq(this)">Will this affect my analytics?</div><div class="cw-faq-a">Client-side analytics (Umami, Plausible, GA) won't see these requests because no JavaScript executes during warming. Server-side logs will show the requests — they come from your IP with a standard browser user agent.</div></div>
   </div>
 </div>
 
-<footer>
-  <div class="container">
-    <a href="/tools/">All Dev Tools</a>
-    <a href="/free-tools/">Scanners</a>
-    <a href="/pulse/">Pulse</a>
-    <a href="/blog/">Blog</a>
-    <a href="/privacy/">Privacy</a>
-    <p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p>
-  </div>
-</footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
 
 <script>
 var abortController = null;
@@ -256,8 +291,8 @@ async function startWarming() {
   urls.forEach(function(url, i) {
     var shortPath = url.replace(/^https?:\/\/[^\/]+/, '') || '/';
     var row = document.createElement('div');
-    row.className = 'url-row pending';
-    row.innerHTML = '<div class="url-status status-WAIT">WAIT</div><div class="url-path" title="' + esc(url) + '">' + esc(shortPath) + '</div><div class="url-time">—</div>';
+    row.className = 'cw-url-row pending';
+    row.innerHTML = '<div class="cw-url-status cw-status-WAIT">WAIT</div><div class="cw-url-path" title="' + esc(url) + '">' + esc(shortPath) + '</div><div class="cw-url-time">—</div>';
     listEl.appendChild(row);
     rowEls.push(row);
   });
@@ -303,19 +338,19 @@ async function startWarming() {
         else { errors++; }
       }
 
-      var statusClass = 'status-' + cacheStatus;
-      if (cacheStatus === 'WARM' || cacheStatus === 'DYNAMIC' || cacheStatus === 'BYPASS') statusClass = 'status-MISS';
-      if (cacheStatus === 'REVALIDATED') statusClass = 'status-HIT';
+      var statusClass = 'cw-status-' + cacheStatus;
+      if (cacheStatus === 'WARM' || cacheStatus === 'DYNAMIC' || cacheStatus === 'BYPASS') statusClass = 'cw-status-MISS';
+      if (cacheStatus === 'REVALIDATED') statusClass = 'cw-status-HIT';
 
-      row.className = 'url-row';
-      row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div><div class="url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="url-time">' + elapsed + 'ms</div>' + (cdn ? '<div class="cdn-badge">' + cdn + '</div>' : '');
+      row.className = 'cw-url-row';
+      row.innerHTML = '<div class="cw-url-status ' + statusClass + '">' + cacheStatus + '</div><div class="cw-url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="cw-url-time">' + elapsed + 'ms</div>' + (cdn ? '<div class="cw-cdn-badge">' + cdn + '</div>' : '');
     } catch (e) {
       if (e.name === 'AbortError') return;
       var elapsed = Math.round(performance.now() - t0);
       errors++;
       var errMsg = e.message.includes('Failed to fetch') ? 'CORS' : 'ERR';
-      row.className = 'url-row';
-      row.innerHTML = '<div class="url-status status-' + errMsg + '">' + errMsg + '</div><div class="url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="url-time">' + elapsed + 'ms</div>';
+      row.className = 'cw-url-row';
+      row.innerHTML = '<div class="cw-url-status cw-status-' + errMsg + '">' + errMsg + '</div><div class="cw-url-path" title="' + esc(url) + '">' + esc(url.replace(/^https?:\/\/[^\/]+/, '') || '/') + '</div><div class="cw-url-time">' + elapsed + 'ms</div>';
     }
 
     completed++;
@@ -435,10 +470,10 @@ function updateProgress(done, total) {
 
 function updateStats(hits, misses, errors, cdn) {
   var html = '';
-  if (hits > 0) html += '<span class="stat-pill stat-hit">HIT: ' + hits + '</span>';
-  if (misses > 0) html += '<span class="stat-pill stat-miss">MISS: ' + misses + '</span>';
-  if (errors > 0) html += '<span class="stat-pill stat-err">ERR: ' + errors + '</span>';
-  if (cdn) html += '<span class="cdn-badge">' + cdn + '</span>';
+  if (hits > 0) html += '<span class="cw-stat-pill cw-stat-hit">HIT: ' + hits + '</span>';
+  if (misses > 0) html += '<span class="cw-stat-pill cw-stat-miss">MISS: ' + misses + '</span>';
+  if (errors > 0) html += '<span class="cw-stat-pill cw-stat-err">ERR: ' + errors + '</span>';
+  if (cdn) html += '<span class="cw-cdn-badge">' + cdn + '</span>';
   document.getElementById('results-stats').innerHTML = html;
 }
 
@@ -451,7 +486,7 @@ async function startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls)
   document.getElementById('stop-btn').style.display = 'block';
   document.getElementById('progress-section').style.display = 'block';
   document.getElementById('results-table').style.display = 'block';
-  document.getElementById('url-list').innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">⚡ Warming from Cloudflare edge network...</div>';
+  document.getElementById('url-list').innerHTML = '<div style="padding:24px;text-align:center;color:var(--color-text-muted);">⚡ Warming from Cloudflare edge network...</div>';
   document.getElementById('results-stats').innerHTML = '';
   updateProgress(0, 0);
 
@@ -480,29 +515,29 @@ async function startPremiumWarming(sitemapUrl, licenseKey, concurrency, maxUrls)
 
     data.results.forEach(function(r) {
       var row = document.createElement('div');
-      row.className = 'url-row';
+      row.className = 'cw-url-row';
       var cacheStatus = r.cacheStatus || 'WARM';
-      var statusClass = 'status-MISS';
-      if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { statusClass = 'status-HIT'; hits++; }
-      else if (cacheStatus === 'ERROR') { statusClass = 'status-ERR'; errors++; }
+      var statusClass = 'cw-status-MISS';
+      if (cacheStatus === 'HIT' || cacheStatus === 'REVALIDATED') { statusClass = 'cw-status-HIT'; hits++; }
+      else if (cacheStatus === 'ERROR') { statusClass = 'cw-status-ERR'; errors++; }
       else { misses++; } // WARM, MISS, DYNAMIC, BYPASS, UNKNOWN all count as misses
 
       var shortPath = (r.url || '').replace(/^https?:\/\/[^\/]+/, '') || '/';
       var timeDisplay = (r.elapsed || 0) + 'ms';
-      if (cacheStatus === 'ERROR' && r.error) timeDisplay = '<span title="' + esc(r.error) + '" style="cursor:help;border-bottom:1px dotted var(--bad);">' + timeDisplay + '</span>';
-      row.innerHTML = '<div class="url-status ' + statusClass + '">' + cacheStatus + '</div>' +
-        '<div class="url-path" title="' + esc(r.url) + '">' + esc(shortPath) + '</div>' +
-        '<div class="url-time">' + timeDisplay + '</div>' +
-        (r.cdn ? '<div class="cdn-badge">' + r.cdn + '</div>' : '');
+      if (cacheStatus === 'ERROR' && r.error) timeDisplay = '<span title="' + esc(r.error) + '" style="cursor:help;border-bottom:1px dotted #ef4444;">' + timeDisplay + '</span>';
+      row.innerHTML = '<div class="cw-url-status ' + statusClass + '">' + cacheStatus + '</div>' +
+        '<div class="cw-url-path" title="' + esc(r.url) + '">' + esc(shortPath) + '</div>' +
+        '<div class="cw-url-time">' + timeDisplay + '</div>' +
+        (r.cdn ? '<div class="cw-cdn-badge">' + r.cdn + '</div>' : '');
       listEl.appendChild(row);
     });
 
     updateProgress(data.warmed, data.totalFound);
     var statsHtml = '';
-    if (hits > 0) statsHtml += '<span class="stat-pill stat-hit">HIT: ' + hits + '</span>';
-    if (misses > 0) statsHtml += '<span class="stat-pill stat-miss">MISS: ' + misses + '</span>';
-    if (errors > 0) statsHtml += '<span class="stat-pill stat-err">ERR: ' + errors + '</span>';
-    if (data.cdnDetected) statsHtml += '<span class="cdn-badge">' + data.cdnDetected + '</span>';
+    if (hits > 0) statsHtml += '<span class="cw-stat-pill cw-stat-hit">HIT: ' + hits + '</span>';
+    if (misses > 0) statsHtml += '<span class="cw-stat-pill cw-stat-miss">MISS: ' + misses + '</span>';
+    if (errors > 0) statsHtml += '<span class="cw-stat-pill cw-stat-err">ERR: ' + errors + '</span>';
+    if (data.cdnDetected) statsHtml += '<span class="cw-cdn-badge">' + data.cdnDetected + '</span>';
     if (data.truncated) statsHtml += '<span style="color:#f59e0b;font-size:0.75rem;margin-left:8px;">(truncated to ' + maxUrls + ')</span>';
     document.getElementById('results-stats').innerHTML = statsHtml;
     document.getElementById('progress-rate').textContent = 'Server-side: ' + data.warmed + ' URLs in ' + (data.avgResponseMs || 0) + 'ms avg';
@@ -524,13 +559,13 @@ document.getElementById('sitemap-url').addEventListener('keydown', function(e) {
   var params = new URLSearchParams(window.location.search);
   if (params.get('upgraded') === 'true') {
     // Show premium banner and license key input
-    var hero = document.querySelector('.hero');
+    var hero = document.querySelector('.cw-hero');
     var banner = document.createElement('div');
-    banner.style.cssText = 'background:rgba(61,225,158,0.1);border:1px solid rgba(61,225,158,0.3);border-radius:12px;padding:16px 24px;margin-bottom:24px;text-align:center;';
-    banner.innerHTML = '<div style="color:#3de19e;font-weight:700;font-size:1.1rem;margin-bottom:8px;">🚀 Cache Warmer Pro Activated</div>' +
-      '<div style="color:#94a3b8;font-size:0.88rem;margin-bottom:12px;">Server-side warming from Cloudflare\'s edge network. No CORS limits, full cache-status headers, up to 500 URLs.</div>' +
-      '<input type="text" id="license-key" placeholder="Paste your license key" style="max-width:320px;margin:0 auto;display:block;background:#0b0f14;border:2px solid #1e2a38;border-radius:8px;color:#e2e8f0;padding:10px 16px;font-family:\'Fira Mono\',monospace;font-size:0.85rem;text-align:center;" />';
-    hero.insertBefore(banner, hero.querySelector('.comparison'));
+    banner.style.cssText = 'background:rgba(61,225,158,0.1);border:1px solid rgba(61,225,158,0.3);border-radius:var(--radius-lg);padding:var(--space-lg) var(--space-xl);margin-bottom:var(--space-xl);text-align:center;';
+    banner.innerHTML = '<div style="color:#3de19e;font-weight:700;font-size:var(--text-lg);margin-bottom:var(--space-sm);">🚀 Cache Warmer Pro Activated</div>' +
+      '<div style="color:var(--color-text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-md);">Server-side warming from Cloudflare\'s edge network. No CORS limits, full cache-status headers, up to 500 URLs.</div>' +
+      '<input type="text" id="license-key" placeholder="Paste your license key" style="max-width:320px;margin:0 auto;display:block;background:var(--color-bg-primary);border:2px solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text-primary);padding:0.75rem 1rem;font-family:var(--font-mono);font-size:var(--text-sm);text-align:center;" />';
+    hero.insertBefore(banner, hero.querySelector('.cw-comparison'));
 
     // Store premium flag
     window.__premiumMode = true;
@@ -541,4 +576,4 @@ document.getElementById('sitemap-url').addEventListener('keydown', function(e) {
 })();
 </script>
 </body>
-</html>"}}]}
+</html>
