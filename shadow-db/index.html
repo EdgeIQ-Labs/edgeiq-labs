@@ -70,6 +70,7 @@
 <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
+<a href="#main-content" class="skip-to-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;padding:0.75rem 1.5rem;background:var(--color-accent);color:#fff;font-weight:700;text-decoration:none;border-radius:0 0 var(--radius-md) var(--radius-md);transition:left 0.2s">Skip to content</a>
     <!-- NAV -->
   <nav class="nav">
     <div class="container nav__inner">
@@ -93,7 +94,7 @@
     </div>
   </nav>
 
-  <section class="hero container">
+  <section class="hero container" id="main-content">
     <h1>Your SaaS tools own your data.<br><span style="color:#ff6b6b">Take it back.</span></h1>
     <p>Shadow DB is the open-source, self-hosted data sovereignty engine. It mirrors every record from Notion, Airtable, Linear, and more into a structured Postgres database you control. Tamper-evident. Encrypted. No vendor lock-in.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">

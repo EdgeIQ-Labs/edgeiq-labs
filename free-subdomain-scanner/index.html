@@ -91,6 +91,7 @@
 <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
+<a href="#main-content" class="skip-to-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;padding:0.75rem 1.5rem;background:var(--color-accent);color:#fff;font-weight:700;text-decoration:none;border-radius:0 0 var(--radius-md) var(--radius-md);transition:left 0.2s">Skip to content</a>
 
   <!-- NAV -->
   <nav class="nav">
@@ -116,7 +117,7 @@
   </nav>
 
 <div class="container">
-  <section class="hero" style="text-align:center;padding-block:var(--space-3xl);">
+  <section class="hero" style="text-align:center;padding-block:var(--space-3xl);" id="main-content">
     <span class="eyebrow">Free Tool</span>
     <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.15;margin-bottom:var(--space-md);">Free Subdomain Scanner</h1>
     <p style="font-size:var(--text-lg);color:var(--color-text-secondary);max-width:560px;margin:0 auto var(--space-xl);">Find subdomains for any domain using certificate transparency logs and DNS enumeration. See what's exposed — free, no sign-up required. First 10 results shown instantly.</p>

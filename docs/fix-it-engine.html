@@ -34,7 +34,8 @@
   ]
 }</script>
 <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
-</head><body>  <!-- NAV -->
+</head><body>
+<a href="#main-content" class="skip-to-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;padding:0.75rem 1.5rem;background:var(--color-accent);color:#fff;font-weight:700;text-decoration:none;border-radius:0 0 var(--radius-md) var(--radius-md);transition:left 0.2s">Skip to content</a>  <!-- NAV -->
   <nav class="nav">
     <div class="container nav__inner">
       <a href="/" class="nav__logo">
@@ -55,7 +56,7 @@
         <button class="nav__hamburger" aria-label="Menu">☰</button>
       </div>
     </div>
-  </nav><section class="hero"><div class="container"><h1>Fix-It Engine</h1><p>Automate remediation steps from EdgeIQ findings.</p></div></section><main class="container"><div class="card"><h2>Setup</h2><p>Enable Fix-It with any compatible tool plan and define action policies per severity.</p><ul><li>Auto SSL Renew</li><li>Header Auto-Fix</li><li>GitHub Issue Creator</li></ul></div>
+  </nav><section class="hero"><div class="container"><h1>Fix-It Engine</h1><p>Automate remediation steps from EdgeIQ findings.</p></div></section><main class="container" id="main-content"><div class="card"><h2>Setup</h2><p>Enable Fix-It with any compatible tool plan and define action policies per severity.</p><ul><li>Auto SSL Renew</li><li>Header Auto-Fix</li><li>GitHub Issue Creator</li></ul></div>
 <div class="card"><h2>How to Use</h2><ol><li>Set approval mode (auto vs human-review).</li><li>Map findings to actions and cooldown windows.</li><li>Run in dry-run for 7 days before full automation.</li></ol></div>
 <div class="card"><h2>Troubleshooting</h2><ul><li><strong>Too many actions:</strong> raise severity threshold and add dedupe.</li><li><strong>No actions firing:</strong> verify webhook/credential config.</li></ul></div>
 <div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div><div class="footer">© 2026 EdgeIQ Labs Docs</div></main>  <!-- FOOTER -->
