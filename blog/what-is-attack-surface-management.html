@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,90 +17,74 @@
   <link rel="canonical" href="https://edgeiqlabs.com/blog/what-is-attack-surface-management.html" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is Attack Surface Management? (And How to Do It for Free)","description":"Attack surface management explained for small teams — what it covers and how to get continuous visibility without enterprise pricing.","datePublished":"2026-05-20","dateModified":"2026-05-20","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <link rel="stylesheet" href="/css/design-system.css" />
   <style>
-    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
-    .container{max-width:740px;margin:0 auto;padding:0 20px;}
-    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
-    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
-    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
-    .nav-brand span{color:var(--accent);}
-    .nav-links{display:flex;align-items:center;gap:6px;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
-    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
-    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
-    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
-    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
-    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
-    .product-strip-inner::-webkit-scrollbar{display:none;}
-    .product-strip-inner::after{content:"";flex:0 0 28px;}
-    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
-    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
-    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
-    .nav-mobile-menu.open{display:flex;}
-    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
-    .nav-mobile-menu a:last-child{border-bottom:none;}
-    .mob-cta{background:#3dd9ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
-    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
-    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
-    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
-    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
-    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
-    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
-    p,li{color:var(--muted);}
-    p{margin-bottom:16px;}
-    ul,ol{margin:0 0 18px 22px;}
-    li{margin-bottom:6px;}
-    strong{color:var(--text);}
-    .tag{display:inline-block;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
-    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
-    .asm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:20px 0;}
-    .asm-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
-    .asm-card-icon{font-size:1.4rem;margin-bottom:8px;}
-    .asm-card-title{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:4px;}
-    .asm-card-desc{font-size:0.8rem;color:var(--muted);line-height:1.5;}
-    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
-    .callout.ok{border-left-color:#3de19e;}
-    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(61,217,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
-    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
-    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
-    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
-    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
-    footer a{color:#4a6080;text-decoration:none;}
-    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+    /* Page-specific overrides using design system tokens */
+    .article-header { padding: var(--space-3xl) 0 var(--space-2xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2xl); }
+    .article-meta { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: var(--space-lg); }
+    .article-header h1 { font-size: clamp(var(--text-3xl), 5vw, var(--text-hero)); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
+    article h2 { font-size: var(--text-2xl); margin: var(--space-2xl) 0 var(--space-md); color: var(--color-text-primary); }
+    article h3 { font-size: var(--text-lg); margin: var(--space-xl) 0 var(--space-sm); color: var(--color-text-primary); }
+    article p, article li { color: var(--color-text-secondary); }
+    article p { margin-bottom: var(--space-md); line-height: var(--leading-relaxed); }
+    article ul, article ol { margin: 0 0 var(--space-lg) var(--space-xl); }
+    article li { margin-bottom: var(--space-xs); }
+    article strong { color: var(--color-text-primary); }
+    .tag { display: inline-block; background: var(--color-accent-subtle); border: 1px solid rgba(34,211,238,0.2); color: var(--color-accent); font-size: var(--text-xs); border-radius: var(--radius-sm); padding: 2px 8px; margin-right: 6px; font-family: var(--font-mono); }
+    .lead { font-size: var(--text-lg); border-left: 3px solid var(--color-accent); padding-left: var(--space-lg); margin-bottom: var(--space-xl); color: var(--color-text-secondary); line-height: var(--leading-relaxed); }
+    .asm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md); margin: var(--space-xl) 0; }
+    .asm-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); transition: border-color var(--transition-fast), transform var(--transition-fast); }
+    .asm-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+    .asm-card-icon { font-size: 1.4rem; margin-bottom: var(--space-sm); }
+    .asm-card-title { font-size: var(--text-sm); font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--space-xs); }
+    .asm-card-desc { font-size: var(--text-xs); color: var(--color-text-secondary); line-height: var(--leading-normal); }
+    .callout { background: var(--color-bg-surface); border-left: 3px solid var(--color-accent); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; padding: var(--space-lg) var(--space-xl); margin: var(--space-xl) 0; }
+    .callout.ok { border-left-color: #34d399; }
+    .cta-box { background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-surface) 100%); border: 1px solid var(--color-accent-subtle); border-radius: var(--radius-lg); padding: var(--space-2xl); margin: var(--space-2xl) 0; text-align: center; }
+    .cta-box h2 { margin-top: 0; margin-bottom: var(--space-md); font-size: var(--text-xl); color: var(--color-text-primary); }
+    .cta-box p { color: var(--color-text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-lg); }
+    .cta-btn { display: inline-block; background: var(--color-accent); color: #000; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--text-sm); transition: background var(--transition-fast); }
+    .cta-btn:hover { background: var(--color-accent-hover); color: #000; }
+    .blog-sub-ok { display: none; color: #34d399; font-size: var(--text-sm); margin-top: var(--space-md); }
+    .newsletter-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl) var(--space-2xl); margin: var(--space-2xl) 0; text-align: center; }
+    .newsletter-box h3 { font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-sm); color: var(--color-text-primary); }
+    .newsletter-box p { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-md); line-height: var(--leading-relaxed); }
+    .newsletter-form { display: flex; gap: var(--space-sm); max-width: 420px; margin: 0 auto; }
+    .newsletter-form input { flex: 1; padding: 0.6rem 1rem; background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-size: var(--text-sm); outline: none; font-family: var(--font-sans); }
+    .newsletter-form input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+    .newsletter-form button { background: var(--color-accent); color: #000; font-weight: 700; padding: 0.6rem 1rem; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-sm); white-space: nowrap; font-family: var(--font-sans); transition: background var(--transition-fast); }
+    .newsletter-form button:hover { background: var(--color-accent-hover); }
+    @media (max-width: 768px) {
+      .newsletter-form { flex-direction: column; }
+      .asm-grid { grid-template-columns: 1fr; }
+    }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-<nav>
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
-      <div class="nav-links">
-        <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
-        <a href="/dashboard/" class="nav-cta">Free Scan →</a>
-      </div>
-      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="/" class="nav__logo">
+      <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+      EdgeIQ Labs
+    </a>
+    <ul class="nav__links">
+      <li><a href="/" class="nav__link">Home</a></li>
+      <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+      <li><a href="/free-tools/" class="nav__link">Free Tools</a></li>
+      <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+      <li><a href="/contact/" class="nav__link">Contact</a></li>
+    </ul>
+    <div class="nav__actions">
+      <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+      <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+      <button class="nav__hamburger" aria-label="Menu">☰</button>
     </div>
   </div>
 </nav>
-<div class="product-strip">
-  <div class="product-strip-inner">
-    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
-    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
-    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
-    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
-    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
-    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
-  </div>
-</div>
-<div class="nav-mobile-menu" id="nav-mobile-menu">
-  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
-  <a href="/dashboard/" class="mob-cta">Free Scan →</a>
-</div>
 
-<div class="container">
+<div class="container container--narrow">
   <article>
     <div class="article-header">
       <div class="article-meta">May 20, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Attack Surface</span><span class="tag">Security Monitoring</span><span class="tag">SMB</span></div>
@@ -158,12 +142,12 @@
     <p>Enterprise tools like Censys, Runzero, and Axonius give you deeper internal network visibility, asset inventory for thousands of IPs, integration with SIEM/SOAR platforms, and dedicated analysts. If you have a SOC and more than a few hundred externally-facing assets, they're worth it.</p>
     <p>For a team of under 50 people with a handful of domains and a standard SaaS stack, a free external scan tool + weekly automated monitoring covers 80% of what matters at 2% of the cost.</p>
 
-    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
-      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">📬 Weekly attack surface digest</h3>
-      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Security monitoring tips, new threat techniques, and product updates. No spam — unsubscribe anytime.</p>
-      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
-        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
-        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+    <div class="newsletter-box">
+      <h3>📬 Weekly attack surface digest</h3>
+      <p>Security monitoring tips, new threat techniques, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" class="newsletter-form">
+        <input type="email" required placeholder="you@company.com" />
+        <button type="submit">Subscribe →</button>
       </form>
       <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
     </div>
@@ -172,17 +156,48 @@
       <h2>Run a free attack surface scan right now</h2>
       <p>The EdgeIQ Dashboard scans your domain for SSL issues, security header gaps, DNS misconfigurations, and open ports in under 30 seconds. Free, no account required.</p>
       <a href="/dashboard/" class="cta-btn">Scan Your Domain Free →</a>
-      <p style="margin-top:10px;font-size:0.78rem;color:#4a6080;">No account required · results in 30 seconds</p>
+      <p style="margin-top:var(--space-md);font-size:var(--text-xs);color:var(--color-text-muted);">No account required · results in 30 seconds</p>
     </div>
   </article>
 </div>
 
-<footer>
-  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/dashboard/">Dashboard</a> · <a href="/products/">All Products</a></p>
-  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+        <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <p>Cybersecurity monitoring and tools</p>
+    </div>
+    <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+      <a href="/">Home</a>
+      <a href="/services.html">SMB Monitoring</a>
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/msp/">For MSPs</a>
+      <a href="/contact/">Contact</a>
+    </div>
+    <div style="text-align:right">
+      <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+      <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+        <a href="/account/">My Account</a>
+        <a href="/docs/">Docs</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="container text-center mt-lg" style="opacity:0.6">
+    © 2026 EdgeIQ Labs.
+  </div>
 </footer>
+
+<script src="/js/theme.js"></script>
 <script>
-function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+// Mobile nav toggle
+document.querySelector('.nav__hamburger').addEventListener('click', function() {
+  document.querySelector('.nav__links').classList.toggle('nav__links--open');
+});
 function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:location.href})}).catch(function(){});}
 </script>
 </body>

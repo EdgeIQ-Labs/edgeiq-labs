@@ -17,7 +17,7 @@
   <meta name="twitter:title" content="SSL Certificate Warnings: What They Mean and Why Ignoring Them Is Dangerous" />
   <meta name="twitter:description" content="A plain-language breakdown of SSL certificate warnings, what they mean for your security, and the risks of clicking through them." />
   <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
-  <meta name="theme-color" content="#0C0C14" />
+  <meta name="theme-color" content="#0A1628" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="canonical" href="https://edgeiqlabs.com/blog/ssl-certificate-warnings-explained.html" />
@@ -25,31 +25,49 @@
   <script src="/js/theme.js"></script>
   <style>
     /* Blog-specific overrides using design system tokens */
-    .article-header { padding-block: var(--space-3xl) var(--space-xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-xl); }
-    .article-meta { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
-    .tag { display: inline-block; background: var(--color-accent-subtle); border: 1px solid rgba(34,211,238,0.2); color: var(--color-accent); font-size: var(--text-xs); border-radius: var(--radius-sm); padding: 2px 8px; font-family: var(--font-mono); }
-    .lead { font-size: var(--text-lg); border-left: 3px solid var(--color-accent); padding-left: var(--space-md); margin-bottom: var(--space-lg); color: var(--color-text-secondary); line-height: var(--leading-relaxed); }
-    h1 { font-size: clamp(var(--text-3xl), 5vw, var(--text-hero)); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
-    h2 { font-size: var(--text-2xl); margin: var(--space-xl) 0 var(--space-md); }
-    h3 { font-size: var(--text-xl); margin: var(--space-lg) 0 var(--space-sm); }
-    p { margin-bottom: var(--space-md); }
-    ul { margin: 0 0 var(--space-md) var(--space-lg); color: var(--color-text-secondary); }
-    li { margin-bottom: var(--space-xs); }
-    code { background: var(--color-accent-subtle); color: var(--color-accent); padding: 2px 6px; border-radius: var(--radius-sm); font-size: 0.9em; font-family: var(--font-mono); }
-    .check { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-md) 0; }
-    .check h3 { color: var(--color-text-primary); margin-top: 0; }
-    .badge-danger { display: inline-block; font-size: var(--text-xs); border-radius: var(--radius-full); padding: 2px 10px; margin-left: var(--space-sm); color: #ff4d4d; border: 1px solid rgba(255,77,77,.35); background: rgba(255,77,77,.12); font-weight: 600; }
-    .badge-warn { display: inline-block; font-size: var(--text-xs); border-radius: var(--radius-full); padding: 2px 10px; margin-left: var(--space-sm); color: #f0a83d; border: 1px solid rgba(240,168,61,.35); background: rgba(240,168,61,.12); font-weight: 600; }
-    .warning-box { background: rgba(255,77,77,.08); border: 1px solid rgba(255,77,77,.3); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-lg) 0; color: var(--color-text-secondary); }
-    .cta-box { background: var(--color-bg-surface); border: 1px solid var(--color-accent); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
-    .cta-box h2 { margin-top: 0; }
-    .blog-subscribe { background: var(--color-bg-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
-    .blog-subscribe form { display: flex; gap: var(--space-sm); max-width: 420px; margin: 0 auto; }
-    .blog-subscribe input[type="email"] { flex: 1; padding: 10px 14px; background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-size: var(--text-sm); outline: none; font-family: var(--font-sans); }
-    .blog-subscribe input[type="email"]:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
-    .blog-subscribe button { background: var(--color-accent); color: #000; font-weight: 700; padding: 10px 18px; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-sm); white-space: nowrap; font-family: var(--font-sans); transition: background var(--transition-fast); }
-    .blog-subscribe button:hover { background: var(--color-accent-hover); }
-    .blog-sub-ok { display: none; color: #34d399; font-size: var(--text-sm); margin-top: var(--space-md); }
+    .article-header { padding: var(--space-3xl) 0 var(--space-2xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2xl); }
+    .article-meta { font-size: var(--text-sm); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: var(--space-lg); }
+    h1 { font-size: clamp(1.8rem,5vw,2.6rem); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
+    .tag { display:inline-block; background:var(--color-accent-subtle); border:1px solid rgba(34,211,238,.2); color:var(--color-accent); font-size:var(--text-xs); border-radius:var(--radius-sm); padding:3px 8px; margin-right:6px; font-family:var(--font-mono); }
+    .lead { font-size:var(--text-lg); border-left:3px solid var(--color-accent); padding-left:var(--space-lg); margin-bottom:var(--space-xl); color:var(--color-text-secondary); }
+    h2 { font-size:var(--text-3xl); margin:var(--space-2xl) 0 var(--space-md); }
+    h3 { font-size:var(--text-xl); margin:var(--space-lg) 0 var(--space-sm); }
+    p, li { color:var(--color-text-secondary); }
+    p { margin-bottom:var(--space-md); line-height:var(--leading-relaxed); }
+    ul { margin:0 0 var(--space-lg) var(--space-xl); }
+    li { margin-bottom:var(--space-xs); }
+    .check { background:var(--color-bg-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:var(--space-lg); margin:var(--space-md) 0; }
+    .check h3 { color:var(--color-text-primary); margin-bottom:var(--space-sm); }
+    code { background:var(--color-accent-subtle); color:var(--color-accent); padding:2px 6px; border-radius:var(--radius-sm); font-size:0.9em; font-family:var(--font-mono); }
+    .warning-box { background:rgba(255,77,77,.08); border:1px solid rgba(255,77,77,.3); border-radius:var(--radius-lg); padding:var(--space-lg); margin:var(--space-xl) 0; }
+    .cta-box { background:var(--color-bg-surface); border:1px solid var(--color-accent); border-radius:var(--radius-lg); padding:var(--space-xl); margin:var(--space-2xl) 0; text-align:center; }
+    .cta-btn { display:inline-block; background:var(--color-accent); color:#000; font-weight:700; padding:11px 22px; border-radius:var(--radius-md); text-decoration:none; }
+    .cta-btn:hover { background:var(--color-accent-hover); color:#000; }
+    .badge-danger { display:inline-block; font-size:var(--text-xs); border-radius:var(--radius-full); padding:2px 10px; margin-left:var(--space-sm); color:#ff4d4d; border:1px solid rgba(255,77,77,.35); background:rgba(255,77,77,.12); font-weight:600; }
+    .badge-warn { display:inline-block; font-size:var(--text-xs); border-radius:var(--radius-full); padding:2px 10px; margin-left:var(--space-sm); color:#f0a83d; border:1px solid rgba(240,168,61,.35); background:rgba(240,168,61,.12); font-weight:600; }
+
+    /* Product strip */
+    .product-strip { background: var(--color-bg-light-band); border-bottom: 1px solid var(--color-border); position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+
+    /* Mobile menu */
+    .nav-mobile-menu { display: none; flex-direction: column; background: var(--color-bg-surface); border-top: 1px solid var(--color-border); padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: var(--color-text-secondary); text-decoration: none; padding: 10px 4px; font-size: var(--text-sm); font-weight: 500; border-bottom: 1px solid var(--color-border); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: var(--color-text-primary); }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: var(--color-accent); color: #000 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: var(--radius-md); border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-text-muted); padding: 12px 4px 4px; border-bottom: none !important; }
+
+    @media (max-width: 768px) {
+      .nav__links { display: none !important; }
+      .nav__hamburger { display: block !important; }
+      .product-strip-inner a { padding: 4px 8px; font-size: var(--text-xs); }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -79,7 +97,8 @@
     }
   }
   </script>
-  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
 
@@ -100,10 +119,41 @@
       <div class="nav__actions">
         <button class="theme-toggle" aria-label="Toggle theme">☀</button>
         <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
-        <button class="nav__hamburger" aria-label="Menu">☰</button>
+        <button class="nav__hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
       </div>
     </div>
   </nav>
+
+  <!-- PRODUCT STRIP -->
+  <div class="product-strip">
+    <div class="product-strip-inner">
+      <a href="/dashboard/" style="color:#22D3EE;">&#x1F4CA; Dashboard</a>
+      <a href="/pulse/" style="color:#34d399;">&#x1F7E2; Pulse</a>
+      <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+      <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+      <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+      <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+      <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+      <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <span class="mob-section">Navigation</span>
+    <a href="/">Home</a>
+    <a href="/products/">All Products</a>
+    <a href="/blog/">Blog</a>
+    <span class="mob-section">Products</span>
+    <a href="/dashboard/" style="color:#22D3EE;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#34d399;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a class="mob-cta" href="/">Get Started &#x2192;</a>
+  </div>
 
   <div class="container container--narrow">
     <div class="article-header">
@@ -144,7 +194,7 @@
 
     <p><span class="badge-warn">Medium Risk</span> — Certificates are issued for a fixed period, typically 90 days to a year. When they expire, the server still accepts connections, but the browser warns because an expired certificate hasn't been re-verified by the CA. Expired certificates often indicate neglect — if the admin forgot to renew the cert, what else did they forget?</p>
 
-    <p>Let’s Encrypt has made certificate renewal nearly automatic. There's no excuse for expired certs on public-facing sites in 2026.</p>
+    <p>Let's Encrypt has made certificate renewal nearly automatic. There's no excuse for expired certs on public-facing sites in 2026.</p>
 
     <h3>"Connection is not secure / Mixed content"</h3>
 
@@ -205,21 +255,10 @@
       <li>No internal apps accessible over plain HTTP with sensitive data</li>
     </ul>
 
-    <div class="blog-subscribe">
-      <div style="font-size:1.6rem;margin-bottom:var(--space-sm)">📬</div>
-      <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-text-primary)">Get the EdgeIQ weekly security digest</h3>
-      <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-md);line-height:var(--leading-relaxed)">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
-      <form onsubmit="blogEmailSignup(event,this)">
-        <input type="email" required placeholder="you@company.com" />
-        <button type="submit">Subscribe →</button>
-      </form>
-      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
-    </div>
-
     <div class="cta-box">
-      <h2>Monitor your TLS posture automatically</h2>
+      <h2 style="margin-top:0;">Monitor your TLS posture automatically</h2>
       <p>EdgeIQ tracks certificate expiration, mixed content, and TLS configuration issues across all your public-facing properties — so you fix problems before users see warnings.</p>
-      <a href="../#pricing" class="btn btn--primary mt-md">View plans →</a>
+      <a href="../#pricing" class="cta-btn">View plans →</a>
     </div>
   </div>
 
@@ -256,20 +295,18 @@
   </footer>
 
 <script>
-function blogEmailSignup(e,form){
-  e.preventDefault();
-  var email=(form.querySelector('input[type=email]')||{}).value||'';
-  email=email.trim();
-  if(!email)return;
-  form.style.display='none';
-  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
-  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
-  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
-    method:'POST',mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
-  }).catch(function(){});
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
 }
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
 </script>
 </body>
 </html>

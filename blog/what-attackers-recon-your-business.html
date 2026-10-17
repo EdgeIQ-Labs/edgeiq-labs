@@ -24,47 +24,49 @@
   <link rel="stylesheet" href="/css/design-system.css?v=10" />
   <script src="/js/theme.js"></script>
   <style>
-    /* Blog-specific styles using design system tokens */
-    .blog-article { max-width: var(--container-narrow); margin-inline: auto; padding-inline: var(--space-lg); }
-    .article-header { padding-block: var(--space-3xl) var(--space-xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-xl); }
+    /* Blog-specific overrides mapped to design system tokens */
+    .article-header { padding: var(--space-3xl) 0 var(--space-2xl); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2xl); }
     .article-header h1 { font-size: clamp(1.8rem, 5vw, var(--text-hero)); line-height: var(--leading-tight); margin-bottom: var(--space-md); }
     .article-meta { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: var(--space-lg); }
     .tag { display: inline-block; background: var(--color-accent-subtle); border: 1px solid rgba(34,211,238,0.2); color: var(--color-accent); font-size: var(--text-xs); border-radius: var(--radius-sm); padding: 3px 8px; margin-right: 6px; font-family: var(--font-mono); }
     .lead { font-size: var(--text-lg); color: var(--color-text-primary); margin-bottom: var(--space-xl); border-left: 3px solid var(--color-accent); padding-left: var(--space-lg); line-height: var(--leading-relaxed); }
-    .blog-article h2 { font-size: var(--text-3xl); margin: var(--space-2xl) 0 var(--space-md); }
-    .blog-article h3 { font-size: var(--text-xl); margin: var(--space-xl) 0 var(--space-sm); color: var(--color-accent); }
-    .blog-article p { color: var(--color-text-secondary); margin-bottom: var(--space-md); line-height: var(--leading-relaxed); }
-    .blog-article ul, .blog-article ol { color: var(--color-text-secondary); margin: 0 0 var(--space-md) var(--space-lg); line-height: var(--leading-relaxed); }
-    .blog-article li { margin-bottom: var(--space-sm); }
-    .blog-article code { font-family: var(--font-mono); font-size: 0.9em; background: var(--color-bg-elevated); padding: 2px 6px; border-radius: var(--radius-sm); }
+    h2 { font-size: var(--text-3xl); margin: var(--space-2xl) 0 var(--space-md); }
+    h3 { font-size: var(--text-xl); margin: var(--space-xl) 0 var(--space-sm); color: var(--color-accent); }
+    p { color: var(--color-text-secondary); margin-bottom: var(--space-md); line-height: var(--leading-relaxed); }
+    ul, ol { color: var(--color-text-secondary); margin: 0 0 var(--space-lg) var(--space-xl); line-height: var(--leading-relaxed); }
+    li { margin-bottom: var(--space-sm); }
     .step-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-lg) 0; }
     .step-card h3 { margin-top: 0; color: var(--color-text-primary); }
-    .fact-box { background: var(--color-bg-pale-blue); border: 1px solid rgba(34,211,238,0.2); border-radius: var(--radius-md); padding: var(--space-md) var(--space-lg); margin: var(--space-md) 0; }
+    .fact-box { background: var(--color-bg-pale-blue); border: 1px solid rgba(34,211,238,0.2); border-radius: var(--radius-md); padding: var(--space-md) var(--space-lg); margin: var(--space-lg) 0; }
     .fact-box p { color: var(--color-accent); font-size: var(--text-sm); margin-bottom: 0; }
     .cta-box { background: var(--color-bg-surface); border: 1px solid var(--color-accent); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
     .cta-box h3 { color: var(--color-text-primary); font-size: var(--text-xl); margin-bottom: var(--space-sm); }
     .cta-box p { color: var(--color-text-secondary); margin-bottom: var(--space-md); }
-    .checklist-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-md) 0; }
+    .cta-btn { display: inline-block; background: var(--color-accent); color: #000; font-weight: 700; padding: 11px 22px; border-radius: var(--radius-md); text-decoration: none; }
+    .cta-btn:hover { background: var(--color-accent-hover); color: #000; }
+    .checklist-box { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-lg) 0; }
     .checklist-box h3 { margin-bottom: var(--space-md); }
-    .checklist-box li { margin-bottom: var(--space-sm); }
+    .checklist-box li { margin-bottom: var(--space-md); }
     .tool-tag { display: inline-block; background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); color: #34d399; font-size: var(--text-xs); border-radius: var(--radius-sm); padding: 2px 7px; font-family: var(--font-mono); margin-right: 4px; }
-    .footer-cta { padding-block: var(--space-2xl); border-top: 1px solid var(--color-border); margin-top: var(--space-2xl); text-align: center; }
-    .blog-signup { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-2xl) 0; text-align: center; }
-    .blog-signup form { display: flex; gap: var(--space-sm); max-width: 420px; margin: 0 auto; }
-    .blog-signup input[type="email"] { flex: 1; padding: 9px 14px; background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-size: var(--text-sm); outline: none; font-family: var(--font-sans); }
-    .blog-signup input[type="email"]:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
-    .blog-sub-ok { display: none; color: #34d399; font-size: var(--text-sm); margin-top: var(--space-sm); }
+    .footer-cta { padding: var(--space-2xl) 0; border-top: 1px solid var(--color-border); margin-top: var(--space-2xl); text-align: center; }
+
     /* Product strip */
-    .product-strip { background: var(--color-bg-light-band); border-bottom: 1px solid var(--color-border); position: sticky; top: 68px; z-index: 99; }
-    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px var(--space-lg); overflow-x: auto; scrollbar-width: none; max-width: var(--container-max); margin: 0 auto; }
+    .product-strip { background: var(--color-bg-light-band); border-bottom: 1px solid var(--color-border); position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px var(--space-lg); overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
     .product-strip-inner::-webkit-scrollbar { display: none; }
     .product-strip-inner::after { content: ""; flex: 0 0 28px; }
-    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background var(--transition-fast); color: var(--color-text-secondary); }
-    .product-strip-inner a:hover { background: var(--color-accent-subtle); }
-    @media (max-width: 768px) {
-      .product-strip-inner a { padding: 4px 8px; font-size: 0.7rem; }
-      .blog-signup form { flex-direction: column; }
-    }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background var(--transition-fast); color: var(--color-text-secondary); }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+
+    /* Mobile menu */
+    .nav-mobile-menu { display: none; flex-direction: column; background: var(--color-bg-surface); border-top: 1px solid var(--color-border); padding: var(--space-md) var(--space-lg) var(--space-lg); position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: var(--color-text-secondary); text-decoration: none; padding: 10px 4px; font-size: var(--text-sm); font-weight: 500; border-bottom: 1px solid var(--color-border); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: var(--color-text-primary); }
+    .nav-mobile-menu .mob-cta { margin-top: var(--space-md); background: var(--color-accent); color: #000 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: var(--radius-md); border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-text-muted); padding: var(--space-md) 4px 4px; border-bottom: none !important; }
+    @media (max-width: 768px) { .nav__links { display: none !important; } .nav__hamburger { display: block !important; } .product-strip-inner a { padding: 4px 8px; font-size: var(--text-xs); } }
   </style>
   <script type="application/ld+json">
   {
@@ -98,7 +100,6 @@
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-
   <!-- NAV -->
   <nav class="nav">
     <div class="container nav__inner">
@@ -116,16 +117,15 @@
       <div class="nav__actions">
         <button class="theme-toggle" aria-label="Toggle theme">☀</button>
         <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
-        <button class="nav__hamburger" aria-label="Menu">☰</button>
+        <button class="nav__hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
       </div>
     </div>
   </nav>
 
-  <!-- PRODUCT STRIP -->
   <div class="product-strip">
     <div class="product-strip-inner">
-      <a href="/dashboard/" style="color:#22d3ee;">📊 Dashboard</a>
-      <a href="/pulse/" style="color:#34d399;">🟢 Pulse</a>
+      <a href="/dashboard/" style="color:#22D3EE;">📊 Dashboard</a>
+      <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
       <a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a>
       <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
       <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
@@ -135,7 +135,24 @@
     </div>
   </div>
 
-  <div class="blog-article">
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <span class="mob-section">Navigation</span>
+    <a href="/">Home</a>
+    <a href="/products/">All Products</a>
+    <a href="/blog/">Blog</a>
+    <span class="mob-section">Products</span>
+    <a href="/dashboard/" style="color:#22D3EE;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉️ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+    <a class="mob-cta" href="/free-tools/">Explore tools →</a>
+  </div>
+
+  <div class="container container--narrow">
     <div class="article-header">
       <div class="article-meta">April 27, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">recon</span><span class="tag">osint</span><span class="tag">attack-surface</span></div>
       <h1>What Attackers See When They Recon Your Business</h1>
@@ -260,21 +277,21 @@
       </ol>
     </div>
 
-    <div class="blog-signup">
+    <div class="card" style="margin:var(--space-2xl) 0;text-align:center;">
       <div style="font-size:1.6rem;margin-bottom:var(--space-sm);">📬</div>
-      <h3 style="font-size:var(--text-base);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
       <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-md);line-height:var(--leading-relaxed);">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
-      <form onsubmit="blogEmailSignup(event,this)">
-        <input type="email" required placeholder="you@company.com"/>
-        <button type="submit" class="btn btn--primary" style="padding:9px 16px;font-size:var(--text-sm);white-space:nowrap;">Subscribe →</button>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" class="input" style="flex:1;font-size:var(--text-sm);"/>
+        <button type="submit" class="btn btn--primary" style="white-space:nowrap;">Subscribe →</button>
       </form>
-      <div class="blog-sub-ok">✅ You're in. Check your inbox.</div>
+      <div class="blog-sub-ok" style="display:none;color:#3de19e;font-size:var(--text-sm);margin-top:var(--space-sm);">✅ You're in. Check your inbox.</div>
     </div>
 
     <div class="cta-box">
       <h3>See Your Full Attack Surface</h3>
       <p>EdgeIQ's site scanner automatically maps your exposed subdomains, DNS records, and running services — giving you the same view an attacker sees, without needing to run a dozen different tools.</p>
-      <a href="../" class="btn btn--primary">Scan your domain free →</a>
+      <a href="../" class="cta-btn">Scan your domain free →</a>
     </div>
 
     <h2>The Bottom Line</h2>
@@ -284,7 +301,7 @@
 
     <div class="footer-cta">
       <p style="color: var(--color-text-secondary); margin-bottom: var(--space-md);">Get a free attack surface scan and see what attackers see when they look at your business.</p>
-      <a href="../" class="btn btn--primary">Get started free →</a>
+      <a href="../" class="cta-btn">Get started free →</a>
     </div>
 
   </div>
@@ -321,6 +338,20 @@
     </div>
   </footer>
 
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
 <script>
 function blogEmailSignup(e,form){
   e.preventDefault();
