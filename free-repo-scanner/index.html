@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free GitHub Repo Security Scanner — Find Leaked Secrets & Misconfigs | EdgeIQ Labs</title>
+  <meta name="description" content="Scan any public GitHub repository for leaked API keys, committed .env files, missing .gitignore patterns, and Supabase RLS gaps. Free instant security grade — no signup required."/>
+  <meta property="og:title" content="Free GitHub Repo Security Scanner — Instant Security Grade"/>
+  <meta property="og:description" content="Check any public repo for hardcoded secrets, exposed env files, gitignore gaps, and missing RLS policies. A–F grade in seconds."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-repo-scanner/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-repo-scanner/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script src="/js/theme.js"></script>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free Repo Security Scanner","url":"https://edgeiqlabs.com/free-repo-scanner/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What does the repo security scanner check?","acceptedAnswer":{"@type":"Answer","text":"It checks for committed .env files, hardcoded API keys and secrets (Stripe, GitHub, AWS, Slack, Google, JWTs, private keys), missing .gitignore patterns, Supabase Row Level Security policies, unpinned GitHub Actions, and repository staleness."}},
+      {"@type":"Question","name":"Is it safe to scan my repository?","acceptedAnswer":{"@type":"Answer","text":"Yes. The scanner only reads publicly available data via the GitHub API. It never clones your repo, never stores your code, and never accesses private repositories unless you provide a scoped token in the Pro tier."}},
+      {"@type":"Question","name":"What is the difference between free and Pro?","acceptedAnswer":{"@type":"Answer","text":"The free tier scans public repos with surface-level checks on a sample of files. Pro adds private repo scanning via your GitHub token, full-file secret detection with entropy analysis, dependency vulnerability audits, CI pipeline hardening checks, and SBOM generation."}},
+      {"@type":"Question","name":"Why are committed .env files dangerous?","acceptedAnswer":{"@type":"Answer","text":".env files typically contain database passwords, API keys, and service credentials. When committed to a repository, anyone with read access can extract them. Even if deleted later, they remain in git history and can be recovered by attackers using tools like truffleHog or git-secrets."}}
+    ]}
+  ]</script>
+  <style>
+    /* Page-specific tool UI styles mapped to design system vars */
+    .scanner-hero{padding:var(--space-3xl) 0 var(--space-2xl);text-align:center;}
+    .scanner-hero .eyebrow{display:inline-block;background:var(--color-accent-subtle);border:1px solid rgba(34,211,238,0.25);padding:var(--space-xs) var(--space-md);border-radius:var(--radius-full);margin-bottom:var(--space-lg);}
+    .scanner-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.15;margin-bottom:var(--space-md);color:var(--color-text-primary);}
+    .scanner-hero p{font-size:var(--text-lg);color:var(--color-text-secondary);max-width:560px;margin:0 auto var(--space-2xl);}
+
+    .tool-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-xl);max-width:620px;margin:0 auto var(--space-md);}
+    .tool-row{display:flex;gap:var(--space-sm);flex-wrap:wrap;}
+    .tool-input{flex:1;min-width:200px;background:var(--color-bg-primary);border:2px solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text-primary);padding:0.8rem 1rem;font-size:var(--text-base);font-family:inherit;outline:none;transition:border-color var(--transition-fast);}
+    .tool-input:focus{border-color:var(--color-accent);box-shadow:0 0 0 3px var(--color-accent-subtle);}
+    .tool-btn{background:var(--color-accent);color:#000;font-weight:700;font-size:var(--text-base);padding:0.8rem 1.5rem;border-radius:var(--radius-md);border:none;cursor:pointer;white-space:nowrap;transition:opacity var(--transition-fast);font-family:inherit;}
+    .tool-btn:hover{opacity:0.87;}
+    .tool-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    #results{display:none;padding-bottom:var(--space-3xl);}
+
+    /* Grade badge */
+    .grade-badge{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;flex-shrink:0;}
+    .grade-A{background:rgba(52,211,153,0.15);color:#34d399;border:2px solid #34d399;}
+    .grade-B{background:var(--color-accent-subtle);color:var(--color-accent);border:2px solid var(--color-accent);}
+    .grade-C{background:rgba(245,158,11,0.15);color:#f59e0b;border:2px solid #f59e0b;}
+    .grade-D{background:rgba(255,107,122,0.15);color:#ff6b7a;border:2px solid #ff6b7a;}
+    .grade-F{background:rgba(239,68,68,0.15);color:#ef4444;border:2px solid #ef4444;}
+    .grade-unknown{background:rgba(148,163,184,0.15);color:var(--color-text-secondary);border:2px solid var(--color-text-secondary);}
+
+    .results-summary{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-lg);margin-bottom:var(--space-md);display:flex;align-items:center;gap:var(--space-md);flex-wrap:wrap;}
+    .summary-meta{flex:1;min-width:200px;}
+    .summary-repo{font-size:var(--text-sm);font-weight:700;color:var(--color-text-primary);margin-bottom:var(--space-xs);font-family:var(--font-mono);}
+    .summary-text{font-size:var(--text-xs);color:var(--color-text-secondary);}
+    .score-bar{height:6px;border-radius:3px;background:var(--color-bg-elevated);margin-top:var(--space-sm);overflow:hidden;}
+    .score-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+
+    /* Findings */
+    .findings-list{display:flex;flex-direction:column;gap:var(--space-sm);margin-bottom:var(--space-md);}
+    .finding{padding:var(--space-md) var(--space-lg);border-radius:var(--radius-md);border-left:4px solid;font-size:var(--text-sm);line-height:1.55;}
+    .finding.critical{background:rgba(239,68,68,0.08);border-color:#ef4444;color:#fca5a5;}
+    .finding.high{background:rgba(255,107,122,0.08);border-color:#ff6b7a;color:#fdba74;}
+    .finding.medium{background:rgba(245,158,11,0.08);border-color:#f59e0b;color:#fde68a;}
+    .finding.low{background:var(--color-accent-subtle);border-color:var(--color-accent);color:#bae6fd;}
+    .finding.info{background:rgba(52,211,153,0.06);border-color:#34d399;color:#a7f3d0;}
+    .finding.locked{background:rgba(99,102,241,0.08);border-color:#6366f1;color:#c7d2fe;cursor:pointer;position:relative;}
+    .finding.locked::after{content:'🔒';position:absolute;right:var(--space-md);top:50%;transform:translateY(-50%);font-size:var(--text-sm);}
+    .finding-type{font-weight:700;font-size:var(--text-xs);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:var(--space-xs);display:block;}
+
+    /* Gate box */
+    .gate-box{background:linear-gradient(135deg,var(--color-bg-primary),var(--color-bg-elevated));border:1px solid rgba(99,102,241,0.3);border-radius:var(--radius-lg);padding:var(--space-xl);text-align:center;margin-top:var(--space-md);}
+    .gate-box h3{font-size:var(--text-lg);font-weight:700;color:var(--color-text-primary);margin-bottom:var(--space-sm);}
+    .gate-box p{font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-lg);max-width:480px;margin-left:auto;margin-right:auto;}
+    .gate-btn{display:inline-block;background:#6366f1;color:#fff;font-weight:700;padding:0.75rem 1.5rem;border-radius:var(--radius-md);text-decoration:none;font-size:var(--text-sm);transition:opacity var(--transition-fast);}
+    .gate-btn:hover{opacity:0.87;}
+
+    .risk-examples{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--space-md);margin:var(--space-md) 0 var(--space-xl);}
+    .risk-ex{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-md) var(--space-lg);}
+    .risk-ex-sub{font-family:var(--font-mono);font-size:var(--text-sm);color:#ff9f43;margin-bottom:var(--space-xs);}
+    .risk-ex-desc{font-size:var(--text-xs);color:var(--color-text-secondary);line-height:1.5;}
+
+    .faq-item{border-bottom:1px solid var(--color-border);padding:var(--space-lg) 0;}
+    .faq-q{font-size:var(--text-base);font-weight:700;color:var(--color-text-primary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:var(--space-sm);}
+    .faq-q::after{content:"＋";color:var(--color-accent);font-size:var(--text-lg);flex-shrink:0;}
+    .faq-q.open::after{content:"−";}
+    .faq-a{display:none;padding-top:var(--space-sm);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:var(--leading-relaxed);}
+
+    .cta-box{background:linear-gradient(135deg,var(--color-bg-primary),var(--color-bg-elevated));border:1px solid rgba(99,102,241,0.3);border-radius:var(--radius-lg);padding:var(--space-2xl) var(--space-xl);margin:var(--space-3xl) 0;text-align:center;}
+    .cta-box h3{font-size:var(--text-xl);font-weight:800;margin-bottom:var(--space-sm);color:var(--color-text-primary);}
+    .cta-box p{color:var(--color-text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-xl);}
+    .cta-btn{display:inline-block;background:#6366f1;color:#fff;font-weight:700;padding:0.8rem 1.75rem;border-radius:var(--radius-md);text-decoration:none;font-size:var(--text-base);}
+    .cta-btn:hover{opacity:0.87;}
+
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--color-accent-subtle);border-top-color:var(--color-accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:var(--space-xs);}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* Email capture override for dark theme consistency */
+    .email-capture{max-width:480px;margin:var(--space-2xl) auto 0;padding:var(--space-xl);background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);text-align:center;}
+    .email-capture h3{color:var(--color-accent);font-size:var(--text-base);margin-bottom:var(--space-sm);}
+    .email-capture p{color:var(--color-text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-md);}
+    .email-capture input{width:70%;padding:10px 14px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text-primary);font-size:14px;outline:none;}
+    .email-capture button{width:25%;padding:10px;background:var(--color-accent);color:#000;font-weight:700;border:none;border-radius:var(--radius-md);cursor:pointer;font-size:14px;}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link nav__link--active">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/dashboard/" class="btn btn--primary">Free Full Scan →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+<div class="container">
+  <div class="scanner-hero">
+    <span class="eyebrow">Free Tool</span>
+    <h1>GitHub Repo Security Scanner</h1>
+    <p>Instantly check any public repository for leaked secrets, committed env files, missing gitignore patterns, and Supabase RLS gaps. Get an A–F security grade in seconds.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-row">
+      <input type="text" id="repo-input" class="tool-input" placeholder="https://github.com/owner/repo" autocomplete="off" autocapitalize="off" spellcheck="false"/>
+      <button class="tool-btn" id="scan-btn" onclick="runScan()">Scan Repo →</button>
+    </div>
+    <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-sm);margin-bottom:0;">Scans public repos via the GitHub API. No cloning, no storage, no account needed.</p>
+  </div>
+
+  <div id="results">
+    <div class="results-summary" id="summary"></div>
+    <div class="findings-list" id="findings-list"></div>
+    <div id="gate-section"></div>
+  </div>
+</div>
+
+<div class="container">
+  <section class="section section--dark">
+    <h2>Why repo security matters</h2>
+    <p>Your source code is your most sensitive asset — and the most commonly overlooked attack surface. Developers accidentally commit secrets at an alarming rate:</p>
+    <div class="risk-examples">
+      <div class="risk-ex"><div class="risk-ex-sub">.env committed to git</div><div class="risk-ex-desc">Database passwords, API keys, and service tokens exposed to anyone with repo access. Even after deletion, secrets persist in git history.</div></div>
+      <div class="risk-ex"><div class="risk-ex-sub">Hardcoded API keys</div><div class="risk-ex-desc">Stripe, AWS, GitHub, and Slack tokens embedded directly in source code. Automated scanners find these within minutes of a push.</div></div>
+      <div class="risk-ex"><div class="risk-ex-sub">Missing .gitignore</div><div class="risk-ex-desc">Without proper ignore rules, IDE configs, build artifacts, and credential files get committed silently over time.</div></div>
+      <div class="risk-ex"><div class="risk-ex-sub">No RLS policies</div><div class="risk-ex-desc">Supabase projects without Row Level Security let any authenticated user read and write every row in your database.</div></div>
+      <div class="risk-ex"><div class="risk-ex-sub">Unpinned CI actions</div><div class="risk-ex-desc">GitHub Actions referencing @main instead of a SHA hash are vulnerable to supply chain attacks that silently modify build steps.</div></div>
+      <div class="risk-ex"><div class="risk-ex-sub">Stale repositories</div><div class="risk-ex-desc">Repos untouched for months accumulate vulnerable dependencies without patches, becoming easy targets for known exploits.</div></div>
+    </div>
+
+    <h2>What the scanner checks</h2>
+    <p>The free tier performs 7 surface-level checks against any public GitHub repository:</p>
+    <ul style="margin:0 0 var(--space-md) var(--space-xl);color:var(--color-text-secondary);font-size:var(--text-base);">
+      <li style="margin-bottom:var(--space-sm);"><strong>Repository metadata</strong> — visibility, wiki/pages status, last update timestamp</li>
+      <li style="margin-bottom:var(--space-sm);"><strong>.env file detection</strong> — walks the full file tree for committed environment files</li>
+      <li style="margin-bottom:var(--space-sm);"><strong>.gitignore analysis</strong> — fetches and validates against 10 recommended patterns</li>
+      <li style="margin-bottom:var(--space-sm);"><strong>Secret pattern matching</strong> — samples up to 30 source files for 8 common key formats</li>
+      <li style="margin-bottom:var(--space-sm);"><strong>Supabase RLS detection</strong> — scans migration files for ENABLE ROW LEVEL SECURITY statements</li>
+      <li style="margin-bottom:var(--space-sm);"><strong>CI/CD security</strong> — flags GitHub Actions pinned to mutable tags instead of SHAs</li>
+      <li style="margin-bottom:var(--space-sm);"><strong>Staleness check</strong> — flags repos untouched for over a year</li>
+    </ul>
+  </section>
+
+  <section class="section section--dark">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What does the repo security scanner check?</div><div class="faq-a">It checks for committed .env files, hardcoded API keys and secrets (Stripe, GitHub, AWS, Slack, Google, JWTs, private keys), missing .gitignore patterns, Supabase Row Level Security policies, unpinned GitHub Actions, and repository staleness.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is it safe to scan my repository?</div><div class="faq-a">Yes. The scanner only reads publicly available data via the GitHub API. It never clones your repo, never stores your code, and never accesses private repositories unless you provide a scoped token in the Pro tier.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the difference between free and Pro?</div><div class="faq-a">The free tier scans public repos with surface-level checks on a sample of files. Pro adds private repo scanning via your GitHub token, full-file secret detection with entropy analysis, dependency vulnerability audits, CI pipeline hardening checks, and SBOM generation.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why are committed .env files dangerous?</div><div class="faq-a">.env files typically contain database passwords, API keys, and service credentials. When committed to a repository, anyone with read access can extract them. Even if deleted later, they remain in git history and can be recovered by attackers using tools like truffleHog or git-secrets.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I scan private repositories?</div><div class="faq-a">Not with the free tier. Repo Scanner Pro accepts a scoped GitHub personal access token (read-only) that lets us analyze private repos without ever storing your code or credentials.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How often should I scan my repos?</div><div class="faq-a">Every push ideally, but at minimum weekly. Pulse Pro includes automated repo scanning on a schedule so new commits are checked automatically and you're alerted when secrets or misconfigs appear.</div></div>
+  </section>
+
+  <div class="cta-box">
+    <h3>Scan private repos, audit dependencies, and harden CI pipelines</h3>
+    <p>Repo Scanner Pro adds private repository support, full-file secret detection with entropy analysis, dependency vulnerability audits against CVE databases, CI/CD pipeline hardening checks, and SBOM generation.</p>
+    <a href="#" class="cta-btn" id="stripe-pro-link">Unlock Repo Scanner Pro →</a>
+  </div>
+</div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm)">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md)">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6">
+      © 2026 EdgeIQ Labs.
+    </div>
+  </footer>
+
+<script>
+// ── Stripe payment link for Repo Scanner Pro ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────......
+// Replace this URL with your buy.stripe.com link once created in Stripe Dashboard.
+var STRIPE_REPO_SCANNER = 'https://buy.stripe.com/8x2eVf2TF7hb4nWg367wA46';
+document.getElementById('stripe-pro-link').href = STRIPE_REPO_SCANNER;
+
+function runScan(){
+  var input = document.getElementById('repo-input');
+  var url = input.value.trim();
+  if(!url || url.indexOf('github.com') === -1){
+    input.style.borderColor = '#ff6b7a';
+    return;
+  }
+  input.style.borderColor = '';
+  var btn = document.getElementById('scan-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Scanning repo…';
+  document.getElementById('results').style.display = 'none';
+  history.replaceState(null, '', '/free-repo-scanner/?repo=' + encodeURIComponent(url));
+
+  fetch('/api/repo-scanner', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({url: url})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){ renderResults(d); })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Scan Repo →';
+    alert('Scan failed — please try again.');
+  });
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function gradeClass(g){
+  if(g==='A') return 'grade-A';
+  if(g==='B') return 'grade-B';
+  if(g==='C') return 'grade-C';
+  if(g==='D') return 'grade-D';
+  if(g==='F') return 'grade-F';
+  return 'grade-unknown';
+}
+
+function scoreColor(s){
+  if(s>=90) return '#34d399';
+  if(s>=75) return 'var(--color-accent)';
+  if(s>=55) return '#f59e0b';
+  if(s>=35) return '#ff6b7a';
+  return '#ef4444';
+}
+
+function renderResults(d){
+  var btn = document.getElementById('scan-btn');
+  btn.disabled = false;
+  btn.textContent = 'Scan Repo →';
+
+  var grade = d.grade || '?';
+  var score = d.score || 0;
+  var findings = d.findings || [];
+  var lockedCount = 0;
+  var freeCount = 0;
+  findings.forEach(function(f){ if(f.severity==='locked') lockedCount++; else freeCount++; });
+
+  // Summary
+  document.getElementById('summary').innerHTML =
+    '<div class="grade-badge ' + gradeClass(grade) + '">' + esc(grade) + '</div>' +
+    '<div class="summary-meta">' +
+      '<div class="summary-repo">' + esc(d.repo || '') + '</div>' +
+      '<div class="summary-text">' + esc(d.summary || '') + '</div>' +
+      '<div class="score-bar"><div class="score-fill" style="width:' + score + '%;background:' + scoreColor(score) + ';"></div></div>' +
+      '<div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-xs);">Score: ' + score + '/100</div>' +
+    '</div>';
+
+  // Findings
+  var html = '';
+  findings.forEach(function(f){
+    var isLocked = f.severity === 'locked';
+    var cls = isLocked ? 'locked' : f.severity;
+    var clickAttr = isLocked ? ' onclick="window.location.href=\'' + STRIPE_REPO_SCANNER + '\'"' : '';
+    html += '<div class="finding ' + cls + '"' + clickAttr + '>' +
+      '<span class="finding-type">' + esc(f.type) + '</span>' +
+      esc(f.message) +
+    '</div>';
+  });
+  document.getElementById('findings-list').innerHTML = html;
+
+  // Gate box
+  if(lockedCount > 0){
+    document.getElementById('gate-section').innerHTML =
+      '<div class="gate-box">' +
+        '<h3>' + lockedCount + ' advanced security checks locked</h3>' +
+        '<p>Upgrade to Repo Scanner Pro to unlock private repo scanning, full dependency audits, deep secret detection with entropy analysis, CI pipeline hardening, and SBOM generation.</p>' +
+        '<a href="' + STRIPE_REPO_SCANNER + '" class="gate-btn">Unlock Pro Checks →</a>' +
+      '</div>';
+  } else {
+    document.getElementById('gate-section').innerHTML = '';
+  }
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toggleFaq(el){ var a = el.nextElementSibling; var open = el.classList.toggle('open'); a.style.display = open ? 'block' : 'none'; }
+
+// Auto-scan from URL param
+(function(){
+  var p = new URLSearchParams(location.search);
+  var r = p.get('repo');
+  if(r){ document.getElementById('repo-input').value = r; runScan(); }
+})();
+document.getElementById('repo-input').addEventListener('keydown', function(e){ if(e.key==='Enter') runScan(); });
+</script>
+
+<!-- EdgeIQ email capture -->
+<div class="email-capture">
+  <h3>Get weekly security intel</h3>
+  <p>Free scans, breach alerts, and SMB tips — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-tool'})}).then(()=>{this.innerHTML='<p style=\'color:#34d399\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required />
+    <button type="submit">Subscribe</button>
+  </form>
+</div>
+
+</body>
+</html>
