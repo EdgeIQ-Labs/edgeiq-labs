@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,223 +11,217 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://edgeiqlabs.com/free-tools/" />
   <meta property="og:title" content="Free Security Tools — EdgeIQ Labs" />
-  <meta property="og:description" content="6 free cybersecurity tools for domains, email, and SSL. No signup required." />
+  <meta property="og:description" content="7 free cybersecurity tools for domains, email, and repos. No signup required." />
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
-  <meta name="theme-color" content="#0b0f14" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0b0f14; --surface: #111720; --border: #1e2a38;
-      --text: #e2e8f0; --muted: #64748b; --accent: #3dd9ff;
-      --accent2: #3de19e; --purple: #b47aff;
-    }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
-    a { color: inherit; text-decoration: none; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-
-    /* NAV */
-    nav { border-bottom: 1px solid var(--border); background: rgba(11,15,20,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); }
-    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 12px; }
-    .nav-brand { display: flex; align-items: center; gap: 10px; }
-    .nav-logo-img { height: 50px; width: auto; border-radius: 10px; }
-    .nav-brand-name { font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--text); }
-    .nav-brand-name span { color: var(--accent); }
-    .nav-brand-tag { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
-    .nav-links { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
-    .nav-links a { color: var(--muted); padding: 5px 8px; font-size: 0.82rem; border-radius: 7px; white-space: nowrap; }
-    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-links a.active { color: var(--accent); }
-    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 6px 12px !important; border-radius: 7px !important; }
-    @media(max-width:720px){ .nav-links { display: none; } }
-
-    /* HERO */
-    .hero { padding: 70px 0 48px; text-align: center; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(61,217,255,0.08); border: 1px solid rgba(61,217,255,0.2); color: var(--accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 22px; }
-    .hero h1 { font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
-    .hero p { font-size: 1.05rem; color: var(--muted); max-width: 560px; margin: 0 auto 32px; }
-
-    /* TOOL GRID */
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 20px; padding-bottom: 80px; }
-    .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 24px; display: flex; flex-direction: column; gap: 14px; transition: border-color 0.2s, transform 0.15s; }
-    .tool-card:hover { border-color: var(--card-accent, var(--accent)); transform: translateY(-2px); }
-    .tool-icon { font-size: 2rem; line-height: 1; }
-    .tool-badge { display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; background: rgba(61,217,255,0.1); color: var(--card-accent, var(--accent)); border: 1px solid rgba(61,217,255,0.2); margin-bottom: 2px; }
-    .tool-card h2 { font-size: 1.15rem; font-weight: 700; }
-    .tool-card p { font-size: 0.88rem; color: var(--muted); flex: 1; }
-    .tool-checks { display: flex; flex-direction: column; gap: 5px; }
-    .tool-check { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
-    .tool-check::before { content: '✓'; color: var(--card-accent, var(--accent)); font-weight: 700; font-size: 0.75rem; flex-shrink: 0; }
-    .tool-link { display: block; text-align: center; background: var(--card-accent, var(--accent)); color: #071018; font-weight: 700; font-size: 0.88rem; padding: 10px 20px; border-radius: 9px; margin-top: 6px; transition: opacity 0.15s; }
-    .tool-link:hover { opacity: 0.85; }
-
-    /* FOOTER */
-    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--muted); font-size: 0.82rem; }
-    footer a { color: var(--muted); margin: 0 10px; }
-    footer a:hover { color: var(--text); }
-  </style>
+  <meta name="theme-color" content="#0A1628" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <script src="/js/theme.js"></script>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
 
-<nav>
-  <div class="container nav-inner">
-    <a href="/" style="display:flex;align-items:center;gap:10px;">
-      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
-      <div>
-        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
-        <div class="nav-brand-tag">Security Intelligence</div>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px;" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/free-tools/" class="nav__link nav__link--active">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/free-tools/" class="btn btn--primary">Explore tools →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
       </div>
-    </a>
-    <div class="nav-links">
-      <a href="/free-tools/" class="active">Free Tools</a>
-      <a href="/products/">All Products</a>
-      <a href="/blog/">Blog</a>
-      <a href="/compare/">Compare</a>
-      <a href="/account/">My Account</a>
-      <a class="nav-cta" href="/#smb-essentials">Get Started</a>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<section class="hero">
-  <div class="container">
-    <div class="hero-badge">🛠 Free Tools</div>
-    <h1>Free Security Tools<br>for Your Domain & Email</h1>
-    <p>Instant checks, no account required. See exactly where your domain stands — then fix it.</p>
-  </div>
-</section>
-
-<div class="container">
-  <div class="tools-grid">
-
-    <!-- Domain Security Score -->
-    <div class="tool-card" style="--card-accent:#3dd9ff;">
-      <div class="tool-icon">🛡</div>
-      <div>
-        <div class="tool-badge">Most Popular</div>
-        <h2>Domain Security Score</h2>
-      </div>
-      <p>Get an A–F grade for your domain's overall security posture. Checks DMARC, SPF, DKIM, SSL, and MX in one scan.</p>
-      <div class="tool-checks">
-        <div class="tool-check">Overall A–F security grade</div>
-        <div class="tool-check">5 checks in under 10 seconds</div>
-        <div class="tool-check">Prioritised fix recommendations</div>
-      </div>
-      <a class="tool-link" href="/free-domain-security-score/">Check Your Score →</a>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container" style="text-align:center;max-width:var(--container-narrow);">
+      <span class="eyebrow">🛠 Free Tools</span>
+      <h1 class="hero__headline">Free Security Tools<br />for Your Domain & Email</h1>
+      <p class="hero__subhead" style="margin-inline:auto;">Instant checks, no account required. See exactly where your domain stands — then fix it.</p>
     </div>
+  </section>
 
-    <!-- DMARC Checker -->
-    <div class="tool-card" style="--card-accent:#3de19e;">
-      <div class="tool-icon">📧</div>
-      <div>
-        <div class="tool-badge" style="background:rgba(61,225,158,0.1);border-color:rgba(61,225,158,0.2);">Email Auth</div>
-        <h2>DMARC Checker</h2>
+  <!-- TOOL GRID -->
+  <section class="section section--surface" style="padding-top:0;">
+    <div class="container">
+      <div class="grid grid--3">
+
+        <!-- Domain Security Score -->
+        <div class="card" style="border-left:3px solid var(--color-accent);">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">🛡</div>
+          <span class="eyebrow" style="color:var(--color-accent);">Most Popular</span>
+          <h4>Domain Security Score</h4>
+          <p class="mt-sm">Get an A–F grade for your domain's overall security posture. Checks DMARC, SPF, DKIM, SSL, and MX in one scan.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Overall A–F security grade</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ 5 checks in under 10 seconds</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Prioritised fix recommendations</li>
+          </ul>
+          <a href="/free-domain-security-score/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;">Check Your Score →</a>
+        </div>
+
+        <!-- DMARC Checker -->
+        <div class="card" style="border-left:3px solid #3de19e;">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">📧</div>
+          <span class="eyebrow" style="color:#3de19e;">Email Auth</span>
+          <h4>DMARC Checker</h4>
+          <p class="mt-sm">Verify your DMARC record, policy strength, and alignment. Find out if spoofed emails can reach your customers.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Policy (none / quarantine / reject)</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ SPF & DKIM alignment check</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ RUA / RUF report addresses</li>
+          </ul>
+          <a href="/free-dmarc-checker/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;background:#3de19e;border-color:#3de19e;">Check DMARC →</a>
+        </div>
+
+        <!-- SPF Checker -->
+        <div class="card" style="border-left:3px solid #b47aff;">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">📋</div>
+          <span class="eyebrow" style="color:#b47aff;">SPF</span>
+          <h4>SPF Record Analyzer</h4>
+          <p class="mt-sm">Deep-dive your SPF record. See every mechanism, DNS lookup count, and whether you're at risk of breaking the 10-lookup limit.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ DNS lookup budget (10 max per RFC)</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ All mechanism breakdown</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ +all / ~all / -all warnings</li>
+          </ul>
+          <a href="/free-spf-checker/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;background:#b47aff;border-color:#b47aff;">Analyze SPF →</a>
+        </div>
+
+        <!-- SSL Checker -->
+        <div class="card" style="border-left:3px solid #f59e0b;">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">🔒</div>
+          <span class="eyebrow" style="color:#f59e0b;">SSL / TLS</span>
+          <h4>SSL Certificate Checker</h4>
+          <p class="mt-sm">Check your SSL certificate expiry, issuer, and HTTPS headers. Find misconfigurations before browsers flag them.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Certificate expiry date & days left</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ HSTS & security headers</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ HTTP→HTTPS redirect check</li>
+          </ul>
+          <a href="/free-ssl-checker/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;background:#f59e0b;border-color:#f59e0b;">Check SSL →</a>
+        </div>
+
+        <!-- Subdomain Scanner -->
+        <div class="card" style="border-left:3px solid #ff6b7a;">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">🔍</div>
+          <span class="eyebrow" style="color:#ff6b7a;">Recon</span>
+          <h4>Subdomain Scanner</h4>
+          <p class="mt-sm">Discover exposed subdomains attackers can target. Find forgotten staging servers, old apps, and shadow IT.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Common subdomain wordlist</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Live / dead status for each</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ IP resolution per subdomain</li>
+          </ul>
+          <a href="/free-subdomain-scanner/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;background:#ff6b7a;border-color:#ff6b7a;">Scan Subdomains →</a>
+        </div>
+
+        <!-- Blacklist Checker -->
+        <div class="card" style="border-left:3px solid var(--color-accent);">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">🚫</div>
+          <span class="eyebrow" style="color:var(--color-accent);">Deliverability</span>
+          <h4>Email Blacklist Checker</h4>
+          <p class="mt-sm">Check your domain or sending IP against 7 major DNSBLs including Barracuda, SpamCop, SORBS, and more.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ 7 DNSBL lists checked in parallel</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Domain & IP support</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Removal links for each blocklist</li>
+          </ul>
+          <a href="/free-blacklist-checker/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;">Check Blacklists →</a>
+        </div>
+
+        <!-- Repo Security Scanner -->
+        <div class="card" style="border-left:3px solid #6366f1;">
+          <div style="font-size:2rem;margin-bottom:var(--space-sm);">🐙</div>
+          <span class="eyebrow" style="color:#6366f1;">New</span>
+          <h4>Repo Security Scanner</h4>
+          <p class="mt-sm">Scan any public GitHub repo for leaked secrets, committed .env files, gitignore gaps, and missing RLS policies. Instant A–F grade.</p>
+          <ul style="list-style:none;margin-top:var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs);">
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ 8 secret pattern types detected</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ Supabase RLS policy verification</li>
+            <li style="font-size:var(--text-sm);color:var(--color-text-secondary);">✓ CI/CD supply chain risk checks</li>
+          </ul>
+          <a href="/free-repo-scanner/" class="btn btn--primary mt-md" style="width:100%;justify-content:center;background:#6366f1;border-color:#6366f1;">Scan Repo →</a>
+        </div>
+
       </div>
-      <p>Verify your DMARC record, policy strength, and alignment. Find out if spoofed emails can reach your customers.</p>
-      <div class="tool-checks">
-        <div class="tool-check">Policy (none / quarantine / reject)</div>
-        <div class="tool-check">SPF & DKIM alignment check</div>
-        <div class="tool-check">RUA / RUF report addresses</div>
-      </div>
-      <a class="tool-link" href="/free-dmarc-checker/" style="background:#3de19e;">Check DMARC →</a>
     </div>
+  </section>
 
-    <!-- SPF Checker -->
-    <div class="tool-card" style="--card-accent:#b47aff;">
-      <div class="tool-icon">📋</div>
-      <div>
-        <div class="tool-badge" style="background:rgba(180,122,255,0.1);border-color:rgba(180,122,255,0.2);color:#b47aff;">SPF</div>
-        <h2>SPF Record Analyzer</h2>
+  <!-- TRIAGE STRIP -->
+  <section class="section section--light">
+    <div class="container">
+      <span class="eyebrow" style="color:#0891B2;">Start with the issue you can describe.</span>
+      <div class="grid grid--3" style="margin-top:var(--space-lg);">
+        <div style="padding:var(--space-lg);border-left:2px solid var(--color-accent);">
+          <h5 style="color:var(--color-text-on-light);">✉️ Email authentication question?</h5>
+          <p style="color:var(--color-text-muted);margin-top:var(--space-xs);">Begin with DMARC or SPF checker.</p>
+        </div>
+        <div style="padding:var(--space-lg);border-left:2px solid var(--color-accent);">
+          <h5 style="color:var(--color-text-on-light);">🔒 Certificate or HTTPS question?</h5>
+          <p style="color:var(--color-text-muted);margin-top:var(--space-xs);">Open the SSL certificate checker.</p>
+        </div>
+        <div style="padding:var(--space-lg);border-left:2px solid var(--color-accent);">
+          <h5 style="color:var(--color-text-on-light);">🔍 Need a broader first look?</h5>
+          <p style="color:var(--color-text-muted);margin-top:var(--space-xs);">Use the Domain Security Score.</p>
+        </div>
       </div>
-      <p>Deep-dive your SPF record. See every mechanism, DNS lookup count, and whether you're at risk of breaking the 10-lookup limit.</p>
-      <div class="tool-checks">
-        <div class="tool-check">DNS lookup budget (10 max per RFC)</div>
-        <div class="tool-check">All mechanism breakdown</div>
-        <div class="tool-check">+all / ~all / -all warnings</div>
-      </div>
-      <a class="tool-link" href="/free-spf-checker/" style="background:#b47aff;">Analyze SPF →</a>
     </div>
+  </section>
 
-    <!-- SSL Checker -->
-    <div class="tool-card" style="--card-accent:#f59e0b;">
-      <div class="tool-icon">🔒</div>
-      <div>
-        <div class="tool-badge" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.2);color:#f59e0b;">SSL / TLS</div>
-        <h2>SSL Certificate Checker</h2>
+  <!-- CTA BAND -->
+  <section class="section section--dark" style="text-align:center;">
+    <div class="container">
+      <h2>Move from a check to ongoing visibility.</h2>
+      <p class="mt-md" style="max-width:600px;margin-inline:auto;">One-off checks find today's problems. Managed monitoring catches tomorrow's.</p>
+      <div class="mt-lg" style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
+        <a href="/services.html" class="btn btn--primary">Explore SMB monitoring →</a>
+        <a href="/msp/" class="btn btn--outline">For MSPs →</a>
       </div>
-      <p>Check your SSL certificate expiry, issuer, and HTTPS headers. Find misconfigurations before browsers flag them.</p>
-      <div class="tool-checks">
-        <div class="tool-check">Certificate expiry date & days left</div>
-        <div class="tool-check">HSTS & security headers</div>
-        <div class="tool-check">HTTP→HTTPS redirect check</div>
-      </div>
-      <a class="tool-link" href="/free-ssl-checker/" style="background:#f59e0b;">Check SSL →</a>
     </div>
+  </section>
 
-    <!-- Subdomain Scanner -->
-    <div class="tool-card" style="--card-accent:#ff6b7a;">
-      <div class="tool-icon">🔍</div>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
       <div>
-        <div class="tool-badge" style="background:rgba(255,107,122,0.1);border-color:rgba(255,107,122,0.2);color:#ff6b7a;">Recon</div>
-        <h2>Subdomain Scanner</h2>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm);">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px;" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
       </div>
-      <p>Discover exposed subdomains attackers can target. Find forgotten staging servers, old apps, and shadow IT.</p>
-      <div class="tool-checks">
-        <div class="tool-check">Common subdomain wordlist</div>
-        <div class="tool-check">Live / dead status for each</div>
-        <div class="tool-check">IP resolution per subdomain</div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap;">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
       </div>
-      <a class="tool-link" href="/free-subdomain-scanner/" style="background:#ff6b7a;">Scan Subdomains →</a>
+      <div style="text-align:right;">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md);">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
     </div>
-
-    <!-- Blacklist Checker -->
-    <div class="tool-card" style="--card-accent:#3dd9ff;">
-      <div class="tool-icon">🚫</div>
-      <div>
-        <div class="tool-badge">Deliverability</div>
-        <h2>Email Blacklist Checker</h2>
-      </div>
-      <p>Check your domain or sending IP against 7 major DNSBLs including Barracuda, SpamCop, SORBS, and more.</p>
-      <div class="tool-checks">
-        <div class="tool-check">7 DNSBL lists checked in parallel</div>
-        <div class="tool-check">Domain & IP support</div>
-        <div class="tool-check">Removal links for each blocklist</div>
-      </div>
-      <a class="tool-link" href="/free-blacklist-checker/">Check Blacklists →</a>
+    <div class="container text-center mt-lg" style="opacity:0.6;">
+      © 2026 EdgeIQ Labs.
     </div>
-
-    <!-- Repo Security Scanner -->
-    <div class="tool-card" style="--card-accent:#6366f1;">
-      <div class="tool-icon">🐙</div>
-      <div>
-        <div class="tool-badge" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);color:#6366f1;">New</div>
-        <h2>Repo Security Scanner</h2>
-      </div>
-      <p>Scan any public GitHub repo for leaked secrets, committed .env files, gitignore gaps, and missing RLS policies. Instant A–F grade.</p>
-      <div class="tool-checks">
-        <div class="tool-check">8 secret pattern types detected</div>
-        <div class="tool-check">Supabase RLS policy verification</div>
-        <div class="tool-check">CI/CD supply chain risk checks</div>
-      </div>
-      <a class="tool-link" href="/free-repo-scanner/" style="background:#6366f1;">Scan Repo →</a>
-    </div>
-
-  </div>
-</div>
-
-<footer>
-  <div class="container">
-    <p style="margin-bottom:12px;">
-      <a href="/">Home</a>
-      <a href="/products/">Products</a>
-      <a href="/blog/">Blog</a>
-      <a href="/compare/">Compare</a>
-      <a href="/docs/">Docs</a>
-      <a href="/account/">My Account</a>
-    </p>
-    <p>© 2026 EdgeIQ Labs. All rights reserved.</p>
-  </div>
-</footer>
+  </footer>
 
 </body>
 </html>
