@@ -26,7 +26,7 @@ export async function onRequestPost({ request, env }) {
   const webhooks = Array.isArray(body.webhooks) ? body.webhooks : [];
 
   if (plan === 'free' && webhooks.length > 0) {
-    return json({ error: 'Webhook integrations require Integrations Pro. Upgrade at https://buy.stripe.com/28E8wR3XJ6d71bK3gk7wA3t' }, 403);
+    return json({ error: 'Webhook integrations require Integrations Pro. Upgrade at https://buy.stripe.com/eVq4gBfGr0SNdYwaIM7wB1n' }, 403);
   }
 
   const MAX_WEBHOOKS = 3;

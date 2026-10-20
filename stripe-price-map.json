@@ -138,7 +138,7 @@
     "amount": 900,
     "name": "Vendor Watch Pro",
     "billing": "monthly",
-    "checkout_url": "https://buy.stripe.com/3cIbJ3dyjgRL3jS3gk7wA3r"
+    "checkout_url": "https://buy.stripe.com/eVqeVfgKv30VcUsdUY7wB2p"
   },
   "integrations": {
     "product_id": "prod_UVg1VEFIpmqmqk",
@@ -146,7 +146,7 @@
     "amount": 700,
     "name": "EdgeIQ Integrations Pro",
     "billing": "monthly",
-    "checkout_url": "https://buy.stripe.com/28E8wR3XJ6d71bK3gk7wA3t"
+    "checkout_url": "https://buy.stripe.com/eVq4gBfGr0SNdYwaIM7wB1n"
   },
   "compliance": {
     "essential": {
@@ -155,7 +155,7 @@
       "amount": 4900,
       "name": "Compliance Essential",
       "billing": "monthly",
-      "checkout_url": "https://buy.stripe.com/eVq3cxam730V9Ig5os7wA2N"
+      "checkout_url": "https://buy.stripe.com/00w4gB8dZfNHcUs18c7wB1R"
     },
     "business": {
       "product_id": "prod_URvf2n2TEJNNy4",
@@ -163,7 +163,7 @@
       "amount": 9900,
       "name": "Compliance Business",
       "billing": "monthly",
-      "checkout_url": "https://buy.stripe.com/3cI28tcuf6d76w42cg7wA2O"
+      "checkout_url": "https://buy.stripe.com/dRmbJ379VeJD07GbMQ7wB1Q"
     },
     "bundle": {
       "product_id": "prod_URvfgWsKCFaCW4",
@@ -171,7 +171,7 @@
       "amount": 11900,
       "name": "Score Engine + Compliance Bundle",
       "billing": "monthly",
-      "checkout_url": "https://buy.stripe.com/9B66oJ8dZcBv9Igg367wA2P"
+      "checkout_url": "https://buy.stripe.com/8x214pgKv30V7A818c7wB1P"
     }
   }
 }

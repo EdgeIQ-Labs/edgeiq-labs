@@ -102,7 +102,7 @@ async function handleRequest(request) {
     return new Response(JSON.stringify({
       error: 'Valid license key required',
       message: 'Cache Warmer Pro requires an active subscription.',
-      upgradeUrl: 'https://buy.stripe.com/5kQ9AV2TF0SN8Ec7wA7wA47'
+      upgradeUrl: 'https://buy.stripe.com/3cI9AVbqbeJD7A8eZ27wB0M'
     }), {
       status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
     });
