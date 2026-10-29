@@ -81,6 +81,7 @@
     footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
 <nav>
@@ -274,6 +275,8 @@ You can view this document at: https://docs.google.com/document/d/1BxYzABC...</d
     <h2>The New Red Flags to Train Your Team On</h2>
 
     <p>Classic red flags (typos, generic greetings, mismatched logos) are largely obsolete. Here's what to watch for now:</p>
+<div class="eq-cta-mid" style="background:linear-gradient(135deg,#0d1a26,#0b1520);border:1px solid rgba(61,217,255,0.25);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">🎯 Train Your Team Against Phishing</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">PhishSim runs unlimited phishing simulations and auto-assigns training to employees who click.</p><a href="/phishsim/" class="btn btn-primary">Open PhishSim Dashboard →</a></div>
+
 
     <table>
       <thead><tr><th>Signal</th><th>What it means</th><th>What to do</th></tr></thead>
@@ -369,7 +372,8 @@ You can view this document at: https://docs.google.com/document/d/1BxYzABC...</d
   ]}
   </script>
 
-  <footer>
+  <div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Stop Phishing Before It Stops You</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">PhishSim: unlimited campaigns, click tracking, automated training. $49/mo.</p><a href="/phishsim/" class="btn btn-primary">Get Started with PhishSim →</a></div>
+<footer>
     <div>© 2026 EdgeIQ Labs · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/blog/">Blog</a> · <a href="/pricing/">Pricing</a></div>
   </footer>
 </div>
@@ -392,5 +396,7 @@ document.getElementById('captureEmail').addEventListener('keydown', function(e) 
   if (e.key === 'Enter') submitCapture();
 });
 </script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
 </body>
 </html>

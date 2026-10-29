@@ -66,6 +66,7 @@
     footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
 <nav><div class="nav-inner">
@@ -114,6 +115,8 @@
     <li><strong>Postmark:</strong> <code>20230601._domainkey.yourdomain.com</code> (date-based)</li>
   </ul>
   <p>You can verify by running: <code>nslookup -type=TXT google._domainkey.yourdomain.com</code> or using our <a href="/free-dmarc-checker/" style="color:var(--accent);">free DMARC checker</a>, which checks for DKIM alongside DMARC and SPF.</p>
+<div class="eq-cta-mid" style="background:linear-gradient(135deg,#0d1a26,#0b1520);border:1px solid rgba(61,217,255,0.25);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">📧 Analyze Email Headers for Free</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">Paste any email header — we'll show you if it's spoofed, phished, or legitimate.</p><a href="/free-email-header-analyzer/" class="btn btn-primary">Run Free Header Analysis →</a></div>
+
   <p>A valid DKIM record will look like: <code>v=DKIM1; k=rsa; p=MIGfMA0G...</code></p>
 
   <h2>What happens if DKIM is missing or broken?</h2>
@@ -149,8 +152,11 @@
     <div class="sub-ok" id="ok">✅ Subscribed — check your inbox.</div>
   </div>
 </article></div>
+<div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Continuous Email Security Monitoring</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">SMB Essentials includes email header phishing analysis + monthly security reports. 14-day free trial.</p><a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener" class="btn btn-primary">Start Free Trial →</a></div>
 <footer><div class="container"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/inbox-shield/">Inbox Shield</a><a href="/free-dmarc-checker/">DMARC Checker</a><a href="/privacy/">Privacy</a><p style="margin-top:12px;">© 2026 EdgeIQ Labs</p></div></footer>
 <script>
 function sub(){var e=(document.getElementById('e').value||'').trim();if(!e||e.indexOf('@')<0)return;document.getElementById('ok').style.display='block';document.getElementById('e').disabled=true;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:location.href})}).catch(function(){});}
 </script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
 </body></html>

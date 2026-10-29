@@ -72,6 +72,7 @@
     .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
 <nav>
@@ -150,6 +151,8 @@
 
     <h3>Enable number matching in Google Workspace</h3>
     <p>Google Workspace doesn't use push-based MFA in the same way — Google Prompt requires user interaction that already includes contextual information. However, upgrading to <strong>Security Keys (FIDO2)</strong> or <strong>Google Passkeys</strong> is the phishing-resistant step up:</p>
+<div class="eq-cta-mid" style="background:linear-gradient(135deg,#0d1a26,#0b1520);border:1px solid rgba(61,217,255,0.25);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">🔍 Run a Free Security Scan</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">12 free security tools — no signup, no credit card, no strings.</p><a href="/free-tools/" class="btn btn-primary">Browse Free Tools →</a></div>
+
     <ol>
       <li>Admin console → <strong>Security → Authentication → 2-Step Verification</strong></li>
       <li>Under "Allowed second factors", enable <strong>Security Key</strong></li>
@@ -198,6 +201,7 @@
   </article>
 </div>
 
+<div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Protect Your Business for $29/mo</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">SSL monitoring, uptime checks, email security, and monthly reports. 14-day free trial.</p><a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener" class="btn btn-primary">Start Free Trial →</a> <a href="/pricing/" class="btn btn-secondary">See All Plans →</a></div>
 <footer>
   <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/workspace-posture/">Workspace Posture</a> · <a href="/products/">All Products</a></p>
   <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
@@ -206,5 +210,7 @@
 function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
 function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:location.href})}).catch(function(){});}
 </script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
 </body>
 </html>
