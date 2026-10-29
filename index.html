@@ -30,9 +30,6 @@
   <!-- Theme color for mobile browsers -->
   <meta name="theme-color" content="#0b0f14" />
 
-  <!-- Theme toggle (early load to prevent FOUC) -->
-  <script src="/js/theme.js"></script>
-
   <!-- Structured data: Organization -->
   <script type="application/ld+json">
   {
@@ -152,21 +149,6 @@
       --border: #233142;
       --ok: #70f0a8;
     }
-    [data-theme="light"] {
-      --bg: #f5f7fa;
-      --card: #ffffff;
-      --text: #1a2332;
-      --muted: #5a6b80;
-      --accent: #0077cc;
-      --border: #d8dee6;
-      --ok: #0a8754;
-    }
-    [data-theme="light"] nav { background: rgba(245,247,250,0.92); }
-    [data-theme="light"] .nav-cta { color: #ffffff !important; }
-    [data-theme="light"] .product-strip { background: #f0f2f5; }
-    [data-theme="light"] .hero-terminal { background: #f8f9fb; border-color: #d8dee6; }
-    [data-theme="light"] .scan-panel { background: #ffffff; border-color: #d8dee6; }
-    [data-theme="light"] .card { background: #ffffff; border-color: #d8dee6; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -883,9 +865,6 @@
           <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
         <a href="/affiliate/" style="color:#00ff66;font-weight:600;">🤝 Affiliates</a>
-        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Switch to light mode" title="Toggle light/dark mode">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
         <a class="nav-cta" href="#smb-essentials">Get Started</a>
       </div>
       <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
