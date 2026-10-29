@@ -182,6 +182,13 @@
       <h1>Why Subdomain Takeovers Are the Forgotten Attack Vector (And How to Check for Them)</h1>
       <p class="lead">Your DNS has gaps. Not configuration errors you can spot from a dashboard — actual ownership gaps that let anyone claim a subdomain your users trust. Here's how the attack works, why it keeps succeeding, and how to find your exposure before an attacker does.</p>
     </div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;max-width:700px;margin:0 auto 32px;padding:10px 14px;background:rgba(18,25,35,0.55);border:1px solid var(--border);border-radius:10px;font-size:0.78rem;color:var(--muted);">
+  <span>🔒 <strong style="color:var(--text);">Privacy-first</strong> · scans never stored</span>
+  <span>⚡ Powered by <strong style="color:var(--text);">Cloudflare</strong></span>
+  <span>💳 <strong style="color:var(--text);">Stripe-secured</strong> payments</span>
+  <span>🆓 No credit card for free tools</span>
+</div>
+
 
     <h2>What a subdomain takeover actually is</h2>
     <p>When you create a CNAME record pointing to a third-party service — say, <code>docs.yourcompany.com → ghithub.io</code> — you are delegating control of that subdomain to that service. If you later stop using the service but forget to remove the CNAME record, the domain record still points to an address you no longer own or control.</p>
