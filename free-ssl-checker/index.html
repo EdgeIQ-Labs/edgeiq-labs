@@ -160,6 +160,8 @@
     <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How often should I check my SSL configuration?</div><div class="faq-a">At minimum after any infrastructure change, and monthly as a routine check. SSL certificates expire (Let's Encrypt certs are 90 days, paid certs typically 1 year). A missed expiry shows a security warning to every visitor. Pulse Pro monitors SSL weekly and alerts you 30 days before expiry.</div></div>
   </div>
 
+  <div id="upsell-banner" style="display:none;"></div>
+
   <div class="cta-box">
     <h3>Get weekly SSL monitoring + certificate expiry alerts</h3>
     <p>Pulse Pro checks your SSL certificate, HTTP headers, DNS health, and subdomain exposure every Monday — and emails you when anything changes or is about to expire.</p>
@@ -239,6 +241,22 @@ function renderResults(d){
     var leakItems=Object.entries(d.leaks).map(function(kv){return'<li class="check-row"><div class="check-icon">⚠️</div><div class="check-body"><div class="check-name">'+esc(kv[0])+' header exposed</div><div class="check-detail">Exposes version info to attackers. Remove or sanitize this header.</div><div class="check-value">'+esc(kv[1])+'</div></div></li>';}).join('');
     document.getElementById('leaks-section').innerHTML='<ul class="checks-list" style="margin-top:8px;">'+leakItems+'</ul>';
   }
+  // Dynamic upsell: show contextual Pro pitch only when grade is C or worse
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    if(grade==='C'||grade==='D'||grade==='F'){
+      var issueCount=checks.filter(function(c){return !c.ok&&!c.warn;}).length;
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin-top:20px;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">⚠️ '+issueCount+' critical issue'+(issueCount!==1?'s':'')+' detected</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Pulse Pro auto-fixes SSL, header, and DNS issues — and monitors weekly so you catch problems before attackers do.</p>'+
+        '<a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Fix This Automatically → $19/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
+  }
+
   document.getElementById('pulse-note').style.display='block';
   document.getElementById('results').style.display='block';
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});

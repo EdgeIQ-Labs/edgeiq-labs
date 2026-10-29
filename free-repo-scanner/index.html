@@ -142,6 +142,7 @@
     <div class="results-summary" id="summary"></div>
     <div class="findings-list" id="findings-list"></div>
     <div id="gate-section"></div>
+    <div id="upsell-banner" style="display:none;"></div>
   </div>
 </div>
 
@@ -301,6 +302,23 @@ function renderResults(d){
       '</div>';
   } else {
     document.getElementById('gate-section').innerHTML = '';
+  }
+
+  // Dynamic upsell: show when grade is C or worse (in addition to gate-box for locked findings)
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    var g=d.grade||'F';
+    if(g==='C'||g==='D'||g==='F'){
+      var critCount=findings.filter(function(f){return f.severity==='critical'||f.severity==='high';}).length;
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin-top:20px;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">⚠️ '+critCount+' critical repo security issue'+(critCount!==1?'s':'')+'</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Repo Scanner Pro unlocks private repo scanning, deep secret detection, CI pipeline hardening, and full dependency audits.</p>'+
+        '<a href="'+STRIPE_REPO_SCANNER+'" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Unlock Pro Checks → $9/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
   }
 
   document.getElementById('results').style.display = 'block';

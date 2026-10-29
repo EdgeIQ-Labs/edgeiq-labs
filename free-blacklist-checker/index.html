@@ -338,6 +338,16 @@ function renderResults(data) {
     html += '</div>';
   }
 
+  // Dynamic upsell: show when listed on any blacklist
+  if (data.listedCount > 0) {
+    html += `
+      <div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin:20px 0;text-align:center;">
+        <h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">🚨 Listed on ${data.listedCount} blacklist${data.listedCount > 1 ? 's' : ''}</h3>
+        <p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Pulse Pro monitors your domain and IP against 15+ blacklists weekly — and alerts you the moment you get listed so you can fix it before customers notice.</p>
+        <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Get Blacklist Monitoring → $19/mo</a>
+      </div>`;
+  }
+
   // CTA
   html += `
     <div class="cta-block">

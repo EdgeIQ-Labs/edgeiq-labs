@@ -241,6 +241,8 @@
   </div>
 </div>
 
+  <div id="upsell-banner" style="display:none;"></div>
+
   <div class="cta-box">
     <h3>Stop checking SPF manually. Let Compliance Pro watch it for you.</h3>
     <p>Compliance Pro runs automated weekly SPF, DKIM, DMARC, and security posture scans — and emails you the moment something degrades or breaks. One domain, $9/mo, cancel anytime.</p>
@@ -327,6 +329,21 @@ function renderResults(data, domain) {
     bannerClass = 'pass'; bannerIcon = '✓';
     bannerTitle = 'SPF record looks good';
     bannerSub = data.summary || 'Your SPF record is well-configured.';
+  }
+
+  // Dynamic upsell: show when SPF has fail-level issues or no record
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    if(bannerClass==='fail'){
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin:20px auto;max-width:600px;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">⚠️ SPF misconfiguration detected</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Compliance Pro monitors your SPF, DMARC, and DKIM records daily — and alerts you before misconfigurations cause email delivery failures.</p>'+
+        '<a href="https://buy.stripe.com/3cI9AV3XJ0SN4nWaIM7wB1j" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Fix Email Auth → $9/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
   }
 
   document.getElementById('statusBanner').innerHTML = `

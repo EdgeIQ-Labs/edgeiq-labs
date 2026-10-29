@@ -207,6 +207,8 @@
     <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">My domain has no DMARC record — how urgent is this?</div><div class="faq-a">Very. Without a DMARC record, anyone can send email appearing to come from your CEO, your support team, or any address at your domain — with no technical barrier. This enables CEO fraud, supplier invoice fraud, and phishing attacks against your customers. Adding even a p=none record with rua reporting is a better starting point than nothing.</div></div>
   </div>
 
+  <div id="upsell-banner" style="display:none;"></div>
+
   <div class="cta-box">
     <h3>Monitor your DMARC record automatically</h3>
     <p>Inbox Shield checks your DMARC, SPF, and DKIM records weekly and alerts you the moment anything changes, degrades, or breaks — before attackers can exploit it.</p>
@@ -316,6 +318,21 @@ function renderResults(d){
     tagsHtml+='</div>';
   }
   document.getElementById('tags-section').innerHTML=tagsHtml?'<div class="results-grid">'+tagsHtml+'</div>':'';
+
+  // Dynamic upsell: show when risk is critical or high
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    if(rLevel==='critical'||rLevel==='high'){
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin-top:20px;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">🚨 Your domain can be spoofed right now</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Inbox Shield Pro monitors DMARC, SPF, and DKIM daily — and alerts you the moment your email authentication breaks.</p>'+
+        '<a href="https://buy.stripe.com/00wbJ33XJatn07G0487wB2q" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Protect Your Domain → $9/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
+  }
 
   // Next steps
   var steps=[];

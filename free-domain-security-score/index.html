@@ -267,6 +267,8 @@
       <div class="category-grid" id="categoryGrid"></div>
 
       <!-- Email gate -->
+      <div id="upsell-banner" style="display:none;"></div>
+
       <div class="gate-section" id="gateSection">
         <div class="gate-icon">🔒</div>
         <h3>Unlock your full security report</h3>
@@ -484,6 +486,23 @@ function renderResults(data) {
     show('issuesSection');
     document.getElementById('issuesList').innerHTML = '<div style="color:var(--grade-a);font-size:0.95rem;padding:16px;background:rgba(34,197,94,.08);border-radius:10px;border:1px solid rgba(34,197,94,.2);">✓ No critical issues found. Keep monitoring to stay this way.</div>';
     show('issuesSection');
+  }
+
+  // Dynamic upsell: show when grade is C or worse
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    var g=data.grade||'F';
+    if(g==='C'||g==='D'||g==='F'){
+      var issueCount=(data.issues||[]).length;
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin:20px auto;max-width:600px;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">⚠️ '+issueCount+' security issue'+(issueCount!==1?'s':'')+' need attention</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Pulse Pro runs this full scan weekly and emails you when anything drops below an A — so you catch problems before attackers do.</p>'+
+        '<a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Automate Weekly Scans → $19/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
   }
 
   // Recs (shown immediately — no gate needed)
