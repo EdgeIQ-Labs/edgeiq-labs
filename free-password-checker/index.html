@@ -140,14 +140,7 @@
 <script>
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-async function sha1(message){
-  const encoder=new TextEncoder();
-  const data=encoder.encode(message);
-  const hash=await crypto.subtle.digest('SHA-1',data);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-}
-
-async function runCheck(){
+function runCheck(){
   var input=document.getElementById('password-input');
   var password=input.value;
   if(!password){input.style.borderColor='#ff6b6b';return;}
@@ -156,43 +149,17 @@ async function runCheck(){
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Checking…';
   document.getElementById('results').style.display='none';
 
-  // Hash locally and send only prefix (k-anonymity)
-  var hash=await sha1(password);
-  var prefix=hash.substring(0,5);
-  var suffix=hash.substring(5);
-
-  try{
-    var res=await fetch('https://api.pwnedpasswords.com/range/'+prefix,{headers:{'User-Agent':'EdgeIQ-BreachChecker/1.0'}});
-    var text=await res.text();
-    var lines=text.trim().split('\n');
-    var count=0;
-    var found=false;
-    for(var i=0;i<lines.length;i++){
-      var parts=lines[i].split(':');
-      if(parts[0]===suffix){count=parseInt(parts[1],10);found=true;break;}
-    }
-
-    // Strength assessment
-    var len=password.length;
-    var hasUpper=/[A-Z]/.test(password);
-    var hasLower=/[a-z]/.test(password);
-    var hasDigit=/\d/.test(password);
-    var hasSpecial=/[^A-Za-z0-9]/.test(password);
-    var charTypes=[hasUpper,hasLower,hasDigit,hasSpecial].filter(Boolean).length;
-
-    var strength='weak',strengthScore=0;
-    if(len>=16&&charTypes>=3){strength='strong';strengthScore=90;}
-    else if(len>=12&&charTypes>=3){strength='good';strengthScore=75;}
-    else if(len>=10&&charTypes>=2){strength='fair';strengthScore=55;}
-    else if(len>=8){strength='weak';strengthScore=30;}
-    else{strength='very_weak';strengthScore=10;}
-    if(found)strengthScore=Math.max(0,strengthScore-40);
-
-    renderResults({breached:found,breachCount:count,strength:strength,strengthScore:strengthScore,details:{length:len,characterTypes:charTypes,hasUppercase:hasUpper,hasLowercase:hasLower,hasDigits:hasDigit,hasSpecialChars:hasSpecial}});
-  }catch(e){
-    alert('Check failed — please try again.');
-  }
-  btn.disabled=false;btn.textContent='Check Password →';
+  // Route through our Worker backend — password hashed server-side via k-anonymity
+  fetch('/api/breach-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:password})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){renderResults({breached:false,breachCount:0,strength:'weak',strengthScore:0,details:{length:password.length,characterTypes:0,hasUppercase:false,hasLowercase:false,hasDigits:false,hasSpecialChars:false},errorMessage:d.error});}
+      else{renderResults(d);}
+    })
+    .catch(function(){
+      btn.disabled=false;btn.textContent='Check Password →';
+      alert('Check failed — please try again.');
+    });
 }
 
 function renderResults(d){

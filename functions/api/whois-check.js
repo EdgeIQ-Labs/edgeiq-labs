@@ -8,8 +8,8 @@
 
 // Bootstrap RDAP servers by TLD
 const RDAP_SERVERS = {
-  com: 'https://rdap.verisign.com/com/v1/',
-  net: 'https://rdap.verisign.com/net/v1/',
+  com: 'https://rdap.verisign.com/com/v1/domain/',
+  net: 'https://rdap.verisign.com/net/v1/domain/',
   org: 'https://rdap.org/domain/',
   io: 'https://rdap.nic.io/domain/',
   co: 'https://rdap.nic.co/domain/',
