@@ -260,6 +260,55 @@ ul, ol { list-style: none; }
 .mb-lg { margin-bottom: var(--space-lg); }
 .hidden { display: none !important; }
 
+/* Light Theme */
+[data-theme="light"] {
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --card2: #f0f2f5;
+  --text: #1a2332;
+  --muted: #5a6b80;
+  --accent: #0077cc;
+  --border: #d8dee6;
+  --green: #0a8754;
+  --ok: #0a8754;
+  --red: #d32f2f;
+  --yellow: #e67e22;
+  --orange: #d35400;
+  --purple: #7c3aed;
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 32px rgba(0,119,204,0.06);
+}
+[data-theme="light"] .nav-bar,
+[data-theme="light"] nav {
+  background: rgba(245,247,250,0.92);
+}
+[data-theme="light"] .nav-cta {
+  color: #ffffff !important;
+}
+[data-theme="light"] .btn-primary {
+  color: #ffffff;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   .nav-links { display: none; }
