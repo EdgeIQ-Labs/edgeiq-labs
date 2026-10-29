@@ -69,7 +69,9 @@ export async function onRequest(context) {
   if (!rdapBase) {
     // Fallback: try IANA bootstrap
     try {
-      const bootstrapRes = await fetch(`https://data.iana.org/rdap/dns.json`, { cf: { timeout: 5000 } });
+      const bootstrapRes = await fetch(`https://data.iana.org/rdap/dns.json`, {
+        headers: { 'User-Agent': 'EdgeIQ-WHOIS/1.0' },
+      });
       if (bootstrapRes.ok) {
         const bootstrap = await bootstrapRes.json();
         // services is array of [tlds[], urls[]]
@@ -102,8 +104,10 @@ async function queryRdap(baseUrl, domain, tld) {
   try {
     const rdapUrl = `${baseUrl}${encodeURIComponent(domain)}`;
     const res = await fetch(rdapUrl, {
-      headers: { 'Accept': 'application/rdap+json' },
-      cf: { timeout: 8000 },
+      headers: {
+        'Accept': 'application/rdap+json, application/json',
+        'User-Agent': 'EdgeIQ-WHOIS/1.0',
+      },
     });
 
     if (!res.ok) {
@@ -117,7 +121,8 @@ async function queryRdap(baseUrl, domain, tld) {
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
         });
       }
-      throw new Error(`RDAP returned ${res.status}`);
+      const errText = await res.text().catch(() => '');
+      throw new Error(`RDAP returned ${res.status}: ${errText.substring(0, 200)}`);
     }
 
     const data = await res.json();
