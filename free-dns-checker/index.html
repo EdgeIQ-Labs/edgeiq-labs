@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free DNS Record Checker — A, AAAA, MX, TXT, CNAME, NS, SOA Lookup | EdgeIQ Labs</title>
+  <meta name="description" content="Look up all DNS records for any domain — A, AAAA, CNAME, MX, TXT, NS, SOA, CAA. Free, instant, no sign-up. See TTLs, priorities, and full record data."/>
+  <meta property="og:title" content="Free DNS Record Checker — Full DNS Lookup"/>
+  <meta property="og:description" content="Check A, AAAA, MX, TXT, CNAME, NS, SOA, and CAA records for any domain — free and instant."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-dns-checker/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-dns-checker/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free DNS Record Checker","url":"https://edgeiqlabs.com/free-dns-checker/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What is a DNS A record?","acceptedAnswer":{"@type":"Answer","text":"An A record maps a domain name to an IPv4 address. When you visit example.com, your browser queries DNS for the A record to find which server IP to connect to."}},
+      {"@type":"Question","name":"What is the difference between A and AAAA records?","acceptedAnswer":{"@type":"Answer","text":"A records map to IPv4 addresses (e.g., 93.184.216.34), while AAAA records map to IPv6 addresses (e.g., 2606:2800:220:1:248:1893:25c8:1946). Most domains have both for dual-stack support."}},
+      {"@type":"Question","name":"What does a CNAME record do?","acceptedAnswer":{"@type":"Answer","text":"A CNAME (Canonical Name) record creates an alias from one domain to another. For example, www.example.com might CNAME to example.com, meaning both resolve to the same IP address."}},
+      {"@type":"Question","name":"Why check DNS records?","acceptedAnswer":{"@type":"Answer","text":"DNS misconfigurations cause email delivery failures (missing MX/SPF), website outages (wrong A records), security issues (missing CAA allowing unauthorized certificate issuance), and subdomain takeovers (dangling CNAMEs). Regular DNS audits prevent these problems."}}
+    ]}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#70f0a8;--red:#ff6b6b;--yellow:#ffb347;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .container{max-width:900px;margin:0 auto;padding:40px 24px;}
+    h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;}
+    .hero-sub{color:var(--muted);font-size:1rem;margin-bottom:32px;}
+    .input-row{display:flex;gap:10px;margin-bottom:32px;}
+    .input-row input{flex:1;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;outline:none;font-family:inherit;}
+    .input-row input:focus{border-color:var(--accent);}
+    .input-row button{padding:14px 28px;background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-family:inherit;white-space:nowrap;}
+    .input-row button:hover{opacity:0.9;}
+    .input-row button:disabled{opacity:0.5;cursor:not-allowed;}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(7,16,24,0.3);border-top-color:#071018;border-radius:50%;animation:spin 0.6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #results{display:none;}
+    .summary-bar{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+    .summary-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;flex:1;min-width:120px;text-align:center;}
+    .summary-num{font-size:1.6rem;font-weight:800;color:var(--accent);}
+    .summary-label{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+    .record-section{margin-bottom:24px;}
+    .record-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .record-type{font-weight:800;font-size:0.95rem;color:var(--accent);background:rgba(61,217,255,0.1);padding:3px 10px;border-radius:6px;}
+    .record-count{font-size:0.8rem;color:var(--muted);}
+    .record-table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+    .record-table th{text-align:left;padding:8px 12px;color:var(--muted);font-weight:600;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+    .record-table td{padding:8px 12px;border-bottom:1px solid rgba(35,49,66,0.5);word-break:break-all;}
+    .record-table tr:last-child td{border-bottom:none;}
+    .record-table code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:0.82rem;}
+    .empty-record{color:var(--muted);font-style:italic;padding:12px;font-size:0.88rem;}
+    .faq{margin-top:48px;}
+    .faq h2{font-size:1.2rem;font-weight:700;margin-bottom:16px;}
+    .faq-item{border-bottom:1px solid var(--border);}
+    .faq-q{padding:14px 0;cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+    .faq-q::after{content:'+';font-size:1.2rem;color:var(--muted);}
+    .faq-q.open::after{content:'−';}
+    .faq-a{display:none;padding:0 0 14px;color:var(--muted);font-size:0.92rem;line-height:1.7;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#071018;font-weight:700;border-radius:10px;text-decoration:none;font-size:1rem;}
+    footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    footer a:hover{color:var(--accent);}
+    @media(max-width:600px){
+      .input-row{flex-direction:column;}
+      .summary-bar{flex-direction:column;}
+      h1{font-size:1.4rem;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <a href="/free-tools/" style="color:var(--muted);text-decoration:none;font-size:0.88rem;">← All Free Tools</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>DNS Record Checker</h1>
+  <p class="hero-sub">Look up all DNS records for any domain — A, AAAA, CNAME, MX, TXT, NS, SOA, and CAA. Instant results, no sign-up.</p>
+
+  <div class="input-row">
+    <input type="text" id="domain-input" placeholder="example.com" autocomplete="off" spellcheck="false"/>
+    <button id="check-btn" onclick="runCheck()">Check DNS →</button>
+  </div>
+
+  <div id="results">
+    <div class="summary-bar" id="summary"></div>
+    <div id="records-output"></div>
+  </div>
+
+  <div id="upsell-banner" style="display:none;"></div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is a DNS A record?</div><div class="faq-a">An A record maps a domain name to an IPv4 address. When you visit example.com, your browser queries DNS for the A record to find which server IP to connect to. Multiple A records enable round-robin load balancing.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the difference between A and AAAA records?</div><div class="faq-a">A records map to IPv4 addresses (e.g., 93.184.216.34), while AAAA records map to IPv6 addresses (e.g., 2606:2800:220:1:248:1893:25c8:1946). Modern domains should have both for dual-stack support. IPv6 adoption is growing but IPv4 is still dominant.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What does a CNAME record do?</div><div class="faq-a">A CNAME (Canonical Name) record creates an alias from one domain to another. For example, www.example.com might CNAME to example.com. Important: CNAMEs cannot coexist with other record types at the same name, and should never be used at the zone apex (bare domain).</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What are MX records?</div><div class="faq-a">MX (Mail Exchange) records specify which mail servers accept email for a domain. Each MX record has a priority number — lower numbers indicate higher priority. Mail is delivered to the lowest-priority server first, with others as fallbacks.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why should I check my DNS records regularly?</div><div class="faq-a">DNS misconfigurations cause email delivery failures (missing MX or SPF records), website outages (wrong A records after migration), security issues (missing CAA records allowing unauthorized certificate issuance), and subdomain takeovers (dangling CNAME records pointing to decommissioned services). Pulse Pro monitors all your DNS records weekly and alerts you when anything changes.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Stop checking DNS manually. Let Pulse Pro watch it for you.</h3>
+    <p>Pulse Pro monitors all your DNS records weekly — A, AAAA, MX, TXT, CNAME, NS — and emails you the moment anything changes, expires, or breaks.</p>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="cta-btn" target="_blank" rel="noopener">Start Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<!-- EdgeIQ email capture -->
+<div style="max-width:480px;margin:40px auto 0;padding:24px;background:#121923;border:1px solid #233142;border-radius:12px;text-align:center;">
+  <h3 style="color:#3dd9ff;font-size:1rem;margin-bottom:8px;">Get weekly security intel</h3>
+  <p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:12px;">Free scans, breach alerts, and SMB tips — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-dns-checker'})}).then(()=>{this.innerHTML='<p style=\'color:#70f0a8\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required style="width:70%;padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:14px;outline:none;">
+    <button type="submit" style="width:25%;padding:10px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Subscribe</button>
+  </form>
+</div>
+
+<footer>
+  <div>
+    <a href="/">Home</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/free-dmarc-checker/">DMARC Checker</a>
+    <a href="/free-spf-checker/">SPF Checker</a>
+    <a href="/free-blacklist-checker/">Blacklist Checker</a>
+    <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+  </div>
+  <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+</footer>
+
+<script>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function runCheck(){
+  var input=document.getElementById('domain-input');
+  var domain=input.value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(!domain||domain.indexOf('.')<0){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Checking…';
+  document.getElementById('results').style.display='none';
+  history.replaceState(null,'','/free-dns-checker/?domain='+encodeURIComponent(domain));
+
+  fetch('/api/dns-check?domain='+encodeURIComponent(domain))
+    .then(function(r){return r.json();})
+    .then(function(d){renderResults(d);})
+    .catch(function(){btn.disabled=false;btn.textContent='Check DNS →';alert('Check failed — please try again.');});
+}
+
+function renderResults(d){
+  var btn=document.getElementById('check-btn');
+  btn.disabled=false;btn.textContent='Check DNS →';
+
+  if(d.error){
+    document.getElementById('summary').innerHTML='<div style="color:var(--red);padding:16px;">'+esc(d.error)+'</div>';
+    document.getElementById('records-output').innerHTML='';
+    document.getElementById('results').style.display='block';
+    return;
+  }
+
+  // Summary
+  var total=d.summary.totalRecords||0;
+  var typesFound=(d.summary.typesFound||[]).length;
+  var typesChecked=(d.summary.typesChecked||[]).length;
+
+  document.getElementById('summary').innerHTML=
+    '<div class="summary-stat"><div class="summary-num">'+total+'</div><div class="summary-label">Total records</div></div>'+
+    '<div class="summary-stat"><div class="summary-num">'+typesFound+'/'+typesChecked+'</div><div class="summary-label">Record types found</div></div>'+
+    '<div class="summary-stat"><div class="summary-num" style="font-size:1rem;color:var(--text);">'+esc(d.domain)+'</div><div class="summary-label">Domain</div></div>';
+
+  // Dynamic upsell: show when critical records missing
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    var missing=[];
+    if(!(d.records.A&&d.records.A.length)) missing.push('A');
+    if(!(d.records.MX&&d.records.MX.length)) missing.push('MX');
+    if(!(d.records.NS&&d.records.NS.length)) missing.push('NS');
+    if(missing.length>=2){
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,179,71,0.3);border-radius:12px;padding:24px;margin:20px 0;text-align:center;">'+
+        '<h3 style="color:#ffb347;font-size:1.05rem;margin-bottom:8px;">⚠️ Missing critical DNS records ('+missing.join(', ')+')</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Missing DNS records cause outages and email failures. Pulse Pro monitors all your DNS records weekly and alerts you when anything changes or disappears.</p>'+
+        '<a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ffb347;color:#071018;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Monitor DNS Changes → $19/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
+  }
+
+  // Records by type
+  var typeOrder=['A','AAAA','CNAME','MX','TXT','NS','SOA','CAA','PTR'];
+  var html='';
+  typeOrder.forEach(function(type){
+    var records=d.records[type]||[];
+    html+='<div class="record-section">';
+    html+='<div class="record-header"><span class="record-type">'+type+'</span><span class="record-count">'+records.length+' record'+(records.length!==1?'s':'')+'</span></div>';
+
+    if(records.length===0){
+      html+='<div class="empty-record">No '+type+' records found</div>';
+    } else {
+      html+='<table class="record-table"><thead><tr><th>Name</th><th>Data</th><th>TTL</th></tr></thead><tbody>';
+      records.forEach(function(r){
+        html+='<tr><td>'+esc(r.name)+'</td><td><code>'+esc(r.data)+'</code></td><td>'+r.ttl+'s</td></tr>';
+      });
+      html+='</tbody></table>';
+    }
+    html+='</div>';
+  });
+
+  document.getElementById('records-output').innerHTML=html;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+
+// Auto-run from URL param
+(function(){var p=new URLSearchParams(location.search),d=p.get('domain');if(d){document.getElementById('domain-input').value=d;runCheck();}})();
+document.getElementById('domain-input').addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});
+</script>
+
+</body>
+</html>

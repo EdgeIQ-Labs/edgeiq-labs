@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free Port Scanner — Check Open Ports & Service Exposure | EdgeIQ Labs</title>
+  <meta name="description" content="Scan any domain or IP for open ports and exposed services. Checks 20 high-risk ports including SSH, RDP, SMB, databases. Free, instant, no sign-up."/>
+  <meta property="og:title" content="Free Port Scanner — Open Port & Service Exposure Check"/>
+  <meta property="og:description" content="Check 20 high-risk ports on any domain or IP — SSH, RDP, SMB, MySQL, PostgreSQL, Redis, MongoDB, and more. Free and instant."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-port-scanner/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-port-scanner/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free Port Scanner","url":"https://edgeiqlabs.com/free-port-scanner/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What ports does this scanner check?","acceptedAnswer":{"@type":"Answer","text":"The free scanner checks 20 high-risk ports commonly targeted by attackers: FTP (21), SSH (22), Telnet (23), SMTP (25), DNS (53), HTTP (80), POP3 (110), IMAP (143), HTTPS (443), SMB (445), MSSQL (1433), Oracle (1521), MySQL (3306), RDP (3389), PostgreSQL (5432), VNC (5900), Redis (6379), HTTP-Alt (8080), HTTPS-Alt (8443), and MongoDB (27017)."}},
+      {"@type":"Question","name":"Why is an open port dangerous?","acceptedAnswer":{"@type":"Answer","text":"Open ports expose services to the internet. If a service has known vulnerabilities, weak authentication, or misconfiguration, attackers can exploit it to gain access. Database ports (MySQL, PostgreSQL, MongoDB, Redis) and remote access ports (RDP, VNC, Telnet) are especially dangerous when exposed without proper access controls."}},
+      {"@type":"Question","name":"What is the difference between this and nmap?","acceptedAnswer":{"@type":"Answer","text":"This scanner runs from Cloudflare's edge network using TCP connect probes — no software to install, works from your browser. It checks the 20 most commonly exploited ports. For full port sweeps (all 65,535 ports), banner grabbing, and version detection, use nmap locally or upgrade to Port Scanner Pro."}},
+      {"@type":"Question","name":"Does this work through Cloudflare or other CDNs?","acceptedAnswer":{"@type":"Answer","text":"Yes. The scanner detects CDN proxying and adjusts results accordingly. Web ports (80, 443) behind a CDN reflect the CDN edge, not your origin. Dangerous service ports (databases, RDP, SMB) probe through to the origin server directly."}}
+    ]}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#70f0a8;--red:#ff6b6b;--yellow:#ffb347;--orange:#ff8c42;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .container{max-width:900px;margin:0 auto;padding:40px 24px;}
+    h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;}
+    .hero-sub{color:var(--muted);font-size:1rem;margin-bottom:32px;}
+    .input-row{display:flex;gap:10px;margin-bottom:32px;}
+    .input-row input{flex:1;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;outline:none;font-family:inherit;}
+    .input-row input:focus{border-color:var(--accent);}
+    .input-row button{padding:14px 28px;background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-family:inherit;white-space:nowrap;}
+    .input-row button:hover{opacity:0.9;}
+    .input-row button:disabled{opacity:0.5;cursor:not-allowed;}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(7,16,24,0.3);border-top-color:#071018;border-radius:50%;animation:spin 0.6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #results{display:none;}
+    .grade-hero{text-align:center;padding:28px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;}
+    .grade-circle{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;font-size:2rem;font-weight:900;border:3px solid;}
+    .grade-A{background:rgba(112,240,168,0.1);border-color:#70f0a8;color:#70f0a8;}
+    .grade-B{background:rgba(61,217,255,0.1);border-color:var(--accent);color:var(--accent);}
+    .grade-C{background:rgba(255,179,71,0.1);border-color:#ffb347;color:#ffb347;}
+    .grade-D{background:rgba(255,140,66,0.1);border-color:#ff8c42;color:#ff8c42;}
+    .grade-F{background:rgba(255,107,107,0.1);border-color:#ff6b6b;color:#ff6b6b;}
+    .grade-label{font-size:0.85rem;color:var(--muted);margin-top:10px;}
+    .checks-list{list-style:none;margin:20px 0;}
+    .check-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(35,49,66,0.5);align-items:flex-start;}
+    .check-row:last-child{border-bottom:none;}
+    .check-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+    .check-body{flex:1;}
+    .check-name{font-weight:700;font-size:0.92rem;margin-bottom:2px;}
+    .check-detail{font-size:0.85rem;color:var(--muted);}
+    .check-severity-critical .check-name{color:var(--red);}
+    .check-severity-high .check-name{color:var(--orange);}
+    .check-severity-medium .check-name{color:var(--yellow);}
+    .check-severity-info .check-name{color:var(--muted);}
+    .check-severity-locked{opacity:0.6;cursor:pointer;}
+    .check-severity-locked .check-name{color:var(--accent);}
+    .faq{margin-top:48px;}
+    .faq h2{font-size:1.2rem;font-weight:700;margin-bottom:16px;}
+    .faq-item{border-bottom:1px solid var(--border);}
+    .faq-q{padding:14px 0;cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+    .faq-q::after{content:'+';font-size:1.2rem;color:var(--muted);}
+    .faq-q.open::after{content:'−';}
+    .faq-a{display:none;padding:0 0 14px;color:var(--muted);font-size:0.92rem;line-height:1.7;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#071018;font-weight:700;border-radius:10px;text-decoration:none;font-size:1rem;}
+    footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    footer a:hover{color:var(--accent);}
+    @media(max-width:600px){
+      .input-row{flex-direction:column;}
+      h1{font-size:1.4rem;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <a href="/free-tools/" style="color:var(--muted);text-decoration:none;font-size:0.88rem;">← All Free Tools</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Port Scanner</h1>
+  <p class="hero-sub">Check any domain or IP for open ports and exposed services. Scans 20 high-risk ports including SSH, RDP, SMB, databases, and mail servers.</p>
+
+  <div class="input-row">
+    <input type="text" id="target-input" placeholder="example.com or 1.2.3.4" autocomplete="off" spellcheck="false"/>
+    <button id="scan-btn" onclick="runScan()">Scan Ports →</button>
+  </div>
+
+  <div id="results">
+    <div id="grade-section" class="grade-hero"></div>
+    <ul class="checks-list" id="findings-list"></ul>
+  </div>
+
+  <div id="upsell-banner" style="display:none;"></div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What ports does this scanner check?</div><div class="faq-a">The free scanner checks 20 high-risk ports commonly targeted by attackers: FTP (21), SSH (22), Telnet (23), SMTP (25), DNS (53), HTTP (80), POP3 (110), IMAP (143), HTTPS (443), SMB (445), MSSQL (1433), Oracle (1521), MySQL (3306), RDP (3389), PostgreSQL (5432), VNC (5900), Redis (6379), HTTP-Alt (8080), HTTPS-Alt (8443), and MongoDB (27017).</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why is an open port dangerous?</div><div class="faq-a">Open ports expose services to the internet. If a service has known vulnerabilities, weak authentication, or misconfiguration, attackers can exploit it to gain unauthorized access. Database ports (MySQL, PostgreSQL, MongoDB, Redis) and remote access ports (RDP, VNC, Telnet) are especially dangerous when exposed without proper access controls like VPN or IP whitelisting.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does this work through Cloudflare or other CDNs?</div><div class="faq-a">Yes. The scanner detects CDN proxying and adjusts results accordingly. Web ports (80, 443) behind a CDN reflect the CDN edge, not your origin server. Dangerous service ports (databases, RDP, SMB, VNC) probe through to the origin directly, so those results remain accurate even behind Cloudflare.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How is this different from nmap?</div><div class="faq-a">This scanner runs entirely from Cloudflare's edge network using TCP connect probes — no software to install, works from any browser. It focuses on the 20 most commonly exploited ports for quick exposure assessment. For comprehensive scans of all 65,535 ports, service banner grabbing, and OS fingerprinting, use nmap locally or upgrade to Port Scanner Pro.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Need a full port sweep? Upgrade to Port Scanner Pro.</h3>
+    <p>Scan all 65,535 ports, detect service versions via banner grabbing, and get continuous monitoring that alerts you the moment a new port opens.</p>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="cta-btn" target="_blank" rel="noopener">Start Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<!-- EdgeIQ email capture -->
+<div style="max-width:480px;margin:40px auto 0;padding:24px;background:#121923;border:1px solid #233142;border-radius:12px;text-align:center;">
+  <h3 style="color:#3dd9ff;font-size:1rem;margin-bottom:8px;">Get weekly security intel</h3>
+  <p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:12px;">Free scans, breach alerts, and SMB tips — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-port-scanner'})}).then(()=>{this.innerHTML='<p style=\'color:#70f0a8\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required style="width:70%;padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:14px;outline:none;">
+    <button type="submit" style="width:25%;padding:10px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Subscribe</button>
+  </form>
+</div>
+
+<footer>
+  <div>
+    <a href="/">Home</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/free-dns-checker/">DNS Checker</a>
+    <a href="/free-dmarc-checker/">DMARC Checker</a>
+    <a href="/free-subdomain-scanner/">Subdomain Scanner</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+  </div>
+  <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+</footer>
+
+<script>
+var STRIPE_PULSE='https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s';
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function runScan(){
+  var input=document.getElementById('target-input');
+  var target=input.value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(!target||target.indexOf('.')<0){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('scan-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Scanning…';
+  document.getElementById('results').style.display='none';
+  history.replaceState(null,'','/free-port-scanner/?target='+encodeURIComponent(target));
+
+  fetch('/api/port-scanner',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:target})})
+    .then(function(r){return r.json();})
+    .then(function(d){renderResults(d);})
+    .catch(function(){btn.disabled=false;btn.textContent='Scan Ports →';alert('Scan failed — please try again.');});
+}
+
+function renderResults(d){
+  var btn=document.getElementById('scan-btn');
+  btn.disabled=false;btn.textContent='Scan Ports →';
+
+  if(d.error){
+    document.getElementById('grade-section').innerHTML='<div style="color:var(--red);padding:16px;">'+esc(d.error)+'</div>';
+    document.getElementById('findings-list').innerHTML='';
+    document.getElementById('results').style.display='block';
+    return;
+  }
+
+  var grade=d.grade||'?';
+  var score=d.score||0;
+  document.getElementById('grade-section').innerHTML=
+    '<div class="grade-circle grade-'+grade+'">'+grade+'</div>'+
+    '<div class="grade-label">Security score: '+score+'/100 · '+esc(d.hostname)+'</div>'+
+    '<div style="font-size:0.82rem;color:var(--muted);margin-top:8px;">'+esc(d.summary)+'</div>';
+
+  var findings=d.findings||[];
+  var html='';
+  findings.forEach(function(f){
+    var sev=f.severity||'info';
+    var icon=sev==='critical'?'🚨':sev==='high'?'⚠️':sev==='medium'?'🔶':sev==='locked'?'🔒':'ℹ️';
+    var cls='check-severity-'+sev;
+    var clickAttr=sev==='locked'?' onclick="window.open(\''+STRIPE_PULSE+'\',\'_blank\')"':'';
+    html+='<li class="check-row '+cls+'"'+clickAttr+'><div class="check-icon">'+icon+'</div><div class="check-body"><div class="check-name">'+esc(f.type.replace(/_/g,' '))+'</div><div class="check-detail">'+esc(f.message)+'</div></div></li>';
+  });
+  document.getElementById('findings-list').innerHTML=html;
+
+  // Dynamic upsell: show when critical or high severity ports found
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    var critCount=findings.filter(function(f){return f.severity==='critical';}).length;
+    var highCount=findings.filter(function(f){return f.severity==='high';}).length;
+    if(critCount>0||highCount>0){
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin:20px 0;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">🚨 '+critCount+' critical + '+highCount+' high-risk ports exposed</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Pulse Pro monitors all 20 high-risk ports weekly and alerts you the moment a new port opens or a dangerous service becomes exposed.</p>'+
+        '<a href="'+STRIPE_PULSE+'" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Monitor Port Exposure → $19/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
+  }
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+
+// Auto-run from URL param
+(function(){var p=new URLSearchParams(location.search),t=p.get('target');if(t){document.getElementById('target-input').value=t;runScan();}})();
+document.getElementById('target-input').addEventListener('keydown',function(e){if(e.key==='Enter')runScan();});
+</script>
+
+</body>
+</html>
