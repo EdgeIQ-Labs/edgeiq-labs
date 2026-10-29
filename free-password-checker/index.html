@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free Password Breach Checker — Has Your Password Been Leaked? | EdgeIQ Labs</title>
+  <meta name="description" content="Check if your password has appeared in known data breaches using Have I Been Pwned. Uses k-anonymity — your password is never sent to any server."/>
+  <meta property="og:title" content="Free Password Breach Checker"/>
+  <meta property="og:description" content="Check if your password has been leaked in data breaches. Zero-knowledge — your password never leaves your browser."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-password-checker/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-password-checker/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free Password Breach Checker","url":"https://edgeiqlabs.com/free-password-checker/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@type":"Question","name":"Is this safe? Does my password get sent anywhere?","acceptedAnswer":{"@type":"Answer","text":"Your password is hashed in your browser using SHA-1 before anything is sent. Only the first 5 characters of the hash are transmitted to the Have I Been Pwned API (k-anonymity model). The server compares the remaining hash suffix locally — your actual password never leaves your device and cannot be reconstructed from the hash prefix."}},
+    {"@type":"Question","name":"What does 'found in X breaches' mean?","acceptedAnswer":{"@type":"Answer","text":"It means your exact password has appeared in X publicly-known data breach dumps. This doesn't mean your specific account was breached — but anyone using this password on any site is at risk because attackers use these leaked password lists for credential stuffing attacks."}},
+    {"@type":"Question","name":"What makes a strong password?","acceptedAnswer":{"@type":"Answer","text":"A strong password is at least 12 characters long, uses a mix of uppercase, lowercase, numbers, and special characters, and is unique to each account. The best approach is using a password manager like Bitwarden to generate and store random 16+ character passwords for every site."}}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#70f0a8;--red:#ff6b6b;--yellow:#ffb347;--orange:#ff8c42;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .container{max-width:900px;margin:0 auto;padding:40px 24px;}
+    h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;}
+    .hero-sub{color:var(--muted);font-size:1rem;margin-bottom:32px;}
+    .trust-note{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--green);background:rgba(112,240,168,0.08);border:1px solid rgba(112,240,168,0.2);padding:6px 14px;border-radius:8px;margin-bottom:24px;}
+    .input-row{display:flex;gap:10px;margin-bottom:32px;position:relative;}
+    .input-row input{flex:1;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;outline:none;font-family:inherit;}
+    .input-row input:focus{border-color:var(--accent);}
+    .input-row button{padding:14px 28px;background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-family:inherit;white-space:nowrap;}
+    .input-row button:hover{opacity:0.9;}
+    .input-row button:disabled{opacity:0.5;cursor:not-allowed;}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(7,16,24,0.3);border-top-color:#071018;border-radius:50%;animation:spin 0.6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #results{display:none;}
+    .result-hero{text-align:center;padding:32px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;}
+    .result-icon{font-size:3rem;margin-bottom:12px;}
+    .result-title{font-size:1.3rem;font-weight:800;margin-bottom:6px;}
+    .result-sub{color:var(--muted);font-size:0.92rem;}
+    .strength-bar{height:8px;background:var(--card2);border-radius:4px;margin:16px 0 8px;overflow:hidden;}
+    .strength-fill{height:100%;border-radius:4px;transition:width 0.5s ease;}
+    .strength-label{font-size:0.82rem;color:var(--muted);text-align:right;}
+    .recs-list{list-style:none;margin:20px 0;}
+    .rec-item{padding:12px 16px;border-radius:10px;margin-bottom:8px;font-size:0.9rem;line-height:1.5;}
+    .rec-critical{background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);color:var(--red);}
+    .rec-high{background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.2);color:var(--orange);}
+    .rec-medium{background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.2);color:var(--yellow);}
+    .rec-info{background:rgba(112,240,168,0.08);border:1px solid rgba(112,240,168,0.2);color:var(--green);}
+    .details-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:20px 0;}
+    .detail-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center;}
+    .detail-val{font-size:1.1rem;font-weight:700;}
+    .detail-lbl{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+    .faq{margin-top:48px;}
+    .faq h2{font-size:1.2rem;font-weight:700;margin-bottom:16px;}
+    .faq-item{border-bottom:1px solid var(--border);}
+    .faq-q{padding:14px 0;cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+    .faq-q::after{content:'+';font-size:1.2rem;color:var(--muted);}
+    .faq-q.open::after{content:'−';}
+    .faq-a{display:none;padding:0 0 14px;color:var(--muted);font-size:0.92rem;line-height:1.7;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#071018;font-weight:700;border-radius:10px;text-decoration:none;font-size:1rem;}
+    footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    footer a:hover{color:var(--accent);}
+    @media(max-width:600px){.input-row{flex-direction:column;}h1{font-size:1.4rem;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <a href="/free-tools/" style="color:var(--muted);text-decoration:none;font-size:0.88rem;">← All Free Tools</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Password Breach Checker</h1>
+  <p class="hero-sub">Check if your password has appeared in known data breaches. Powered by Have I Been Pwned.</p>
+  <div class="trust-note">🔒 Zero-knowledge: your password is hashed in your browser — only a partial hash is sent</div>
+
+  <div class="input-row">
+    <input type="password" id="password-input" placeholder="Enter a password to check" autocomplete="off" spellcheck="false"/>
+    <button id="check-btn" onclick="runCheck()">Check Password →</button>
+  </div>
+
+  <div id="results">
+    <div id="result-hero" class="result-hero"></div>
+    <div id="strength-section"></div>
+    <div id="details-section" class="details-grid"></div>
+    <ul class="recs-list" id="recs-list"></ul>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is this safe? Does my password get sent anywhere?</div><div class="faq-a">Your password is hashed in your browser using SHA-1 before anything leaves your device. Only the first 5 characters of the hash are sent to the Have I Been Pwned API (this is called k-anonymity). The server returns all hashes matching that prefix, and your browser checks if the remaining hash suffix is in the list. Your actual password is never transmitted and cannot be reconstructed from the hash.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What does "found in X breaches" mean?</div><div class="faq-a">It means your exact password has appeared in X publicly-known data breach dumps collected by Have I Been Pwned. This doesn't necessarily mean your specific account was breached — but anyone using this password on any site is at risk because attackers use these leaked password lists for automated credential stuffing attacks across thousands of websites.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What makes a strong password?</div><div class="faq-a">A strong password is at least 12 characters long, uses a mix of uppercase letters, lowercase letters, numbers, and special characters, and is completely unique to each account. The most effective approach is using a password manager like Bitwarden to generate and store random 16+ character passwords for every site — you only need to remember one master password.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Should I use this tool with my real passwords?</div><div class="faq-a">Yes — the tool is designed to be safe for real passwords thanks to the k-anonymity model. However, if you're uncomfortable entering any password into a web form (even one that hashes locally), you can download the HIBP password database and check offline, or use a password manager's built-in breach checking feature.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Protect your accounts beyond just passwords</h3>
+    <p>Pulse Pro monitors your domain's email authentication (DMARC, SPF, DKIM), SSL certificates, and security posture weekly — catching the vulnerabilities that lead to breaches before they happen.</p>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="cta-btn" target="_blank" rel="noopener">Start Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<!-- EdgeIQ email capture -->
+<div style="max-width:480px;margin:40px auto 0;padding:24px;background:#121923;border:1px solid #233142;border-radius:12px;text-align:center;">
+  <h3 style="color:#3dd9ff;font-size:1rem;margin-bottom:8px;">Get weekly security intel</h3>
+  <p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:12px;">Free scans, breach alerts, and SMB tips — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-password-checker'})}).then(()=>{this.innerHTML='<p style=\'color:#70f0a8\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required style="width:70%;padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:14px;outline:none;">
+    <button type="submit" style="width:25%;padding:10px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Subscribe</button>
+  </form>
+</div>
+
+<footer>
+  <div>
+    <a href="/">Home</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/free-dns-checker/">DNS Checker</a>
+    <a href="/free-header-analyzer/">Header Analyzer</a>
+    <a href="/free-whois-lookup/">WHOIS Lookup</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+  </div>
+  <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+</footer>
+
+<script>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+async function sha1(message){
+  const encoder=new TextEncoder();
+  const data=encoder.encode(message);
+  const hash=await crypto.subtle.digest('SHA-1',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+
+async function runCheck(){
+  var input=document.getElementById('password-input');
+  var password=input.value;
+  if(!password){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Checking…';
+  document.getElementById('results').style.display='none';
+
+  // Hash locally and send only prefix (k-anonymity)
+  var hash=await sha1(password);
+  var prefix=hash.substring(0,5);
+  var suffix=hash.substring(5);
+
+  try{
+    var res=await fetch('https://api.pwnedpasswords.com/range/'+prefix,{headers:{'User-Agent':'EdgeIQ-BreachChecker/1.0'}});
+    var text=await res.text();
+    var lines=text.trim().split('\n');
+    var count=0;
+    var found=false;
+    for(var i=0;i<lines.length;i++){
+      var parts=lines[i].split(':');
+      if(parts[0]===suffix){count=parseInt(parts[1],10);found=true;break;}
+    }
+
+    // Strength assessment
+    var len=password.length;
+    var hasUpper=/[A-Z]/.test(password);
+    var hasLower=/[a-z]/.test(password);
+    var hasDigit=/\d/.test(password);
+    var hasSpecial=/[^A-Za-z0-9]/.test(password);
+    var charTypes=[hasUpper,hasLower,hasDigit,hasSpecial].filter(Boolean).length;
+
+    var strength='weak',strengthScore=0;
+    if(len>=16&&charTypes>=3){strength='strong';strengthScore=90;}
+    else if(len>=12&&charTypes>=3){strength='good';strengthScore=75;}
+    else if(len>=10&&charTypes>=2){strength='fair';strengthScore=55;}
+    else if(len>=8){strength='weak';strengthScore=30;}
+    else{strength='very_weak';strengthScore=10;}
+    if(found)strengthScore=Math.max(0,strengthScore-40);
+
+    renderResults({breached:found,breachCount:count,strength:strength,strengthScore:strengthScore,details:{length:len,characterTypes:charTypes,hasUppercase:hasUpper,hasLowercase:hasLower,hasDigits:hasDigit,hasSpecialChars:hasSpecial}});
+  }catch(e){
+    alert('Check failed — please try again.');
+  }
+  btn.disabled=false;btn.textContent='Check Password →';
+}
+
+function renderResults(d){
+  var hero=document.getElementById('result-hero');
+  if(d.breached){
+    hero.innerHTML='<div class="result-icon">🚨</div><div class="result-title" style="color:var(--red);">Password found in '+d.breachCount.toLocaleString()+' breaches</div><div class="result-sub">Change this password immediately on every account where you use it.</div>';
+  }else{
+    hero.innerHTML='<div class="result-icon">✅</div><div class="result-title" style="color:var(--green);">Not found in any known breaches</div><div class="result-sub">This password hasn\'t appeared in any publicly-known data breach dumps.</div>';
+  }
+
+  // Strength bar
+  var barColor=d.strengthScore>=75?'var(--green)':d.strengthScore>=55?'var(--yellow)':d.strengthScore>=30?'var(--orange)':'var(--red)';
+  var strengthLabel=d.strength==='strong'?'Strong':d.strength==='good'?'Good':d.strength==='fair'?'Fair':d.strength==='weak'?'Weak':'Very Weak';
+  document.getElementById('strength-section').innerHTML=
+    '<div style="font-size:0.88rem;font-weight:600;margin-bottom:4px;">Password Strength: '+strengthLabel+' ('+d.strengthScore+'/100)</div>'+
+    '<div class="strength-bar"><div class="strength-fill" style="width:'+d.strengthScore+'%;background:'+barColor+';"></div></div>';
+
+  // Details grid
+  document.getElementById('details-section').innerHTML=
+    '<div class="detail-item"><div class="detail-val">'+d.details.length+'</div><div class="detail-lbl">Characters</div></div>'+
+    '<div class="detail-item"><div class="detail-val">'+d.details.characterTypes+'/4</div><div class="detail-lbl">Char Types</div></div>'+
+    '<div class="detail-item"><div class="detail-val">'+(d.details.hasUppercase?'✅':'❌')+'</div><div class="detail-lbl">Uppercase</div></div>'+
+    '<div class="detail-item"><div class="detail-val">'+(d.details.hasLowercase?'✅':'❌')+'</div><div class="detail-lbl">Lowercase</div></div>'+
+    '<div class="detail-item"><div class="detail-val">'+(d.details.hasDigits?'✅':'❌')+'</div><div class="detail-lbl">Digits</div></div>'+
+    '<div class="detail-item"><div class="detail-val">'+(d.details.hasSpecialChars?'✅':'❌')+'</div><div class="detail-lbl">Special</div></div>';
+
+  // Recommendations
+  var recs=[];
+  if(d.breached){
+    recs.push({cls:'rec-critical',text:'🚨 This password has appeared in '+d.breachCount.toLocaleString()+' known data breaches. Change it immediately on every account where you use it.'});
+    recs.push({cls:'rec-high',text:'Use a unique password for every account. A password manager like Bitwarden generates and stores strong unique passwords so you never reuse credentials.'});
+  }
+  if(d.details.length<12){
+    recs.push({cls:d.breached?'rec-high':'rec-medium',text:'Password is only '+d.details.length+' characters. Use at least 12 characters — longer is exponentially harder to crack.'});
+  }
+  if(d.details.characterTypes<3){
+    recs.push({cls:'rec-medium',text:'Mix uppercase, lowercase, numbers, and special characters for stronger passwords.'});
+  }
+  if(!d.breached&&d.strength==='strong'){
+    recs.push({cls:'rec-info',text:'✅ Strong password not found in any known breaches. Keep using unique passwords per account and consider a password manager.'});
+  }
+  document.getElementById('recs-list').innerHTML=recs.map(function(r){return'<li class="rec-item '+r.cls+'">'+r.text+'</li>';}).join('');
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+document.getElementById('password-input').addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});
+</script>
+
+</body>
+</html>

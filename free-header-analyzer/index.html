@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free HTTP Security Header Analyzer — CSP, HSTS, X-Frame-Options Check | EdgeIQ Labs</title>
+  <meta name="description" content="Analyze all HTTP security headers for any website — HSTS, CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy. Free A–F grade with fix recommendations."/>
+  <meta property="og:title" content="Free HTTP Security Header Analyzer"/>
+  <meta property="og:description" content="Check HSTS, CSP, X-Frame-Options, and 5 more security headers — free instant A–F grade with fix instructions."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-header-analyzer/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-header-analyzer/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free HTTP Security Header Analyzer","url":"https://edgeiqlabs.com/free-header-analyzer/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@type":"Question","name":"What are HTTP security headers?","acceptedAnswer":{"@type":"Answer","text":"HTTP security headers are response headers that tell browsers how to handle your site securely. They prevent clickjacking (X-Frame-Options), XSS attacks (Content-Security-Policy), protocol downgrade attacks (HSTS), MIME sniffing (X-Content-Type-Options), and referrer leakage (Referrer-Policy)."}},
+    {"@type":"Question","name":"Why does my site need HSTS?","acceptedAnswer":{"@type":"Answer","text":"Without HSTS, browsers will connect over plain HTTP on the first visit or when a user types http:// explicitly. This enables SSL stripping attacks where an attacker intercepts the initial HTTP request before the redirect to HTTPS. HSTS tells browsers to always use HTTPS for a specified duration."}},
+    {"@type":"Question","name":"What is Content-Security-Policy?","acceptedAnswer":{"@type":"Answer","text":"CSP is a header that restricts which resources (scripts, styles, images) a browser can load. It prevents XSS by blocking inline scripts and limiting script sources to trusted domains. Without CSP, any injected JavaScript runs with full access to the page."}}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#70f0a8;--red:#ff6b6b;--yellow:#ffb347;--orange:#ff8c42;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .container{max-width:900px;margin:0 auto;padding:40px 24px;}
+    h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;}
+    .hero-sub{color:var(--muted);font-size:1rem;margin-bottom:32px;}
+    .input-row{display:flex;gap:10px;margin-bottom:32px;}
+    .input-row input{flex:1;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;outline:none;font-family:inherit;}
+    .input-row input:focus{border-color:var(--accent);}
+    .input-row button{padding:14px 28px;background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-family:inherit;white-space:nowrap;}
+    .input-row button:hover{opacity:0.9;}
+    .input-row button:disabled{opacity:0.5;cursor:not-allowed;}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(7,16,24,0.3);border-top-color:#071018;border-radius:50%;animation:spin 0.6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #results{display:none;}
+    .grade-hero{text-align:center;padding:28px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;}
+    .grade-circle{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;font-size:2rem;font-weight:900;border:3px solid;}
+    .grade-A{background:rgba(112,240,168,0.1);border-color:#70f0a8;color:#70f0a8;}
+    .grade-B{background:rgba(61,217,255,0.1);border-color:var(--accent);color:var(--accent);}
+    .grade-C{background:rgba(255,179,71,0.1);border-color:#ffb347;color:#ffb347;}
+    .grade-D{background:rgba(255,140,66,0.1);border-color:#ff8c42;color:#ff8c42;}
+    .grade-F{background:rgba(255,107,107,0.1);border-color:#ff6b6b;color:#ff6b6b;}
+    .grade-label{font-size:0.85rem;color:var(--muted);margin-top:10px;}
+    .checks-list{list-style:none;margin:20px 0;}
+    .check-row{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid rgba(35,49,66,0.5);align-items:flex-start;}
+    .check-row:last-child{border-bottom:none;}
+    .check-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+    .check-body{flex:1;}
+    .check-name{font-weight:700;font-size:0.92rem;margin-bottom:3px;}
+    .check-detail{font-size:0.85rem;color:var(--muted);}
+    .check-fix{font-size:0.82rem;color:var(--accent);margin-top:4px;font-family:monospace;background:var(--card2);padding:4px 8px;border-radius:4px;display:inline-block;word-break:break-all;}
+    .check-value{font-size:0.78rem;color:var(--muted);margin-top:3px;font-family:monospace;word-break:break-all;opacity:0.7;}
+    .status-pass .check-name{color:var(--green);}
+    .status-fail .check-name{color:var(--red);}
+    .status-warn .check-name{color:var(--yellow);}
+    .status-info .check-name{color:var(--muted);}
+    .leak-section{margin-top:20px;padding:16px;background:rgba(255,179,71,0.05);border:1px solid rgba(255,179,71,0.2);border-radius:10px;}
+    .leak-title{font-weight:700;color:var(--yellow);margin-bottom:8px;font-size:0.92rem;}
+    .faq{margin-top:48px;}
+    .faq h2{font-size:1.2rem;font-weight:700;margin-bottom:16px;}
+    .faq-item{border-bottom:1px solid var(--border);}
+    .faq-q{padding:14px 0;cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+    .faq-q::after{content:'+';font-size:1.2rem;color:var(--muted);}
+    .faq-q.open::after{content:'−';}
+    .faq-a{display:none;padding:0 0 14px;color:var(--muted);font-size:0.92rem;line-height:1.7;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#071018;font-weight:700;border-radius:10px;text-decoration:none;font-size:1rem;}
+    footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    footer a:hover{color:var(--accent);}
+    @media(max-width:600px){.input-row{flex-direction:column;}h1{font-size:1.4rem;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <a href="/free-tools/" style="color:var(--muted);text-decoration:none;font-size:0.88rem;">← All Free Tools</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>HTTP Security Header Analyzer</h1>
+  <p class="hero-sub">Check all security headers for any website — HSTS, CSP, X-Frame-Options, Referrer-Policy, and more. Instant A–F grade with fix instructions.</p>
+
+  <div class="input-row">
+    <input type="text" id="domain-input" placeholder="example.com" autocomplete="off" spellcheck="false"/>
+    <button id="check-btn" onclick="runCheck()">Analyze Headers →</button>
+  </div>
+
+  <div id="results">
+    <div id="grade-section" class="grade-hero"></div>
+    <ul class="checks-list" id="headers-list"></ul>
+    <div id="leaks-section"></div>
+  </div>
+
+  <div id="upsell-banner" style="display:none;"></div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What are HTTP security headers?</div><div class="faq-a">HTTP security headers are response headers that instruct browsers how to handle your site securely. They prevent clickjacking (X-Frame-Options), cross-site scripting (Content-Security-Policy), protocol downgrade attacks (Strict-Transport-Security), MIME sniffing (X-Content-Type-Options), and referrer URL leakage (Referrer-Policy). Together they form a defense-in-depth layer that protects users even if application-level security fails.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why does my site need HSTS?</div><div class="faq-a">Without HSTS, browsers connect over plain HTTP on the first visit or when a user types http:// explicitly. This enables SSL stripping attacks where an attacker on the same network intercepts the initial HTTP request before the server redirects to HTTPS. HSTS tells browsers to always use HTTPS for a specified duration (recommended: at least 1 year = 31536000 seconds).</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is Content-Security-Policy?</div><div class="faq-a">CSP restricts which resources (scripts, styles, images, fonts) a browser can load and execute. It's the most effective defense against XSS attacks because it blocks inline scripts and limits script execution to trusted sources. Without CSP, any injected JavaScript runs with full access to the page, cookies, and session tokens.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How do I fix missing security headers?</div><div class="faq-a">Add them at your web server level (nginx, Apache, Caddy) or CDN configuration (Cloudflare, Fastly). Each header has a recommended value shown in this tool's results. For example, nginx: add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always; Cloudflare: enable HSTS in SSL/TLS settings and use Transform Rules for custom headers.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Stop checking headers manually. Let Pulse Pro monitor them weekly.</h3>
+    <p>Pulse Pro scans all your security headers every Monday and alerts you the moment one is removed, weakened, or misconfigured — before attackers exploit the gap.</p>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="cta-btn" target="_blank" rel="noopener">Start Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<!-- EdgeIQ email capture -->
+<div style="max-width:480px;margin:40px auto 0;padding:24px;background:#121923;border:1px solid #233142;border-radius:12px;text-align:center;">
+  <h3 style="color:#3dd9ff;font-size:1rem;margin-bottom:8px;">Get weekly security intel</h3>
+  <p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:12px;">Free scans, breach alerts, and SMB tips — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-header-analyzer'})}).then(()=>{this.innerHTML='<p style=\'color:#70f0a8\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required style="width:70%;padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:14px;outline:none;">
+    <button type="submit" style="width:25%;padding:10px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Subscribe</button>
+  </form>
+</div>
+
+<footer>
+  <div>
+    <a href="/">Home</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/free-dns-checker/">DNS Checker</a>
+    <a href="/free-port-scanner/">Port Scanner</a>
+    <a href="/free-dmarc-checker/">DMARC Checker</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+  </div>
+  <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+</footer>
+
+<script>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function runCheck(){
+  var input=document.getElementById('domain-input');
+  var domain=input.value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(!domain||domain.indexOf('.')<0){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Analyzing…';
+  document.getElementById('results').style.display='none';
+  history.replaceState(null,'','/free-header-analyzer/?domain='+encodeURIComponent(domain));
+
+  fetch('/api/header-check?domain='+encodeURIComponent(domain))
+    .then(function(r){return r.json();})
+    .then(function(d){renderResults(d);})
+    .catch(function(){btn.disabled=false;btn.textContent='Analyze Headers →';alert('Check failed — please try again.');});
+}
+
+function renderResults(d){
+  var btn=document.getElementById('check-btn');
+  btn.disabled=false;btn.textContent='Analyze Headers →';
+
+  if(d.error){
+    document.getElementById('grade-section').innerHTML='<div style="color:var(--red);padding:16px;">'+esc(d.error)+'</div>';
+    document.getElementById('headers-list').innerHTML='';
+    document.getElementById('leaks-section').innerHTML='';
+    document.getElementById('results').style.display='block';
+    return;
+  }
+
+  var grade=d.grade||'?';
+  document.getElementById('grade-section').innerHTML=
+    '<div class="grade-circle grade-'+grade+'">'+grade+'</div>'+
+    '<div class="grade-label">Header score: '+d.score+'/100 · '+esc(d.domain)+'</div>'+
+    '<div style="font-size:0.82rem;color:var(--muted);margin-top:8px;">'+d.passed+' passed · '+d.failed+' failed · '+d.warnings+' warnings out of '+d.totalChecked+' headers</div>';
+
+  var html='';
+  (d.headers||[]).forEach(function(h){
+    var icon=h.status==='pass'?'✅':h.status==='fail'?'❌':h.status==='warn'?'⚠️':'ℹ️';
+    html+='<li class="check-row status-'+h.status+'"><div class="check-icon">'+icon+'</div><div class="check-body"><div class="check-name">'+esc(h.name)+'</div><div class="check-detail">'+esc(h.detail)+'</div>';
+    if(h.fix) html+='<div class="check-fix">Fix: '+esc(h.fix)+'</div>';
+    if(h.value) html+='<div class="check-value">Value: '+esc(h.value)+'</div>';
+    html+='</div></li>';
+  });
+  document.getElementById('headers-list').innerHTML=html;
+
+  // Leaks
+  var leaks=d.leaks||[];
+  if(leaks.length){
+    var lhtml='<div class="leak-section"><div class="leak-title">⚠️ Server information disclosure ('+leaks.length+' headers)</div>';
+    leaks.forEach(function(l){lhtml+='<div style="font-size:0.85rem;color:var(--muted);margin-bottom:4px;"><code>'+esc(l.header)+': '+esc(l.value)+'</code> — '+esc(l.detail)+'</div>';});
+    lhtml+='<div style="font-size:0.82rem;color:var(--accent);margin-top:8px;">Remove or sanitize these headers to avoid revealing server software and versions to attackers.</div></div>';
+    document.getElementById('leaks-section').innerHTML=lhtml;
+  } else {
+    document.getElementById('leaks-section').innerHTML='';
+  }
+
+  // Dynamic upsell: show when grade C or worse
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    if(grade==='C'||grade==='D'||grade==='F'){
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin:20px 0;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">⚠️ '+d.failed+' security header'+(d.failed!==1?'s':'')+' missing or misconfigured</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Pulse Pro monitors all your security headers weekly and alerts you the moment one is removed or weakened — before attackers exploit the gap.</p>'+
+        '<a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Monitor Headers Weekly → $19/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
+  }
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+(function(){var p=new URLSearchParams(location.search),d=p.get('domain');if(d){document.getElementById('domain-input').value=d;runCheck();}})();
+document.getElementById('domain-input').addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});
+</script>
+
+</body>
+</html>

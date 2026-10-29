@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free WHOIS Lookup — Domain Registration & Expiry Checker | EdgeIQ Labs</title>
+  <meta name="description" content="Look up domain registration info, expiry date, registrar, and nameservers for any domain. Free, instant WHOIS lookup via RDAP."/>
+  <meta property="og:title" content="Free WHOIS Lookup — Domain Registration Checker"/>
+  <meta property="og:description" content="Check domain registration date, expiry, registrar, and nameservers — free instant WHOIS lookup."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-whois-lookup/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-whois-lookup/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free WHOIS Lookup","url":"https://edgeiqlabs.com/free-whois-lookup/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@type":"Question","name":"What is WHOIS?","acceptedAnswer":{"@type":"Answer","text":"WHOIS is a protocol for querying domain registration databases. It returns information about who registered a domain, when it expires, which registrar manages it, and what nameservers it uses. Modern WHOIS uses RDAP (Registration Data Access Protocol) which returns structured JSON instead of unstructured text."}},
+    {"@type":"Question","name":"Why check domain expiry dates?","acceptedAnswer":{"@type":"Answer","text":"Expired domains stop resolving, taking websites and email offline immediately. Attackers also register recently-expired domains to impersonate legitimate businesses. Monitoring expiry dates prevents accidental outages and domain hijacking."}},
+    {"@type":"Question","name":"What is RDAP?","acceptedAnswer":{"@type":"Answer","text":"RDAP (Registration Data Access Protocol) is the modern replacement for WHOIS. Unlike legacy WHOIS which returns unstructured text with inconsistent formatting, RDAP returns structured JSON data. It also supports internationalization, secure access via HTTPS, and standardized error responses."}}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--green:#70f0a8;--red:#ff6b6b;--yellow:#ffb347;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .container{max-width:900px;margin:0 auto;padding:40px 24px;}
+    h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;}
+    .hero-sub{color:var(--muted);font-size:1rem;margin-bottom:32px;}
+    .input-row{display:flex;gap:10px;margin-bottom:32px;}
+    .input-row input{flex:1;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;outline:none;font-family:inherit;}
+    .input-row input:focus{border-color:var(--accent);}
+    .input-row button{padding:14px 28px;background:var(--accent);color:#071018;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-size:1rem;font-family:inherit;white-space:nowrap;}
+    .input-row button:hover{opacity:0.9;}
+    .input-row button:disabled{opacity:0.5;cursor:not-allowed;}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(7,16,24,0.3);border-top-color:#071018;border-radius:50%;animation:spin 0.6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #results{display:none;}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+    .info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;}
+    .info-label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+    .info-value{font-size:1rem;font-weight:700;word-break:break-all;}
+    .info-value.danger{color:var(--red);}
+    .info-value.warning{color:var(--yellow);}
+    .info-value.good{color:var(--green);}
+    .section-title{font-size:1rem;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .ns-list{list-style:none;}
+    .ns-list li{padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-family:monospace;font-size:0.88rem;}
+    .status-badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;margin:2px 4px 2px 0;}
+    .faq{margin-top:48px;}
+    .faq h2{font-size:1.2rem;font-weight:700;margin-bottom:16px;}
+    .faq-item{border-bottom:1px solid var(--border);}
+    .faq-q{padding:14px 0;cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+    .faq-q::after{content:'+';font-size:1.2rem;color:var(--muted);}
+    .faq-q.open::after{content:'−';}
+    .faq-a{display:none;padding:0 0 14px;color:var(--muted);font-size:0.92rem;line-height:1.7;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#071018;font-weight:700;border-radius:10px;text-decoration:none;font-size:1rem;}
+    footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;color:var(--muted);font-size:0.82rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 8px;}
+    footer a:hover{color:var(--accent);}
+    @media(max-width:600px){.input-row{flex-direction:column;}h1{font-size:1.4rem;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <a href="/free-tools/" style="color:var(--muted);text-decoration:none;font-size:0.88rem;">← All Free Tools</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>WHOIS Lookup</h1>
+  <p class="hero-sub">Check domain registration info, expiry date, registrar, and nameservers for any domain. Powered by RDAP.</p>
+
+  <div class="input-row">
+    <input type="text" id="domain-input" placeholder="example.com" autocomplete="off" spellcheck="false"/>
+    <button id="check-btn" onclick="runCheck()">Lookup WHOIS →</button>
+  </div>
+
+  <div id="results">
+    <div class="info-grid" id="info-grid"></div>
+    <div id="nameservers-section"></div>
+    <div id="status-section"></div>
+  </div>
+
+  <div id="upsell-banner" style="display:none;"></div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is WHOIS?</div><div class="faq-a">WHOIS is a protocol for querying domain registration databases. It returns information about who registered a domain, when it was created, when it expires, which registrar manages it, and what nameservers it uses. This tool uses RDAP (Registration Data Access Protocol), the modern replacement for WHOIS that returns structured JSON data instead of unformatted text.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why should I monitor domain expiry dates?</div><div class="faq-a">When a domain expires, your website goes offline immediately, email stops working, and SSL certificates become invalid. Worse, attackers actively monitor expired domains and register them to impersonate your business, intercept email, or serve malware to your former visitors. Setting up expiry monitoring prevents accidental outages and domain hijacking.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why doesn't this show the registrant name?</div><div class="faq-a">Since GDPR took effect in 2018, most registrars redact personal registrant data from public WHOIS/RDAP responses. The registrant name, email, and address are typically hidden unless the domain owner has opted out of privacy protection. Law enforcement and trademark holders can access full data through registrar abuse contacts.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What TLDs are supported?</div><div class="faq-a">This tool supports all major TLDs including .com, .net, .org, .io, .co, .dev, .app, .xyz, .me, .info, .us, .uk, .ca, .au, .de, and .fr. For less common TLDs, it falls back to the IANA RDAP bootstrap service which covers virtually all registered TLDs.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Never miss a domain expiry again. Pulse Pro monitors it for you.</h3>
+    <p>Pulse Pro tracks your domain expiry dates and alerts you 30 days before renewal — plus monitors DNS records, SSL certificates, and security headers weekly.</p>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="cta-btn" target="_blank" rel="noopener">Start Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<!-- EdgeIQ email capture -->
+<div style="max-width:480px;margin:40px auto 0;padding:24px;background:#121923;border:1px solid #233142;border-radius:12px;text-align:center;">
+  <h3 style="color:#3dd9ff;font-size:1rem;margin-bottom:8px;">Get weekly security intel</h3>
+  <p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:12px;">Free scans, breach alerts, and SMB tips — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-whois-lookup'})}).then(()=>{this.innerHTML='<p style=\'color:#70f0a8\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required style="width:70%;padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:14px;outline:none;">
+    <button type="submit" style="width:25%;padding:10px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Subscribe</button>
+  </form>
+</div>
+
+<footer>
+  <div>
+    <a href="/">Home</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/free-dns-checker/">DNS Checker</a>
+    <a href="/free-header-analyzer/">Header Analyzer</a>
+    <a href="/free-port-scanner/">Port Scanner</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+  </div>
+  <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+</footer>
+
+<script>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function runCheck(){
+  var input=document.getElementById('domain-input');
+  var domain=input.value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(!domain||domain.indexOf('.')<0){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Looking up…';
+  document.getElementById('results').style.display='none';
+  history.replaceState(null,'','/free-whois-lookup/?domain='+encodeURIComponent(domain));
+
+  fetch('/api/whois-check?domain='+encodeURIComponent(domain))
+    .then(function(r){return r.json();})
+    .then(function(d){renderResults(d);})
+    .catch(function(){btn.disabled=false;btn.textContent='Lookup WHOIS →';alert('Lookup failed — please try again.');});
+}
+
+function renderResults(d){
+  var btn=document.getElementById('check-btn');
+  btn.disabled=false;btn.textContent='Lookup WHOIS →';
+
+  if(d.error){
+    document.getElementById('info-grid').innerHTML='<div style="color:var(--red);padding:16px;grid-column:1/-1;">'+esc(d.error)+(d.suggestion?'<br><span style="color:var(--muted);font-size:0.85rem;">'+esc(d.suggestion)+'</span>':'')+'</div>';
+    document.getElementById('nameservers-section').innerHTML='';
+    document.getElementById('status-section').innerHTML='';
+    document.getElementById('results').style.display='block';
+    return;
+  }
+
+  if(!d.registered){
+    document.getElementById('info-grid').innerHTML='<div style="color:var(--yellow);padding:16px;grid-column:1/-1;">Domain '+esc(d.domain)+' does not appear to be registered.</div>';
+    document.getElementById('nameservers-section').innerHTML='';
+    document.getElementById('status-section').innerHTML='';
+    document.getElementById('results').style.display='block';
+    return;
+  }
+
+  // Info cards
+  var daysClass=d.daysToExpiry<=30?'danger':d.daysToExpiry<=90?'warning':'good';
+  var expiryDisplay=d.dates.expires||'Unknown';
+  var daysDisplay=d.daysToExpiry!=null?d.daysToExpiry+' days':'N/A';
+
+  var html='';
+  html+='<div class="info-card"><div class="info-label">Domain</div><div class="info-value">'+esc(d.domain)+'</div></div>';
+  html+='<div class="info-card"><div class="info-label">Registrar</div><div class="info-value">'+esc(d.registrar||'Unknown')+'</div></div>';
+  html+='<div class="info-card"><div class="info-label">Registered</div><div class="info-value">'+esc(d.dates.registered||'Unknown')+'</div></div>';
+  html+='<div class="info-card"><div class="info-label">Expires</div><div class="info-value '+daysClass+'">'+esc(expiryDisplay)+'</div></div>';
+  html+='<div class="info-card"><div class="info-label">Days Until Expiry</div><div class="info-value '+daysClass+'">'+daysDisplay+'</div></div>';
+  if(d.dates.updated) html+='<div class="info-card"><div class="info-label">Last Updated</div><div class="info-value">'+esc(d.dates.updated)+'</div></div>';
+  document.getElementById('info-grid').innerHTML=html;
+
+  // Nameservers
+  if(d.nameservers&&d.nameservers.length){
+    var nsHtml='<div class="section-title">Nameservers ('+d.nameservers.length+')</div><ul class="ns-list">';
+    d.nameservers.forEach(function(ns){nsHtml+='<li>'+esc(ns)+'</li>';});
+    nsHtml+='</ul>';
+    document.getElementById('nameservers-section').innerHTML=nsHtml;
+  } else {
+    document.getElementById('nameservers-section').innerHTML='';
+  }
+
+  // Statuses
+  if(d.statuses&&d.statuses.length){
+    var stHtml='<div class="section-title">Domain Status</div><div>';
+    d.statuses.forEach(function(s){stHtml+='<span class="status-badge" style="background:rgba(61,217,255,0.1);border:1px solid rgba(61,217,255,0.2);color:var(--accent);">'+esc(s)+'</span>';});
+    stHtml+='</div>';
+    document.getElementById('status-section').innerHTML=stHtml;
+  } else {
+    document.getElementById('status-section').innerHTML='';
+  }
+
+  // Dynamic upsell: show when expiring within 90 days
+  var upsellEl=document.getElementById('upsell-banner');
+  if(upsellEl){
+    if(d.daysToExpiry!=null&&d.daysToExpiry<=90){
+      var urgency=d.daysToExpiry<=30?'🚨 CRITICAL: Domain expires in '+d.daysToExpiry+' days!':'⚠️ Domain expires in '+d.daysToExpiry+' days';
+      upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin:20px 0;text-align:center;">'+
+        '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">'+urgency+'</h3>'+
+        '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">Pulse Pro monitors your domain expiry date and alerts you 30 days before renewal — so you never accidentally lose a domain.</p>'+
+        '<a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Monitor Domain Expiry → $19/mo</a>'+
+        '</div>';
+      upsellEl.style.display='block';
+    } else {
+      upsellEl.style.display='none';
+    }
+  }
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+(function(){var p=new URLSearchParams(location.search),d=p.get('domain');if(d){document.getElementById('domain-input').value=d;runCheck();}})();
+document.getElementById('domain-input').addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});
+</script>
+
+</body>
+</html>
