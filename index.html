@@ -200,6 +200,37 @@
     .ticker-badge { display: inline-block; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0b0f14; padding: 2px 6px; border-radius: 3px; flex-shrink: 0; }
     @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     .ticker-track:hover { animation-play-state: paused; }
+
+    /* Search Button */
+    .nav-search-btn { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 5px 8px; cursor: pointer; color: var(--muted); display: flex; align-items: center; transition: all 0.15s; flex-shrink: 0; }
+    .nav-search-btn:hover { color: var(--text); border-color: var(--accent); background: rgba(61,217,255,0.08); }
+
+    /* Search Overlay */
+    .search-overlay { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .search-overlay.active { opacity: 1; pointer-events: auto; }
+    .search-overlay.hidden { display: none; }
+    .search-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+    .search-modal { position: relative; width: 90%; max-width: 620px; background: #121923; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); overflow: hidden; animation: search-in 0.2s ease-out; }
+    @keyframes search-in { from { transform: translateY(-20px) scale(0.97); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    .search-input-wrap { display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); gap: 10px; }
+    .search-icon { color: var(--muted); flex-shrink: 0; }
+    .search-input-wrap input { flex: 1; background: none; border: none; color: var(--text); font-size: 1rem; outline: none; font-family: inherit; }
+    .search-input-wrap input::placeholder { color: var(--muted); }
+    .search-esc { font-size: 0.65rem; color: var(--muted); background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: inherit; }
+    .search-results { max-height: 400px; overflow-y: auto; padding: 6px; }
+    .search-result-item { display: flex; flex-direction: column; gap: 3px; padding: 10px 14px; border-radius: 8px; text-decoration: none; cursor: pointer; transition: background 0.1s; }
+    .search-result-item:hover, .search-result-item.selected { background: rgba(61,217,255,0.08); }
+    .search-result-badge { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
+    .search-result-badge[data-cat="Free Tool"] { color: #3de19e; }
+    .search-result-badge[data-cat="Product"] { color: #b47aff; }
+    .search-result-badge[data-cat="Blog"] { color: #f59e0b; }
+    .search-result-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    .search-result-title mark { background: rgba(61,217,255,0.25); color: var(--text); border-radius: 2px; padding: 0 2px; }
+    .search-result-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+    .search-result-desc mark { background: rgba(61,217,255,0.15); color: var(--muted); border-radius: 2px; padding: 0 2px; }
+    .search-empty { padding: 30px 20px; text-align: center; color: var(--muted); font-size: 0.88rem; }
+    .search-footer { padding: 8px 18px; border-top: 1px solid var(--border); font-size: 0.7rem; color: var(--muted); }
+    .search-footer kbd { background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; font-family: inherit; font-size: 0.65rem; }
     .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
     /* Mobile menu */
@@ -876,6 +907,9 @@
           <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
         <a href="/affiliate/" style="color:#00ff66;font-weight:600;">🤝 Affiliates</a>
+        <button class="nav-search-btn" onclick="openSiteSearch()" aria-label="Search site" title="Search (/ or Ctrl+K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
         <a class="nav-cta" href="#smb-essentials">Get Started</a>
       </div>
       <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">

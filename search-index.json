@@ -1,0 +1,555 @@
+[
+  {
+    "url": "/free-ssl-checker/",
+    "title": "SSL Certificate Checker",
+    "category": "Free Tool",
+    "description": "Check SSL/TLS certificate validity, expiry, chain, and configuration for any domain.",
+    "keywords": "ssl certificate checker check ssl/tls certificate validity, expiry, chain, and configuration for any domain. free tool"
+  },
+  {
+    "url": "/free-dmarc-checker/",
+    "title": "DMARC Record Checker",
+    "category": "Free Tool",
+    "description": "Validate DMARC DNS records and get enforcement policy recommendations.",
+    "keywords": "dmarc record checker validate dmarc dns records and get enforcement policy recommendations. free tool"
+  },
+  {
+    "url": "/free-spf-checker/",
+    "title": "SPF Record Checker",
+    "category": "Free Tool",
+    "description": "Verify SPF DNS records for email authentication and deliverability.",
+    "keywords": "spf record checker verify spf dns records for email authentication and deliverability. free tool"
+  },
+  {
+    "url": "/free-subdomain-scanner/",
+    "title": "Subdomain Scanner",
+    "category": "Free Tool",
+    "description": "Discover subdomains via DNS enumeration and certificate transparency logs.",
+    "keywords": "subdomain scanner discover subdomains via dns enumeration and certificate transparency logs. free tool"
+  },
+  {
+    "url": "/free-repo-scanner/",
+    "title": "Repository Security Scanner",
+    "category": "Free Tool",
+    "description": "Scan GitHub repos for exposed secrets, API keys, and security misconfigurations.",
+    "keywords": "repository security scanner scan github repos for exposed secrets, api keys, and security misconfigurations. free tool"
+  },
+  {
+    "url": "/free-blacklist-checker/",
+    "title": "Email Blacklist Checker",
+    "category": "Free Tool",
+    "description": "Check if your IP or domain is on major email blacklists (RBL/DNSBL).",
+    "keywords": "email blacklist checker check if your ip or domain is on major email blacklists (rbl/dnsbl). free tool"
+  },
+  {
+    "url": "/free-domain-security-score/",
+    "title": "Domain Security Score",
+    "category": "Free Tool",
+    "description": "Get an A-F security grade for any domain based on DNS, SSL, and header analysis.",
+    "keywords": "domain security score get an a-f security grade for any domain based on dns, ssl, and header analysis. free tool"
+  },
+  {
+    "url": "/free-dns-checker/",
+    "title": "DNS Record Checker",
+    "category": "Free Tool",
+    "description": "Lookup all DNS records (A, AAAA, MX, TXT, CNAME, NS) for any domain.",
+    "keywords": "dns record checker lookup all dns records (a, aaaa, mx, txt, cname, ns) for any domain. free tool"
+  },
+  {
+    "url": "/free-port-scanner/",
+    "title": "Port Scanner",
+    "category": "Free Tool",
+    "description": "Scan common TCP ports on any host to identify open services.",
+    "keywords": "port scanner scan common tcp ports on any host to identify open services. free tool"
+  },
+  {
+    "url": "/free-header-analyzer/",
+    "title": "HTTP Header Analyzer",
+    "category": "Free Tool",
+    "description": "Analyze HTTP response headers for security misconfigurations and missing protections.",
+    "keywords": "http header analyzer analyze http response headers for security misconfigurations and missing protections. free tool"
+  },
+  {
+    "url": "/free-whois-lookup/",
+    "title": "WHOIS Lookup",
+    "category": "Free Tool",
+    "description": "Lookup domain registration data including registrar, dates, and nameservers.",
+    "keywords": "whois lookup lookup domain registration data including registrar, dates, and nameservers. free tool"
+  },
+  {
+    "url": "/free-password-checker/",
+    "title": "Password Breach Checker",
+    "category": "Free Tool",
+    "description": "Check if a password has been exposed in known data breaches (k-anonymity, zero storage).",
+    "keywords": "password breach checker check if a password has been exposed in known data breaches (k-anonymity, zero storage). free tool"
+  },
+  {
+    "url": "/certwatch/",
+    "title": "CertWatch Pro",
+    "category": "Product",
+    "description": "SSL certificate expiry monitoring with daily checks and email alerts. From $1/mo.",
+    "keywords": "certwatch pro ssl certificate expiry monitoring with daily checks and email alerts. from $1/mo. product"
+  },
+  {
+    "url": "/inbox-shield/",
+    "title": "Inbox Shield",
+    "category": "Product",
+    "description": "Email security gateway with spam filtering, phishing protection, and attachment scanning. $9/mo.",
+    "keywords": "inbox shield email security gateway with spam filtering, phishing protection, and attachment scanning. $9/mo. product"
+  },
+  {
+    "url": "/compliance/",
+    "title": "Compliance Pro",
+    "category": "Product",
+    "description": "Automated compliance checks for SOC2, HIPAA, PCI-DSS with monthly reports. $9/mo.",
+    "keywords": "compliance pro automated compliance checks for soc2, hipaa, pci-dss with monthly reports. $9/mo. product"
+  },
+  {
+    "url": "/services.html",
+    "title": "Managed Security Services",
+    "category": "Services",
+    "description": "SMB cybersecurity monitoring, Wazuh SIEM, monthly action reports. Plans from $199/mo.",
+    "keywords": "managed security services smb cybersecurity monitoring, wazuh siem, monthly action reports. plans from $199/mo. services"
+  },
+  {
+    "url": "/pricing/",
+    "title": "Pricing",
+    "category": "Page",
+    "description": "All plans and pricing for EdgeIQ Labs products and services.",
+    "keywords": "pricing all plans and pricing for edgeiq labs products and services. page"
+  },
+  {
+    "url": "/free-tools/",
+    "title": "Free Security Tools",
+    "category": "Page",
+    "description": "Browse all 12+ free cybersecurity scanners and checkers.",
+    "keywords": "free security tools browse all 12+ free cybersecurity scanners and checkers. page"
+  },
+  {
+    "url": "/blog/",
+    "title": "Security Blog & Intel",
+    "category": "Page",
+    "description": "Latest cybersecurity news, breach analysis, vulnerability reports, and SMB guides.",
+    "keywords": "security blog & intel latest cybersecurity news, breach analysis, vulnerability reports, and smb guides. page"
+  },
+  {
+    "url": "/docs/",
+    "title": "Documentation",
+    "category": "Page",
+    "description": "API docs, setup guides, and integration references.",
+    "keywords": "documentation api docs, setup guides, and integration references. page"
+  },
+  {
+    "url": "/blog/ai-phishing-attacks-2026-employee-training.html",
+    "title": "Why AI-Generated Phishing Emails Are Impossible to Spot in 2026 — And How to Train Your Team",
+    "category": "Blog",
+    "description": "AI tools now generate personalised phishing emails with perfect grammar, correct branding, and context scraped from LinkedIn. Click rates are 4x higher than traditional templates. Here's what changed and how phishing simulations are the only defence that works.",
+    "keywords": "why ai-generated phishing emails are impossible to spot in 2026 — and how to train your team ai tools now generate personalised phishing emails with perfect grammar, correct branding, and context scraped from linkedin. click rates are 4x higher than traditional templates. here's what changed and how phishing simulations are the only defence that works. blog"
+  },
+  {
+    "url": "/blog/api-authentication-mistakes-2026.html",
+    "title": "API Authentication Mistakes Teams Still Make in 2026",
+    "category": "Blog",
+    "description": "The most common API auth mistakes in 2026: weak tokens, missing scope checks, no rotation, and broken service-to-service trust.",
+    "keywords": "api authentication mistakes teams still make in 2026 the most common api auth mistakes in 2026: weak tokens, missing scope checks, no rotation, and broken service-to-service trust. blog"
+  },
+  {
+    "url": "/blog/api-endpoint-security-testing-free.html",
+    "title": "API Endpoint Security Testing: Free Tools and Techniques That Actually Work",
+    "category": "Blog",
+    "description": "APIs are the hidden attack surface in modern web apps. Here's how to find exposed API endpoints, test for common vulnerabilities, and fix what you find — without spending a dime.",
+    "keywords": "api endpoint security testing: free tools and techniques that actually work apis are the hidden attack surface in modern web apps. here's how to find exposed api endpoints, test for common vulnerabilities, and fix what you find — without spending a dime. blog"
+  },
+  {
+    "url": "/blog/best-dmarc-monitoring-tools-2026.html",
+    "title": "Best DMARC Monitoring Tools 2026: Tested and Compared",
+    "category": "Blog",
+    "description": "The 7 best DMARC monitoring tools in 2026 — compared by features, pricing, ease of use, and who each is best for. Includes free options and SMB picks.",
+    "keywords": "best dmarc monitoring tools 2026: tested and compared the 7 best dmarc monitoring tools in 2026 — compared by features, pricing, ease of use, and who each is best for. includes free options and smb picks. blog"
+  },
+  {
+    "url": "/blog/binance-6-billion-hack-what-it-means-for-you.html",
+    "title": "Binance Lost $6.3 Billion in a Hack. Your Business Is Next.",
+    "category": "Blog",
+    "description": "Binance just lost $6.3 billion to hackers who compromised an engineer's laptop. Here's what that means for small businesses and how to avoid becoming the next headline.",
+    "keywords": "binance lost $6.3 billion in a hack. your business is next. binance just lost $6.3 billion to hackers who compromised an engineer's laptop. here's what that means for small businesses and how to avoid becoming the next headline. blog"
+  },
+  {
+    "url": "/blog/business-email-compromise-bec-prevention-2026.html",
+    "title": "Business Email Compromise (BEC): How to Spot and Stop Attacks in 2026",
+    "category": "Blog",
+    "description": "BEC attacks cost businesses $2.9 billion last year. Learn how attackers impersonate executives, suppliers, and HR — and the 9 controls that stop them.",
+    "keywords": "business email compromise (bec): how to spot and stop attacks in 2026 bec attacks cost businesses $2.9 billion last year. learn how attackers impersonate executives, suppliers, and hr — and the 9 controls that stop them. blog"
+  },
+  {
+    "url": "/blog/cloud-storage-misconfig-checklist.html",
+    "title": "Cloud Storage Misconfiguration Checklist",
+    "category": "Blog",
+    "description": "A practical checklist for cloud bucket/object storage misconfigurations: public ACLs, weak IAM, stale objects, and logging gaps.",
+    "keywords": "cloud storage misconfiguration checklist a practical checklist for cloud bucket/object storage misconfigurations: public acls, weak iam, stale objects, and logging gaps. blog"
+  },
+  {
+    "url": "/blog/dark-web-monitoring-data-leakage.html",
+    "title": "Dark Web Monitoring Explained: How to Know If Your Business Data Has Been Leaked",
+    "category": "Blog",
+    "description": "Find out if your business data is on the dark web before attackers use it. Practical dark web monitoring guide for small business owners.",
+    "keywords": "dark web monitoring explained: how to know if your business data has been leaked find out if your business data is on the dark web before attackers use it. practical dark web monitoring guide for small business owners. blog"
+  },
+  {
+    "url": "/blog/dark-web-monitoring-free-tools.html",
+    "title": "Dark Web Monitoring: Free Tools vs Paid Services for Small Business",
+    "category": "Blog",
+    "description": "Your company data could already be on the dark web and you wouldn't know it until a breach hits. Here's how dark web monitoring works, what's actually free, and when paying for it makes sense.",
+    "keywords": "dark web monitoring: free tools vs paid services for small business your company data could already be on the dark web and you wouldn't know it until a breach hits. here's how dark web monitoring works, what's actually free, and when paying for it makes sense. blog"
+  },
+  {
+    "url": "/blog/detect-phishing-kit-on-my-domain.html",
+    "title": "How to Detect a Phishing Kit Using Your Domain (Before It Costs You Customers)",
+    "category": "Blog",
+    "description": "Someone could be phishing your customers right now using your own domain name. Here's how to find out and shut it down.",
+    "keywords": "how to detect a phishing kit using your domain (before it costs you customers) someone could be phishing your customers right now using your own domain name. here's how to find out and shut it down. blog"
+  },
+  {
+    "url": "/blog/dmarc-reject-vs-quarantine.html",
+    "title": "DMARC p=reject vs p=quarantine: Which Policy Should You Set?",
+    "category": "Blog",
+    "description": "DMARC p=reject vs p=quarantine explained. Learn the difference, when to use each, and how to safely move from quarantine to reject without breaking your email.",
+    "keywords": "dmarc p=reject vs p=quarantine: which policy should you set? dmarc p=reject vs p=quarantine explained. learn the difference, when to use each, and how to safely move from quarantine to reject without breaking your email. blog"
+  },
+  {
+    "url": "/blog/dns-misconfigurations-attack-surface.html",
+    "title": "DNS Misconfigurations That Leak Attack Surface",
+    "category": "Blog",
+    "description": "The DNS mistakes that quietly expand attack surface: dangling CNAMEs, stale records, permissive zone transfers, and overexposed TXT metadata.",
+    "keywords": "dns misconfigurations that leak attack surface the dns mistakes that quietly expand attack surface: dangling cnames, stale records, permissive zone transfers, and overexposed txt metadata. blog"
+  },
+  {
+    "url": "/blog/domain-impersonation-detection-guide.html",
+    "title": "How to Detect Domain Impersonation Before Your Customers Get Scammed",
+    "category": "Blog",
+    "description": "Domain impersonation attacks are rising fast. Learn how typosquatting, lookalike domains, and brand impersonation work — and how to detect them before damage is done.",
+    "keywords": "how to detect domain impersonation before your customers get scammed domain impersonation attacks are rising fast. learn how typosquatting, lookalike domains, and brand impersonation work — and how to detect them before damage is done. blog"
+  },
+  {
+    "url": "/blog/domain-spoofing-check-guide.html",
+    "title": "How to Check if Your Domain is Being Spoofed",
+    "category": "Blog",
+    "description": "Learn how to detect domain spoofing using free tools like MXToolbox, SPF/DMARC checks, and DMARC forensic reports — practical steps small businesses can take today.",
+    "keywords": "how to check if your domain is being spoofed learn how to detect domain spoofing using free tools like mxtoolbox, spf/dmarc checks, and dmarc forensic reports — practical steps small businesses can take today. blog"
+  },
+  {
+    "url": "/blog/email-blacklist-check-domain-removal.html",
+    "title": "How to Check If Your Domain Is on an Email Blacklist (and Get Removed)",
+    "category": "Blog",
+    "description": "If your emails are landing in spam, your domain may be blacklisted. Here's how to check every major blacklist, why it happens, and how to get removed — step by step.",
+    "keywords": "how to check if your domain is on an email blacklist (and get removed) if your emails are landing in spam, your domain may be blacklisted. here's how to check every major blacklist, why it happens, and how to get removed — step by step. blog"
+  },
+  {
+    "url": "/blog/email-header-analyzer-phishing-guide.html",
+    "title": "Email Header Analyzer: Spot Spoofed Senders in 5 Minutes",
+    "category": "Blog",
+    "description": "Most phishing clues are in the email header, not the body. Here's how to check SPF, DKIM, DMARC, and reply-path mismatches quickly.",
+    "keywords": "email header analyzer: spot spoofed senders in 5 minutes most phishing clues are in the email header, not the body. here's how to check spf, dkim, dmarc, and reply-path mismatches quickly. blog"
+  },
+  {
+    "url": "/blog/email-spoofing-small-business-domain-check-2026.html",
+    "title": "Your Business Email Domain Can Be Spoofed Right Now — The 2026 DMARC Gap",
+    "category": "Blog",
+    "description": "Most small business domains can be spoofed in under 60 seconds. Here's how email spoofing works, why DMARC at p=none is not enough, and how to lock down your domain in five steps.",
+    "keywords": "your business email domain can be spoofed right now — the 2026 dmarc gap most small business domains can be spoofed in under 60 seconds. here's how email spoofing works, why dmarc at p=none is not enough, and how to lock down your domain in five steps. blog"
+  },
+  {
+    "url": "/blog/exposed-admin-panels-how-attackers-find-them.html",
+    "title": "Exposed Admin Panels: How Attackers Find Them Fast",
+    "category": "Blog",
+    "description": "How attackers discover exposed admin portals using subdomain recon, default paths, and leaked references—and how to lock them down.",
+    "keywords": "exposed admin panels: how attackers find them fast how attackers discover exposed admin portals using subdomain recon, default paths, and leaked references—and how to lock them down. blog"
+  },
+  {
+    "url": "/blog/free-subdomain-finder-tool.html",
+    "title": "Free Subdomain Finder: How to Map Your Entire Attack Surface Before Attackers Do",
+    "category": "Blog",
+    "description": "Development servers, staging environments, old admin panels — your subdomains are an attack surface you probably didn't know you had. Here's how to find all of them, for free.",
+    "keywords": "free subdomain finder: how to map your entire attack surface before attackers do development servers, staging environments, old admin panels — your subdomains are an attack surface you probably didn't know you had. here's how to find all of them, for free. blog"
+  },
+  {
+    "url": "/blog/free-website-security-checker-small-business.html",
+    "title": "Free Website Security Checker for Small Business: What Actually Works in 2026",
+    "category": "Blog",
+    "description": "Most free security tools are either useless or so loud with false positives they make you ignore real threats. Here's what small businesses should actually be checking — and what free tools get it right.",
+    "keywords": "free website security checker for small business: what actually works in 2026 most free security tools are either useless or so loud with false positives they make you ignore real threats. here's what small businesses should actually be checking — and what free tools get it right. blog"
+  },
+  {
+    "url": "/blog/free-xss-vulnerability-scanner.html",
+    "title": "Free XSS Vulnerability Scanner: How to Find Cross-Site Scripting Before Attackers Do",
+    "category": "Blog",
+    "description": "Cross-site scripting is the most common web vulnerability and it's often hiding in places basic scanners miss. Here's how to find it on your own sites — for free.",
+    "keywords": "free xss vulnerability scanner: how to find cross-site scripting before attackers do cross-site scripting is the most common web vulnerability and it's often hiding in places basic scanners miss. here's how to find it on your own sites — for free. blog"
+  },
+  {
+    "url": "/blog/google-cloud-outage-when-your-provider-goes-dark.html",
+    "title": "Google Cloud Went Dark. Is Your Infrastructure Designed to Survive That?",
+    "category": "Blog",
+    "description": "A power outage took out Google Cloud's europe-west2-b zone for hours. When your cloud provider loses physical power, your redundancy plan better not be 'hope it doesn't happen.'",
+    "keywords": "google cloud went dark. is your infrastructure designed to survive that? a power outage took out google cloud's europe-west2-b zone for hours. when your cloud provider loses physical power, your redundancy plan better not be 'hope it doesn't happen.' blog"
+  },
+  {
+    "url": "/blog/google-workspace-security-audit-checklist.html",
+    "title": "Google Workspace Security Audit: 8 Misconfigurations to Fix in 2026",
+    "category": "Blog",
+    "description": "A practical Google Workspace security audit checklist for 2026. Covers 2-step verification, external sharing, third-party app access, forwarding rules, and admin account hygiene.",
+    "keywords": "google workspace security audit: 8 misconfigurations to fix in 2026 a practical google workspace security audit checklist for 2026. covers 2-step verification, external sharing, third-party app access, forwarding rules, and admin account hygiene. blog"
+  },
+  {
+    "url": "/blog/how-attackers-find-subdomains-you-didnt-know-about.html",
+    "title": "How Attackers Find Subdomains You Didn't Know You Had",
+    "category": "Blog",
+    "description": "Attackers find subdomains before you do. Learn the exact reconnaissance techniques they use and how to find your hidden subdomains first.",
+    "keywords": "how attackers find subdomains you didn't know you had attackers find subdomains before you do. learn the exact reconnaissance techniques they use and how to find your hidden subdomains first. blog"
+  },
+  {
+    "url": "/blog/how-to-check-email-dmarc-compliance.html",
+    "title": "How to Check If Your Email Is DMARC Compliant",
+    "category": "Blog",
+    "description": "Find out if your domain is protected against email spoofing. A practical guide to checking your DMARC record, interpreting policy levels, and getting to p=reject.",
+    "keywords": "how to check if your email is dmarc compliant find out if your domain is protected against email spoofing. a practical guide to checking your dmarc record, interpreting policy levels, and getting to p=reject. blog"
+  },
+  {
+    "url": "/blog/how-to-find-exposed-api-endpoints.html",
+    "title": "How to Find Exposed API Endpoints: A Practical Guide",
+    "category": "Blog",
+    "description": "Misconfigured APIs leak data, expose admin panels, and create attack surfaces that scanners miss. Here's the OSINT and recon workflow used by security researchers to find them.",
+    "keywords": "how to find exposed api endpoints: a practical guide misconfigured apis leak data, expose admin panels, and create attack surfaces that scanners miss. here's the osint and recon workflow used by security researchers to find them. blog"
+  },
+  {
+    "url": "/blog/how-to-fix-dmarc-policy.html",
+    "title": "How to Fix Your DMARC Policy (And Move to p=reject Without Breaking Email)",
+    "category": "Blog",
+    "description": "Your DMARC is set to p=none — that means attackers can still spoof your domain. Here's the step-by-step path to p=reject without breaking legitimate email.",
+    "keywords": "how to fix your dmarc policy (and move to p=reject without breaking email) your dmarc is set to p=none — that means attackers can still spoof your domain. here's the step-by-step path to p=reject without breaking legitimate email. blog"
+  },
+  {
+    "url": "/blog/http-security-headers-what-sites-get-wrong.html",
+    "title": "HTTP Security Headers: What Most Sites Get Wrong in 2026",
+    "category": "Blog",
+    "description": "CSP too permissive, HSTS max-age too short, X-Frame-Options instead of CSP frame-ancestors, nosniff missing, Referrer-Policy leaking data — here's what wrong looks like vs. correct for 8 critical HTTP security headers.",
+    "keywords": "http security headers: what most sites get wrong in 2026 csp too permissive, hsts max-age too short, x-frame-options instead of csp frame-ancestors, nosniff missing, referrer-policy leaking data — here's what wrong looks like vs. correct for 8 critical http security headers. blog"
+  },
+  {
+    "url": "/blog/incident-response-checklist-first-24-hours.html",
+    "title": "Incident Response Checklist: The First 24 Hours",
+    "category": "Blog",
+    "description": "A practical first-24-hours incident response checklist for small teams: contain, preserve evidence, communicate, and recover safely.",
+    "keywords": "incident response checklist: the first 24 hours a practical first-24-hours incident response checklist for small teams: contain, preserve evidence, communicate, and recover safely. blog"
+  },
+  {
+    "url": "/blog/m365-security-audit-checklist-2026.html",
+    "title": "M365 Security Audit Checklist 2026: 9 Checks Every Admin Must Run",
+    "category": "Blog",
+    "description": "A practical Microsoft 365 security audit checklist for 2026. Covers MFA gaps, legacy auth, stale admins, email forwarding rules, OAuth apps, and conditional access.",
+    "keywords": "m365 security audit checklist 2026: 9 checks every admin must run a practical microsoft 365 security audit checklist for 2026. covers mfa gaps, legacy auth, stale admins, email forwarding rules, oauth apps, and conditional access. blog"
+  },
+  {
+    "url": "/blog/mfa-fatigue-attack-prevention.html",
+    "title": "MFA Fatigue Attacks: What They Are and How to Stop Them",
+    "category": "Blog",
+    "description": "MFA fatigue (MFA bombing) explained — how attackers flood users with push notifications until they accidentally approve. How to detect it and switch to phishing-resistant MFA.",
+    "keywords": "mfa fatigue attacks: what they are and how to stop them mfa fatigue (mfa bombing) explained — how attackers flood users with push notifications until they accidentally approve. how to detect it and switch to phishing-resistant mfa. blog"
+  },
+  {
+    "url": "/blog/microsoft-365-account-compromised-signs.html",
+    "title": "How to Tell If Your Microsoft 365 Account Has Been Compromised",
+    "category": "Blog",
+    "description": "7 signs your Microsoft 365 tenant has been compromised and exactly where to look in the admin centre. Plus a step-by-step response checklist.",
+    "keywords": "how to tell if your microsoft 365 account has been compromised 7 signs your microsoft 365 tenant has been compromised and exactly where to look in the admin centre. plus a step-by-step response checklist. blog"
+  },
+  {
+    "url": "/blog/mxtoolbox-alternatives.html",
+    "title": "MXToolbox Alternatives in 2026: 5 Tools That Do More Than One-Off Checks",
+    "category": "Blog",
+    "description": "Looking for a MXToolbox alternative? These 5 tools go beyond one-off lookups with continuous monitoring, automated alerts, and broader security coverage — many starting free.",
+    "keywords": "mxtoolbox alternatives in 2026: 5 tools that do more than one-off checks looking for a mxtoolbox alternative? these 5 tools go beyond one-off lookups with continuous monitoring, automated alerts, and broader security coverage — many starting free. blog"
+  },
+  {
+    "url": "/blog/oauth-security-checker-best-practices.html",
+    "title": "OAuth Security Checker: Common Login Flow Weaknesses and How to Test Them",
+    "category": "Blog",
+    "description": "OAuth login bugs are subtle and expensive. Learn how to test redirect URI, state, PKCE, and token handling without breaking your auth flow.",
+    "keywords": "oauth security checker: common login flow weaknesses and how to test them oauth login bugs are subtle and expensive. learn how to test redirect uri, state, pkce, and token handling without breaking your auth flow. blog"
+  },
+  {
+    "url": "/blog/phishing-email-examples-2026.html",
+    "title": "Phishing Email Examples 2026: What to Look For",
+    "category": "Blog",
+    "description": "Real phishing email examples from 2026 — Microsoft, DocuSign, payroll, and CEO fraud. Learn the red flags, what attackers do differently now, and how to protect your team.",
+    "keywords": "phishing email examples 2026: what to look for real phishing email examples from 2026 — microsoft, docusign, payroll, and ceo fraud. learn the red flags, what attackers do differently now, and how to protect your team. blog"
+  },
+  {
+    "url": "/blog/php-memory-corruption-rce-cve-2026-109618.html",
+    "title": "CVE-2026-109618: PHP Memory Corruption RCE — Patch Now or Get Owned",
+    "category": "Blog",
+    "description": "A critical memory corruption vulnerability in PHP allows unauthenticated remote code execution. If you run WordPress, Laravel, or any PHP app, you need to patch immediately.",
+    "keywords": "cve-2026-109618: php memory corruption rce — patch now or get owned a critical memory corruption vulnerability in php allows unauthenticated remote code execution. if you run wordpress, laravel, or any php app, you need to patch immediately. blog"
+  },
+  {
+    "url": "/blog/ransomware-readiness-checklist-small-business.html",
+    "title": "Ransomware Readiness Checklist for Small Businesses",
+    "category": "Blog",
+    "description": "A practical ransomware readiness checklist for small businesses: backups, MFA, endpoint controls, and recovery planning.",
+    "keywords": "ransomware readiness checklist for small businesses a practical ransomware readiness checklist for small businesses: backups, mfa, endpoint controls, and recovery planning. blog"
+  },
+  {
+    "url": "/blog/saas-app-permission-audit-guide.html",
+    "title": "How to Audit Your SaaS App Permissions in M365 and Google Workspace",
+    "category": "Blog",
+    "description": "Most M365 and Google Workspace tenants have dozens of OAuth apps with broad permissions that no one remembers authorising. Here's how to audit them and what to revoke.",
+    "keywords": "how to audit your saas app permissions in m365 and google workspace most m365 and google workspace tenants have dozens of oauth apps with broad permissions that no one remembers authorising. here's how to audit them and what to revoke. blog"
+  },
+  {
+    "url": "/blog/security-misconfiguration-exploits.html",
+    "title": "What Is a Security Misconfiguration and How Do Attackers Exploit Them?",
+    "category": "Blog",
+    "description": "Security misconfigurations are the most common attack vector for small businesses — here's what they look like, how attackers find them, and how to fix them.",
+    "keywords": "what is a security misconfiguration and how do attackers exploit them? security misconfigurations are the most common attack vector for small businesses — here's what they look like, how attackers find them, and how to fix them. blog"
+  },
+  {
+    "url": "/blog/security-monitoring-routine-small-team.html",
+    "title": "How to Set Up a Security Monitoring Routine Without a Dedicated Team",
+    "category": "Blog",
+    "description": "You don't need a SOC team to monitor your security posture. Here's a practical weekly routine for small businesses with limited staff and no dedicated security team.",
+    "keywords": "how to set up a security monitoring routine without a dedicated team you don't need a soc team to monitor your security posture. here's a practical weekly routine for small businesses with limited staff and no dedicated security team. blog"
+  },
+  {
+    "url": "/blog/security-scans-how-often-small-business.html",
+    "title": "Why Your Business Needs Regular Security Scans (And How Often)",
+    "category": "Blog",
+    "description": "Security scans catch misconfigurations and exposed assets before attackers do. Here's how often to run them and which types matter most for small businesses.",
+    "keywords": "why your business needs regular security scans (and how often) security scans catch misconfigurations and exposed assets before attackers do. here's how often to run them and which types matter most for small businesses. blog"
+  },
+  {
+    "url": "/blog/small-business-cybersecurity-checklist-2026.html",
+    "title": "Small Business Cybersecurity Checklist for 2026: The Complete Guide",
+    "category": "Blog",
+    "description": "You don't need a dedicated security team to stay significantly more secure than the average small business. Here's the prioritized checklist that covers what actually matters in 2026.",
+    "keywords": "small business cybersecurity checklist for 2026: the complete guide you don't need a dedicated security team to stay significantly more secure than the average small business. here's the prioritized checklist that covers what actually matters in 2026. blog"
+  },
+  {
+    "url": "/blog/smb-cybersecurity-compliance-hipaa-pci-checklist.html",
+    "title": "SMB Cybersecurity Compliance: HIPAA and PCI-DSS Without the Enterprise Budget",
+    "category": "Blog",
+    "description": "If you handle health data or accept card payments, compliance isn't optional. Here's the practical path for small businesses without a team of lawyers.",
+    "keywords": "smb cybersecurity compliance: hipaa and pci-dss without the enterprise budget if you handle health data or accept card payments, compliance isn't optional. here's the practical path for small businesses without a team of lawyers. blog"
+  },
+  {
+    "url": "/blog/smb-security-monitoring-weekly-routine.html",
+    "title": "Small Business Security Monitoring: A 30-Minute Weekly Routine",
+    "category": "Blog",
+    "description": "A practical 30-minute weekly security routine for small businesses: what to check, what to fix first, and how to avoid alert fatigue.",
+    "keywords": "small business security monitoring: a 30-minute weekly routine a practical 30-minute weekly security routine for small businesses: what to check, what to fix first, and how to avoid alert fatigue. blog"
+  },
+  {
+    "url": "/blog/spf-dkim-dmarc-setup-guide.html",
+    "title": "SPF, DKIM, DMARC: A Real-World Setup Guide",
+    "category": "Blog",
+    "description": "A practical SPF, DKIM, and DMARC setup guide for small teams. Prevent spoofing and improve deliverability without breaking legitimate email.",
+    "keywords": "spf, dkim, dmarc: a real-world setup guide a practical spf, dkim, and dmarc setup guide for small teams. prevent spoofing and improve deliverability without breaking legitimate email. blog"
+  },
+  {
+    "url": "/blog/sql-injection-scanner-for-small-business.html",
+    "title": "SQL Injection Scanner for Small Business: Find SQLi Before It Hits Production",
+    "category": "Blog",
+    "description": "SQL injection still breaks real businesses in 2026. Here's a practical way to test your forms, URL params, and APIs before attackers do.",
+    "keywords": "sql injection scanner for small business: find sqli before it hits production sql injection still breaks real businesses in 2026. here's a practical way to test your forms, url params, and apis before attackers do. blog"
+  },
+  {
+    "url": "/blog/ssl-certificate-expired-check.html",
+    "title": "How to Check If Your SSL Certificate Has Expired (And What Happens If It Does)",
+    "category": "Blog",
+    "description": "Your SSL certificate expiring isn't just a browser warning — it kills trust, tanks SEO, and opens you up to interception attacks. Here's how to check and what to do before it expires.",
+    "keywords": "how to check if your ssl certificate has expired (and what happens if it does) your ssl certificate expiring isn't just a browser warning — it kills trust, tanks seo, and opens you up to interception attacks. here's how to check and what to do before it expires. blog"
+  },
+  {
+    "url": "/blog/ssl-certificate-warnings-explained.html",
+    "title": "SSL Certificate Warnings: What They Mean and Why Ignoring Them Is Dangerous",
+    "category": "Blog",
+    "description": "That SSL warning in your browser isn't just an annoyance — it's a signal something is wrong. Here's what each warning means and the real risks of ignoring them.",
+    "keywords": "ssl certificate warnings: what they mean and why ignoring them is dangerous that ssl warning in your browser isn't just an annoyance — it's a signal something is wrong. here's what each warning means and the real risks of ignoring them. blog"
+  },
+  {
+    "url": "/blog/stripe-outage-checklist-saas.html",
+    "title": "Stripe Outage Checklist: What Every SaaS Team Needs Ready Before Payments Go Down",
+    "category": "Blog",
+    "description": "When Stripe has an outage, the last thing you want is to scramble. This checklist covers everything your SaaS team needs to have in place before payments go down — and how to recover fast when they do.",
+    "keywords": "stripe outage checklist: what every saas team needs ready before payments go down when stripe has an outage, the last thing you want is to scramble. this checklist covers everything your saas team needs to have in place before payments go down — and how to recover fast when they do. blog"
+  },
+  {
+    "url": "/blog/subdomain-enumeration-techniques-2026.html",
+    "title": "Subdomain Enumeration: The 5 Techniques That Actually Work in 2026",
+    "category": "Blog",
+    "description": "Certificate Transparency logs, DNS zone transfers, NSLOOKUP record enumeration, permutation fuzzing, and OWASP Amass chaining — here's the modern subdomain enum playbook that security researchers actually use.",
+    "keywords": "subdomain enumeration: the 5 techniques that actually work in 2026 certificate transparency logs, dns zone transfers, nslookup record enumeration, permutation fuzzing, and owasp amass chaining — here's the modern subdomain enum playbook that security researchers actually use. blog"
+  },
+  {
+    "url": "/blog/subdomain-takeover-overlooked-attack-vector.html",
+    "title": "Why Subdomain Takeovers Are the Forgotten Attack Vector (And How to Check for Them)",
+    "category": "Blog",
+    "description": "Subdomain takeovers are a silent threat that most organizations miss until it's too late. Learn how dangling DNS records expose your infrastructure and how to find them before attackers do.",
+    "keywords": "why subdomain takeovers are the forgotten attack vector (and how to check for them) subdomain takeovers are a silent threat that most organizations miss until it's too late. learn how dangling dns records expose your infrastructure and how to find them before attackers do. blog"
+  },
+  {
+    "url": "/blog/top-10-subdomain-takeover-attacks.html",
+    "title": "Top 10 Subdomain Takeover Attacks and How to Prevent Them",
+    "category": "Blog",
+    "description": "Subdomain takeovers are an overlooked but critical attack vector. Learn how attackers find them, why they're dangerous, and how to prevent them from happening to your domains.",
+    "keywords": "top 10 subdomain takeover attacks and how to prevent them subdomain takeovers are an overlooked but critical attack vector. learn how attackers find them, why they're dangerous, and how to prevent them from happening to your domains. blog"
+  },
+  {
+    "url": "/blog/vendor-supply-chain-security-smb-2026.html",
+    "title": "Your Vendors Are the New Attack Surface: Supply Chain Security for SMBs in 2026",
+    "category": "Blog",
+    "description": "62% of breaches now involve a compromised third-party vendor. SMBs are prime targets because attackers know their vendor security controls are loose. Here's how to monitor your supply chain before it becomes your breach.",
+    "keywords": "your vendors are the new attack surface: supply chain security for smbs in 2026 62% of breaches now involve a compromised third-party vendor. smbs are prime targets because attackers know their vendor security controls are loose. here's how to monitor your supply chain before it becomes your breach. blog"
+  },
+  {
+    "url": "/blog/vulnerability-triage-workflow-small-teams.html",
+    "title": "Vulnerability Triage Workflow for Small Teams",
+    "category": "Blog",
+    "description": "A practical vuln triage workflow for small teams: severity, exploitability, exposure, and business impact in one decision framework.",
+    "keywords": "vulnerability triage workflow for small teams a practical vuln triage workflow for small teams: severity, exploitability, exposure, and business impact in one decision framework. blog"
+  },
+  {
+    "url": "/blog/what-attackers-recon-your-business.html",
+    "title": "What Attackers See When They Recon Your Business",
+    "category": "Blog",
+    "description": "DNS records, CT logs, exposed ports, LinkedIn profiles, GitHub repos, breach data — here's what an attacker learns about your business before they ever touch your network. Non-technical walkthrough for founders, marketers, and small business owners.",
+    "keywords": "what attackers see when they recon your business dns records, ct logs, exposed ports, linkedin profiles, github repos, breach data — here's what an attacker learns about your business before they ever touch your network. non-technical walkthrough for founders, marketers, and small business owners. blog"
+  },
+  {
+    "url": "/blog/what-is-attack-surface-management.html",
+    "title": "What Is Attack Surface Management? (And How to Do It for Free)",
+    "category": "Blog",
+    "description": "Attack surface management explained: what it covers, why it matters for small teams, and how to get continuous visibility into your external attack surface without enterprise tooling.",
+    "keywords": "what is attack surface management? (and how to do it for free) attack surface management explained: what it covers, why it matters for small teams, and how to get continuous visibility into your external attack surface without enterprise tooling. blog"
+  },
+  {
+    "url": "/blog/what-is-dkim-email-authentication.html",
+    "title": "What Is DKIM? How It Works and Why It Matters for Email Security",
+    "category": "Blog",
+    "description": "DKIM (DomainKeys Identified Mail) explained simply. Learn how it works, how to check if yours is set up, and why it's essential alongside SPF and DMARC.",
+    "keywords": "what is dkim? how it works and why it matters for email security dkim (domainkeys identified mail) explained simply. learn how it works, how to check if yours is set up, and why it's essential alongside spf and dmarc. blog"
+  },
+  {
+    "url": "/blog/what-is-phishing-simulation.html",
+    "title": "What Is a Phishing Simulation and Why Does Your Business Need One?",
+    "category": "Blog",
+    "description": "Phishing simulations train employees to spot real attacks — without the risk. Learn what they are, how to run one, and why small businesses need them now.",
+    "keywords": "what is a phishing simulation and why does your business need one? phishing simulations train employees to spot real attacks — without the risk. learn what they are, how to run one, and why small businesses need them now. blog"
+  },
+  {
+    "url": "/blog/zero-trust-security-small-business-guide.html",
+    "title": "Zero Trust Security for Small Businesses: A Practical Guide",
+    "category": "Blog",
+    "description": "Zero trust isn't just for enterprises. This practical guide shows small businesses how to implement zero trust principles without a dedicated security team or six-figure budget.",
+    "keywords": "zero trust security for small businesses: a practical guide zero trust isn't just for enterprises. this practical guide shows small businesses how to implement zero trust principles without a dedicated security team or six-figure budget. blog"
+  }
+]
