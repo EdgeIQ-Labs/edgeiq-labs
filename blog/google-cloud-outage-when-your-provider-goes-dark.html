@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Google Cloud Went Dark. Is Your Infrastructure Designed to Survive That? — EdgeIQ Labs</title>
+  <meta name="description" content="A power outage took out Google Cloud's europe-west2-b zone for hours. When your cloud provider loses physical power, your redundancy plan better not be 'hope it doesn't happen.'"/>
+  <meta property="og:title" content="Google Cloud Went Dark. Can Your Business Survive That?"/>
+  <meta property="og:description" content="Physical power disruption took out an entire GCP zone. Here's what small businesses need to know about cloud resilience."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/google-cloud-outage-when-your-provider-goes-dark.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/google-cloud-outage-when-your-provider-goes-dark.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Google Cloud Went Dark. Is Your Infrastructure Designed to Survive That?","datePublished":"2026-10-30","dateModified":"2026-10-30","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.orange{color:#f97316;background:#1f1710;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">EdgeIQ<span>Labs</span></a>
+    <div class="nav__links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/services.html">Services</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav__cta">Get Protected</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag orange">Infrastructure</span>
+      <span class="tag">Cloud Resilience</span>
+      <span class="tag">Hosting</span>
+    </div>
+    <h1>Google Cloud Went Dark. Is Your Infrastructure Designed to Survive That?</h1>
+    <div class="meta">
+      <span>October 30, 2026</span>
+      <span>·</span>
+      <span>7 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>On October 19, an external electrical power disruption hit a data center facility hosting Google Cloud's <code>europe-west2-b</code> zone. The result: workloads in that zone went completely unavailable. Services across the broader <code>europe-west2</code> region experienced elevated errors and latency as traffic redistributed to surviving zones.</p>
+
+    <p>Google mitigated the power event within hours. Full recovery took longer. Customers couldn't create new workloads during restoration. Existing workloads came back gradually, not all at once.</p>
+
+    <p>This wasn't a software bug. It wasn't a misconfiguration. It was <em>physical infrastructure losing power</em>. And it's exactly the kind of event that exposes the gap between what cloud providers promise and what small businesses actually plan for.</p>
+
+    <h2>The Myth of "The Cloud Never Goes Down"</h2>
+
+    <p>There's a persistent belief that moving to the cloud eliminates infrastructure risk. It doesn't. It transfers it. Your server still lives in a building with power lines, cooling systems, and physical hardware. Those things fail.</p>
+
+    <p>Google's own incident report confirms: the root cause was an external power disruption at the facility level. Not a Google software issue. Not a customer misconfiguration. A <em>building</em> lost power.</p>
+
+    <div class="callout warn">
+      <strong>The uncomfortable truth:</strong> Every major cloud provider has experienced similar events. AWS had a US-EAST-1 outage in June 2026 affecting multiple services. Azure has had regional power events. These aren't anomalies — they're inherent to operating physical infrastructure at scale.
+    </div>
+
+    <h2>What This Means for Small Businesses</h2>
+
+    <p>If your entire infrastructure lives in a single cloud zone and that zone goes dark, your business goes dark with it. No website. No email. No customer-facing applications. No internal tools. Revenue stops. Support tickets pile up. Customers notice.</p>
+
+    <p>Enterprise customers handle this with multi-zone deployments, cross-region failover, and dedicated disaster recovery infrastructure. They also pay tens of thousands per month for the privilege.</p>
+
+    <p>Small businesses typically don't. Most run everything in a single zone, maybe a single instance, with backups that haven't been tested in months (if ever). When the zone fails, they wait for the provider to fix it and hope their customers are patient.</p>
+
+    <h2>Resilience Doesn't Have to Be Expensive</h2>
+
+    <p>You don't need enterprise-grade DR to survive a zone outage. Here's what actually works at small-business budgets:</p>
+
+    <h3>1. Multi-Zone by Default</h3>
+    <p>If your hosting provider offers multiple availability zones, use at least two. Deploy your application across zones and put a load balancer in front. When one zone dies, traffic routes to the survivor automatically. This costs marginally more than single-zone but eliminates the single point of failure.</p>
+
+    <h3>2. DNS-Level Failover</h3>
+    <p>Even simpler: run a secondary instance with a different provider or in a different region. Use DNS with health checks to route traffic away from the failed instance. Cloudflare, which we use extensively, offers this natively. Total additional cost: one extra small VPS (~$4-8/mo).</p>
+
+    <h3>3. Test Your Backups</h3>
+    <p>Backups you've never restored are just hopes. Schedule monthly restore tests. Verify your data is intact, your applications boot correctly, and your recovery time meets your actual business requirements. A backup that takes 6 hours to restore when your SLA says 30 minutes isn't a backup — it's a liability.</p>
+
+    <h3>4. Monitoring With Independent Alerting</h3>
+    <p>If your monitoring lives in the same cloud as your application, it dies when your application dies. Use an external uptime monitor (even a free one) that pings your critical endpoints from outside your infrastructure. Get alerted via SMS or push notification, not just email that might be hosted on the same failing platform.</p>
+
+    <h3>5. Document Your Recovery Plan</h3>
+    <p>When the outage hits at 2 AM, you don't want to be figuring out recovery steps from scratch. Write down: what to check first, how to fail over, who to contact, how to communicate with customers. Store this document somewhere accessible during an outage (not solely on the infrastructure that might be down).</p>
+
+    <div class="callout">
+      <strong>Practical starting point:</strong> Our VPS hosting ($4/mo) includes NVMe storage, root SSH access, DDoS mitigation, and pre-installed Wazuh SIEM + Checkmk monitoring. We run on infrastructure with redundant power and network paths. For small businesses that need reliability without the enterprise price tag, it's a meaningful step up from single-zone shared hosting.
+    </div>
+
+    <h2>The Real Question</h2>
+
+    <p>Google recovered from this outage. Their customers eventually came back online. The question isn't whether your cloud provider can recover — it's whether <em>your business</em> can survive the downtime while they do.</p>
+
+    <p>For a SaaS company with 50 employees and a dedicated ops team, a few hours of degraded service is painful but survivable. For a small e-commerce store doing $10K/month in revenue, four hours of downtime during peak season might mean missing quarterly targets. For a local service business whose booking system lives entirely in the cloud, it means turning away customers who find a competitor instead.</p>
+
+    <p>Resilience isn't about preventing outages. It's about deciding how much downtime your business can actually afford — and building accordingly.</p>
+
+    <h2>One More Thing</h2>
+
+    <p>This GCP outage happened the same week as critical PHP and Brotli vulnerabilities, the Binance hack, and Cisco/CISA advisories. Infrastructure failures and security incidents don't schedule themselves conveniently. They stack. They compound. They hit when you're already dealing with something else.</p>
+
+    <p>The businesses that survive aren't the ones with perfect uptime. They're the ones that assumed things would break and built accordingly. Start there.</p>
+  </div>
+
+  <div class="cta-box">
+    <h3>Hosting Built for Resilience</h3>
+    <p>EdgeIQ Labs VPS hosting from $4/mo — NVMe, root SSH, DDoS mitigation, Wazuh SIEM pre-installed. Plus managed bot hosting from $5/mo for always-on services.</p>
+    <a href="/pricing/" class="btn">See Plans →</a>
+  </div>
+
+  <!-- Email Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;">
+    <h3 style="margin:0 0 10px;font-size:1.1rem;">Weekly Infrastructure & Security Briefings</h3>
+    <p style="margin:0 0 16px;color:var(--muted);font-size:0.88rem;">Outages, CVEs, breaches, and practical fixes — delivered to your inbox every Tuesday.</p>
+    <form id="blogEmailSignup" style="display:flex;gap:8px;max-width:400px;margin:0 auto;" onsubmit="event.preventDefault();var e=this.querySelector('input[type=email]').value;if(!e)return;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:'blog'})}).then(()=>{this.innerHTML='<p style=color:var(--green)>✓ You\'re in. Watch your inbox.</p>';});">
+      <input type="email" placeholder="you@company.com" required style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;"/>
+      <button type="submit" style="background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;">Subscribe</button>
+    </form>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>© 2026 EdgeIQ Labs. Cybersecurity · Hosting for Small Business.</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+</body>
+</html>
