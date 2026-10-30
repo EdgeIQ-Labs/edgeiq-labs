@@ -1,19 +1,23 @@
 /**
- * CertWatch API — SSL Certificate Expiry Monitor
+ * CertWatch API — SSL Certificate Expiry Monitor (KV-backed)
+ * Uses PULSE_KV for storage to match existing EdgeIQ architecture.
+ *
+ * KV Key Schema:
+ *   certwatch:sub:{email}          → subscriber JSON
+ *   certwatch:domains:{email}      → JSON array of domain objects
+ *
  * Endpoints:
  *   POST /api/certwatch/domains     — Add domain (requires auth)
  *   DELETE /api/certwatch/domains/:domain — Remove domain (requires auth)
  *   GET  /api/certwatch/domains     — List monitored domains (requires auth)
  *   POST /api/certwatch/check       — Manual check for a domain (free, no auth)
  *   POST /api/certwatch/webhook     — Stripe webhook handler
- *
- * Cron trigger: daily at 6AM ET, checks all monitored certs
  */
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CertWatch-Email',
 };
 
 function json(data, status = 200) {
@@ -23,64 +27,59 @@ function json(data, status = 200) {
   });
 }
 
-// Check SSL cert for a single domain using CF's built-in fetch
-async function checkCert(domain) {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    
-    const resp = await fetch(`https://${domain}`, {
-      signal: controller.signal,
-      redirect: 'follow',
-    });
-    clearTimeout(timeout);
-    
-    // CF Workers expose certificate info on the response
-    // Unfortunately, CF Workers don't expose cert details directly.
-    // We need to use a different approach: connect via TLS and read cert.
-    // For now, use the existing ssl-checker worker endpoint.
-    return null; // Will be replaced with actual check logic
-  } catch (e) {
-    return { error: e.message, domain };
-  }
+// ─── KV Helpers ────────────────────────────────────────────────
+async function getSubscriber(env, email) {
+  const raw = await env.PULSE_KV.get(`certwatch:sub:${email}`);
+  return raw ? JSON.parse(raw) : null;
 }
 
-// Use the existing SSL checker infrastructure
-async function checkCertViaWorker(domain, env) {
+async function putSubscriber(env, email, data) {
+  await env.PULSE_KV.put(`certwatch:sub:${email}`, JSON.stringify(data));
+}
+
+async function getDomains(env, email) {
+  const raw = await env.PULSE_KV.get(`certwatch:domains:${email}`);
+  return raw ? JSON.parse(raw) : [];
+}
+
+async function putDomains(env, email, domains) {
+  await env.PULSE_KV.put(`certwatch:domains:${email}`, JSON.stringify(domains));
+}
+
+// ─── SSL Check via existing infrastructure ─────────────────────
+async function checkCertViaWorker(domain) {
   try {
-    // Call our own SSL checker API
     const resp = await fetch('https://edgeiqlabs.com/api/ssl-check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ domain }),
     });
-    
+
     if (!resp.ok) {
       return { domain, status: 'error', error: `API returned ${resp.status}` };
     }
-    
+
     const data = await resp.json();
-    
+
     if (data.error) {
       return { domain, status: 'error', error: data.error };
     }
-    
-    // Parse expiry from the SSL checker response
+
     const expiryDate = data.expiry || data.validTo || data.notAfter;
     const issuer = data.issuer || data.organization || 'Unknown';
-    
+
     if (!expiryDate) {
       return { domain, status: 'error', error: 'No expiry date in response' };
     }
-    
+
     const expiry = new Date(expiryDate);
     const now = new Date();
     const daysUntilExpiry = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-    
+
     let status = 'valid';
     if (daysUntilExpiry <= 0) status = 'expired';
     else if (daysUntilExpiry <= 30) status = 'expiring_soon';
-    
+
     return {
       domain,
       status,
@@ -93,6 +92,7 @@ async function checkCertViaWorker(domain, env) {
   }
 }
 
+// ─── Request Handler ───────────────────────────────────────────
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -108,43 +108,47 @@ export async function onRequest(context) {
   if (path === '/check' && method === 'POST') {
     const body = await request.json().catch(() => ({}));
     const domain = (body.domain || '').trim().toLowerCase();
-    
+
     if (!domain || !domain.includes('.')) {
       return json({ error: 'Valid domain required' }, 400);
     }
-    
-    const result = await checkCertViaWorker(domain, env);
+
+    const result = await checkCertViaWorker(domain);
     return json(result);
   }
 
   // All other endpoints require authentication
-  // For MVP: simple email-based auth via query param or header
-  // TODO: Replace with proper JWT/session auth
-  const authEmail = request.headers.get('X-CertWatch-Email') || url.searchParams.get('email');
-  
-  if (!authEmail) {
+  const authEmail = (request.headers.get('X-CertWatch-Email') || url.searchParams.get('email') || '').trim().toLowerCase();
+
+  if (!authEmail || !authEmail.includes('@')) {
     return json({ error: 'Authentication required. Pass X-CertWatch-Email header.' }, 401);
   }
 
   // Get or create subscriber
-  let subscriber = await env.DB.prepare('SELECT * FROM subscribers WHERE email = ?').bind(authEmail).first();
-  
+  let subscriber = await getSubscriber(env, authEmail);
+
   if (!subscriber) {
-    // Free tier: allow 1 domain without subscription
-    await env.DB.prepare('INSERT INTO subscribers (email, max_domains) VALUES (?, 1)').bind(authEmail).run();
-    subscriber = await env.DB.prepare('SELECT * FROM subscribers WHERE email = ?').bind(authEmail).first();
+    // Free tier: 1 domain, no subscription
+    subscriber = {
+      email: authEmail,
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+      status: 'free',
+      max_domains: 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    await putSubscriber(env, authEmail, subscriber);
   }
 
   // Route: GET /domains — List monitored domains
   if (path === '/domains' && method === 'GET') {
-    const domains = await env.DB.prepare(
-      'SELECT * FROM monitored_domains WHERE subscriber_id = ? ORDER BY added_at DESC'
-    ).bind(subscriber.id).all();
-    
-    return json({ 
-      domains: domains.results, 
+    const domains = await getDomains(env, authEmail);
+    return json({
+      domains,
       max_domains: subscriber.max_domains,
-      count: domains.results.length 
+      count: domains.length,
+      status: subscriber.status,
     });
   }
 
@@ -152,109 +156,121 @@ export async function onRequest(context) {
   if (path === '/domains' && method === 'POST') {
     const body = await request.json().catch(() => ({}));
     const domain = (body.domain || '').trim().toLowerCase();
-    
+
     if (!domain || !domain.includes('.')) {
       return json({ error: 'Valid domain required' }, 400);
     }
-    
+
+    const domains = await getDomains(env, authEmail);
+
     // Check domain limit
-    const countResult = await env.DB.prepare(
-      'SELECT COUNT(*) as cnt FROM monitored_domains WHERE subscriber_id = ?'
-    ).bind(subscriber.id).first();
-    
-    if (countResult.cnt >= subscriber.max_domains) {
-      return json({ 
+    if (domains.length >= subscriber.max_domains) {
+      return json({
         error: `Domain limit reached (${subscriber.max_domains}). Upgrade to add more.`,
-        upgrade_url: 'https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v'
+        upgrade_url: 'https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v',
       }, 403);
     }
-    
+
     // Check for duplicate
-    const existing = await env.DB.prepare(
-      'SELECT id FROM monitored_domains WHERE subscriber_id = ? AND domain = ?'
-    ).bind(subscriber.id, domain).first();
-    
-    if (existing) {
+    if (domains.some(d => d.domain === domain)) {
       return json({ error: 'Domain already monitored' }, 409);
     }
-    
-    // Add domain
-    await env.DB.prepare(
-      'INSERT INTO monitored_domains (subscriber_id, domain) VALUES (?, ?)'
-    ).bind(subscriber.id, domain).run();
-    
+
     // Do initial check
-    const checkResult = await checkCertViaWorker(domain, env);
-    
-    if (checkResult.status !== 'error') {
-      await env.DB.prepare(
-        'UPDATE monitored_domains SET last_checked_at = ?, last_expiry_date = ?, last_issuer = ?, last_status = ? WHERE subscriber_id = ? AND domain = ?'
-      ).bind(
-        new Date().toISOString(),
-        checkResult.expiry_date,
-        checkResult.issuer,
-        checkResult.status,
-        subscriber.id,
-        domain
-      ).run();
-    }
-    
-    return json({ success: true, domain, check: checkResult }, 201);
+    const checkResult = await checkCertViaWorker(domain);
+
+    const newDomain = {
+      domain,
+      added_at: new Date().toISOString(),
+      last_checked_at: checkResult.status !== 'error' ? new Date().toISOString() : null,
+      last_expiry_date: checkResult.expiry_date || null,
+      last_issuer: checkResult.issuer || null,
+      last_status: checkResult.status || 'error',
+      last_days_until_expiry: checkResult.days_until_expiry ?? null,
+    };
+
+    domains.push(newDomain);
+    await putDomains(env, authEmail, domains);
+
+    return json({ success: true, domain: newDomain, check: checkResult }, 201);
   }
 
   // Route: DELETE /domains/:domain — Remove domain
   if (path.startsWith('/domains/') && method === 'DELETE') {
     const domain = decodeURIComponent(path.replace('/domains/', '')).toLowerCase();
-    
-    await env.DB.prepare(
-      'DELETE FROM monitored_domains WHERE subscriber_id = ? AND domain = ?'
-    ).bind(subscriber.id, domain).run();
-    
+    const domains = await getDomains(env, authEmail);
+    const filtered = domains.filter(d => d.domain !== domain);
+
+    if (filtered.length === domains.length) {
+      return json({ error: 'Domain not found' }, 404);
+    }
+
+    await putDomains(env, authEmail, filtered);
     return json({ success: true, removed: domain });
   }
 
   // Route: POST /webhook — Stripe webhook
   if (path === '/webhook' && method === 'POST') {
-    // TODO: Verify Stripe signature
     const event = await request.json().catch(() => ({}));
-    
+
     if (event.type === 'checkout.session.completed') {
-      const customerEmail = event.data?.object?.customer_details?.email;
+      const customerEmail = (event.data?.object?.customer_details?.email || '').toLowerCase();
       const subscriptionId = event.data?.object?.subscription;
       const customerId = event.data?.object?.customer;
-      
+
       if (customerEmail) {
-        await env.DB.prepare(
-          'UPDATE subscribers SET stripe_customer_id = ?, stripe_subscription_id = ?, status = ?, max_domains = 25, updated_at = datetime("now") WHERE email = ?'
-        ).bind(customerId, subscriptionId, 'active', customerEmail).run();
-        
-        // If subscriber doesn't exist yet, create them
-        const exists = await env.DB.prepare('SELECT id FROM subscribers WHERE email = ?').bind(customerEmail).first();
-        if (!exists) {
-          await env.DB.prepare(
-            'INSERT INTO subscribers (email, stripe_customer_id, stripe_subscription_id, status, max_domains) VALUES (?, ?, ?, ?, 25)'
-          ).bind(customerEmail, customerId, subscriptionId, 'active').run();
+        let sub = await getSubscriber(env, customerEmail);
+        if (sub) {
+          sub.stripe_customer_id = customerId;
+          sub.stripe_subscription_id = subscriptionId;
+          sub.status = 'active';
+          sub.max_domains = 25;
+          sub.updated_at = new Date().toISOString();
+        } else {
+          sub = {
+            email: customerEmail,
+            stripe_customer_id: customerId,
+            stripe_subscription_id: subscriptionId,
+            status: 'active',
+            max_domains: 25,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
         }
+        await putSubscriber(env, customerEmail, sub);
       }
     }
-    
+
     if (event.type === 'customer.subscription.updated') {
       const subscriptionId = event.data?.object?.id;
       const status = event.data?.object?.status;
-      
-      await env.DB.prepare(
-        'UPDATE subscribers SET status = ?, updated_at = datetime("now") WHERE stripe_subscription_id = ?'
-      ).bind(status, subscriptionId).run();
+      const customerEmail = (event.data?.object?.metadata?.email || '').toLowerCase();
+
+      if (customerEmail) {
+        const sub = await getSubscriber(env, customerEmail);
+        if (sub && sub.stripe_subscription_id === subscriptionId) {
+          sub.status = status;
+          sub.updated_at = new Date().toISOString();
+          await putSubscriber(env, customerEmail, sub);
+        }
+      }
     }
-    
+
     if (event.type === 'customer.subscription.deleted') {
       const subscriptionId = event.data?.object?.id;
-      
-      await env.DB.prepare(
-        'UPDATE subscribers SET status = ?, max_domains = 1, updated_at = datetime("now") WHERE stripe_subscription_id = ?'
-      ).bind('cancelled', subscriptionId).run();
+      const customerEmail = (event.data?.object?.metadata?.email || '').toLowerCase();
+
+      if (customerEmail) {
+        const sub = await getSubscriber(env, customerEmail);
+        if (sub && sub.stripe_subscription_id === subscriptionId) {
+          sub.status = 'cancelled';
+          sub.max_domains = 1;
+          sub.updated_at = new Date().toISOString();
+          await putSubscriber(env, customerEmail, sub);
+        }
+      }
     }
-    
+
     return json({ received: true });
   }
 

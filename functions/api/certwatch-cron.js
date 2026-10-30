@@ -1,15 +1,100 @@
 /**
- * CertWatch Cron Handler
- * Runs daily at 6AM ET via CF Cron Trigger
- * Checks all monitored domains, sends alerts at 30/14/7/1 day thresholds
+ * CertWatch Cron Handler (KV-backed)
+ * Triggered via CF Pages scheduled function or external cron ping.
+ * Checks all monitored domains, sends alerts at 30/14/7/1 day thresholds.
+ *
+ * KV Key Schema:
+ *   certwatch:sub:{email}          → subscriber JSON
+ *   certwatch:domains:{email}      → JSON array of domain objects
+ *   certwatch:alerts:{email}:{domain}:{alertType}:{YYYY-MM-DD} → "sent" (TTL 48h)
  */
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = 'certwatch@edgeiqlabs.com';
 
-async function sendAlert(email, domain, daysUntilExpiry, expiryDate) {
+// ─── KV Helpers ────────────────────────────────────────────────
+async function getAllSubscribers(env) {
+  const subscribers = [];
+  let cursor = undefined;
+
+  do {
+    const result = await env.PULSE_KV.list({ prefix: 'certwatch:sub:', cursor, limit: 100 });
+    for (const key of result.keys) {
+      const raw = await env.PULSE_KV.get(key.name);
+      if (raw) {
+        try {
+          subscribers.push(JSON.parse(raw));
+        } catch {}
+      }
+    }
+    cursor = result.list_complete ? undefined : result.cursor;
+  } while (cursor);
+
+  return subscribers;
+}
+
+async function getDomains(env, email) {
+  const raw = await env.PULSE_KV.get(`certwatch:domains:${email}`);
+  return raw ? JSON.parse(raw) : [];
+}
+
+async function putDomains(env, email, domains) {
+  await env.PULSE_KV.put(`certwatch:domains:${email}`, JSON.stringify(domains));
+}
+
+async function hasRecentAlert(env, email, domain, alertType) {
+  const today = new Date().toISOString().split('T')[0];
+  const key = `certwatch:alerts:${email}:${domain}:${alertType}:${today}`;
+  const exists = await env.PULSE_KV.get(key);
+  return !!exists;
+}
+
+async function recordAlert(env, email, domain, alertType) {
+  const today = new Date().toISOString().split('T')[0];
+  const key = `certwatch:alerts:${email}:${domain}:${alertType}:${today}`;
+  // TTL 48 hours to prevent duplicate alerts within same threshold window
+  await env.PULSE_KV.put(key, 'sent', { expirationTtl: 172800 });
+}
+
+// ─── SSL Check ─────────────────────────────────────────────────
+async function checkCert(domain) {
+  try {
+    const resp = await fetch('https://edgeiqlabs.com/api/ssl-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain }),
+    });
+
+    if (!resp.ok) return null;
+
+    const data = await resp.json();
+    if (data.error) return null;
+
+    const expiryDate = data.expiry || data.validTo || data.notAfter;
+    if (!expiryDate) return null;
+
+    const expiry = new Date(expiryDate);
+    const now = new Date();
+    const daysUntilExpiry = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+
+    let status = 'valid';
+    if (daysUntilExpiry <= 0) status = 'expired';
+    else if (daysUntilExpiry <= 30) status = 'expiring_soon';
+
+    return {
+      expiry_date: expiry.toISOString(),
+      days_until_expiry: daysUntilExpiry,
+      issuer: data.issuer || data.organization || 'Unknown',
+      status,
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ─── Email Alert via Resend ────────────────────────────────────
+async function sendAlert(env, email, domain, daysUntilExpiry, expiryDate) {
   let alertType, subject, urgency;
-  
+
   if (daysUntilExpiry <= 0) {
     alertType = 'expired';
     subject = `🚨 EXPIRED: SSL certificate for ${domain}`;
@@ -31,19 +116,27 @@ async function sendAlert(email, domain, daysUntilExpiry, expiryDate) {
     subject = `📋 ${domain} SSL expires in ${daysUntilExpiry} days`;
     urgency = 'INFO';
   } else {
-    return null; // No alert needed
+    return null;
   }
+
+  // Deduplicate: only one alert per type per day
+  if (await hasRecentAlert(env, email, domain, alertType)) {
+    return { skipped: true, alertType };
+  }
+
+  const colorMap = { CRITICAL: '#ff6b6b', URGENT: '#ff8c42', WARNING: '#ffb347', NOTICE: '#3dd9ff', INFO: '#3de19e' };
+  const color = colorMap[urgency] || '#3dd9ff';
 
   const html = `
     <div style="font-family:system-ui,sans-serif;background:#0b0f14;color:#e8eef7;padding:32px;border-radius:12px;max-width:600px;margin:0 auto;">
-      <h1 style="color:${urgency === 'CRITICAL' ? '#ff6b6b' : urgency === 'URGENT' ? '#ff8c42' : '#3dd9ff'};margin:0 0 16px;">${subject}</h1>
+      <h1 style="color:${color};margin:0 0 16px;">${subject}</h1>
       <p style="color:#9fb0c7;font-size:16px;line-height:1.6;">
-        The SSL certificate for <strong style="color:#e8eef7;">${domain}</strong> 
+        The SSL certificate for <strong style="color:#e8eef7;">${domain}</strong>
         ${daysUntilExpiry <= 0 ? 'has expired' : `expires in ${daysUntilExpiry} days`}.
       </p>
       <div style="background:#121923;border:1px solid #233142;border-radius:8px;padding:20px;margin:24px 0;">
         <div style="margin-bottom:12px;"><span style="color:#9fb0c7;">Expiry Date:</span> <strong style="color:#e8eef7;">${expiryDate}</strong></div>
-        <div><span style="color:#9fb0c7;">Status:</span> <strong style="color:${urgency === 'CRITICAL' ? '#ff6b6b' : '#ffb347'};">${alertType.toUpperCase()}</strong></div>
+        <div><span style="color:#9fb0c7;">Status:</span> <strong style="color:${color};">${alertType.toUpperCase()}</strong></div>
       </div>
       <a href="https://edgeiqlabs.com/certwatch/" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;padding:14px 28px;border-radius:8px;text-decoration:none;margin-top:16px;">View Dashboard →</a>
       <p style="color:#4a6080;font-size:12px;margin-top:32px;">
@@ -53,11 +146,16 @@ async function sendAlert(email, domain, daysUntilExpiry, expiryDate) {
     </div>
   `;
 
+  const resendKey = env.RESEND_API_KEY;
+  if (!resendKey) {
+    return { success: false, error: 'RESEND_API_KEY not configured' };
+  }
+
   try {
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Authorization': `Bearer ${resendKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -67,133 +165,76 @@ async function sendAlert(email, domain, daysUntilExpiry, expiryDate) {
         html,
       }),
     });
-    
+
     if (!resp.ok) {
-      console.error(`Resend API error for ${email}: ${resp.status}`);
-      return { success: false, error: `HTTP ${resp.status}` };
+      return { success: false, error: `Resend HTTP ${resp.status}` };
     }
-    
+
+    await recordAlert(env, email, domain, alertType);
     return { success: true, alertType };
   } catch (e) {
-    console.error(`Failed to send alert to ${email}:`, e.message);
     return { success: false, error: e.message };
   }
 }
 
+// ─── Main Cron Handler ─────────────────────────────────────────
 export async function onRequest(context) {
   const { env } = context;
-  
-  // Get all active subscribers with monitored domains
-  const subscribers = await env.DB.prepare(`
-    SELECT DISTINCT s.id, s.email 
-    FROM subscribers s 
-    JOIN monitored_domains md ON s.id = md.subscriber_id 
-    WHERE s.status = 'active'
-  `).all();
+
+  const subscribers = await getAllSubscribers(env);
+  const activeSubs = subscribers.filter(s => s.status === 'active' || s.status === 'free');
 
   let totalChecked = 0;
   let totalAlerts = 0;
   let errors = [];
 
-  for (const subscriber of subscribers.results) {
-    // Get all domains for this subscriber
-    const domains = await env.DB.prepare(
-      'SELECT * FROM monitored_domains WHERE subscriber_id = ?'
-    ).bind(subscriber.id).all();
+  for (const sub of activeSubs) {
+    const domains = await getDomains(env, sub.email);
 
-    for (const domainRow of domains.results) {
+    for (const domainObj of domains) {
       totalChecked++;
-      
-      // Check cert via existing SSL checker
-      try {
-        const checkResp = await fetch('https://edgeiqlabs.com/api/ssl-check', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ domain: domainRow.domain }),
-        });
-        
-        if (!checkResp.ok) {
-          errors.push(`${domainRow.domain}: API returned ${checkResp.status}`);
-          continue;
-        }
-        
-        const checkData = await checkResp.json();
-        
-        if (checkData.error) {
-          errors.push(`${domainRow.domain}: ${checkData.error}`);
-          continue;
-        }
-        
-        const expiryDate = checkData.expiry || checkData.validTo || checkData.notAfter;
-        if (!expiryDate) {
-          errors.push(`${domainRow.domain}: No expiry date in response`);
-          continue;
-        }
-        
-        const expiry = new Date(expiryDate);
-        const now = new Date();
-        const daysUntilExpiry = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-        
-        let status = 'valid';
-        if (daysUntilExpiry <= 0) status = 'expired';
-        else if (daysUntilExpiry <= 30) status = 'expiring_soon';
-        
-        // Update database
-        await env.DB.prepare(
-          'UPDATE monitored_domains SET last_checked_at = ?, last_expiry_date = ?, last_issuer = ?, last_status = ? WHERE id = ?'
-        ).bind(
-          now.toISOString(),
-          expiry.toISOString(),
-          checkData.issuer || checkData.organization || 'Unknown',
-          status,
-          domainRow.id
-        ).run();
-        
-        // Check if we should send an alert
-        const alertThresholds = [30, 14, 7, 1, 0];
-        const shouldAlert = alertThresholds.some(t => daysUntilExpiry <= t && daysUntilExpiry > (t - 1));
-        
-        if (shouldAlert || daysUntilExpiry <= 0) {
-          // Check if we already sent this alert type recently
-          const recentAlert = await env.DB.prepare(
-            'SELECT id FROM alert_history WHERE subscriber_id = ? AND domain = ? AND alert_type = ? AND sent_at > datetime("now", "-24 hours")'
-          ).bind(subscriber.id, domainRow.domain, 
-            daysUntilExpiry <= 0 ? 'expired' : 
-            daysUntilExpiry <= 1 ? '1_day' : 
-            daysUntilExpiry <= 7 ? '7_day' : 
-            daysUntilExpiry <= 14 ? '14_day' : '30_day'
-          ).first();
-          
-          if (!recentAlert) {
-            const alertResult = await sendAlert(
-              subscriber.email, 
-              domainRow.domain, 
-              daysUntilExpiry, 
-              expiry.toISOString().split('T')[0]
-            );
-            
-            if (alertResult?.success) {
-              totalAlerts++;
-              
-              // Record alert
-              await env.DB.prepare(
-                'INSERT INTO alert_history (subscriber_id, domain, alert_type, expiry_date) VALUES (?, ?, ?, ?)'
-              ).bind(
-                subscriber.id,
-                domainRow.domain,
-                alertResult.alertType,
-                expiry.toISOString()
-              ).run();
-            }
-          }
-        }
-        
-      } catch (e) {
-        errors.push(`${domainRow.domain}: ${e.message}`);
+
+      const result = await checkCert(domainObj.domain);
+
+      if (!result) {
+        errors.push(`${domainObj.domain}: check failed`);
+        continue;
       }
-      
-      // Rate limit: don't hammer the SSL checker API
+
+      // Update stored domain data
+      domainObj.last_checked_at = new Date().toISOString();
+      domainObj.last_expiry_date = result.expiry_date;
+      domainObj.last_issuer = result.issuer;
+      domainObj.last_status = result.status;
+      domainObj.last_days_until_expiry = result.days_until_expiry;
+
+      // Send alert if at threshold
+      const thresholds = [30, 14, 7, 1, 0];
+      const hitThreshold = thresholds.some(t =>
+        result.days_until_expiry <= t && result.days_until_expiry > (t - 1)
+      );
+
+      if (hitThreshold || result.days_until_expiry <= 0) {
+        const alertResult = await sendAlert(
+          env,
+          sub.email,
+          domainObj.domain,
+          result.days_until_expiry,
+          result.expiry_date.split('T')[0]
+        );
+
+        if (alertResult?.success) {
+          totalAlerts++;
+        }
+      }
+
+      // Rate limit between checks
       await new Promise(r => setTimeout(r, 500));
+    }
+
+    // Save updated domain data
+    if (domains.length > 0) {
+      await putDomains(env, sub.email, domains);
     }
   }
 
@@ -202,7 +243,7 @@ export async function onRequest(context) {
     checked: totalChecked,
     alerts_sent: totalAlerts,
     errors: errors.length,
-    error_details: errors.slice(0, 10), // First 10 errors only
+    error_details: errors.slice(0, 10),
     timestamp: new Date().toISOString(),
   }), {
     headers: { 'Content-Type': 'application/json' },
