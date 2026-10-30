@@ -55,36 +55,22 @@ async function recordAlert(env, email, domain, alertType) {
   await env.PULSE_KV.put(key, 'sent', { expirationTtl: 172800 });
 }
 
-// ─── SSL Check ─────────────────────────────────────────────────
+// ─── SSL Cert Expiry Check via dedicated endpoint ──────────────────
 async function checkCert(domain) {
   try {
-    const resp = await fetch('https://edgeiqlabs.com/api/ssl-check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ domain }),
-    });
+    const resp = await fetch(`https://edgeiqlabs.com/api/cert-expiry?domain=${encodeURIComponent(domain)}`);
 
     if (!resp.ok) return null;
 
     const data = await resp.json();
-    if (data.error) return null;
-
-    const expiryDate = data.expiry || data.validTo || data.notAfter;
-    if (!expiryDate) return null;
-
-    const expiry = new Date(expiryDate);
-    const now = new Date();
-    const daysUntilExpiry = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-
-    let status = 'valid';
-    if (daysUntilExpiry <= 0) status = 'expired';
-    else if (daysUntilExpiry <= 30) status = 'expiring_soon';
+    if (data.error || data.status === 'error') return null;
+    if (!data.expiry_date) return null;
 
     return {
-      expiry_date: expiry.toISOString(),
-      days_until_expiry: daysUntilExpiry,
-      issuer: data.issuer || data.organization || 'Unknown',
-      status,
+      expiry_date: data.expiry_date,
+      days_until_expiry: data.days_until_expiry,
+      issuer: data.issuer || 'Unknown',
+      status: data.status || 'valid',
     };
   } catch {
     return null;

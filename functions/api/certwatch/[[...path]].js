@@ -46,46 +46,28 @@ async function putDomains(env, email, domains) {
   await env.PULSE_KV.put(`certwatch:domains:${email}`, JSON.stringify(domains));
 }
 
-// ─── SSL Check via existing infrastructure ─────────────────────
+// ─── SSL Cert Expiry Check via dedicated endpoint ──────────────────
 async function checkCertViaWorker(domain) {
   try {
-    const resp = await fetch('https://edgeiqlabs.com/api/ssl-check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ domain }),
-    });
+    // Use the dedicated cert-expiry endpoint which does raw TLS handshake
+    const resp = await fetch(`https://edgeiqlabs.com/api/cert-expiry?domain=${encodeURIComponent(domain)}`);
 
     if (!resp.ok) {
-      return { domain, status: 'error', error: `API returned ${resp.status}` };
+      return { domain, status: 'error', error: `cert-expiry API returned ${resp.status}` };
     }
 
     const data = await resp.json();
 
-    if (data.error) {
-      return { domain, status: 'error', error: data.error };
+    if (data.error || data.status === 'error') {
+      return { domain, status: 'error', error: data.error || 'Certificate check failed' };
     }
-
-    const expiryDate = data.expiry || data.validTo || data.notAfter;
-    const issuer = data.issuer || data.organization || 'Unknown';
-
-    if (!expiryDate) {
-      return { domain, status: 'error', error: 'No expiry date in response' };
-    }
-
-    const expiry = new Date(expiryDate);
-    const now = new Date();
-    const daysUntilExpiry = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-
-    let status = 'valid';
-    if (daysUntilExpiry <= 0) status = 'expired';
-    else if (daysUntilExpiry <= 30) status = 'expiring_soon';
 
     return {
       domain,
-      status,
-      expiry_date: expiry.toISOString(),
-      days_until_expiry: daysUntilExpiry,
-      issuer,
+      status: data.status || 'valid',
+      expiry_date: data.expiry_date,
+      days_until_expiry: data.days_until_expiry,
+      issuer: data.issuer || 'Unknown',
     };
   } catch (e) {
     return { domain, status: 'error', error: e.message };
