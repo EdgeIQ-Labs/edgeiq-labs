@@ -12,6 +12,7 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <link rel="canonical" href="https://edgeiqlabs.com/free-port-scanner/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script src="/js/grade-ring.js"></script>
   <script type="application/ld+json">[
     {"@context":"https://schema.org","@type":"WebApplication","name":"Free Port Scanner","url":"https://edgeiqlabs.com/free-port-scanner/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
     {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
@@ -179,10 +180,12 @@ function renderResults(d){
 
   var grade=d.grade||'?';
   var score=d.score||0;
-  document.getElementById('grade-section').innerHTML=
-    '<div class="grade-circle grade-'+grade+'">'+grade+'</div>'+
-    '<div class="grade-label">Security score: '+score+'/100 · '+esc(d.hostname)+'</div>'+
-    '<div style="font-size:0.82rem;color:var(--muted);margin-top:8px;">'+esc(d.summary)+'</div>';
+  var gs = document.getElementById('grade-section');
+  renderGradeRing(gs, grade, score);
+  var lbl = document.createElement('div');
+  lbl.className = 'grade-label';
+  lbl.innerHTML = 'Security score: '+score+'/100 · '+esc(d.hostname)+'<br><span style="font-size:0.82rem;color:var(--muted);margin-top:8px;display:inline-block;">'+esc(d.summary)+'</span>';
+  gs.appendChild(lbl);
 
   var findings=d.findings||[];
   var html='';

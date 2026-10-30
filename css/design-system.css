@@ -260,6 +260,26 @@ ul, ol { list-style: none; }
 .mb-lg { margin-bottom: var(--space-lg); }
 .hidden { display: none !important; }
 
+/* Grade Ring Animation */
+.grade-ring-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;width:90px;height:90px;}
+.grade-ring-svg{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(-90deg);}
+.grade-ring-bg{fill:none;stroke:var(--border);stroke-width:4;}
+.grade-ring-fg{fill:none;stroke-width:4;stroke-linecap:round;stroke-dasharray:251.33;stroke-dashoffset:251.33;transition:stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1),stroke 0.3s ease;}
+.grade-ring-letter{font-size:2rem;font-weight:900;line-height:1;z-index:1;}
+.grade-ring-score{font-size:0.75rem;font-weight:600;opacity:0.7;z-index:1;position:absolute;bottom:14px;}
+.grade-ring-wrap.grade-A .grade-ring-fg{stroke:#70f0a8;}
+.grade-ring-wrap.grade-A .grade-ring-letter{color:#70f0a8;}
+.grade-ring-wrap.grade-B .grade-ring-fg{stroke:var(--accent);}
+.grade-ring-wrap.grade-B .grade-ring-letter{color:var(--accent);}
+.grade-ring-wrap.grade-C .grade-ring-fg{stroke:#ffb347;}
+.grade-ring-wrap.grade-C .grade-ring-letter{color:#ffb347;}
+.grade-ring-wrap.grade-D .grade-ring-fg{stroke:#ff8c42;}
+.grade-ring-wrap.grade-D .grade-ring-letter{color:#ff8c42;}
+.grade-ring-wrap.grade-F .grade-ring-fg{stroke:#ff6b6b;}
+.grade-ring-wrap.grade-F .grade-ring-letter{color:#ff6b6b;}
+@keyframes grade-pop{0%{transform:scale(0.8);opacity:0;}60%{transform:scale(1.05);}100%{transform:scale(1);opacity:1;}}
+.grade-ring-wrap.animated{animation:grade-pop 0.4s ease-out forwards;}
+
 /* Responsive */
 @media (max-width: 720px) {
   .nav-links { display: none; }

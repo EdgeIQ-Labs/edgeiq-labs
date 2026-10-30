@@ -12,6 +12,8 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <link rel="canonical" href="https://edgeiqlabs.com/free-ssl-checker/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <script src="/js/grade-ring.js"></script>
   <script type="application/ld+json">[
     {"@context":"https://schema.org","@type":"WebApplication","name":"Free SSL Certificate Checker","url":"https://edgeiqlabs.com/free-ssl-checker/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
     {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
@@ -207,9 +209,12 @@ function renderResults(d){
   var btn=document.getElementById('check-btn');
   btn.disabled=false;btn.textContent='Check SSL →';
   var grade=d.grade||'F';
-  document.getElementById('grade-section').innerHTML=
-    '<div class="grade-circle grade-'+grade+'">'+grade+'</div>'+
-    '<div class="grade-label">Security score: '+d.score+'% &nbsp;·&nbsp; '+esc(d.domain)+'</div>';
+  var gradeContainer = document.getElementById('grade-section');
+  renderGradeRing(gradeContainer, grade, d.score);
+  var label = document.createElement('div');
+  label.className = 'grade-label';
+  label.innerHTML = 'Security score: '+d.score+'% &nbsp;·&nbsp; '+esc(d.domain);
+  gradeContainer.appendChild(label);
 
   var checks=[];
   if(d.https){

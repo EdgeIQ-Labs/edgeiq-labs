@@ -12,6 +12,7 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <link rel="canonical" href="https://edgeiqlabs.com/free-header-analyzer/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script src="/js/grade-ring.js"></script>
   <script type="application/ld+json">[
     {"@context":"https://schema.org","@type":"WebApplication","name":"Free HTTP Security Header Analyzer","url":"https://edgeiqlabs.com/free-header-analyzer/","applicationCategory":"SecurityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
     {"@type":"Question","name":"What are HTTP security headers?","acceptedAnswer":{"@type":"Answer","text":"HTTP security headers are response headers that tell browsers how to handle your site securely. They prevent clickjacking (X-Frame-Options), XSS attacks (Content-Security-Policy), protocol downgrade attacks (HSTS), MIME sniffing (X-Content-Type-Options), and referrer leakage (Referrer-Policy)."}},
@@ -175,10 +176,12 @@ function renderResults(d){
   }
 
   var grade=d.grade||'?';
-  document.getElementById('grade-section').innerHTML=
-    '<div class="grade-circle grade-'+grade+'">'+grade+'</div>'+
-    '<div class="grade-label">Header score: '+d.score+'/100 · '+esc(d.domain)+'</div>'+
-    '<div style="font-size:0.82rem;color:var(--muted);margin-top:8px;">'+d.passed+' passed · '+d.failed+' failed · '+d.warnings+' warnings out of '+d.totalChecked+' headers</div>';
+  var gs = document.getElementById('grade-section');
+  renderGradeRing(gs, grade, d.score);
+  var lbl = document.createElement('div');
+  lbl.className = 'grade-label';
+  lbl.innerHTML = 'Header score: '+d.score+'/100 · '+esc(d.domain)+'<br><span style="font-size:0.82rem;color:var(--muted);margin-top:8px;display:inline-block;">'+d.passed+' passed · '+d.failed+' failed · '+d.warnings+' warnings out of '+d.totalChecked+' headers</span>';
+  gs.appendChild(lbl);
 
   var html='';
   (d.headers||[]).forEach(function(h){

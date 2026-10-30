@@ -11,6 +11,7 @@
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
   <link rel="canonical" href="https://edgeiqlabs.com/free-domain-security-score/"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script src="/js/grade-ring.js"></script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebApplication","name":"Free Domain Security Score","url":"https://edgeiqlabs.com/free-domain-security-score/","description":"Free A-F security grade for any domain — DMARC, SPF, DKIM, SSL, security headers checked instantly.","applicationCategory":"SecurityApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
   </script>
@@ -251,10 +252,7 @@
 
       <!-- Grade circle -->
       <div class="grade-section">
-        <div class="grade-circle" id="gradeCircle">
-          <div class="grade-letter" id="gradeLetter"></div>
-          <div class="grade-score" id="gradeScore"></div>
-        </div>
+        <div id="gradeCircleWrap" style="display:flex;justify-content:center;margin-bottom:12px;"></div>
         <div class="grade-domain" id="gradeDomain"></div>
         <div class="grade-summary" id="gradeSummary"></div>
         <div class="share-row">
@@ -431,21 +429,17 @@ function renderResults(data) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (!data || data.error) {
-    document.getElementById('gradeCircle').className = 'grade-circle grade-f';
-    document.getElementById('gradeLetter').textContent = '?';
-    document.getElementById('gradeScore').textContent = 'Error';
+    var wrap = document.getElementById('gradeCircleWrap');
+    renderGradeRing(wrap, 'F', 0);
     document.getElementById('gradeDomain').textContent = currentDomain;
     document.getElementById('gradeSummary').textContent = 'Could not complete the scan. Please check the domain and try again.';
     document.getElementById('categoryGrid').innerHTML = '';
     return;
   }
 
-  // Grade circle
-  const gradeClass = 'grade-' + data.grade.toLowerCase();
-  const circle = document.getElementById('gradeCircle');
-  circle.className = 'grade-circle ' + gradeClass;
-  document.getElementById('gradeLetter').textContent = data.grade;
-  document.getElementById('gradeScore').textContent = data.score + '/100';
+  // Grade ring animation
+  var wrap = document.getElementById('gradeCircleWrap');
+  renderGradeRing(wrap, data.grade, data.score);
   document.getElementById('gradeDomain').textContent = data.domain;
   document.getElementById('gradeSummary').textContent = data.summary;
 
