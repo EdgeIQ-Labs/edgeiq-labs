@@ -29,15 +29,44 @@ async function putDomains(env, email, domains) {
   await env.PULSE_KV.put('certwatch:domains:' + email, JSON.stringify(domains));
 }
 
-async function checkCertViaWorker(domain) {
+// Inline cert expiry check via crt.sh — no self-referential HTTP call needed
+async function checkCertExpiry(domain) {
   try {
-    var resp = await fetch('https://edgeiqlabs.com/api/cert-expiry?domain=' + encodeURIComponent(domain));
-    if (!resp.ok) return { domain: domain, status: 'error', error: 'cert-expiry returned ' + resp.status };
-    var data = await resp.json();
-    if (data.error || data.status === 'error') return { domain: domain, status: 'error', error: data.error || 'Check failed' };
-    return { domain: domain, status: data.status || 'valid', expiry_date: data.expiry_date, days_until_expiry: data.days_until_expiry, issuer: data.issuer || 'Unknown' };
+    var resp = await fetch('https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json', {
+      headers: { 'User-Agent': 'EdgeIQ-CertWatch/1.0', 'Accept': 'application/json' },
+    });
+    if (!resp.ok) return { domain: domain, status: 'error', error: 'Certificate lookup failed' };
+    var text = await resp.text();
+    var certs;
+    try { certs = JSON.parse(text); } catch(e) { return { domain: domain, status: 'error', error: 'Failed to parse certificate data' }; }
+    if (!Array.isArray(certs) || certs.length === 0) return { domain: domain, status: 'error', error: 'No certificates found' };
+    
+    // Filter to matching certs with valid dates
+    var matching = [];
+    for (var i = 0; i < certs.length; i++) {
+      var c = certs[i];
+      if (!c.not_after || !c.not_before) continue;
+      var nv = c.name_value || '';
+      var cn = c.common_name || '';
+      if (nv.indexOf(domain) !== -1 || cn === domain) matching.push(c);
+    }
+    if (matching.length === 0) matching = certs.filter(function(c) { return c.not_after && c.not_before; });
+    if (matching.length === 0) return { domain: domain, status: 'error', error: 'No valid certificates found' };
+    
+    matching.sort(function(a, b) { return new Date(b.not_before).getTime() - new Date(a.not_before).getTime(); });
+    var latest = matching[0];
+    var expiryDate = new Date(latest.not_after);
+    var now = new Date();
+    var daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+    var status = 'valid';
+    if (daysUntilExpiry <= 0) status = 'expired';
+    else if (daysUntilExpiry <= 30) status = 'expiring_soon';
+    var issuerRaw = latest.issuer_name || 'Unknown';
+    var cnMatch = issuerRaw.match(/CN=([^,]+)/);
+    var issuerCN = cnMatch ? cnMatch[1] : issuerRaw;
+    return { domain: domain, status: status, expiry_date: expiryDate.toISOString(), days_until_expiry: daysUntilExpiry, issuer: issuerCN, common_name: latest.common_name || domain, serial: latest.serial_number || null };
   } catch (e) {
-    return { domain: domain, status: 'error', error: e.message };
+    return { domain: domain, status: 'error', error: e.message || 'Unknown error' };
   }
 }
 
@@ -70,11 +99,26 @@ export async function onRequest(context) {
     if (domains.length >= subscriber.max_domains) return json({ error: 'Domain limit reached (' + subscriber.max_domains + '). Upgrade to add more.', upgrade_url: 'https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v' }, 403);
     if (domains.some(function(d) { return d.domain === domain; })) return json({ error: 'Domain already monitored' }, 409);
     
-    var checkResult = await checkCertViaWorker(domain);
+    var checkResult = await checkCertExpiry(domain);
     var newDomain = { domain: domain, added_at: new Date().toISOString(), last_checked_at: checkResult.status !== 'error' ? new Date().toISOString() : null, last_expiry_date: checkResult.expiry_date || null, last_issuer: checkResult.issuer || null, last_status: checkResult.status || 'error', last_days_until_expiry: checkResult.days_until_expiry || null };
     domains.push(newDomain);
     await putDomains(env, authEmail, domains);
     return json({ success: true, domain: newDomain, check: checkResult }, 201);
+  }
+  
+  if (request.method === 'DELETE') {
+    // Handle DELETE /api/certwatch/domains/:domain
+    var url = new URL(request.url);
+    var pathParts = url.pathname.split('/');
+    // /api/certwatch/domains/somedomain.com -> ['', 'api', 'certwatch', 'domains', 'somedomain.com']
+    var domainParam = pathParts.slice(4).join('/');
+    if (!domainParam) return json({ error: 'Domain parameter required' }, 400);
+    var targetDomain = decodeURIComponent(domainParam).toLowerCase();
+    var domains = await getDomains(env, authEmail);
+    var filtered = domains.filter(function(d) { return d.domain !== targetDomain; });
+    if (filtered.length === domains.length) return json({ error: 'Domain not found' }, 404);
+    await putDomains(env, authEmail, filtered);
+    return json({ success: true, removed: targetDomain });
   }
   
   return json({ error: 'Method not allowed' }, 405);
