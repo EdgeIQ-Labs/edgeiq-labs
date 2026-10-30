@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.png" />
+  <title>UptimePing — Website Uptime Monitoring | EdgeIQ Labs</title>
+  <meta name="description" content="Monitor your website uptime with 5-minute checks, response time tracking, and instant email alerts on downtime. From $1/mo." />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <style>
+    .up-dashboard { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    .up-header { text-align: center; margin-bottom: 40px; }
+    .up-header h1 { font-size: 1.8rem; margin-bottom: 8px; }
+    .up-header p { color: var(--muted); font-size: 0.95rem; }
+    .up-add-form { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+    .up-add-form input { flex: 1; min-width: 200px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 0.95rem; outline: none; }
+    .up-add-form input:focus { border-color: var(--accent); }
+    .up-add-form button { background: var(--accent); color: #071018; border: none; border-radius: 10px; padding: 12px 24px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .up-add-form button:hover { opacity: 0.9; }
+    .up-add-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .up-monitors { display: flex; flex-direction: column; gap: 12px; }
+    .up-monitor-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+    .up-status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .up-status-dot.up { background: #3de19e; box-shadow: 0 0 8px rgba(61,225,158,0.4); }
+    .up-status-dot.down { background: #ff6b6b; box-shadow: 0 0 8px rgba(255,107,107,0.4); }
+    .up-status-dot.unknown { background: var(--muted); }
+    .up-monitor-info { flex: 1; min-width: 0; }
+    .up-monitor-name { font-weight: 600; color: var(--text); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .up-monitor-url { color: var(--muted); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .up-monitor-stats { display: flex; gap: 20px; flex-shrink: 0; align-items: center; }
+    .up-stat { text-align: right; }
+    .up-stat-value { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+    .up-stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .up-remove-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; color: var(--muted); cursor: pointer; font-size: 0.78rem; }
+    .up-remove-btn:hover { border-color: #ff6b6b; color: #ff6b6b; }
+    .up-empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .up-upgrade-banner { background: linear-gradient(135deg, rgba(61,217,255,0.08), rgba(61,225,158,0.06)); border: 1px solid rgba(61,217,255,0.2); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 30px; }
+    .up-upgrade-banner h3 { margin-bottom: 6px; }
+    .up-upgrade-banner a { color: var(--accent); font-weight: 700; }
+    .up-error { color: #ff6b6b; font-size: 0.85rem; margin-top: 8px; display: none; }
+    .up-auth-gate { text-align: center; padding: 80px 20px; }
+    .up-auth-gate input { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 0.95rem; outline: none; margin-bottom: 12px; width: 300px; max-width: 100%; }
+    .up-auth-gate button { background: var(--accent); color: #071018; border: none; border-radius: 10px; padding: 12px 24px; font-weight: 700; cursor: pointer; }
+    @media (max-width: 600px) {
+      .up-monitor-card { flex-wrap: wrap; }
+      .up-monitor-stats { width: 100%; justify-content: space-between; margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a href="/" class="nav-brand">
+        <img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" class="nav-logo-img" />
+        <div class="nav-wordmark">
+          <span class="nav-brand-name">EdgeIQ <span>Labs</span></span>
+          <span class="nav-brand-tag">Cybersecurity · Hosting</span>
+        </div>
+      </a>
+      <a href="/" style="color:var(--muted);text-decoration:none;font-size:0.85rem;">← Back to Home</a>
+    </div>
+  </nav>
+
+  <main class="up-dashboard">
+    <div class="up-header">
+      <h1>📡 UptimePing</h1>
+      <p>Website uptime monitoring with instant alerts. 5-minute checks, response time tracking.</p>
+    </div>
+
+    <!-- Auth Gate -->
+    <div id="auth-gate" class="up-auth-gate">
+      <h2 style="margin-bottom:12px;">Enter your email to access your monitors</h2>
+      <p style="color:var(--muted);margin-bottom:20px;font-size:0.9rem;">Use the email you signed up with</p>
+      <input type="email" id="auth-email" placeholder="you@example.com" />
+      <br />
+      <button onclick="authenticate()">Open Dashboard</button>
+    </div>
+
+    <!-- Dashboard (hidden until auth) -->
+    <div id="dashboard" style="display:none;">
+      <div id="upgrade-banner" class="up-upgrade-banner" style="display:none;">
+        <h3>🚀 Upgrade to UptimePing Pro</h3>
+        <p style="color:var(--muted);font-size:0.9rem;margin-bottom:10px;">Monitor up to 25 sites with 5-minute checks and priority alerts</p>
+        <a id="upgrade-link" href="#">Upgrade for $1/mo →</a>
+      </div>
+
+      <div class="up-add-form">
+        <input type="url" id="add-url" placeholder="https://example.com" />
+        <input type="text" id="add-name" placeholder="My Site (optional)" style="flex:0.6;min-width:150px;" />
+        <button id="add-btn" onclick="addMonitor()">+ Add Monitor</button>
+      </div>
+      <p id="add-error" class="up-error"></p>
+
+      <div id="monitors-list" class="up-monitors">
+        <div class="up-empty">Loading monitors...</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    var API_BASE = '/api/uptimeping';
+    var userEmail = '';
+
+    function authenticate() {
+      var email = document.getElementById('auth-email').value.trim().toLowerCase();
+      if (!email || !email.includes('@')) { alert('Please enter a valid email'); return; }
+      userEmail = email;
+      localStorage.setItem('uptimeping_email', email);
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadMonitors();
+    }
+
+    // Auto-login from localStorage
+    (function() {
+      var saved = localStorage.getItem('uptimeping_email');
+      if (saved) {
+        userEmail = saved;
+        document.getElementById('auth-gate').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadMonitors();
+      }
+    })();
+
+    async function loadMonitors() {
+      try {
+        var resp = await fetch(API_BASE + '/monitors', {
+          headers: { 'X-UptimePing-Email': userEmail }
+        });
+        var data = await resp.json();
+        if (data.error) { renderEmpty(data.error); return; }
+        
+        // Show upgrade banner if free tier
+        if (data.status === 'free' || data.count >= data.max_monitors) {
+          document.getElementById('upgrade-banner').style.display = 'block';
+        }
+        
+        if (!data.monitors || data.monitors.length === 0) {
+          renderEmpty('No monitors yet. Add your first URL above.');
+          return;
+        }
+        renderMonitors(data.monitors);
+      } catch (e) {
+        renderEmpty('Failed to load monitors. Please refresh.');
+      }
+    }
+
+    function renderEmpty(msg) {
+      document.getElementById('monitors-list').innerHTML = '<div class="up-empty">' + msg + '</div>';
+    }
+
+    function renderMonitors(monitors) {
+      var html = '';
+      for (var i = 0; i < monitors.length; i++) {
+        var m = monitors[i];
+        var statusClass = m.status || 'unknown';
+        var responseTime = m.response_time_ms ? m.response_time_ms + 'ms' : '—';
+        var lastChecked = m.last_checked_at ? timeAgo(m.last_checked_at) : 'Never';
+        var httpStatus = m.http_status || '—';
+        
+        html += '<div class="up-monitor-card">' +
+          '<div class="up-status-dot ' + statusClass + '"></div>' +
+          '<div class="up-monitor-info">' +
+            '<div class="up-monitor-name">' + escapeHtml(m.name || m.url) + '</div>' +
+            '<div class="up-monitor-url">' + escapeHtml(m.url) + '</div>' +
+          '</div>' +
+          '<div class="up-monitor-stats">' +
+            '<div class="up-stat"><div class="up-stat-value">' + statusClass.toUpperCase() + '</div><div class="up-stat-label">Status</div></div>' +
+            '<div class="up-stat"><div class="up-stat-value">' + responseTime + '</div><div class="up-stat-label">Response</div></div>' +
+            '<div class="up-stat"><div class="up-stat-value">' + httpStatus + '</div><div class="up-stat-label">HTTP</div></div>' +
+            '<div class="up-stat"><div class="up-stat-value">' + lastChecked + '</div><div class="up-stat-label">Last Check</div></div>' +
+          '</div>' +
+          '<button class="up-remove-btn" onclick="removeMonitor(\'' + encodeURIComponent(m.url) + '\')">Remove</button>' +
+        '</div>';
+      }
+      document.getElementById('monitors-list').innerHTML = html;
+    }
+
+    async function addMonitor() {
+      var url = document.getElementById('add-url').value.trim();
+      var name = document.getElementById('add-name').value.trim();
+      var errEl = document.getElementById('add-error');
+      var btn = document.getElementById('add-btn');
+      
+      if (!url) { errEl.textContent = 'URL required'; errEl.style.display = 'block'; return; }
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Adding...';
+      
+      try {
+        var resp = await fetch(API_BASE + '/monitors', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-UptimePing-Email': userEmail },
+          body: JSON.stringify({ url: url, name: name })
+        });
+        var data = await resp.json();
+        if (data.error) {
+          errEl.textContent = data.error;
+          errEl.style.display = 'block';
+          if (data.upgrade_url) document.getElementById('upgrade-link').href = data.upgrade_url;
+        } else {
+          document.getElementById('add-url').value = '';
+          document.getElementById('add-name').value = '';
+          loadMonitors();
+        }
+      } catch (e) {
+        errEl.textContent = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+      }
+      btn.disabled = false;
+      btn.textContent = '+ Add Monitor';
+    }
+
+    async function removeMonitor(encodedUrl) {
+      if (!confirm('Remove this monitor?')) return;
+      try {
+        await fetch(API_BASE + '/monitors?url=' + encodedUrl, {
+          method: 'DELETE',
+          headers: { 'X-UptimePing-Email': userEmail }
+        });
+        loadMonitors();
+      } catch (e) {
+        alert('Failed to remove monitor');
+      }
+    }
+
+    function timeAgo(iso) {
+      var diff = Date.now() - new Date(iso).getTime();
+      var mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return mins + 'm ago';
+      var hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      return Math.floor(hrs / 24) + 'd ago';
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Check for ?upgraded=true param
+    if (new URLSearchParams(window.location.search).get('upgraded') === 'true') {
+      localStorage.removeItem('uptimeping_email');
+      location.reload();
+    }
+  </script>
+  <script src="/js/theme.js"></script>
+</body>
+</html>
