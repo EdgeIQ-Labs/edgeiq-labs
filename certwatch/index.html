@@ -302,7 +302,7 @@ async function removeDomain(domain) {
   if (!confirm(`Remove ${domain} from monitoring?`)) return;
   
   try {
-    await fetch(`${API_BASE}/domains/${encodeURIComponent(domain)}`, {
+    await fetch(`${API_BASE}/domains?domain=${encodeURIComponent(domain)}`, {
       method: 'DELETE',
       headers: { 'X-CertWatch-Email': currentUser }
     });

@@ -107,12 +107,10 @@ export async function onRequest(context) {
   }
   
   if (request.method === 'DELETE') {
-    // Handle DELETE /api/certwatch/domains/:domain
+    // Handle DELETE /api/certwatch/domains?domain=example.com
     var url = new URL(request.url);
-    var pathParts = url.pathname.split('/');
-    // /api/certwatch/domains/somedomain.com -> ['', 'api', 'certwatch', 'domains', 'somedomain.com']
-    var domainParam = pathParts.slice(4).join('/');
-    if (!domainParam) return json({ error: 'Domain parameter required' }, 400);
+    var domainParam = (url.searchParams.get('domain') || '').trim();
+    if (!domainParam) return json({ error: 'Domain parameter required. Use ?domain=example.com' }, 400);
     var targetDomain = decodeURIComponent(domainParam).toLowerCase();
     var domains = await getDomains(env, authEmail);
     var filtered = domains.filter(function(d) { return d.domain !== targetDomain; });
