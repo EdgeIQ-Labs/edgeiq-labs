@@ -104,7 +104,7 @@ export async function onRequest(context) {
     try { new URL(url); } catch(e) { return json({ error: 'Invalid URL format' }, 400); }
     
     var monitors = await getMonitors(env, authEmail);
-    if (monitors.length >= subscriber.max_monitors) return json({ error: 'Monitor limit reached (' + subscriber.max_monitors + '). Upgrade to add more.', upgrade_url: 'UPTIMEPING_CHECKOUT_URL_PLACEHOLDER' }, 403);
+    if (monitors.length >= subscriber.max_monitors) return json({ error: 'Monitor limit reached (' + subscriber.max_monitors + '). Upgrade to add more.', upgrade_url: 'https://buy.stripe.com/14A4gB65RcBvaMk18c7wB2w' }, 403);
     if (monitors.some(function(m) { return m.url === url; })) return json({ error: 'URL already monitored' }, 409);
     
     // Initial check
