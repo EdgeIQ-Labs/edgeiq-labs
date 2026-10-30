@@ -20,6 +20,25 @@ async function putSubscriber(env, email, data) {
   await env.PULSE_KV.put('uptimeping:sub:' + email, JSON.stringify(data));
 }
 
+async function addToSubscribersIndex(env, email) {
+  var raw = await env.PULSE_KV.get('uptimeping:subscribers');
+  var list = raw ? JSON.parse(raw) : [];
+  if (list.indexOf(email) === -1) {
+    list.push(email);
+    await env.PULSE_KV.put('uptimeping:subscribers', JSON.stringify(list));
+  }
+}
+
+async function removeFromSubscribersIndex(env, email) {
+  var raw = await env.PULSE_KV.get('uptimeping:subscribers');
+  var list = raw ? JSON.parse(raw) : [];
+  var idx = list.indexOf(email);
+  if (idx !== -1) {
+    list.splice(idx, 1);
+    await env.PULSE_KV.put('uptimeping:subscribers', JSON.stringify(list));
+  }
+}
+
 export async function onRequest(context) {
   var request = context.request;
   var env = context.env;
@@ -38,6 +57,7 @@ export async function onRequest(context) {
       if (sub) { sub.stripe_customer_id = customerId; sub.stripe_subscription_id = subscriptionId; sub.status = 'active'; sub.max_monitors = 25; sub.updated_at = new Date().toISOString(); }
       else { sub = { email: customerEmail, stripe_customer_id: customerId, stripe_subscription_id: subscriptionId, status: 'active', max_monitors: 25, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }; }
       await putSubscriber(env, customerEmail, sub);
+      await addToSubscribersIndex(env, customerEmail);
     }
   }
   
@@ -51,7 +71,7 @@ export async function onRequest(context) {
   if (event.type === 'customer.subscription.deleted') {
     var sid2 = event.data && event.data.object && event.data.object.id;
     var ce2 = (event.data && event.data.object && event.data.object.metadata && event.data.object.metadata.email || '').toLowerCase();
-    if (ce2) { var s2 = await getSubscriber(env, ce2); if (s2 && s2.stripe_subscription_id === sid2) { s2.status = 'cancelled'; s2.max_monitors = 1; s2.updated_at = new Date().toISOString(); await putSubscriber(env, ce2, s2); } }
+    if (ce2) { var s2 = await getSubscriber(env, ce2); if (s2 && s2.stripe_subscription_id === sid2) { s2.status = 'cancelled'; s2.max_monitors = 1; s2.updated_at = new Date().toISOString(); await putSubscriber(env, ce2, s2); await removeFromSubscribersIndex(env, ce2); } }
   }
   
   return json({ received: true });
