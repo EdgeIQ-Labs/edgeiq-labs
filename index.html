@@ -902,20 +902,27 @@
   </div>
   <!-- Product strip removed 2026-09-14 — too many competing nav links. Individual products still accessible via /products/. -->
 
-  <!-- ANNOUNCEMENT BAR: simplified to single security CTA -->
-  <div style="background:linear-gradient(90deg,#0a0e1c,#0d1228,#0a0e1c);border-bottom:1px solid #1a2a4a;padding:8px 24px;text-align:center;">
-    <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:#9fb0c7;">
-      <span style="width:7px;height:7px;background:#3dd9ff;border-radius:50%;display:inline-block;animation:pulse-dot 2s infinite;flex-shrink:0;"></span>
-      <strong style="color:#3dd9ff;">NEW:</strong> Free SMB Cybersecurity Checklist + weekly tips — no fluff.
-    </span>
-    <a href="#lead-magnet"
-       style="display:inline-block;background:#3dd9ff;color:#0b0f14;font-weight:700;font-size:0.78rem;padding:4px 14px;border-radius:6px;text-decoration:none;white-space:nowrap;margin-left:12px;">
-      Get it free →
-    </a>
+  <!-- Site Updates Ticker -->
+  <div class="site-updates" aria-label="Recent updates">
+    <div class="ticker-wrap">
+      <div class="ticker-label">🚀 What's New</div>
+      <div class="ticker-track">
+        <div class="ticker-item"><span class="ticker-badge" style="background:#3de19e;">NEW</span> <strong>CertWatch Pro</strong> — SSL expiry monitoring from $1/mo</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">TOOLS</span> <strong>5 New Free Scanners</strong> — DNS, Port, Header, WHOIS, Breach</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack, PHP RCE, GCP outage</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#f59e0b;">UX</span> <strong>Animated Grade Rings</strong> — SVG reveal on all scanners</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS $4/mo, bots $5/mo</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — new layout + pricing</div>
+        <!-- Duplicate for seamless loop -->
+        <div class="ticker-item"><span class="ticker-badge" style="background:#3de19e;">NEW</span> <strong>CertWatch Pro</strong> — SSL expiry monitoring from $1/mo</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">TOOLS</span> <strong>5 New Free Scanners</strong> — DNS, Port, Header, WHOIS, Breach</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack, PHP RCE, GCP outage</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#f59e0b;">UX</span> <strong>Animated Grade Rings</strong> — SVG reveal on all scanners</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS $4/mo, bots $5/mo</div>
+        <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — new layout + pricing</div>
+      </div>
+    </div>
   </div>
-  <style>
-    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-  </style>
 
   <main class="container">
     <section class="hero">
@@ -1060,30 +1067,6 @@
           <div style="font-size:0.84rem;color:#9fb0c7;line-height:1.5;">I need specific security tools — scanners, monitors, and automation I can use right now for free.</div>
           <div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:#3de19e;">Open free dashboard →</div>
         </a>
-      </div>
-    </section>
-
-    <!-- Site Updates Ticker -->
-    <section id="site-updates" class="site-updates" aria-label="Recent updates">
-      <div class="container">
-        <div class="ticker-wrap">
-          <div class="ticker-label">🚀 What's New</div>
-          <div class="ticker-track">
-            <div class="ticker-item"><span class="ticker-badge" style="background:#3de19e;">NEW</span> <strong>CertWatch Pro</strong> — SSL expiry monitoring from $1/mo. Daily checks, email alerts, multi-domain dashboard.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">TOOLS</span> <strong>5 New Free Scanners</strong> — DNS Checker, Port Scanner, Header Analyzer, WHOIS Lookup, Password Breach Checker.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack breakdown, PHP RCE CVE-2026-109618, GCP outage postmortem.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#f59e0b;">UX</span> <strong>Animated Grade Rings</strong> — SVG reveal animation across all free scanner tools.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS from $4/mo, bot hosting from $5/mo, Wazuh SIEM included.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — Cleaner layout, new SSL monitoring card, updated pricing.</div>
-            <!-- Duplicate for seamless loop -->
-            <div class="ticker-item"><span class="ticker-badge" style="background:#3de19e;">NEW</span> <strong>CertWatch Pro</strong> — SSL expiry monitoring from $1/mo. Daily checks, email alerts, multi-domain dashboard.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">TOOLS</span> <strong>5 New Free Scanners</strong> — DNS Checker, Port Scanner, Header Analyzer, WHOIS Lookup, Password Breach Checker.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack breakdown, PHP RCE CVE-2026-109618, GCP outage postmortem.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#f59e0b;">UX</span> <strong>Animated Grade Rings</strong> — SVG reveal animation across all free scanner tools.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS from $4/mo, bot hosting from $5/mo, Wazuh SIEM included.</div>
-            <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — Cleaner layout, new SSL monitoring card, updated pricing.</div>
-          </div>
-        </div>
       </div>
     </section>
 
