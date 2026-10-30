@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>CertWatch — SSL Expiry Monitor | EdgeIQ Labs</title>
+  <meta name="description" content="Monitor SSL certificate expiry for up to 25 domains. Get email alerts at 30, 14, 7, and 1 day before expiry. Only $1/month."/>
+  <meta property="og:title" content="CertWatch — Never Miss an SSL Expiry Again"/>
+  <meta property="og:description" content="$1/mo SSL monitoring with email alerts. Add domains, get notified before certs expire. Free tier included."/>
+  <meta property="og:type" content="website"/><meta property="og:url" content="https://edgeiqlabs.com/certwatch/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/certwatch/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .cw-hero{padding:80px 0 48px;text-align:center;}
+    .cw-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:16px;}
+    .cw-hero h1 span{color:var(--accent);}
+    .cw-hero p{color:var(--muted);font-size:1.1rem;max-width:600px;margin:0 auto 32px;}
+    .cw-pricing{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin:40px 0;}
+    .cw-price-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;width:280px;text-align:center;}
+    .cw-price-card.featured{border-color:var(--accent);box-shadow:0 0 30px rgba(61,217,255,0.15);}
+    .cw-price-card h3{font-size:1.3rem;margin-bottom:8px;}
+    .cw-price-card .price{font-size:2.5rem;font-weight:900;color:var(--accent);margin:16px 0;}
+    .cw-price-card .price span{font-size:1rem;color:var(--muted);font-weight:400;}
+    .cw-price-card ul{list-style:none;text-align:left;margin:20px 0;color:var(--muted);}
+    .cw-price-card li{padding:8px 0;border-bottom:1px solid var(--border);}
+    .cw-price-card li::before{content:'✓';color:var(--green);margin-right:8px;font-weight:700;}
+    .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:14px 28px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-2px);filter:brightness(1.1);}
+    .btn-outline{background:transparent;border:2px solid var(--accent);color:var(--accent);}
+    .btn-outline:hover{background:var(--accent);color:#071018;}
+    .cw-dashboard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;margin:48px auto;max-width:900px;}
+    .cw-dashboard h2{margin-bottom:24px;}
+    .cw-add-form{display:flex;gap:12px;margin-bottom:32px;}
+    .cw-add-form input{flex:1;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;}
+    .cw-domain-list{display:flex;flex-direction:column;gap:12px;}
+    .cw-domain-row{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+    .cw-domain-info h4{margin:0 0 4px;font-size:1rem;}
+    .cw-domain-info p{margin:0;font-size:0.85rem;color:var(--muted);}
+    .cw-status{padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;}
+    .cw-status.valid{background:rgba(61,225,158,0.15);color:var(--green);}
+    .cw-status.expiring_soon{background:rgba(255,179,71,0.15);color:#ffb347;}
+    .cw-status.expired{background:rgba(255,107,107,0.15);color:#ff6b6b;}
+    .cw-status.error{background:rgba(159,176,199,0.15);color:var(--muted);}
+    .cw-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:4px 8px;}
+    .cw-remove:hover{color:#ff6b6b;}
+    .cw-empty{text-align:center;padding:48px;color:var(--muted);}
+    .cw-login{max-width:400px;margin:80px auto;text-align:center;}
+    .cw-login input{width:100%;padding:14px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:16px;}
+    .cw-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;margin:48px 0;}
+    .cw-feature{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;}
+    .cw-feature h3{margin:0 0 8px;font-size:1.1rem;}
+    .cw-feature p{margin:0;color:var(--muted);font-size:0.92rem;}
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">EdgeIQ<span>Labs</span></a>
+    <div class="nav__links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/services.html">Services</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav__cta">Get Protected</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Hero -->
+  <div class="cw-hero">
+    <h1>Never Miss an <span>SSL Expiry</span> Again</h1>
+    <p>Add your domains. Get email alerts at 30, 14, 7, and 1 day before certificates expire. Stop losing customers to "NOT SECURE" warnings.</p>
+    
+    <div class="cw-pricing">
+      <div class="cw-price-card">
+        <h3>Free</h3>
+        <div class="price">$0<span>/mo</span></div>
+        <ul>
+          <li>1 domain</li>
+          <li>One-time check</li>
+          <li>No account required</li>
+        </ul>
+        <a href="/free-ssl-checker/" class="btn btn-outline">Try Free Checker →</a>
+      </div>
+      
+      <div class="cw-price-card featured">
+        <h3>CertWatch Pro</h3>
+        <div class="price">$1<span>/mo</span></div>
+        <ul>
+          <li>Up to 25 domains</li>
+          <li>Daily monitoring</li>
+          <li>Email alerts (30/14/7/1 day)</li>
+          <li>Dashboard & history</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v" id="upgradeBtn" class="btn" target="_blank" rel="noopener">Start Monitoring →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="cw-features">
+    <div class="cw-feature">
+      <h3>🔔 Smart Alerts</h3>
+      <p>Email notifications at 30, 14, 7, and 1 day before expiry. No spam, just actionable warnings.</p>
+    </div>
+    <div class="cw-feature">
+      <h3>📊 Dashboard</h3>
+      <p>See all your domains at a glance with expiry dates, issuers, and status badges.</p>
+    </div>
+    <div class="cw-feature">
+      <h3>⚡ Instant Setup</h3>
+      <p>Add domains in seconds. First check runs immediately. No configuration needed.</p>
+    </div>
+    <div class="cw-feature">
+      <h3>🏢 Agency Ready</h3>
+      <p>Manage 25+ client domains from one dashboard. Perfect for MSPs and web agencies.</p>
+    </div>
+  </div>
+
+  <!-- Login / Dashboard -->
+  <div id="loginSection" class="cw-login">
+    <h2>Access Your Dashboard</h2>
+    <p style="color:var(--muted);margin-bottom:24px;">Enter your email to manage monitored domains</p>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="you@company.com" required/>
+      <button type="submit" class="btn" style="width:100%;">Open Dashboard</button>
+    </form>
+  </div>
+
+  <div id="dashboardSection" class="cw-dashboard" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h2>Your Monitored Domains</h2>
+      <button onclick="logout()" style="background:none;border:none;color:var(--muted);cursor:pointer;">Sign Out</button>
+    </div>
+    
+    <form class="cw-add-form" id="addDomainForm">
+      <input type="text" id="newDomain" placeholder="example.com" required pattern="[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+      <button type="submit" class="btn">Add Domain</button>
+    </form>
+    
+    <div id="domainList" class="cw-domain-list">
+      <div class="cw-empty">Loading...</div>
+    </div>
+    
+    <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <span id="domainCount" style="color:var(--muted);font-size:0.9rem;"></span>
+      <a href="https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v" id="upgradeLink" class="btn" style="padding:10px 20px;font-size:0.9rem;" target="_blank" rel="noopener">Upgrade to Pro</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>© 2026 EdgeIQ Labs. Cybersecurity · Hosting for Small Business.</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+<script>
+const API_BASE = '/api/certwatch';
+let currentUser = null;
+
+// Check for saved session
+const savedEmail = localStorage.getItem('certwatch_email');
+if (savedEmail) {
+  login(savedEmail);
+}
+
+// Login form
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (email) {
+    localStorage.setItem('certwatch_email', email);
+    login(email);
+  }
+});
+
+function login(email) {
+  currentUser = email;
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('dashboardSection').style.display = 'block';
+  loadDomains();
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('certwatch_email');
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('dashboardSection').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+}
+
+// Load domains
+async function loadDomains() {
+  try {
+    const resp = await fetch(`${API_BASE}/domains`, {
+      headers: { 'X-CertWatch-Email': currentUser }
+    });
+    const data = await resp.json();
+    
+    if (data.error) {
+      showError(data.error);
+      return;
+    }
+    
+    renderDomains(data.domains, data.max_domains, data.count);
+  } catch (e) {
+    showError('Failed to load domains');
+  }
+}
+
+function renderDomains(domains, maxDomains, count) {
+  const list = document.getElementById('domainList');
+  const countEl = document.getElementById('domainCount');
+  const upgradeBtn = document.getElementById('upgradeLink');
+  
+  countEl.textContent = `${count} / ${maxDomains} domains`;
+  
+  if (count >= maxDomains) {
+    upgradeBtn.style.display = 'inline-block';
+    upgradeBtn.textContent = 'Upgrade for More Domains';
+  } else {
+    upgradeBtn.style.display = 'none';
+  }
+  
+  if (domains.length === 0) {
+    list.innerHTML = '<div class="cw-empty">No domains added yet. Add your first domain above.</div>';
+    return;
+  }
+  
+  list.innerHTML = domains.map(d => {
+    const statusClass = d.last_status || 'error';
+    const statusLabel = d.last_status ? d.last_status.replace('_', ' ') : 'Not checked';
+    const expiryDisplay = d.last_expiry_date ? new Date(d.last_expiry_date).toLocaleDateString() : '—';
+    const daysLeft = d.last_expiry_date ? Math.ceil((new Date(d.last_expiry_date) - new Date()) / (1000*60*60*24)) : null;
+    const daysText = daysLeft !== null ? (daysLeft <= 0 ? 'EXPIRED' : `${daysLeft} days left`) : '';
+    
+    return `
+      <div class="cw-domain-row">
+        <div class="cw-domain-info">
+          <h4>${escapeHtml(d.domain)}</h4>
+          <p>Expires: ${expiryDisplay} ${daysText ? '· ' + daysText : ''}</p>
+          <p>Issuer: ${escapeHtml(d.last_issuer || 'Unknown')} · Last checked: ${d.last_checked_at ? new Date(d.last_checked_at).toLocaleDateString() : 'Never'}</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="cw-status ${statusClass}">${statusLabel}</span>
+          <button class="cw-remove" onclick="removeDomain('${escapeHtml(d.domain)}')" title="Remove">×</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Add domain
+document.getElementById('addDomainForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const domain = document.getElementById('newDomain').value.trim().toLowerCase();
+  
+  if (!domain) return;
+  
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = 'Adding...';
+  
+  try {
+    const resp = await fetch(`${API_BASE}/domains`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-CertWatch-Email': currentUser 
+      },
+      body: JSON.stringify({ domain })
+    });
+    
+    const data = await resp.json();
+    
+    if (data.error) {
+      alert(data.error);
+      if (data.upgrade_url) {
+        window.open(data.upgrade_url, '_blank');
+      }
+    } else {
+      document.getElementById('newDomain').value = '';
+      await loadDomains();
+    }
+  } catch (e) {
+    alert('Failed to add domain');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Add Domain';
+  }
+});
+
+// Remove domain
+async function removeDomain(domain) {
+  if (!confirm(`Remove ${domain} from monitoring?`)) return;
+  
+  try {
+    await fetch(`${API_BASE}/domains/${encodeURIComponent(domain)}`, {
+      method: 'DELETE',
+      headers: { 'X-CertWatch-Email': currentUser }
+    });
+    await loadDomains();
+  } catch (e) {
+    alert('Failed to remove domain');
+  }
+}
+
+function showError(msg) {
+  document.getElementById('domainList').innerHTML = `<div class="cw-empty" style="color:#ff6b6b;">${escapeHtml(msg)}</div>`;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Stripe checkout is wired directly in HTML href attributes
+</script>
+</body>
+</html>
