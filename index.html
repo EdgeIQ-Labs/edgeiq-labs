@@ -3628,73 +3628,7 @@
 })();
 </script>
 
-<script>
-/* Lead magnet: above-the-fold email capture in exchange for the
-   13-step SMB cybersecurity checklist. Posts to the same Substack
-   subscribe endpoint as the scanner gate, with metadata source set
-   so the user can segment captures later. Persists capture state in
-   localStorage (separate flag from the scanner gate). */
-(function() {
-  var STORAGE_KEY = 'edgeiq_lead_magnet_captured';
-  var SUBSTACK_URL = 'https://edgeiqlabs.substack.com/api/v1/free';
 
-  var form    = document.getElementById('lead-magnet-form');
-  var input   = document.getElementById('lead-magnet-email');
-  var btn     = document.getElementById('lead-magnet-submit');
-  var errEl   = document.getElementById('lead-magnet-error');
-  var success = document.getElementById('lead-magnet-success');
-  if (!form) return;
-
-  // If user already captured, show the success state immediately.
-  function alreadyCaptured() {
-    try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch(e) { return false; }
-  }
-  function showSuccess() {
-    form.style.display = 'none';
-    var note = form.parentElement.querySelector('.lead-magnet-note');
-    if (note) note.style.display = 'none';
-    success.style.display = 'block';
-    success.innerHTML = '<strong>\u2705 You\'re in!</strong> Check your inbox for the checklist link \u2014 we just emailed it to you.<br><a href="/blog/small-business-cybersecurity-checklist-2026.html" style="color:#3dd9ff;font-weight:600;">Or open it here \u2192</a>';
-  }
-  if (alreadyCaptured()) showSuccess();
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    var email = (input.value || '').trim();
-    if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 0) {
-      errEl.textContent = 'Please enter a valid email.';
-      errEl.style.display = 'block';
-      return;
-    }
-    errEl.style.display = 'none';
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-
-    var payload = JSON.stringify({ email: email, source: 'checklist' });
-
-    fetch('/api/capture-email', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: payload
-    }).then(function(r) { return r.json(); }).then(function(data) {
-      if (data && data.ok) {
-        try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e) {}
-        showSuccess();
-      } else {
-        errEl.textContent = 'Something went wrong. Please try again or email support@edgeiqlabs.com.';
-        errEl.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Get the checklist';
-      }
-    }).catch(function() {
-      errEl.textContent = 'Network error. Please try again.';
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Get the checklist';
-    });
-  });
-})();
-</script>
 
 <script>
 /* Email gate for free scanner — adds a Substack-backed email capture
