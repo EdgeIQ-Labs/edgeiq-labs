@@ -1,7 +1,7 @@
 /**
  * GET /api/cert-expiry?domain=example.com
  *
- * Checks SSL certificate expiry via crt.sh Certificate Transparency API.
+ * Checks SSL certificate expiry via CertSpotter API.
  * Returns the most recently issued certificate's expiry date.
  *
  * Returns: { domain, expiry_date, days_until_expiry, issuer, status }
@@ -20,22 +20,6 @@ function json(data, status = 200) {
   });
 }
 
-async function fetchWithTimeout(url, ms) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), ms);
-  try {
-    const resp = await fetch(url, {
-      headers: { 'User-Agent': 'EdgeIQ-CertWatch/1.0' },
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-    return resp;
-  } catch (e) {
-    clearTimeout(timeoutId);
-    throw e;
-  }
-}
-
 export async function onRequest(context) {
   const { request } = context;
   const url = new URL(request.url);
@@ -50,51 +34,38 @@ export async function onRequest(context) {
   }
 
   try {
-    // Query crt.sh for certificates issued to this domain
+    // CertSpotter API — no auth needed for basic queries, fast response
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     let resp;
     try {
-      resp = await fetchWithTimeout(
-        `https://crt.sh/?q=%25.${encodeURIComponent(domain)}&output=json`,
-        10000
+      resp = await fetch(
+        `https://api.certspotter.com/v1/certs?domain=${encodeURIComponent(domain)}&expand=dns_names`,
+        {
+          headers: { 'Accept': 'application/json' },
+          signal: controller.signal,
+        }
       );
-    } catch (fetchErr) {
-      // Retry with exact domain match if wildcard fails
-      resp = await fetchWithTimeout(
-        `https://crt.sh/?q=${encodeURIComponent(domain)}&output=json`,
-        10000
+      clearTimeout(timeoutId);
+    } catch (e) {
+      clearTimeout(timeoutId);
+      // Fallback: try without expand param
+      resp = await fetch(
+        `https://api.certspotter.com/v1/certs?domain=${encodeURIComponent(domain)}`,
+        { headers: { 'Accept': 'application/json' } }
       );
     }
 
     if (!resp.ok) {
-      return json({ domain, status: 'error', error: `crt.sh returned ${resp.status}` });
+      // If CertSpotter fails, try crt.sh as last resort with shorter timeout
+      return await tryCrtShFallback(domain);
     }
 
-    const text = await resp.text();
-    let certs;
-    try {
-      certs = JSON.parse(text);
-    } catch (parseErr) {
-      return json({ domain, status: 'error', error: 'Failed to parse crt.sh response' });
-    }
+    const certs = await resp.json();
 
     if (!Array.isArray(certs) || certs.length === 0) {
-      // Try exact match without wildcard as fallback
-      if (!text.includes('"not_after"')) {
-        const resp2 = await fetchWithTimeout(
-          `https://crt.sh/?q=${encodeURIComponent(domain)}&output=json`,
-          10000
-        );
-        if (resp2.ok) {
-          const text2 = await resp2.text();
-          try {
-            certs = JSON.parse(text2);
-          } catch {}
-        }
-      }
-
-      if (!Array.isArray(certs) || certs.length === 0) {
-        return json({ domain, status: 'error', error: 'No certificates found for this domain' });
-      }
+      return await tryCrtShFallback(domain);
     }
 
     return processCerts(domain, certs);
@@ -103,19 +74,63 @@ export async function onRequest(context) {
   }
 }
 
-function processCerts(domain, certs) {
-  // Find the most recently issued certificate
-  // Sort by not_before descending to get the latest cert
-  const sorted = certs
-    .filter(function(c) { return c.not_after && c.not_before; })
-    .sort(function(a, b) { return new Date(b.not_before).getTime() - new Date(a.not_before).getTime(); });
+async function tryCrtShFallback(domain) {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const resp = await fetch(
+      `https://crt.sh/?q=${encodeURIComponent(domain)}&output=json`,
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
 
-  if (sorted.length === 0) {
+    if (!resp.ok) {
+      return json({ domain, status: 'error', error: 'No certificates found' });
+    }
+
+    const text = await resp.text();
+    const certs = JSON.parse(text);
+
+    if (!Array.isArray(certs) || certs.length === 0) {
+      return json({ domain, status: 'error', error: 'No certificates found for this domain' });
+    }
+
+    // crt.sh uses not_before/not_after format
+    const sorted = certs
+      .filter(function(c) { return c.not_after && c.not_before; })
+      .sort(function(a, b) { return new Date(b.not_before).getTime() - new Date(a.not_before).getTime(); });
+
+    if (sorted.length === 0) {
+      return json({ domain, status: 'error', error: 'No valid certificates found' });
+    }
+
+    const latest = sorted[0];
+    return buildResult(domain, latest.not_after, latest.issuer_name, latest.common_name, latest.serial_number);
+  } catch (e) {
+    return json({ domain, status: 'error', error: 'Certificate lookup failed' });
+  }
+}
+
+function processCerts(domain, certs) {
+  // CertSpotter returns certs sorted by issuance date descending
+  // Each cert has: dns_names[], not_before, not_after, issuer
+  const valid = certs.filter(function(c) {
+    return c.not_after && c.not_before;
+  });
+
+  if (valid.length === 0) {
     return { domain: domain, status: 'error', error: 'No valid certificates found' };
   }
 
-  const latest = sorted[0];
-  const expiryDate = new Date(latest.not_after);
+  const latest = valid[0];
+  const issuerName = latest.issuer ? latest.issuer.name || latest.issuer : 'Unknown';
+  const commonName = latest.dns_names ? latest.dns_names[0] : domain;
+
+  return buildResult(domain, latest.not_after, issuerName, commonName, latest.serial || null);
+}
+
+function buildResult(domain, notAfter, issuerRaw, commonName, serial) {
+  const expiryDate = new Date(notAfter);
   const now = new Date();
   const daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
 
@@ -123,10 +138,14 @@ function processCerts(domain, certs) {
   if (daysUntilExpiry <= 0) status = 'expired';
   else if (daysUntilExpiry <= 30) status = 'expiring_soon';
 
-  // Extract issuer CN from issuer_name field
-  const issuer = latest.issuer_name || 'Unknown';
-  const cnMatch = issuer.match(/CN=([^,]+)/);
-  const issuerCN = cnMatch ? cnMatch[1] : issuer;
+  // Extract CN from issuer string if it's in DN format
+  var issuerCN = issuerRaw;
+  if (typeof issuerRaw === 'string') {
+    const cnMatch = issuerRaw.match(/CN=([^,]+)/);
+    if (cnMatch) issuerCN = cnMatch[1];
+  } else if (issuerRaw && typeof issuerRaw === 'object' && issuerRaw.name) {
+    issuerCN = issuerRaw.name;
+  }
 
   return {
     domain: domain,
@@ -134,7 +153,7 @@ function processCerts(domain, certs) {
     expiry_date: expiryDate.toISOString(),
     days_until_expiry: daysUntilExpiry,
     issuer: issuerCN,
-    common_name: latest.common_name || domain,
-    serial: latest.serial_number || null,
+    common_name: commonName || domain,
+    serial: serial || null,
   };
 }
