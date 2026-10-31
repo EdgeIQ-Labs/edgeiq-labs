@@ -18,6 +18,7 @@
  */
 
 const FROM_ADDRESS = 'EdgeIQ Labs <security@edgeiqlabs.com>';
+const COMPLIANCE_FROM = 'EdgeIQ Labs Compliance <compliance@edgeiqlabs.com>';
 const RESEND_URL   = 'https://api.resend.com/emails';
 const SUBSTACK_URL = 'https://edgeiqlabs.substack.com/api/v1/free';
 
@@ -397,8 +398,9 @@ function buildNewsletterEmail() {
 
 // ── Send helper ───────────────────────────────────────────────────────────────
 
-async function sendEmail(env, to, payload) {
+async function sendEmail(env, to, payload, fromOverride) {
   if (!env.RESEND_API_KEY) return;
+  const from = fromOverride || FROM_ADDRESS;
   try {
     await fetch(RESEND_URL, {
       method: 'POST',
@@ -406,7 +408,7 @@ async function sendEmail(env, to, payload) {
         'Authorization': `Bearer ${env.RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ from: FROM_ADDRESS, to: [to], ...payload }),
+      body: JSON.stringify({ from: from, to: [to], ...payload }),
     });
   } catch (_) {}
 }
@@ -477,7 +479,7 @@ export async function onRequestPost(context) {
   if (source === 'checklist' || source === 'lead-magnet-checklist') {
     if (env.RESEND_API_KEY) {
       const cl = buildChecklistEmail();
-      await sendEmail(env, email, cl);
+      await sendEmail(env, email, cl, COMPLIANCE_FROM);
     }
     return Response.json({ ok: true });
   }
