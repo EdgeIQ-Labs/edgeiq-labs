@@ -350,11 +350,11 @@
     <div class="lead-magnet">
       <h3>Free 2026 HIPAA Gap Assessment Checklist</h3>
       <p>Get our complete checklist covering all 2026 HIPAA Security Rule updates. Self-assess in 15 minutes or let us do it for free.</p>
-      <form class="lead-form" action="/api/compliance-shield/subscribe" method="POST">
-        <input type="email" name="email" class="input" placeholder="your@email.com" required />
-        <button type="submit" class="btn btn-primary">Get Checklist</button>
+      <form class="lead-form" id="checklist-form">
+        <input type="email" id="checklist-email" class="input" placeholder="your@email.com" required />
+        <button type="submit" class="btn btn-primary" id="checklist-btn">Get Checklist</button>
       </form>
-      <p style="font-size:0.78rem;color:var(--muted);margin-top:var(--space-sm);">No spam. Unsubscribe anytime.</p>
+      <p id="checklist-status" style="font-size:0.78rem;color:var(--muted);margin-top:var(--space-sm);">No spam. Unsubscribe anytime.</p>
     </div>
   </section>
 
@@ -416,16 +416,56 @@
       q.addEventListener('click', function() {
         var answer = this.nextElementSibling;
         var isOpen = this.classList.contains('open');
-        // Close all
         document.querySelectorAll('.faq-question').forEach(function(x) { x.classList.remove('open'); });
         document.querySelectorAll('.faq-answer').forEach(function(x) { x.classList.remove('open'); });
-        // Toggle clicked
         if (!isOpen) {
           this.classList.add('open');
           answer.classList.add('open');
         }
       });
     });
+
+    // Checklist lead capture form
+    (function() {
+      var form = document.getElementById('checklist-form');
+      var emailInput = document.getElementById('checklist-email');
+      var btn = document.getElementById('checklist-btn');
+      var status = document.getElementById('checklist-status');
+      if (!form) return;
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = emailInput.value.trim();
+        if (!email) return;
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        status.textContent = 'Sending your checklist...';
+        fetch('/api/capture-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, source: 'checklist' })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.ok) {
+            status.textContent = '✓ Check your inbox! The checklist is on its way.';
+            status.style.color = 'var(--ok)';
+            emailInput.value = '';
+            btn.textContent = 'Sent!';
+          } else {
+            status.textContent = 'Something went wrong. Please try again.';
+            status.style.color = 'var(--red)';
+            btn.disabled = false;
+            btn.textContent = 'Get Checklist';
+          }
+        })
+        .catch(function() {
+          status.textContent = 'Network error. Please try again.';
+          status.style.color = 'var(--red)';
+          btn.disabled = false;
+          btn.textContent = 'Get Checklist';
+        });
+      });
+    })();
   </script>
 
 </body>
