@@ -360,16 +360,16 @@ function buildEmail3() {
 // ── Checklist lead magnet email ───────────────────────────────────────────────
 
 function buildChecklistEmail() {
-  const subject = 'Your Free SMB Cybersecurity Checklist \u2014 EdgeIQ Labs';
+  const subject = 'Your Free 2026 HIPAA Gap Assessment Checklist \u2014 EdgeIQ Labs';
   const html = emailWrap(`
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${S.accent};margin-bottom:12px;">\ud83d\udee1\ufe0f Lead Magnet</div>
-    <h1 style="font-size:22px;font-weight:800;color:${S.text};margin:0 0 16px;line-height:1.3;">Your SMB Cybersecurity Checklist is ready</h1>
-    <p style="font-size:14px;color:${S.muted};line-height:1.7;margin:0 0 20px;">Here's the exact 13-step checklist EdgeIQ Labs uses to audit small businesses \u2014 MFA, patching, network segmentation, backups, phishing training, incident response, and more.</p>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${S.accent};margin-bottom:12px;">\ud83d\udee1\ufe0f Compliance Shield</div>
+    <h1 style="font-size:22px;font-weight:800;color:${S.text};margin:0 0 16px;line-height:1.3;">Your HIPAA Gap Assessment Checklist is ready</h1>
+    <p style="font-size:14px;color:${S.muted};line-height:1.7;margin:0 0 20px;">This professional-grade checklist covers every requirement of the <strong>2026 HIPAA Security Rule update</strong> \u2014 including the new MFA mandate and 72-hour breach notification window. Use it to self-assess your dental practice or prepare for an audit.</p>
     <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:8px 0 28px;">
-      <a href="https://edgeiqlabs.com/blog/small-business-cybersecurity-checklist-2026.html" style="display:inline-block;background:${S.accent};color:#071018;font-weight:700;font-size:15px;padding:14px 32px;border-radius:9px;text-decoration:none;">Open the Checklist \u2192</a>
+      <a href="https://edgeiqlabs.com/compliance-shield/assets/hipaa-gap-checklist-2026.pdf" style="display:inline-block;background:${S.accent};color:#071018;font-weight:700;font-size:15px;padding:14px 32px;border-radius:9px;text-decoration:none;">Download the Checklist (PDF) \u2192</a>
     </td></tr></table>
-    <p style="font-size:13px;color:${S.muted};line-height:1.6;margin:0 0 12px;">You'll also get weekly security tips \u2014 practical stuff, no fluff. Unsubscribe anytime by replying to this email.</p>
-    <p style="font-size:12px;color:#4a6080;line-height:1.6;margin:16px 0 0;border-top:1px solid ${S.border};padding-top:16px;">Questions? Reply to this email or join <a href="https://discord.gg/PaP7nsFUJT" style="color:${S.accent};">our Discord</a>.</p>
+    <p style="font-size:13px;color:${S.muted};line-height:1.6;margin:0 0 12px;">Includes scoring guide, 2026-specific requirements, and next steps. No phone calls needed \u2014 reply to this email if you'd like a free review of your findings.</p>
+    <p style="font-size:12px;color:#4a6080;line-height:1.6;margin:16px 0 0;border-top:1px solid ${S.border};padding-top:16px;">EdgeIQ Labs Compliance | <a href="https://edgeiqlabs.com/compliance-shield" style="color:${S.accent};">compliance-shield</a> | Unsubscribe by replying STOP</p>
   `);
   return { subject, html };
 }
