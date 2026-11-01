@@ -475,6 +475,25 @@ export async function onRequestPost(context) {
     return Response.json({ ok: true });
   }
 
+  // ── Breach checker lead magnet ────────────────────────────────────────────
+  if (source === 'breach-checker') {
+    // Deduplicate
+    const kvKey = `lead:breach:${email}`;
+    if (env.PULSE_KV) {
+      const existing = await env.PULSE_KV.get(kvKey).catch(() => null);
+      if (existing) return Response.json({ ok: true, duplicate: true });
+      await env.PULSE_KV.put(kvKey, JSON.stringify({
+        email, capturedAt: new Date().toISOString(), source: 'breach-checker',
+      }), { expirationTtl: 90 * 24 * 60 * 60 }).catch(() => {});
+    }
+    // Send checklist + Compliance Shield upsell
+    if (env.RESEND_API_KEY) {
+      const cl = buildChecklistEmail();
+      await sendEmail(env, email, cl, COMPLIANCE_FROM);
+    }
+    return Response.json({ ok: true });
+  }
+
   // ── Checklist lead magnet ─────────────────────────────────────────────────
   if (source === 'checklist' || source === 'lead-magnet-checklist') {
     if (env.RESEND_API_KEY) {

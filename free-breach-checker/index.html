@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/free-breach-checker/" />
+  <title>Free Breach Checker — Has Your Email or Password Been Leaked? | EdgeIQ Labs</title>
+  <meta name="description" content="Check if your email or password has appeared in known data breaches. Free instant scan using k-anonymity — your credentials never leave your browser. By EdgeIQ Labs." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://edgeiqlabs.com/free-breach-checker/" />
+  <meta property="og:title" content="Free Breach Checker — Has Your Email or Password Been Leaked?" />
+  <meta property="og:description" content="Instant breach check for email & passwords. Zero-knowledge architecture — your data never leaves your browser." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=12"/>
+  <style>
+    .checker-tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border-radius: 10px; padding: 4px; border: 1px solid var(--border); }
+    .checker-tab { flex: 1; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.2s; text-align: center; border: none; background: transparent; }
+    .checker-tab:hover { color: var(--text); }
+    .checker-tab.active { background: var(--accent); color: #071018; }
+    .checker-panel { display: none; }
+    .checker-panel.active { display: block; }
+    .input-group { position: relative; margin-bottom: 16px; }
+    .input-group input { width: 100%; padding: 16px 20px; font-size: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); outline: none; transition: border-color 0.2s; }
+    .input-group input:focus { border-color: var(--accent); }
+    .input-group input::placeholder { color: var(--muted); }
+    .check-btn { width: 100%; padding: 16px; font-size: 1rem; font-weight: 700; background: var(--accent); color: #071018; border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }
+    .check-btn:hover { opacity: 0.9; }
+    .check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-top: 24px; display: none; }
+    .result-card.visible { display: block; }
+    .grade-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 16px; font-weight: 900; line-height: 1; }
+    .grade-letter { font-size: 2.5rem; }
+    .grade-label { font-size: 0.7rem; font-weight: 700; margin-top: 4px; }
+    .result-headline { text-align: center; font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .result-detail { text-align: center; color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; }
+    .rec-list { list-style: none; padding: 0; margin: 0 0 24px; }
+    .rec-item { background: rgba(61,217,255,0.05); border-left: 3px solid var(--accent); padding: 12px 16px; margin-bottom: 8px; border-radius: 0 8px 8px 0; font-size: 0.9rem; line-height: 1.5; }
+    .rec-item.critical { border-left-color: #ef4444; background: rgba(239,68,68,0.06); }
+    .rec-item.high { border-left-color: #f97316; background: rgba(249,115,22,0.06); }
+    .rec-item.medium { border-left-color: #fbbf24; background: rgba(251,191,36,0.06); }
+    .privacy-note { display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; color: var(--muted); margin-top: 16px; padding: 12px 16px; background: rgba(61,217,255,0.04); border-radius: 8px; border: 1px solid rgba(61,217,255,0.1); }
+    .privacy-note svg { flex-shrink: 0; margin-top: 2px; }
+    .capture-section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-top: 32px; text-align: center; }
+    .capture-section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .capture-section p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; line-height: 1.5; }
+    .capture-form { display: flex; gap: 8px; max-width: 440px; margin: 0 auto; }
+    .capture-form input { flex: 1; padding: 12px 16px; font-size: 0.9rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none; }
+    .capture-form input:focus { border-color: var(--accent); }
+    .capture-form button { padding: 12px 20px; font-size: 0.9rem; font-weight: 700; background: var(--accent); color: #071018; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+    .capture-success { color: #22c55e; font-size: 0.9rem; margin-top: 12px; display: none; }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(7,16,24,0.3); border-top-color: #071018; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media(max-width: 500px) { .capture-form { flex-direction: column; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="/" style="display:flex;align-items:center;gap:10px;">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div>
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Security Intelligence</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/products/">All Products</a>
+      <a href="/blog/">Blog</a>
+      <a href="/compare/">Compare</a>
+      <a href="/account/">My Account</a>
+      <a class="nav-cta" href="/#smb-essentials">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🔓 Free Breach Checker</div>
+    <h1>Has Your Email or Password<br>Been Leaked?</h1>
+    <p>Instant check against billions of known breach records. Zero-knowledge architecture — your credentials never leave your browser.</p>
+  </div>
+</section>
+
+<section class="container" style="max-width: 640px; padding-bottom: 80px;">
+  <div class="checker-tabs">
+    <button class="checker-tab active" data-tab="password">Password Check</button>
+    <button class="checker-tab" data-tab="email">Email Check</button>
+  </div>
+
+  <!-- PASSWORD PANEL -->
+  <div id="panel-password" class="checker-panel active">
+    <div class="input-group">
+      <input type="password" id="pw-input" placeholder="Enter a password to check..." autocomplete="off" />
+    </div>
+    <button class="check-btn" id="pw-btn">Check Password</button>
+    <div class="privacy-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Your password is hashed in-browser using SHA-1. Only the first 5 characters of the hash are sent to the Have I Been Pwned API (k-anonymity). The full password and complete hash never leave your device.</span>
+    </div>
+  </div>
+
+  <!-- EMAIL PANEL -->
+  <div id="panel-email" class="checker-panel">
+    <div class="input-group">
+      <input type="email" id="em-input" placeholder="Enter an email address to check..." autocomplete="off" />
+    </div>
+    <button class="check-btn" id="em-btn">Check Email</button>
+    <div class="privacy-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Your email is sent securely to our server which queries the Have I Been Pwned database. We do not store your email or the results. Checks are rate-limited to prevent abuse.</span>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="result-card" id="result-card">
+    <div class="grade-circle" id="grade-circle">
+      <span class="grade-letter" id="grade-letter"></span>
+      <span class="grade-label" id="grade-sublabel"></span>
+    </div>
+    <div class="result-headline" id="result-headline"></div>
+    <div class="result-detail" id="result-detail"></div>
+    <ul class="rec-list" id="rec-list"></ul>
+  </div>
+
+  <!-- EMAIL CAPTURE -->
+  <div class="capture-section">
+    <h3>🛡️ Get the Free Employee Risk Checklist</h3>
+    <p>If your credentials have been exposed, your team is at risk too. Download our free 2026 HIPAA Gap Assessment Checklist to identify vulnerabilities before attackers do.</p>
+    <form class="capture-form" id="capture-form">
+      <input type="email" id="capture-email" placeholder="your@email.com" required />
+      <button type="submit">Send Checklist</button>
+    </form>
+    <div class="capture-success" id="capture-success">✓ Checklist sent! Check your inbox.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+    <p style="margin-top:8px;">
+      <a href="/">Home</a> · <a href="/free-tools/">Free Tools</a> · <a href="/pricing/">Pricing</a> · <a href="/contact/">Contact</a> · <a href="/privacy/">Privacy</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+// Tab switching
+document.querySelectorAll('.checker-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.checker-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.checker-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    document.getElementById('result-card').classList.remove('visible');
+  });
+});
+
+// SHA-1 for k-anonymity (client-side)
+async function sha1(message) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const hash = await crypto.subtle.digest('SHA-1', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+// Password check
+const pwBtn = document.getElementById('pw-btn');
+const pwInput = document.getElementById('pw-input');
+
+pwBtn.addEventListener('click', async () => {
+  const password = pwInput.value;
+  if (!password) return;
+
+  pwBtn.disabled = true;
+  pwBtn.innerHTML = '<span class="spinner"></span>Checking...';
+  document.getElementById('result-card').classList.remove('visible');
+
+  try {
+    const res = await fetch('/api/breach-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    showPasswordResult(data);
+  } catch (e) {
+    showError(e.message);
+  } finally {
+    pwBtn.disabled = false;
+    pwBtn.textContent = 'Check Password';
+  }
+});
+
+// Email check
+const emBtn = document.getElementById('em-btn');
+const emInput = document.getElementById('em-input');
+
+emBtn.addEventListener('click', async () => {
+  const email = emInput.value.trim();
+  if (!email || !email.includes('@')) return;
+
+  emBtn.disabled = true;
+  emBtn.innerHTML = '<span class="spinner"></span>Checking...';
+  document.getElementById('result-card').classList.remove('visible');
+
+  try {
+    const res = await fetch('/api/breach-check-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    showEmailResult(data);
+  } catch (e) {
+    showError(e.message);
+  } finally {
+    emBtn.disabled = false;
+    emBtn.textContent = 'Check Email';
+  }
+});
+
+function showPasswordResult(data) {
+  const card = document.getElementById('result-card');
+  const circle = document.getElementById('grade-circle');
+  const letter = document.getElementById('grade-letter');
+  const sub = document.getElementById('grade-sublabel');
+  const headline = document.getElementById('result-headline');
+  const detail = document.getElementById('result-detail');
+  const recList = document.getElementById('rec-list');
+
+  let grade, color, bg;
+  if (data.breached) {
+    grade = 'F'; color = '#ef4444'; bg = 'rgba(239,68,68,0.10)';
+    headline.textContent = '⚠️ This password has been breached';
+    detail.textContent = `Found in ${data.breachCount.toLocaleString()} known data breach${data.breachCount !== 1 ? 'es' : ''}. Change it immediately everywhere you use it.`;
+  } else if (data.strength === 'strong') {
+    grade = 'A'; color = '#22c55e'; bg = 'rgba(34,197,94,0.10)';
+    headline.textContent = '✅ Strong & uncompromised';
+    detail.textContent = 'This password hasn\'t appeared in any known breaches and meets strong password criteria.';
+  } else if (data.strength === 'good') {
+    grade = 'B'; color = '#3dd9ff'; bg = 'rgba(61,217,255,0.10)';
+    headline.textContent = '✅ Not breached — but could be stronger';
+    detail.textContent = 'No breaches found, but consider making it longer or adding more character types.';
+  } else if (data.strength === 'fair') {
+    grade = 'C'; color = '#fbbf24'; bg = 'rgba(251,191,36,0.10)';
+    headline.textContent = '⚡ Not breached — weak password';
+    detail.textContent = 'No breaches found yet, but this password is too easy to crack. Strengthen it now.';
+  } else {
+    grade = 'D'; color = '#f97316'; bg = 'rgba(249,115,22,0.10)';
+    headline.textContent = '⚠️ Very weak password';
+    detail.textContent = 'Not found in breaches yet, but this password would be cracked in seconds. Change it.';
+  }
+
+  circle.style.border = `4px solid ${color}`;
+  circle.style.background = bg;
+  letter.style.color = color;
+  letter.textContent = grade;
+  sub.style.color = color;
+  sub.textContent = data.breached ? 'BREACHED' : `${data.strengthScore}/100`;
+
+  recList.innerHTML = '';
+  (data.recommendations || []).forEach(rec => {
+    const li = document.createElement('li');
+    li.className = `rec-item ${rec.priority}`;
+    li.textContent = rec.text;
+    recList.appendChild(li);
+  });
+
+  card.classList.add('visible');
+}
+
+function showEmailResult(data) {
+  const card = document.getElementById('result-card');
+  const circle = document.getElementById('grade-circle');
+  const letter = document.getElementById('grade-letter');
+  const sub = document.getElementById('grade-sublabel');
+  const headline = document.getElementById('result-headline');
+  const detail = document.getElementById('result-detail');
+  const recList = document.getElementById('rec-list');
+
+  const count = data.breachCount || 0;
+  let grade, color, bg;
+
+  if (count >= 10) {
+    grade = 'F'; color = '#ef4444'; bg = 'rgba(239,68,68,0.10)';
+    headline.textContent = '🚨 High exposure detected';
+    detail.textContent = `This email has appeared in ${count} known data breaches. Assume all associated accounts are compromised.`;
+  } else if (count >= 3) {
+    grade = 'D'; color = '#f97316'; bg = 'rgba(249,115,22,0.10)';
+    headline.textContent = '⚠️ Multiple breaches found';
+    detail.textContent = `Found in ${count} breaches. Change passwords on affected services and enable 2FA everywhere.`;
+  } else if (count >= 1) {
+    grade = 'C'; color = '#fbbf24'; bg = 'rgba(251,191,36,0.10)';
+    headline.textContent = '⚡ Breach detected';
+    detail.textContent = `Found in ${count} breach. Update the password for that service and check for reuse.`;
+  } else {
+    grade = 'A'; color = '#22c55e'; bg = 'rgba(34,197,94,0.10)';
+    headline.textContent = '✅ No breaches found';
+    detail.textContent = 'This email hasn\'t appeared in any known data breaches. Keep monitoring regularly.';
+  }
+
+  circle.style.border = `4px solid ${color}`;
+  circle.style.background = bg;
+  letter.style.color = color;
+  letter.textContent = grade;
+  sub.style.color = color;
+  sub.textContent = count > 0 ? `${count} BREACH${count !== 1 ? 'ES' : ''}` : 'CLEAN';
+
+  recList.innerHTML = '';
+  const recs = [];
+  if (count > 0) {
+    recs.push({ priority: 'critical', text: 'Change passwords immediately on all breached services. Use unique passwords for every account.' });
+    recs.push({ priority: 'high', text: 'Enable two-factor authentication (2FA) on every account that supports it.' });
+    recs.push({ priority: 'medium', text: 'Use a password manager like Bitwarden to generate and store strong unique passwords.' });
+    if (count >= 5) {
+      recs.push({ priority: 'critical', text: 'Consider freezing your credit with Equifax, Experian, and TransUnion to prevent identity theft.' });
+    }
+  } else {
+    recs.push({ priority: 'info', text: 'No breaches found — but new breaches surface daily. Re-check periodically.' });
+    recs.push({ priority: 'info', text: 'Enable 2FA on critical accounts as a preventive measure.' });
+  }
+  recs.forEach(rec => {
+    const li = document.createElement('li');
+    li.className = `rec-item ${rec.priority}`;
+    li.textContent = rec.text;
+    recList.appendChild(li);
+  });
+
+  card.classList.add('visible');
+}
+
+function showError(msg) {
+  const card = document.getElementById('result-card');
+  const circle = document.getElementById('grade-circle');
+  const letter = document.getElementById('grade-letter');
+  const sub = document.getElementById('grade-sublabel');
+  const headline = document.getElementById('result-headline');
+  const detail = document.getElementById('result-detail');
+  const recList = document.getElementById('rec-list');
+
+  circle.style.border = '4px solid #9fb0c7';
+  circle.style.background = 'rgba(159,176,199,0.08)';
+  letter.style.color = '#9fb0c7';
+  letter.textContent = '?';
+  sub.style.color = '#9fb0c7';
+  sub.textContent = 'ERROR';
+  headline.textContent = 'Check failed';
+  detail.textContent = msg || 'Something went wrong. Please try again.';
+  recList.innerHTML = '';
+  card.classList.add('visible');
+}
+
+// Email capture form
+document.getElementById('capture-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('capture-email').value.trim();
+  if (!email) return;
+
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    await fetch('/api/capture-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'breach-checker' }),
+    });
+    document.getElementById('capture-success').style.display = 'block';
+    e.target.reset();
+  } catch (_) {}
+
+  btn.disabled = false;
+  btn.textContent = 'Send Checklist';
+});
+</script>
+</body>
+</html>
