@@ -1020,99 +1020,62 @@
       </div>
     </section>
 
-    <!-- Compliance Shield Feature Section -->
-    <section id="compliance-shield" style="padding:48px 0 40px;">
-      <div class="card" style="background:linear-gradient(135deg,rgba(244,114,182,0.08),rgba(99,102,241,0.06));border:1px solid rgba(244,114,182,0.3);padding:36px 32px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(244,114,182,0.15),transparent 70%);border-radius:50%;pointer-events:none;"></div>
-        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:280px;">
-            <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;">
-              <span class="badge" style="background:#2d1a2e;border-color:#5a2d5e;color:#f472b6;font-weight:700;margin:0;">🏥 Healthcare Compliance</span>
-              <span class="badge" style="background:#1a1a2e;border-color:#3d3d6e;color:#a78bfa;font-weight:700;margin:0;">NEW SERVICE</span>
-            </div>
-            <h2 style="font-size:1.6rem;margin-bottom:10px;line-height:1.2;">Compliance Shield — HIPAA compliance for small healthcare practices</h2>
-            <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:16px;">The 2026 HIPAA Security Rule update introduced mandatory MFA, 72-hour breach notification, and updated privacy notices. Most small practices — dental, therapy, chiropractic, optometry, med spa — have gaps they don't know about until an audit hits.</p>
-            <ul style="list-style:none;padding:0;margin:0 0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f472b6;">✓</span> Free HIPAA gap assessment</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f472b6;">✓</span> Monthly compliance monitoring</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f472b6;">✓</span> Staff training documentation</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f472b6;">✓</span> Breach response readiness</li>
-            </ul>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;">
-              <a class="btn btn-primary" href="/compliance-shield/" style="font-size:0.95rem;">Learn more →</a>
-              <a class="btn btn-secondary" href="/compliance-shield/#pricing" style="font-size:0.95rem;">View pricing ($299–$499/mo)</a>
-            </div>
-          </div>
-          <div style="flex:0 0 auto;min-width:220px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:20px;">
-            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Starting at</div>
-            <div style="font-size:2rem;font-weight:800;color:#f472b6;line-height:1;">$299<span style="font-size:0.9rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="margin-top:12px;font-size:0.82rem;color:var(--muted);line-height:1.5;">Per practice · No contracts<br>Cancel anytime · Email-only support</div>
-          </div>
-        </div>
+    <!-- New Services Grid — compact product shelf -->
+    <section id="new-services" style="padding:32px 0 24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h2 style="font-size:1.15rem;margin:0;display:flex;align-items:center;gap:8px;"><span style="color:#b47aff;">⚡</span> New Services</h2>
+        <a href="/products/" style="font-size:0.82rem;color:var(--muted);text-decoration:none;">View all →</a>
       </div>
-    </section>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;">
 
-    <!-- ShieldFill Feature Section -->
-    <section id="shieldfill" style="padding:48px 0 40px;">
-      <div class="card" style="background:linear-gradient(135deg,rgba(61,217,255,0.08),rgba(99,102,241,0.06));border:1px solid rgba(61,217,255,0.3);padding:36px 32px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(61,217,255,0.15),transparent 70%);border-radius:50%;pointer-events:none;"></div>
-        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:280px;">
-            <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;">
-              <span class="badge" style="background:#0f2535;border-color:#1e4060;color:#3dd9ff;font-weight:700;margin:0;">🤖 AI-Powered Sales</span>
-              <span class="badge" style="background:#1a1a2e;border-color:#3d3d6e;color:#a78bfa;font-weight:700;margin:0;">NEW SERVICE</span>
+        <!-- Compliance Shield -->
+        <a href="/compliance-shield/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(244,114,182,0.06),rgba(99,102,241,0.04));border:1px solid rgba(244,114,182,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(244,114,182,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(244,114,182,0.25)';this.style.transform='none'">
+          <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(244,114,182,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🏥</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+              <span style="font-size:0.92rem;font-weight:700;color:var(--text);white-space:nowrap;">Compliance Shield</span>
+              <span style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;background:#2d1a2e;color:#f472b6;padding:2px 6px;border-radius:4px;font-weight:700;white-space:nowrap;">NEW</span>
             </div>
-            <h2 style="font-size:1.6rem;margin-bottom:10px;line-height:1.2;">ShieldFill — Stop losing enterprise deals to security questionnaires</h2>
-            <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:16px;">Your prospects send 200-question vendor assessments. Your team spends 10–40 hours answering them. ShieldFill uses AI to auto-complete 80% from your existing knowledge base — so you close deals in days, not weeks.</p>
-            <ul style="list-style:none;padding:0;margin:0 0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3dd9ff;">✓</span> Upload past answers once</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3dd9ff;">✓</span> AI auto-fills new questionnaires</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3dd9ff;">✓</span> Human review before delivery</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3dd9ff;">✓</span> Excel, Word & PDF export</li>
-            </ul>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;">
-              <a class="btn btn-primary" href="/shieldfill/" style="font-size:0.95rem;">Learn more →</a>
-              <a class="btn btn-secondary" href="/shieldfill/#pricing" style="font-size:0.95rem;">View pricing ($499–$999/mo)</a>
-            </div>
+            <p style="font-size:0.8rem;color:var(--muted);margin:0;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">HIPAA compliance monitoring for small healthcare practices</p>
           </div>
-          <div style="flex:0 0 auto;min-width:220px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:20px;">
-            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Starting at</div>
-            <div style="font-size:2rem;font-weight:800;color:#3dd9ff;line-height:1;">$499<span style="font-size:0.9rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="margin-top:12px;font-size:0.82rem;color:var(--muted);line-height:1.5;">Per company · No contracts<br>Cancel anytime · Email delivery</div>
+          <div style="flex:0 0 auto;text-align:right;">
+            <div style="font-size:0.95rem;font-weight:800;color:#f472b6;line-height:1;">$299<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
           </div>
-        </div>
-      </div>
-    </section>
+        </a>
 
-    <!-- Vendor Risk Assessment Feature Section -->
-    <section id="vendor-risk" style="padding:48px 0 40px;">
-      <div class="card" style="background:linear-gradient(135deg,rgba(180,122,255,0.08),rgba(99,102,241,0.06));border:1px solid rgba(180,122,255,0.3);padding:36px 32px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(180,122,255,0.15),transparent 70%);border-radius:50%;pointer-events:none;"></div>
-        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:280px;">
-            <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;">
-              <span class="badge" style="background:#1a1030;border-color:#3d2d6e;color:#b47aff;font-weight:700;margin:0;">🏥 Vendor Management</span>
-              <span class="badge" style="background:#1a1a2e;border-color:#3d3d6e;color:#a78bfa;font-weight:700;margin:0;">NEW PRODUCT</span>
+        <!-- ShieldFill -->
+        <a href="/shieldfill/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(61,217,255,0.06),rgba(99,102,241,0.04));border:1px solid rgba(61,217,255,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(61,217,255,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(61,217,255,0.25)';this.style.transform='none'">
+          <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(61,217,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📋</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+              <span style="font-size:0.92rem;font-weight:700;color:var(--text);white-space:nowrap;">ShieldFill</span>
+              <span style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;background:#0f2535;color:#3dd9ff;padding:2px 6px;border-radius:4px;font-weight:700;white-space:nowrap;">NEW</span>
             </div>
-            <h2 style="font-size:1.6rem;margin-bottom:10px;line-height:1.2;">Vendor Risk Assessment — HIPAA-native vendor management for SMBs</h2>
-            <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:16px;">Track BAAs, assess third-party risk, and monitor vendor compliance without the $10K enterprise bundle. AI auto-fills assessments from public evidence, and cross-product intelligence from Compliance Shield + PhishSim gives you risk signals no standalone tool can.</p>
-            <ul style="list-style:none;padding:0;margin:0 0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#b47aff;">✓</span> BAA lifecycle tracking + alerts</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#b47aff;">✓</span> AI auto-fill from SOC2/HITRUST</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#b47aff;">✓</span> Cross-product risk signals</li>
-              <li style="color:var(--text);font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#b47aff;">✓</span> Audit-ready exports for OCR</li>
-            </ul>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;">
-              <a class="btn btn-primary" href="/vendor-risk/" style="font-size:0.95rem;">Learn more →</a>
-              <a class="btn btn-secondary" href="/vendor-risk/#pricing" style="font-size:0.95rem;">View pricing ($499–$999/mo)</a>
+            <p style="font-size:0.8rem;color:var(--muted);margin:0;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">AI auto-fills security questionnaires from your KB docs</p>
+          </div>
+          <div style="flex:0 0 auto;text-align:right;">
+            <div style="font-size:0.95rem;font-weight:800;color:#3dd9ff;line-height:1;">$499<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+          </div>
+        </a>
+
+        <!-- Vendor Risk -->
+        <a href="/vendor-risk/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(180,122,255,0.06),rgba(99,102,241,0.04));border:1px solid rgba(180,122,255,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(180,122,255,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(180,122,255,0.25)';this.style.transform='none'">
+          <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(180,122,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔍</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+              <span style="font-size:0.92rem;font-weight:700;color:var(--text);white-space:nowrap;">Vendor Risk</span>
+              <span style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;background:#1a1030;color:#b47aff;padding:2px 6px;border-radius:4px;font-weight:700;white-space:nowrap;">NEW</span>
             </div>
+            <p style="font-size:0.8rem;color:var(--muted);margin:0;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">HIPAA-native third-party vendor assessments + BAA tracking</p>
           </div>
-          <div style="flex:0 0 auto;min-width:220px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:20px;">
-            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Starting at</div>
-            <div style="font-size:2rem;font-weight:800;color:#b47aff;line-height:1;">$499<span style="font-size:0.9rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="margin-top:12px;font-size:0.82rem;color:var(--muted);line-height:1.5;">Per company · No contracts<br>Cancel anytime · Email-only support</div>
+          <div style="flex:0 0 auto;text-align:right;">
+            <div style="font-size:0.95rem;font-weight:800;color:#b47aff;line-height:1;">$499<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
           </div>
-        </div>
+        </a>
+
       </div>
     </section>
 
