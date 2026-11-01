@@ -126,9 +126,9 @@
 
   <!-- CTA -->
   <div class="capture-section" style="margin-top:32px;">
-    <h3>🛡️ Need Full SBOM + Remediation?</h3>
-    <p>The free scan checks up to 50 dependencies. For full software bill of materials export, remediation plans, and continuous monitoring, explore Compliance Shield.</p>
-    <a href="https://edgeiqlabs.com/compliance-shield/" style="display:inline-block;background:var(--accent);color:#071018;font-weight:700;font-size:0.9rem;padding:12px 24px;border-radius:9px;text-decoration:none;margin-top:8px;">Explore Compliance Shield →</a>
+    <h3>⚖️ Get Full SBOM Export — $29</h3>
+    <p>The free scan checks up to 50 dependencies. Unlock the complete software bill of materials, SPDX-compatible export, copyleft remediation plan, and M&amp;A due diligence report.</p>
+    <button id="checkout-btn" style="display:inline-block;background:var(--accent);color:#071018;font-weight:700;font-size:0.9rem;padding:12px 24px;border-radius:9px;border:none;cursor:pointer;margin-top:8px;transition:opacity 0.2s;">Get Full SBOM Report — $29 →</button>
   </div>
 
   <!-- FAQ Schema -->
@@ -207,6 +207,28 @@ scanBtn.addEventListener('click', async () => {
 
 repoInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') scanBtn.click();
+});
+
+// Checkout button for SBOM export
+document.getElementById('checkout-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('checkout-btn');
+  btn.disabled = true;
+  btn.textContent = 'Loading checkout...';
+  try {
+    const res = await fetch('/api/license-audit-checkout', { method: 'POST' });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert(data.error || 'Checkout failed. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Get Full SBOM Report — $29 →';
+    }
+  } catch (e) {
+    alert('Checkout error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Get Full SBOM Report — $29 →';
+  }
 });
 
 function showResult(data) {
