@@ -73,6 +73,31 @@ export async function onRequest(context) {
       return new Response('OK', { status: 200 });
     }
 
+    // Create user account in KV
+    const kv = context.env.SHIELDBUILD_KV;
+    if (kv) {
+      try {
+        const userId = crypto.randomUUID();
+        const tempPassword = 'Temp' + Math.random().toString(36).slice(-8) + '!';
+        const userRecord = {
+          id: userId,
+          email: customerEmail,
+          name: session.customer_details?.name || customerEmail.split('@')[0],
+          password: tempPassword,
+          tier: tier,
+          stripeCustomerId: session.customer || null,
+          createdAt: new Date().toISOString(),
+          companyName: session.metadata?.company_name || '',
+        };
+        await kv.put(`users:${customerEmail.toLowerCase()}`, JSON.stringify(userRecord));
+        console.log(`User account created for ${customerEmail} (tier: ${tier})`);
+        // Store temp password for email
+        var generatedPassword = tempPassword;
+      } catch (kvErr) {
+        console.error('Failed to create user in KV:', kvErr);
+      }
+    }
+
     // Tier-specific onboarding details
     const tierDetails = {
       crew: {
@@ -107,6 +132,12 @@ export async function onRequest(context) {
           <ul style="line-height: 1.6;">
             ${tierInfo.features.split(', ').map(f => `<li>${f}</li>`).join('')}
           </ul>
+          <p><strong>Your login credentials:</strong></p>
+          <div style="margin: 16px 0; padding: 16px; background: #f0f7ff; border-radius: 8px; border-left: 4px solid #3dd9ff;">
+            <p style="margin: 0;"><strong>Login URL:</strong> <a href="https://edgeiqlabs.com/shieldbuild/dashboard.html">edgeiqlabs.com/shieldbuild/dashboard.html</a></p>
+            <p style="margin: 8px 0 0;"><strong>Email:</strong> ${customerEmail}</p>
+            ${typeof generatedPassword !== 'undefined' ? `<p style="margin: 8px 0 0;"><strong>Temporary Password:</strong> ${generatedPassword}</p><p style="margin: 8px 0 0; font-size: 12px; color: #666;">Please change your password after first login.</p>` : ''}
+          </div>
           <p><strong>Next steps:</strong></p>
           <p>${tierInfo.nextSteps}</p>
           <div style="margin: 32px 0; padding: 20px; background: #f5f5f5; border-radius: 8px;">

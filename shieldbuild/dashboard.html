@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldBuild Dashboard — EdgeIQ Labs</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    .sb-dash-header { padding: var(--space-xl) 0; border-bottom: 1px solid var(--border); margin-bottom: var(--space-xl); }
+    .sb-dash-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .sb-dash-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .sb-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .sb-stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-lg); text-align: center; }
+    .sb-stat-card .value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .sb-stat-card .label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .sb-section { margin-bottom: var(--space-xl); }
+    .sb-section h2 { font-size: 1.2rem; margin-bottom: var(--space-md); display: flex; align-items: center; gap: 8px; }
+    .sb-card-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+    .sb-card-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-md); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .sb-card-item .title { font-weight: 600; }
+    .sb-card-item .meta { font-size: 0.85rem; color: var(--muted); }
+    .sb-badge-status { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+    .sb-badge-status.open { background: rgba(255,107,107,0.15); color: var(--red); }
+    .sb-badge-status.closed { background: rgba(61,225,158,0.15); color: var(--green); }
+    .sb-badge-status.investigating { background: rgba(255,179,71,0.15); color: var(--yellow); }
+    .sb-calendar-item { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .sb-calendar-date { min-width: 60px; text-align: center; }
+    .sb-calendar-date .day { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+    .sb-calendar-date .month { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
+    .sb-calendar-info .title { font-weight: 600; font-size: 0.95rem; }
+    .sb-calendar-info .type { font-size: 0.78rem; color: var(--muted); text-transform: capitalize; }
+    .sb-calendar-days { font-size: 0.8rem; margin-left: auto; white-space: nowrap; }
+    .sb-calendar-days.urgent { color: var(--red); font-weight: 700; }
+    .sb-calendar-days.soon { color: var(--yellow); }
+    .sb-calendar-days.ok { color: var(--green); }
+    .sb-form { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-lg); }
+    .sb-form label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; margin-top: var(--space-md); }
+    .sb-form label:first-child { margin-top: 0; }
+    .sb-form input, .sb-form select, .sb-form textarea { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.9rem; font-family: var(--font-sans); }
+    .sb-form textarea { min-height: 80px; resize: vertical; }
+    .sb-form button { margin-top: var(--space-lg); }
+    .sb-login-wrap { max-width: 400px; margin: 80px auto; padding: var(--space-xl); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .sb-login-wrap h1 { text-align: center; margin-bottom: var(--space-lg); font-size: 1.4rem; }
+    .sb-tabs { display: flex; gap: 4px; margin-bottom: var(--space-lg); border-bottom: 1px solid var(--border); }
+    .sb-tab { padding: 10px 20px; cursor: pointer; color: var(--muted); font-size: 0.9rem; border-bottom: 2px solid transparent; transition: all 0.15s; }
+    .sb-tab:hover { color: var(--text); }
+    .sb-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .sb-tab-content { display: none; }
+    .sb-tab-content.active { display: block; }
+    @media (max-width: 700px) {
+      .sb-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .sb-card-item { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <img src="/assets/img/logo-icon.png" alt="EdgeIQ" class="nav-logo-img" onerror="this.style.display='none'" />
+        <div class="nav-wordmark">
+          <span class="nav-brand-name">Edge<span>IQ</span> Labs</span>
+          <span class="nav-brand-tag">ShieldBuild</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/shieldbuild/">Product</a>
+        <a href="#" id="logoutBtn" style="display:none;">Log Out</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Login Form -->
+    <div id="loginView">
+      <div class="sb-login-wrap">
+        <h1>🔐 ShieldBuild Login</h1>
+        <div class="sb-form">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="demo@edgeiqlabs.com" />
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter password" />
+          <button class="btn btn-primary" style="width:100%;margin-top:20px;" onclick="doLogin()">Sign In</button>
+          <p id="loginError" style="color:var(--red);font-size:0.85rem;margin-top:12px;text-align:center;display:none;"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardView" style="display:none;">
+      <div class="sb-dash-header">
+        <h1 id="dashGreeting">Dashboard</h1>
+        <p id="dashTier"></p>
+      </div>
+
+      <!-- Stats -->
+      <div class="sb-stats-grid" id="statsGrid"></div>
+
+      <!-- Tabs -->
+      <div class="sb-tabs">
+        <div class="sb-tab active" onclick="switchTab('sites')">Job Sites</div>
+        <div class="sb-tab" onclick="switchTab('incidents')">Incidents</div>
+        <div class="sb-tab" onclick="switchTab('calendar')">Calendar</div>
+        <div class="sb-tab" onclick="switchTab('osha300')">OSHA 300</div>
+        <div class="sb-tab" onclick="switchTab('newincident')">+ New Incident</div>
+      </div>
+
+      <!-- Job Sites Tab -->
+      <div id="tab-sites" class="sb-tab-content active">
+        <div class="sb-section">
+          <h2>🏗️ Active Job Sites</h2>
+          <div class="sb-card-list" id="sitesList"></div>
+        </div>
+      </div>
+
+      <!-- Incidents Tab -->
+      <div id="tab-incidents" class="sb-tab-content">
+        <div class="sb-section">
+          <h2>🚨 Incident Reports</h2>
+          <div class="sb-card-list" id="incidentsList"></div>
+        </div>
+      </div>
+
+      <!-- Calendar Tab -->
+      <div id="tab-calendar" class="sb-tab-content">
+        <div class="sb-section">
+          <h2>📅 Compliance Calendar</h2>
+          <div class="sb-card-list" id="calendarList"></div>
+        </div>
+      </div>
+
+      <!-- OSHA 300 Tab -->
+      <div id="tab-osha300" class="sb-tab-content">
+        <div class="sb-section">
+          <h2>📄 OSHA 300 Log Generator</h2>
+          <div class="sb-form">
+            <label>Year</label>
+            <select id="oshaYear">
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+            </select>
+            <label>Job Site (optional)</label>
+            <select id="oshaSite"><option value="">All Sites</option></select>
+            <button class="btn btn-primary" onclick="generateOSHA300()">Generate OSHA 300 Log</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- New Incident Tab -->
+      <div id="tab-newincident" class="sb-tab-content">
+        <div class="sb-section">
+          <h2>🚨 New Incident Report</h2>
+          <div class="sb-form">
+            <label>Job Site</label>
+            <select id="incidentSite"></select>
+            <label>Type</label>
+            <select id="incidentType">
+              <option value="injury">Injury</option>
+              <option value="near_miss">Near Miss</option>
+              <option value="property_damage">Property Damage</option>
+              <option value="environmental">Environmental</option>
+            </select>
+            <label>Date</label>
+            <input type="date" id="incidentDate" />
+            <label>Location on Site</label>
+            <input type="text" id="incidentLocation" placeholder="e.g., North scaffolding, Floor 3" />
+            <label>Description</label>
+            <textarea id="incidentDesc" placeholder="Describe what happened..."></textarea>
+            <label>Severity</label>
+            <select id="incidentSeverity">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+            <label>Corrective Actions</label>
+            <textarea id="incidentCorrective" placeholder="Actions taken or planned..."></textarea>
+            <button class="btn btn-primary" onclick="submitIncident()">Submit Incident Report</button>
+            <p id="incidentResult" style="font-size:0.85rem;margin-top:12px;display:none;"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--border);padding:var(--space-xl) 0;text-align:center;color:var(--muted);font-size:0.85rem;margin-top:var(--space-3xl);">
+    <div class="container">
+      <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="mailto:safety@edgeiqlabs.com" style="color:var(--accent);">safety@edgeiqlabs.com</a></p>
+    </div>
+  </footer>
+
+  <script src="/assets/js/theme.js"></script>
+  <script>
+    const API_BASE = '/api/shieldbuild';
+    let authToken = localStorage.getItem('sb_token');
+    let dashData = null;
+
+    // Init
+    (async function() {
+      if (authToken) {
+        await loadDashboard();
+      } else {
+        document.getElementById('loginView').style.display = 'block';
+      }
+      document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('sb_token');
+        location.reload();
+      });
+      // Set default date for incident form
+      document.getElementById('incidentDate').valueAsDate = new Date();
+    })();
+
+    async function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Login failed';
+          errEl.style.display = 'block';
+          return;
+        }
+        authToken = data.token;
+        localStorage.setItem('sb_token', authToken);
+        await loadDashboard();
+      } catch (e) {
+        errEl.textContent = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+      }
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_BASE}/dashboard`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (res.status === 401) {
+          localStorage.removeItem('sb_token');
+          location.reload();
+          return;
+        }
+        dashData = await res.json();
+        renderDashboard();
+      } catch (e) {
+        console.error('Dashboard load error:', e);
+      }
+    }
+
+    function renderDashboard() {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('dashboardView').style.display = 'block';
+      document.getElementById('logoutBtn').style.display = 'inline';
+
+      const u = dashData.user;
+      document.getElementById('dashGreeting').textContent = `Welcome, ${u.name || u.email}`;
+      document.getElementById('dashTier').textContent = `${u.tier.charAt(0).toUpperCase() + u.tier.slice(1)} Plan`;
+
+      // Stats
+      const s = dashData.stats;
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="sb-stat-card"><div class="value">${s.totalSites}</div><div class="label">Job Sites</div></div>
+        <div class="sb-stat-card"><div class="value">${s.totalIncidents}</div><div class="label">Incidents</div></div>
+        <div class="sb-stat-card"><div class="value">${s.upcomingInspections}</div><div class="label">Upcoming Inspections</div></div>
+        <div class="sb-stat-card"><div class="value">${s.expiringSoon}</div><div class="label">Expiring Soon</div></div>
+        <div class="sb-stat-card"><div class="value">${s.complianceScore}%</div><div class="label">Compliance Score</div></div>
+      `;
+
+      // Sites
+      const sitesHtml = dashData.jobSites.map(site => `
+        <div class="sb-card-item">
+          <div>
+            <div class="title">${esc(site.name)}</div>
+            <div class="meta">${esc(site.address || '')} · ${site.status || 'active'}</div>
+          </div>
+          <span class="sb-badge-status ${site.status === 'active' ? 'closed' : 'open'}">${site.status || 'active'}</span>
+        </div>
+      `).join('') || '<p style="color:var(--muted);">No job sites configured yet.</p>';
+      document.getElementById('sitesList').innerHTML = sitesHtml;
+
+      // Populate site dropdowns
+      const siteOptions = dashData.jobSites.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+      document.getElementById('incidentSite').innerHTML = siteOptions;
+      document.getElementById('oshaSite').innerHTML = '<option value="">All Sites</option>' + siteOptions;
+
+      // Incidents
+      renderIncidents();
+
+      // Calendar
+      renderCalendar();
+    }
+
+    function renderIncidents() {
+      const html = dashData.incidents.map(inc => `
+        <div class="sb-card-item">
+          <div>
+            <div class="title">${esc(inc.type.replace('_', ' '))} — ${esc(inc.location || 'N/A')}</div>
+            <div class="meta">${inc.date} · ${esc(inc.description.substring(0, 80))}${inc.description.length > 80 ? '...' : ''}</div>
+          </div>
+          <span class="sb-badge-status ${inc.status}">${inc.status}</span>
+        </div>
+      `).join('') || '<p style="color:var(--muted);">No incidents recorded.</p>';
+      document.getElementById('incidentsList').innerHTML = html;
+    }
+
+    function renderCalendar() {
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const html = dashData.calendar.map(entry => {
+        const d = new Date(entry.date);
+        const daysClass = entry.daysUntilExpiry <= 7 ? 'urgent' : entry.daysUntilExpiry <= 30 ? 'soon' : 'ok';
+        const daysText = entry.daysUntilExpiry < 0 ? `${Math.abs(entry.daysUntilExpiry)}d overdue` : entry.daysUntilExpiry === 0 ? 'Today' : `${entry.daysUntilExpiry}d away`;
+        return `
+          <div class="sb-calendar-item">
+            <div class="sb-calendar-date">
+              <div class="day">${d.getDate()}</div>
+              <div class="month">${months[d.getMonth()]}</div>
+            </div>
+            <div class="sb-calendar-info">
+              <div class="title">${esc(entry.title)}</div>
+              <div class="type">${entry.type}</div>
+            </div>
+            <div class="sb-calendar-days ${daysClass}">${daysText}</div>
+          </div>
+        `;
+      }).join('') || '<p style="color:var(--muted);">No calendar entries.</p>';
+      document.getElementById('calendarList').innerHTML = html;
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.sb-tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`tab-${name}`).classList.add('active');
+    }
+
+    async function submitIncident() {
+      const resultEl = document.getElementById('incidentResult');
+      resultEl.style.display = 'none';
+      const payload = {
+        siteId: document.getElementById('incidentSite').value,
+        type: document.getElementById('incidentType').value,
+        date: document.getElementById('incidentDate').value,
+        location: document.getElementById('incidentLocation').value,
+        description: document.getElementById('incidentDesc').value,
+        severity: document.getElementById('incidentSeverity').value,
+        correctiveActions: document.getElementById('incidentCorrective').value,
+      };
+      if (!payload.siteId || !payload.description) {
+        resultEl.textContent = 'Please fill in required fields (site, description).';
+        resultEl.style.color = 'var(--red)';
+        resultEl.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/incident`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          resultEl.textContent = data.error || 'Failed to submit';
+          resultEl.style.color = 'var(--red)';
+        } else {
+          resultEl.textContent = '✅ Incident report submitted successfully!';
+          resultEl.style.color = 'var(--green)';
+          // Clear form
+          document.getElementById('incidentLocation').value = '';
+          document.getElementById('incidentDesc').value = '';
+          document.getElementById('incidentCorrective').value = '';
+          // Reload dashboard
+          await loadDashboard();
+        }
+        resultEl.style.display = 'block';
+      } catch (e) {
+        resultEl.textContent = 'Network error. Please try again.';
+        resultEl.style.color = 'var(--red)';
+        resultEl.style.display = 'block';
+      }
+    }
+
+    async function generateOSHA300() {
+      const year = document.getElementById('oshaYear').value;
+      const siteId = document.getElementById('oshaSite').value;
+      try {
+        const res = await fetch(`${API_BASE}/osha300/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify({ year: parseInt(year), siteId: siteId || undefined })
+        });
+        if (!res.ok) {
+          alert('Failed to generate OSHA 300 log');
+          return;
+        }
+        const html = await res.text();
+        const w = window.open('', '_blank');
+        w.document.write(html);
+        w.document.close();
+      } catch (e) {
+        alert('Error generating OSHA 300 log');
+      }
+    }
+
+    function esc(s) {
+      if (!s) return '';
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>
