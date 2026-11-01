@@ -357,6 +357,103 @@ function buildEmail3() {
   return { subject, html };
 }
 
+// ── Breach report email (capture-gated) ───────────────────────────────────────
+
+function buildBreachReportEmail(email, breachCount, breaches) {
+  const masked = email.replace(/(.{2})(.*)(@.*)/, '$1***$3');
+  let grade, color, bg, headline;
+  if (breachCount >= 10) {
+    grade = 'F'; color = '#ef4444'; bg = 'rgba(239,68,68,0.10)';
+    headline = '🚨 High exposure detected';
+  } else if (breachCount >= 3) {
+    grade = 'D'; color = '#f97316'; bg = 'rgba(249,115,22,0.10)';
+    headline = '⚠️ Multiple breaches found';
+  } else if (breachCount >= 1) {
+    grade = 'C'; color = '#fbbf24'; bg = 'rgba(251,191,36,0.10)';
+    headline = '⚡ Breach detected';
+  } else {
+    grade = 'A'; color = '#22c55e'; bg = 'rgba(34,197,94,0.10)';
+    headline = '✅ No breaches found';
+  }
+
+  let breachRows = '';
+  if (breaches.length > 0) {
+    breachRows = `
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${S.border};border-radius:8px;overflow:hidden;margin:16px 0;">
+      <tr style="background:${S.card2};">
+        <td style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${S.muted};">Breach</td>
+        <td style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${S.muted};">Date</td>
+        <td style="padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${S.muted};text-align:right;">Accounts</td>
+      </tr>
+      ${breaches.slice(0, 10).map(b => `
+      <tr>
+        <td style="padding:9px 12px;border-top:1px solid ${S.border};font-size:13px;font-weight:600;color:${S.text};">${b.Name || b.Title || 'Unknown'}</td>
+        <td style="padding:9px 12px;border-top:1px solid ${S.border};font-size:12px;color:${S.muted};">${b.BreachDate || 'N/A'}</td>
+        <td style="padding:9px 12px;border-top:1px solid ${S.border};font-size:12px;color:${S.muted};text-align:right;">${(b.PwnCount || 0).toLocaleString()}</td>
+      </tr>`).join('')}
+    </table>`;
+    if (breaches.length > 10) {
+      breachRows += `<p style="font-size:12px;color:${S.muted};margin:4px 0 0;">+ ${breaches.length - 10} more breaches not shown.</p>`;
+    }
+  }
+
+  const recs = [];
+  if (breachCount > 0) {
+    recs.push({ priority: 'critical', text: 'Change passwords immediately on all breached services. Use unique passwords for every account.' });
+    recs.push({ priority: 'high', text: 'Enable two-factor authentication (2FA) on every account that supports it.' });
+    recs.push({ priority: 'medium', text: 'Use a password manager like Bitwarden to generate and store strong unique passwords.' });
+    if (breachCount >= 5) {
+      recs.push({ priority: 'critical', text: 'Consider freezing your credit with Equifax, Experian, and TransUnion to prevent identity theft.' });
+    }
+  } else {
+    recs.push({ priority: 'info', text: 'No breaches found — but new breaches surface daily. Re-check periodically.' });
+    recs.push({ priority: 'info', text: 'Enable 2FA on critical accounts as a preventive measure.' });
+  }
+  const recHtml = recs.map(r => {
+    const bColor = r.priority === 'critical' ? '#ef4444' : r.priority === 'high' ? '#f97316' : r.priority === 'medium' ? '#fbbf24' : '#22c55e';
+    return `<div style="background:rgba(${r.priority === 'critical' ? '239,68,68' : r.priority === 'high' ? '249,115,22' : r.priority === 'medium' ? '251,191,36' : '34,197,94'},0.06);border-left:3px solid ${bColor};padding:10px 14px;margin-bottom:8px;border-radius:0 8px 8px 0;font-size:13px;color:${S.muted};line-height:1.5;"><strong style="color:${S.text};">${r.priority.toUpperCase()}:</strong> ${r.text}</div>`;
+  }).join('');
+
+  const subject = breachCount > 0
+    ? `Your Breach Report — ${breachCount} breach${breachCount !== 1 ? 'es' : ''} found for ${masked}`
+    : `Your Breach Report — No breaches found for ${masked}`;
+
+  const html = emailWrap(`
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${S.accent};margin-bottom:12px;">🔓 Breach Report</div>
+    <h1 style="font-size:21px;font-weight:800;color:${S.text};margin:0 0 16px;line-height:1.3;">${headline}</h1>
+    <p style="font-size:14px;color:${S.muted};line-height:1.7;margin:0 0 20px;">We scanned <strong style="color:${S.text};">${masked}</strong> against billions of known breach records from Have I Been Pwned.</p>
+
+    <div style="text-align:center;margin-bottom:24px;">
+      <table cellpadding="0" cellspacing="0" style="margin:0 auto 12px;">
+        <tr><td style="width:100px;height:100px;border-radius:50px;border:4px solid ${color};background:${bg};text-align:center;vertical-align:middle;">
+          <div style="font-size:2.5rem;font-weight:900;color:${color};line-height:1;">${grade}</div>
+          <div style="font-size:0.75rem;font-weight:700;color:${color};">${breachCount > 0 ? breachCount + ' BREACH' + (breachCount !== 1 ? 'ES' : '') : 'CLEAN'}</div>
+        </td></tr>
+      </table>
+    </div>
+
+    ${breachRows}
+
+    <div style="margin-top:20px;">
+      <div style="font-size:13px;font-weight:700;color:${S.text};margin-bottom:12px;">Recommended Actions</div>
+      ${recHtml}
+    </div>
+
+    <div style="margin-top:24px;background:${S.card2};border:1px solid ${S.border};border-radius:10px;padding:20px;text-align:center;">
+      <div style="font-size:14px;font-weight:700;color:${S.text};margin-bottom:6px;">Protect your team from credential-based attacks</div>
+      <div style="font-size:13px;color:${S.muted};margin-bottom:16px;">Compliance Shield monitors your organization's exposure and delivers weekly risk reports.</div>
+      <a href="https://edgeiqlabs.com/compliance-shield/" style="display:inline-block;background:${S.accent};color:#071018;font-weight:700;font-size:14px;padding:12px 24px;border-radius:9px;text-decoration:none;">Explore Compliance Shield →</a>
+    </div>
+
+    <p style="font-size:12px;color:#4a6080;line-height:1.6;margin:20px 0 0;border-top:1px solid ${S.border};padding-top:16px;">
+      This report was generated by EdgeIQ Labs using data from Have I Been Pwned.
+      <a href="https://edgeiqlabs.com/free-breach-checker/" style="color:${S.accent};">Run another check</a> ·
+      <a href="https://edgeiqlabs.com/free-tools/" style="color:${S.accent};">All free tools</a>
+    </p>
+  `);
+  return { subject, html };
+}
+
 // ── Checklist lead magnet email ───────────────────────────────────────────────
 
 function buildChecklistEmail() {
@@ -472,6 +569,46 @@ export async function onRequestPost(context) {
       ]);
     }
 
+    return Response.json({ ok: true });
+  }
+
+  // ── Breach report (capture-gated email check) ─────────────────────────────
+  if (source === 'breach-report') {
+    const kvKey = `lead:breach-report:${email}`;
+    if (env.PULSE_KV) {
+      const existing = await env.PULSE_KV.get(kvKey).catch(() => null);
+      if (existing) return Response.json({ ok: true, duplicate: true });
+      await env.PULSE_KV.put(kvKey, JSON.stringify({
+        email, capturedAt: new Date().toISOString(), source: 'breach-report',
+      }), { expirationTtl: 90 * 24 * 60 * 60 }).catch(() => {});
+    }
+
+    // Run HIBP lookup server-side and email results
+    let breachCount = 0;
+    let breaches = [];
+    try {
+      const hibpKey = env.HIBP_API_KEY || '';
+      const headers = { 'User-Agent': 'EdgeIQ-BreachChecker/1.0', 'Accept': 'application/json' };
+      if (hibpKey) headers['hibp-api-key'] = hibpKey;
+      const res = await fetch(
+        `https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}?truncateResponse=true`,
+        { headers, cf: { timeout: 8000 } }
+      );
+      if (res.status === 200) {
+        const data = await res.json();
+        breaches = Array.isArray(data) ? data : [];
+        breachCount = breaches.length;
+      }
+    } catch (_) {}
+
+    // Build and send breach report email
+    if (env.RESEND_API_KEY) {
+      const report = buildBreachReportEmail(email, breachCount, breaches);
+      await sendEmail(env, email, report, COMPLIANCE_FROM);
+      // Also send checklist
+      const cl = buildChecklistEmail();
+      await sendEmail(env, email, cl, COMPLIANCE_FROM);
+    }
     return Response.json({ ok: true });
   }
 

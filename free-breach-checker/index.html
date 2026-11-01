@@ -105,15 +105,20 @@
     </div>
   </div>
 
-  <!-- EMAIL PANEL -->
+  <!-- EMAIL PANEL (Capture-Gated) -->
   <div id="panel-email" class="checker-panel">
-    <div class="input-group">
-      <input type="email" id="em-input" placeholder="Enter an email address to check..." autocomplete="off" />
-    </div>
-    <button class="check-btn" id="em-btn">Check Email</button>
-    <div class="privacy-note">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>Your email is sent securely to our server which queries the Have I Been Pwned database. We do not store your email or the results. Checks are rate-limited to prevent abuse.</span>
+    <div class="capture-section" style="margin-top:0; text-align:left;">
+      <h3 style="text-align:center;">📧 Get Your Free Breach Report</h3>
+      <p style="text-align:center;">Enter your email and we'll scan it against billions of known breach records. Your personalized report — including breach names, dates, and exposed data types — will be delivered to your inbox in under 60 seconds.</p>
+      <form class="capture-form" id="email-report-form" style="max-width:100%;">
+        <input type="email" id="em-input" placeholder="your@email.com" required autocomplete="off" />
+        <button type="submit" id="em-btn">Send My Report</button>
+      </form>
+      <div class="capture-success" id="em-success" style="text-align:center;">✓ Report is being generated! Check your inbox in ~60 seconds.</div>
+      <div class="privacy-note" style="margin-top:16px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Your email is queried server-side against Have I Been Pwned. We never sell or share your data. You'll also receive our free Employee Risk Checklist.</span>
+      </div>
     </div>
   </div>
 
@@ -198,33 +203,28 @@ pwBtn.addEventListener('click', async () => {
   }
 });
 
-// Email check
-const emBtn = document.getElementById('em-btn');
-const emInput = document.getElementById('em-input');
+// Email report form (capture-gated)
+document.getElementById('email-report-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('em-input').value.trim();
+  if (!email) return;
 
-emBtn.addEventListener('click', async () => {
-  const email = emInput.value.trim();
-  if (!email || !email.includes('@')) return;
-
-  emBtn.disabled = true;
-  emBtn.innerHTML = '<span class="spinner"></span>Checking...';
-  document.getElementById('result-card').classList.remove('visible');
+  const btn = document.getElementById('em-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generating Report...';
 
   try {
-    const res = await fetch('/api/breach-check-email', {
+    await fetch('/api/capture-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, source: 'breach-report' }),
     });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    showEmailResult(data);
-  } catch (e) {
-    showError(e.message);
-  } finally {
-    emBtn.disabled = false;
-    emBtn.textContent = 'Check Email';
-  }
+    document.getElementById('em-success').style.display = 'block';
+    e.target.reset();
+  } catch (_) {}
+
+  btn.disabled = false;
+  btn.textContent = 'Send My Report';
 });
 
 function showPasswordResult(data) {
