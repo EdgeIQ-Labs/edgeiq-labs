@@ -1,0 +1,77 @@
+// ShieldInvoice Single Invoice — GET/DELETE /api/shieldinvoice/invoices/:id
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+  });
+}
+
+async function verifyJWT(token, secret) {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const [headerB64, payloadB64, sigB64] = parts;
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const signatureInput = `${headerB64}.${payloadB64}`;
+    const sigBinary = atob(sigB64.replace(/-/g, '+').replace(/_/g, '/'));
+    const sigBuffer = new Uint8Array(sigBinary.length);
+    for (let i = 0; i < sigBinary.length; i++) sigBuffer[i] = sigBinary.charCodeAt(i);
+    const valid = await crypto.subtle.verify('HMAC', key, sigBuffer, encoder.encode(signatureInput));
+    if (!valid) return null;
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/')));
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch (e) { return null; }
+}
+
+export async function onRequest(context) {
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+  
+  const kv = context.env.SHIELDINVOICE_KV;
+  const jwtSecret = context.env.SHIELDINVOICE_JWT_SECRET || 'shieldinvoice-dev-secret-change-in-prod';
+  if (!kv) return json({ error: 'KV namespace not bound' }, 500);
+  
+  const authHeader = context.request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return json({ error: 'Authorization required' }, 401);
+  const user = await verifyJWT(authHeader.slice(7), jwtSecret);
+  if (!user) return json({ error: 'Invalid or expired token' }, 401);
+  
+  // Extract ID from path params
+  const id = context.params.id;
+  if (!id) return json({ error: 'Invoice ID required' }, 400);
+  
+  const invoiceKey = `invoices:${user.sub}:${id}`;
+  
+  if (context.request.method === 'GET') {
+    const invoice = await kv.get(invoiceKey, 'json');
+    if (!invoice) return json({ error: 'Invoice not found' }, 404);
+    return json({ invoice });
+  }
+  
+  if (context.request.method === 'DELETE') {
+    const invoice = await kv.get(invoiceKey, 'json');
+    if (!invoice) return json({ error: 'Invoice not found' }, 404);
+    
+    await kv.delete(invoiceKey);
+    
+    // Remove from index
+    const indexKey = `index:${user.sub}`;
+    const index = await kv.get(indexKey, 'json') || [];
+    const filtered = index.filter(i => i.id !== id);
+    await kv.put(indexKey, JSON.stringify(filtered));
+    
+    return json({ success: true, deleted: id });
+  }
+  
+  return json({ error: 'Method not allowed' }, 405);
+}

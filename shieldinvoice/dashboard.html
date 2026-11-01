@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShieldInvoice Dashboard | EdgeIQ Labs</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=42">
+  <script src="/assets/js/theme.js"></script>
+  <style>
+    .dash-wrap { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+    .auth-box { max-width: 400px; margin: 80px auto; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 36px; }
+    .auth-box h2 { margin: 0 0 20px; text-align: center; }
+    .auth-box input { width: 100%; padding: 12px 14px; margin-bottom: 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.95rem; box-sizing: border-box; }
+    .auth-box button { width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--accent); color: #0b0f14; font-weight: 700; font-size: 1rem; cursor: pointer; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .stat-card .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .stat-card .value { font-size: 1.8rem; font-weight: 800; }
+    .upload-zone { border: 2px dashed var(--border); border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 30px; cursor: pointer; transition: all 0.15s; }
+    .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: rgba(61,217,255,0.04); }
+    .upload-zone p { margin: 0; color: var(--muted); }
+    .upload-zone .icon { font-size: 2rem; margin-bottom: 10px; }
+    table.inv-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .inv-table th { text-align: left; padding: 12px 14px; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .inv-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    .inv-table tr:hover { background: rgba(61,217,255,0.03); }
+    .badge-status { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .badge-ok { background: rgba(61,225,158,0.15); color: #3de19e; }
+    .badge-warn { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .detail-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 30px; display: none; }
+    .detail-panel.active { display: block; }
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .detail-field .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+    .detail-field .val { font-size: 1rem; font-weight: 600; }
+    .line-items-table { width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 0.85rem; }
+    .line-items-table th, .line-items-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    .line-items-table th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; }
+    .anomaly-list { margin-top: 16px; }
+    .anomaly-item { background: rgba(245,158,11,0.1); border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 0.85rem; }
+    .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+    .hidden { display: none !important; }
+    #processingMsg { text-align: center; padding: 20px; color: var(--accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">EdgeIQ Labs</a>
+      <div class="nav__links">
+        <a href="/shieldinvoice/" class="nav__link">ShieldInvoice</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">◑</button>
+        <button id="logoutBtn" class="btn btn--outline hidden" style="padding:6px 16px;font-size:0.8rem;">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login Form -->
+  <div id="loginSection" class="auth-box">
+    <h2>Sign In</h2>
+    <input type="email" id="loginEmail" placeholder="Email address" />
+    <input type="password" id="loginPassword" placeholder="Password" />
+    <button id="loginBtn">Sign In</button>
+    <p id="loginError" style="color:#ef4444;margin-top:12px;font-size:0.85rem;text-align:center;"></p>
+  </div>
+
+  <!-- Dashboard (hidden until auth) -->
+  <div id="dashboardSection" class="dash-wrap hidden">
+    <div class="toolbar">
+      <h2 style="margin:0;flex:1;">Dashboard</h2>
+      <button id="exportCsvBtn" class="btn btn--outline" style="padding:8px 18px;font-size:0.85rem;">Export CSV</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="label">Processed This Month</div><div class="value" id="statMonth">—</div></div>
+      <div class="stat-card"><div class="label">Total Amount</div><div class="value" id="statAmount">—</div></div>
+      <div class="stat-card"><div class="label">Anomalies Flagged</div><div class="value" id="statAnomalies">—</div></div>
+      <div class="stat-card"><div class="label">Total Processed</div><div class="value" id="statTotal">—</div></div>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone">
+      <div class="icon">📄</div>
+      <p><strong>Drop PDF here</strong> or click to browse</p>
+      <input type="file" id="fileInput" accept=".pdf" style="display:none;" />
+    </div>
+    <div id="processingMsg" class="hidden">Processing invoice… please wait</div>
+
+    <!-- Detail Panel -->
+    <div id="detailPanel" class="detail-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h3 style="margin:0;">Invoice Details</h3>
+        <button id="closeDetail" class="btn btn--outline" style="padding:6px 14px;font-size:0.8rem;">Close</button>
+      </div>
+      <div class="detail-grid" id="detailGrid"></div>
+      <div id="lineItemsWrap"></div>
+      <div id="anomaliesWrap" class="anomaly-list"></div>
+    </div>
+
+    <!-- Invoice Table -->
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>Vendor</th>
+          <th>Invoice #</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="invoiceTableBody">
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const API = '/api/shieldinvoice';
+    let token = localStorage.getItem('si_token');
+    let currentUser = null;
+
+    // Auth check
+    if (token) {
+      showDashboard();
+      loadDashboard();
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', doLogin);
+    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      token = null; currentUser = null;
+      localStorage.removeItem('si_token');
+      location.reload();
+    });
+
+    async function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.textContent = '';
+      if (!email || !password) { errEl.textContent = 'Enter email and password'; return; }
+      try {
+        const resp = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { errEl.textContent = data.error || 'Login failed'; return; }
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('si_token', token);
+        showDashboard();
+        loadDashboard();
+      } catch (e) { errEl.textContent = 'Network error'; }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+      document.getElementById('logoutBtn').classList.remove('hidden');
+    }
+
+    async function loadDashboard() {
+      try {
+        const [dashResp, invResp] = await Promise.all([
+          fetch(`${API}/dashboard`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${API}/invoices?limit=50`, { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        if (dashResp.status === 401 || invResp.status === 401) { token = null; localStorage.removeItem('si_token'); location.reload(); return; }
+        const dash = await dashResp.json();
+        const invData = await invResp.json();
+        renderStats(dash.stats);
+        renderTable(invData.invoices);
+      } catch (e) { console.error('Dashboard load error:', e); }
+    }
+
+    function renderStats(s) {
+      document.getElementById('statMonth').textContent = s.thisMonthProcessed || 0;
+      document.getElementById('statAmount').textContent = '$' + (s.totalAmount || 0).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2});
+      document.getElementById('statAnomalies').textContent = s.anomalyCount || 0;
+      document.getElementById('statTotal').textContent = s.totalProcessed || 0;
+    }
+
+    function renderTable(invoices) {
+      const tbody = document.getElementById('invoiceTableBody');
+      if (!invoices || invoices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">No invoices processed yet. Upload one above!</td></tr>';
+        return;
+      }
+      tbody.innerHTML = invoices.map(inv => {
+        const hasAnomaly = false; // index doesn't carry anomaly flag; detail view does
+        const statusClass = 'badge-ok';
+        const statusText = 'Processed';
+        return `<tr>
+          <td>${esc(inv.vendorName || 'Unknown')}</td>
+          <td>${esc(inv.id.slice(0,8))}</td>
+          <td>${esc((inv.processedAt||'').slice(0,10))}</td>
+          <td>${inv.total != null ? '$'+Number(inv.total).toFixed(2) : '—'}</td>
+          <td><span class="badge-status ${statusClass}">${statusText}</span></td>
+          <td><button class="btn btn--outline" style="padding:4px 12px;font-size:0.75rem;" onclick="viewInvoice('${inv.id}')">View</button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    async function viewInvoice(id) {
+      try {
+        const resp = await fetch(`${API}/invoices/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!resp.ok) return;
+        const { invoice } = await resp.json();
+        const d = invoice.data || {};
+        const panel = document.getElementById('detailPanel');
+        document.getElementById('detailGrid').innerHTML = [
+          ['Vendor', d.vendorName], ['Invoice #', d.invoiceNumber], ['Date', d.date],
+          ['PO Number', d.poNumber], ['Subtotal', fmt$(d.subtotal)], ['Tax', fmt$(d.tax)],
+          ['Total', fmt$(d.total)], ['Confidence', d.confidenceScore != null ? (d.confidenceScore*100).toFixed(0)+'%' : '—'],
+          ['File', invoice.fileName], ['Processed', (invoice.processedAt||'').slice(0,16)]
+        ].map(([l,v]) => `<div class="detail-field"><div class="lbl">${l}</div><div class="val">${esc(v ?? '—')}</div></div>`).join('');
+        const items = d.lineItems || [];
+        document.getElementById('lineItemsWrap').innerHTML = items.length ? `
+          <h4 style="margin:20px 0 8px;font-size:0.85rem;color:var(--muted);">LINE ITEMS</h4>
+          <table class="line-items-table"><thead><tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead><tbody>
+          ${items.map(i => `<tr><td>${esc(i.description)}</td><td>${i.quantity??''}</td><td>${fmt$(i.unitPrice)}</td><td>${fmt$(i.amount)}</td></tr>`).join('')}
+          </tbody></table>` : '';
+        const anomalies = d.anomalies || [];
+        document.getElementById('anomaliesWrap').innerHTML = anomalies.length ?
+          `<h4 style="margin:20px 0 8px;font-size:0.85rem;color:#f59e0b;">⚠ ANOMALIES (${anomalies.length})</h4>` +
+          anomalies.map(a => `<div class="anomaly-item">${esc(a)}</div>`).join('') : '';
+        panel.classList.add('active');
+      } catch (e) { console.error('View invoice error:', e); }
+    }
+
+    document.getElementById('closeDetail').addEventListener('click', () => {
+      document.getElementById('detailPanel').classList.remove('active');
+    });
+
+    // Upload handling
+    const zone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    zone.addEventListener('click', () => fileInput.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) uploadFile(fileInput.files[0]); });
+
+    async function uploadFile(file) {
+      if (file.type !== 'application/pdf') { alert('Please upload a PDF file'); return; }
+      document.getElementById('processingMsg').classList.remove('hidden');
+      zone.classList.add('hidden');
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const resp = await fetch(`${API}/process`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        const data = await resp.json();
+        if (!resp.ok) { alert('Processing failed: ' + (data.error || data.message || 'Unknown error')); }
+        else { loadDashboard(); }
+      } catch (e) { alert('Upload error: ' + e.message); }
+      finally {
+        document.getElementById('processingMsg').classList.add('hidden');
+        zone.classList.remove('hidden');
+        fileInput.value = '';
+      }
+    }
+
+    // Export CSV
+    document.getElementById('exportCsvBtn').addEventListener('click', async () => {
+      try {
+        const resp = await fetch(`${API}/export`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+        if (!resp.ok) { alert('Export failed'); return; }
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'shieldinvoice-export.csv'; a.click();
+        URL.revokeObjectURL(url);
+      } catch (e) { alert('Export error: ' + e.message); }
+    });
+
+    function esc(v) { if (v == null) return ''; const d = document.createElement('div'); d.textContent = String(v); return d.innerHTML; }
+    function fmt$(v) { return v != null ? '$' + Number(v).toFixed(2) : '—'; }
+  </script>
+</body>
+</html>

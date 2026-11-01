@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShieldInvoice — AI-Powered Invoice Processing | EdgeIQ Labs</title>
+  <meta name="description" content="Automate AP invoice processing with AI. Upload PDFs, extract data instantly, flag anomalies, export to CSV/QBO. From $149/mo.">
+  <link rel="stylesheet" href="/css/design-system.css?v=42">
+  <script src="/assets/js/theme.js"></script>
+  <style>
+    .si-hero { text-align: center; padding: 80px 20px 60px; }
+    .si-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin-bottom: 20px; line-height: 1.15; }
+    .si-hero p { font-size: 1.15rem; color: var(--muted); max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+    .si-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; padding: 40px 20px; max-width: 900px; margin: 0 auto; }
+    .si-step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; text-align: center; }
+    .si-step-num { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #0b0f14; font-weight: 800; font-size: 1.1rem; margin-bottom: 16px; }
+    .si-step h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .si-step p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+    .si-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px 20px; max-width: 1100px; margin: 0 auto; }
+    .si-feature { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; border-left: 3px solid var(--accent); }
+    .si-feature h3 { margin: 0 0 10px; font-size: 1.05rem; }
+    .si-feature p { margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .si-pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; padding: 40px 20px; max-width: 750px; margin: 0 auto; }
+    .si-price-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 36px 28px; position: relative; }
+    .si-price-card.featured { border-color: var(--accent); box-shadow: 0 0 30px rgba(61,217,255,0.08); }
+    .si-price-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #0b0f14; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; }
+    .si-price-card h3 { margin: 0 0 8px; font-size: 1.3rem; }
+    .si-price { font-size: 2.4rem; font-weight: 800; margin: 12px 0 4px; }
+    .si-price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .si-price-card ul { list-style: none; padding: 0; margin: 20px 0 28px; }
+    .si-price-card li { padding: 8px 0; font-size: 0.9rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+    .si-price-card li::before { content: '✓'; color: var(--accent); font-weight: 700; margin-right: 10px; }
+    .si-cta-btn { display: inline-block; width: 100%; text-align: center; padding: 14px 24px; border-radius: 8px; font-weight: 700; text-decoration: none; transition: all 0.15s; }
+    .si-cta-primary { background: var(--accent); color: #0b0f14; }
+    .si-cta-primary:hover { filter: brightness(1.1); }
+    .si-cta-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .si-cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .si-faq { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+    .si-faq details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+    .si-faq summary { padding: 18px 24px; cursor: pointer; font-weight: 600; font-size: 0.95rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    .si-faq summary::-webkit-details-marker { display: none; }
+    .si-faq summary::after { content: '+'; font-size: 1.3rem; color: var(--accent); font-weight: 300; }
+    .si-faq details[open] summary::after { content: '−'; }
+    .si-faq .faq-body { padding: 0 24px 18px; font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+    .section-heading { text-align: center; margin-bottom: 12px; font-size: 1.8rem; }
+    .section-sub { text-align: center; color: var(--muted); margin-bottom: 32px; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">EdgeIQ Labs</a>
+      <div class="nav__links">
+        <a href="#how-it-works" class="nav__link">How It Works</a>
+        <a href="#features" class="nav__link">Features</a>
+        <a href="#pricing" class="nav__link">Pricing</a>
+        <a href="#faq" class="nav__link">FAQ</a>
+        <a href="/shieldinvoice/dashboard.html" class="nav__link nav__link--active">Dashboard</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">◑</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="si-hero">
+      <span class="badge" style="background:#0f2535;border-color:#1e4060;color:#7ab8d0;">🤖 AI-Powered AP Automation</span>
+      <h1>Stop keying invoices manually.<br>AI-powered AP processing in seconds.</h1>
+      <p>Upload or forward PDF invoices. ShieldInvoice extracts vendor, line items, totals, and PO numbers automatically — flags duplicates and anomalies before they hit your books.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="#pricing" class="btn btn--primary">Get Started</a>
+        <a href="#how-it-works" class="btn btn--outline">See How It Works</a>
+      </div>
+    </section>
+
+    <section id="how-it-works" style="padding:40px 0;">
+      <h2 class="section-heading">How It Works</h2>
+      <p class="section-sub">Three steps from PDF to clean data</p>
+      <div class="si-steps">
+        <div class="si-step">
+          <div class="si-step-num">1</div>
+          <h3>Upload PDF</h3>
+          <p>Drag-drop or forward invoices via email. Supports any PDF format.</p>
+        </div>
+        <div class="si-step">
+          <div class="si-step-num">2</div>
+          <h3>Extract Data</h3>
+          <p>AI reads vendor, invoice #, dates, line items, totals, tax, and PO number.</p>
+        </div>
+        <div class="si-step">
+          <div class="si-step-num">3</div>
+          <h3>Review & Export</h3>
+          <p>Verify extracted fields, check anomaly flags, export to CSV or QuickBooks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section--surface" style="padding:60px 0;">
+      <h2 class="section-heading">Everything You Need</h2>
+      <p class="section-sub">Built for SMB accounting teams who need accuracy without the headcount</p>
+      <div class="si-features">
+        <div class="si-feature">
+          <h3>🔍 OCR Extraction</h3>
+          <p>AI-powered text extraction from any PDF invoice. Handles scanned docs, digital PDFs, and multi-page statements.</p>
+        </div>
+        <div class="si-feature">
+          <h3>⚠️ Anomaly Detection</h3>
+          <p>Automatic flags for duplicate invoices, amount mismatches, missing PO numbers, and tax calculation errors.</p>
+        </div>
+        <div class="si-feature">
+          <h3>📧 Email Ingest</h3>
+          <p>Forward invoices directly to your unique ingest address. No manual upload needed for high-volume AP teams.</p>
+        </div>
+        <div class="si-feature">
+          <h3>📊 CSV / QBO Export</h3>
+          <p>One-click export to CSV for any spreadsheet, or direct QuickBooks Online integration for seamless bookkeeping.</p>
+        </div>
+        <div class="si-feature">
+          <h3>📋 Dashboard History</h3>
+          <p>Full audit trail of every processed invoice. Search, filter, and re-export anytime. Never lose an invoice again.</p>
+        </div>
+        <div class="si-feature">
+          <h3>🔒 Compliance Ready</h3>
+          <p>SOC 2-aligned data handling. Encrypted at rest and in transit. Full extraction confidence scores for auditor review.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" style="padding:60px 0;">
+      <h2 class="section-heading">Simple Pricing</h2>
+      <p class="section-sub">No per-invoice overages. Cancel anytime.</p>
+      <div class="si-pricing">
+        <div class="si-price-card">
+          <h3>Starter</h3>
+          <div class="si-price">$149<span>/mo</span></div>
+          <ul>
+            <li>100 invoices per month</li>
+            <li>Email invoice ingest</li>
+            <li>CSV export</li>
+            <li>Basic anomaly detection</li>
+            <li>Standard support</li>
+          </ul>
+          <a href="https://buy.stripe.com/5kQfZj1PBfNHg6EaIM7wB2I" class="si-cta-btn si-cta-secondary">Start Starter</a>
+        </div>
+        <div class="si-price-card featured">
+          <h3>Pro</h3>
+          <div class="si-price">$299<span>/mo</span></div>
+          <ul>
+            <li>Unlimited invoices</li>
+            <li>QuickBooks Online export</li>
+            <li>Advanced anomaly detection</li>
+            <li>Priority support</li>
+            <li>Dedicated ingest address</li>
+          </ul>
+          <a href="https://buy.stripe.com/bJe00lbqbdFz3jS6sw7wB2J" class="si-cta-btn si-cta-primary">Start Pro</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section--surface" style="padding:60px 0;">
+      <h2 class="section-heading">Frequently Asked Questions</h2>
+      <div class="si-faq">
+        <details>
+          <summary>How accurate is the AI extraction?</summary>
+          <div class="faq-body">ShieldInvoice returns a confidence score (0–1) with every extraction. For clean digital PDFs, accuracy typically exceeds 95%. Scanned or low-quality documents may score lower — the dashboard highlights these for manual review so nothing slips through unchecked.</div>
+        </details>
+        <details>
+          <summary>Is my invoice data secure?</summary>
+          <div class="faq-body">All data is encrypted at rest and in transit. We process invoices in isolated Cloudflare Workers environments with no persistent storage beyond your account's KV namespace. We never share or sell your data. Full deletion is available on request.</div>
+        </details>
+        <details>
+          <summary>What integrations are supported?</summary>
+          <div class="faq-body">CSV export works with any spreadsheet or ERP system. QuickBooks Online export is available on the Pro plan. We're adding Xero and NetSuite connectors next. Email ingest works with any email provider — just forward to your unique address.</div>
+        </details>
+        <details>
+          <summary>Can I process invoices from multiple vendors?</summary>
+          <div class="faq-body">Yes. ShieldInvoice handles unlimited vendors across all plans. The AI automatically identifies and categorizes vendor names, and the dashboard shows top-vendor analytics so you can spot spending patterns.</div>
+        </details>
+        <details>
+          <summary>What happens if I exceed my monthly limit?</summary>
+          <div class="faq-body">On the Starter plan, you'll receive a notification at 80% usage. Additional invoices are billed at $1.50 each, or you can upgrade to Pro for unlimited processing mid-cycle with prorated billing.</div>
+        </details>
+        <details>
+          <summary>Do you offer a free trial?</summary>
+          <div class="faq-body">We offer a live demo with sample invoices so you can see extraction quality before subscribing. Contact billing@edgeiqlabs.com for a guided walkthrough tailored to your invoice formats.</div>
+        </details>
+      </div>
+    </section>
+
+    <section style="text-align:center;padding:60px 20px;">
+      <h2 style="margin-bottom:16px;">Ready to automate your AP?</h2>
+      <p style="color:var(--muted);margin-bottom:28px;">Join SMBs processing thousands of invoices monthly with ShieldInvoice.</p>
+      <a href="#pricing" class="btn btn--primary" style="padding:16px 40px;font-size:1.05rem;">Choose Your Plan</a>
+      <p style="margin-top:20px;font-size:0.85rem;color:var(--muted);">Questions? <a href="mailto:billing@edgeiqlabs.com" style="color:var(--accent);">billing@edgeiqlabs.com</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">EdgeIQ Labs · ShieldInvoice</div>
+      <div class="footer__links">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/free-tools">Free Tools</a>
+        <a href="mailto:billing@edgeiqlabs.com">Contact</a>
+      </div>
+      <div class="footer__copy">© 2026 EdgeIQ Labs. All rights reserved.</div>
+    </div>
+  </footer>
+</body>
+</html>
