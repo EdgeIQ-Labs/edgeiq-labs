@@ -5,3 +5,5 @@ phishsim-manager/.env
 # Local backups
 backups/
 *.umami-bak
+workers/shieldfill/node_modules/
+workers/shieldfill/dist/

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/free-license-audit/" />
+  <title>Free License Audit — Open Source Compliance Scanner | EdgeIQ Labs</title>
+  <meta name="description" content="Scan any GitHub repo for GPL, AGPL, and copyleft license risks in your dependencies. Free instant SBOM analysis with A-F grading. By EdgeIQ Labs." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://edgeiqlabs.com/free-license-audit/" />
+  <meta property="og:title" content="Free License Audit — Open Source Compliance Scanner" />
+  <meta property="og:description" content="Instant open source license compliance check. Detect GPL/AGPL copyleft risk before it becomes a legal problem." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=12"/>
+  <style>
+    .input-group { position: relative; margin-bottom: 16px; }
+    .input-group input { width: 100%; padding: 16px 20px; font-size: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); outline: none; transition: border-color 0.2s; }
+    .input-group input:focus { border-color: var(--accent); }
+    .input-group input::placeholder { color: var(--muted); }
+    .check-btn { width: 100%; padding: 16px; font-size: 1rem; font-weight: 700; background: var(--accent); color: #071018; border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }
+    .check-btn:hover { opacity: 0.9; }
+    .check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-top: 24px; display: none; }
+    .result-card.visible { display: block; }
+    .grade-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 16px; font-weight: 900; line-height: 1; }
+    .grade-letter { font-size: 2.5rem; }
+    .grade-label { font-size: 0.7rem; font-weight: 700; margin-top: 4px; }
+    .result-headline { text-align: center; font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .result-detail { text-align: center; color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; }
+    .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .summary-box { text-align: center; padding: 14px 8px; border-radius: 10px; border: 1px solid var(--border); }
+    .summary-box .count { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+    .summary-box .label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; color: var(--muted); }
+    .summary-box.safe { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.06); }
+    .summary-box.safe .count { color: #22c55e; }
+    .summary-box.caution { border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.06); }
+    .summary-box.caution .count { color: #fbbf24; }
+    .summary-box.danger { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.06); }
+    .summary-box.danger .count { color: #ef4444; }
+    .summary-box.unknown { border-color: rgba(159,176,199,0.3); background: rgba(159,176,199,0.06); }
+    .summary-box.unknown .count { color: #9fb0c7; }
+    .dep-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 0.85rem; }
+    .dep-table th { text-align: left; padding: 8px 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); background: var(--bg); border-bottom: 1px solid var(--border); }
+    .dep-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .dep-table tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .badge.safe { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .badge.caution { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .badge.danger { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .badge.unknown { background: rgba(159,176,199,0.15); color: #9fb0c7; }
+    .rec-list { list-style: none; padding: 0; margin: 0 0 24px; }
+    .rec-item { padding: 12px 16px; margin-bottom: 8px; border-radius: 0 8px 8px 0; font-size: 0.9rem; line-height: 1.5; border-left: 3px solid var(--accent); background: rgba(61,217,255,0.05); }
+    .rec-item.critical { border-left-color: #ef4444; background: rgba(239,68,68,0.06); }
+    .rec-item.high { border-left-color: #f97316; background: rgba(249,115,22,0.06); }
+    .rec-item.medium { border-left-color: #fbbf24; background: rgba(251,191,36,0.06); }
+    .rec-item.info { border-left-color: #22c55e; background: rgba(34,197,94,0.06); }
+    .rec-deps { font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-family: var(--font-mono, monospace); }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(7,16,24,0.3); border-top-color: #071018; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media(max-width: 500px) { .summary-row { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="/" style="display:flex;align-items:center;gap:10px;">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div>
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Security Intelligence</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/products/">All Products</a>
+      <a href="/blog/">Blog</a>
+      <a href="/compare/">Compare</a>
+      <a href="/account/">My Account</a>
+      <a class="nav-cta" href="/#smb-essentials">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">⚖️ Free License Audit</div>
+    <h1>Open Source License<br>Compliance Scanner</h1>
+    <p>Paste a GitHub repo URL to instantly detect GPL, AGPL, and copyleft license risks in your dependencies. Know your supply chain exposure before it becomes a legal problem.</p>
+  </div>
+</section>
+
+<section class="container" style="max-width: 720px; padding-bottom: 80px;">
+  <div class="input-group">
+    <input type="url" id="repo-url" placeholder="https://github.com/owner/repo" autocomplete="off" />
+  </div>
+  <button class="check-btn" id="scan-btn">Scan Licenses</button>
+
+  <!-- RESULTS -->
+  <div class="result-card" id="result-card">
+    <div class="grade-circle" id="grade-circle">
+      <span class="grade-letter" id="grade-letter"></span>
+      <span class="grade-label" id="grade-sublabel"></span>
+    </div>
+    <div class="result-headline" id="result-headline"></div>
+    <div class="result-detail" id="result-detail"></div>
+
+    <div class="summary-row" id="summary-row">
+      <div class="summary-box safe"><div class="count" id="cnt-safe">0</div><div class="label">Safe</div></div>
+      <div class="summary-box caution"><div class="count" id="cnt-caution">0</div><div class="label">Caution</div></div>
+      <div class="summary-box danger"><div class="count" id="cnt-danger">0</div><div class="label">Danger</div></div>
+      <div class="summary-box unknown"><div class="count" id="cnt-unknown">0</div><div class="label">Unknown</div></div>
+    </div>
+
+    <table class="dep-table" id="dep-table">
+      <thead><tr><th>Package</th><th>Version</th><th>License</th><th>Risk</th></tr></thead>
+      <tbody id="dep-tbody"></tbody>
+    </table>
+
+    <ul class="rec-list" id="rec-list"></ul>
+  </div>
+
+  <!-- CTA -->
+  <div class="capture-section" style="margin-top:32px;">
+    <h3>🛡️ Need Full SBOM + Remediation?</h3>
+    <p>The free scan checks up to 50 dependencies. For full software bill of materials export, remediation plans, and continuous monitoring, explore Compliance Shield.</p>
+    <a href="https://edgeiqlabs.com/compliance-shield/" style="display:inline-block;background:var(--accent);color:#071018;font-weight:700;font-size:0.9rem;padding:12px 24px;border-radius:9px;text-decoration:none;margin-top:8px;">Explore Compliance Shield →</a>
+  </div>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is an open source license audit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A license audit scans your project's dependencies to identify which open source licenses are in use. It flags copyleft licenses like GPL and AGPL that may require you to open-source your own code if used in proprietary products."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do GPL dependencies matter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GPL and AGPL are strong copyleft licenses. If your proprietary software links to or incorporates GPL-licensed code, you may be legally required to release your entire codebase under the GPL. This can derail acquisitions, funding rounds, and commercial products."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this tool free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The free tier scans up to 50 dependencies per repository and provides a summary grade with risk breakdowns. No account required."
+        }
+      }
+    ]
+  }
+  </script>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+    <p style="margin-top:8px;">
+      <a href="/">Home</a> · <a href="/free-tools/">Free Tools</a> · <a href="/pricing/">Pricing</a> · <a href="/contact/">Contact</a> · <a href="/privacy/">Privacy</a>
+    </p>
+    <p style="margin-top:8px;font-size:0.75rem;color:var(--muted);">Secure VPS hosting from $4/mo · Bot hosting from $5/mo · Wazuh SIEM included</p>
+  </div>
+</footer>
+
+<script>
+const scanBtn = document.getElementById('scan-btn');
+const repoInput = document.getElementById('repo-url');
+
+scanBtn.addEventListener('click', async () => {
+  const url = repoInput.value.trim();
+  if (!url) return;
+
+  scanBtn.disabled = true;
+  scanBtn.innerHTML = '<span class="spinner"></span>Scanning dependencies...';
+  document.getElementById('result-card').classList.remove('visible');
+
+  try {
+    const res = await fetch('/api/license-audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    showResult(data);
+  } catch (e) {
+    showError(e.message);
+  } finally {
+    scanBtn.disabled = false;
+    scanBtn.textContent = 'Scan Licenses';
+  }
+});
+
+repoInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') scanBtn.click();
+});
+
+function showResult(data) {
+  const card = document.getElementById('result-card');
+  const circle = document.getElementById('grade-circle');
+  const letter = document.getElementById('grade-letter');
+  const sub = document.getElementById('grade-sublabel');
+  const headline = document.getElementById('result-headline');
+  const detail = document.getElementById('result-detail');
+
+  const colors = { A: '#22c55e', B: '#3dd9ff', C: '#fbbf24', D: '#f97316', F: '#ef4444' };
+  const bgs = { A: 'rgba(34,197,94,0.10)', B: 'rgba(61,217,255,0.10)', C: 'rgba(251,191,36,0.10)', D: 'rgba(249,115,22,0.10)', F: 'rgba(239,68,68,0.10)' };
+  const c = colors[data.grade] || '#9fb0c7';
+  const bg = bgs[data.grade] || 'rgba(159,176,199,0.08)';
+
+  circle.style.border = `4px solid ${c}`;
+  circle.style.background = bg;
+  letter.style.color = c;
+  letter.textContent = data.grade;
+  sub.style.color = c;
+  sub.textContent = `${data.score}/100`;
+
+  const name = data.projectName || 'Repository';
+  if (data.danger > 0) {
+    headline.textContent = `⚠️ Copyleft risk detected in ${name}`;
+    detail.textContent = `${data.danger} dependenc${data.danger === 1 ? 'y' : 'ies'} use strong copyleft licenses that could force open-sourcing your code.`;
+  } else if (data.caution > 0) {
+    headline.textContent = `⚡ Weak copyleft found in ${name}`;
+    detail.textContent = `${data.caution} dependenc${data.caution === 1 ? 'y' : 'ies'} use weak copyleft licenses. Review linking requirements.`;
+  } else {
+    headline.textContent = `✅ ${name} looks clean`;
+    detail.textContent = 'No copyleft license risks detected. All dependencies use permissive licenses.';
+  }
+
+  // Summary counts
+  document.getElementById('cnt-safe').textContent = data.safe || 0;
+  document.getElementById('cnt-caution').textContent = data.caution || 0;
+  document.getElementById('cnt-danger').textContent = data.danger || 0;
+  document.getElementById('cnt-unknown').textContent = data.unknown || 0;
+
+  // Dependency table
+  const tbody = document.getElementById('dep-tbody');
+  tbody.innerHTML = '';
+  (data.results || []).forEach(dep => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600;">${escHtml(dep.name)}</td>
+      <td style="color:var(--muted);font-family:var(--font-mono,monospace);font-size:0.8rem;">${escHtml(dep.version || '')}</td>
+      <td style="font-family:var(--font-mono,monospace);font-size:0.8rem;">${escHtml(dep.license || 'Unknown')}</td>
+      <td><span class="badge ${dep.category}">${dep.category}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Recommendations
+  const recList = document.getElementById('rec-list');
+  recList.innerHTML = '';
+  (data.recommendations || []).forEach(rec => {
+    const li = document.createElement('li');
+    li.className = `rec-item ${rec.priority}`;
+    let html = `<strong>${rec.priority.toUpperCase()}:</strong> ${escHtml(rec.text)}`;
+    if (rec.deps && rec.deps.length > 0) {
+      html += `<div class="rec-deps">${rec.deps.map(d => escHtml(d)).join(', ')}</div>`;
+    }
+    li.innerHTML = html;
+    recList.appendChild(li);
+  });
+
+  card.classList.add('visible');
+}
+
+function showError(msg) {
+  const card = document.getElementById('result-card');
+  const circle = document.getElementById('grade-circle');
+  circle.style.border = '4px solid #9fb0c7';
+  circle.style.background = 'rgba(159,176,199,0.08)';
+  document.getElementById('grade-letter').style.color = '#9fb0c7';
+  document.getElementById('grade-letter').textContent = '?';
+  document.getElementById('grade-sublabel').textContent = 'ERROR';
+  document.getElementById('result-headline').textContent = 'Scan failed';
+  document.getElementById('result-detail').textContent = msg || 'Something went wrong. Verify the repo has a package.json and try again.';
+  document.getElementById('dep-tbody').innerHTML = '';
+  document.getElementById('rec-list').innerHTML = '';
+  card.classList.add('visible');
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
