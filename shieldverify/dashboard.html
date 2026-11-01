@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShieldVerify Dashboard — EdgeIQ Labs</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="/css/design-system.css?v=42">
+  <script src="/assets/js/theme.js"></script>
+  <style>
+    .dash-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .auth-gate { text-align: center; padding: 120px 20px; }
+    .auth-gate h1 { font-size: 2rem; margin-bottom: 16px; }
+    .auth-gate p { color: var(--muted); margin-bottom: 32px; }
+    .login-form { max-width: 400px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; }
+    .login-form label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; margin-top: 16px; }
+    .login-form input { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; }
+    .login-form input:focus { border-color: var(--accent); }
+    .login-form button { width: 100%; margin-top: 24px; padding: 14px; background: var(--accent); color: #0b0f14; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+    .login-form button:hover { filter: brightness(1.1); }
+    .login-error { color: #ff6b81; font-size: 0.85rem; margin-top: 12px; display: none; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .stat-card .stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .stat-card .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .panel h2 { font-size: 1.2rem; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .panel h2 button { background: var(--accent); color: #0b0f14; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    tr:last-child td { border-bottom: none; }
+    .status-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .status-passed { background: rgba(112,240,168,0.15); color: #70f0a8; }
+    .status-failed { background: rgba(255,82,82,0.15); color: #ff5252; }
+    .status-pending { background: rgba(255,196,0,0.15); color: #ffc400; }
+    .resilience-score { font-weight: 700; }
+    .resilience-high { color: #70f0a8; }
+    .resilience-med { color: #ffc400; }
+    .resilience-low { color: #ff5252; }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+    .logout-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; }
+    .logout-btn:hover { border-color: var(--accent); color: var(--text); }
+    .user-info { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .user-info .tier-badge { background: var(--accent); color: #0b0f14; font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">EdgeIQ Labs</a>
+      <div class="nav__links">
+        <a href="/shieldverify/" class="nav__link">ShieldVerify Home</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">◑</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Auth Gate -->
+  <div id="authGate" class="auth-gate">
+    <h1>ShieldVerify Dashboard</h1>
+    <p>Sign in to manage your backup verification tests</p>
+    <form class="login-form" id="loginForm">
+      <label for="email">Email</label>
+      <input type="email" id="email" required placeholder="you@company.com">
+      <label for="password">Password</label>
+      <input type="password" id="password" required placeholder="Your password">
+      <button type="submit">Sign In</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+
+  <!-- Dashboard Content (hidden until auth) -->
+  <div id="dashboardContent" class="dash-container" style="display:none;">
+    <div class="user-info">
+      <h1 style="font-size:1.5rem;margin:0;">Dashboard</h1>
+      <span class="tier-badge" id="tierBadge"></span>
+      <span style="color:var(--muted);font-size:0.9rem;" id="userEmail"></span>
+      <button class="logout-btn" onclick="logout()" style="margin-left:auto;">Sign Out</button>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-value" id="statServers">-</div><div class="stat-label">Servers Monitored</div></div>
+      <div class="stat-card"><div class="stat-value" id="statTests">-</div><div class="stat-label">Total Tests</div></div>
+      <div class="stat-card"><div class="stat-value" id="statPassRate">-</div><div class="stat-label">Pass Rate</div></div>
+      <div class="stat-card"><div class="stat-value" id="statResilience">-</div><div class="stat-label">Avg Resilience Score</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Servers <button onclick="showAddServer()">+ Add Server</button></h2>
+      <table id="serversTable">
+        <thead><tr><th>Name</th><th>Type</th><th>Last Test</th><th>Status</th></tr></thead>
+        <tbody id="serversBody"></tbody>
+      </table>
+      <div class="empty-state" id="serversEmpty" style="display:none;">No servers configured yet.</div>
+    </div>
+
+    <div class="panel">
+      <h2>Recent Test Results <button onclick="runNewTest()">Run Test</button></h2>
+      <table id="testsTable">
+        <thead><tr><th>Date</th><th>Server</th><th>Type</th><th>Checksum</th><th>Resilience</th><th>Status</th></tr></thead>
+        <tbody id="testsBody"></tbody>
+      </table>
+      <div class="empty-state" id="testsEmpty" style="display:none;">No test results yet.</div>
+    </div>
+
+    <div class="panel">
+      <h2>Compliance Reports</h2>
+      <table id="reportsTable">
+        <thead><tr><th>Report</th><th>Framework</th><th>Generated</th><th>Action</th></tr></thead>
+        <tbody id="reportsBody"></tbody>
+      </table>
+      <div class="empty-state" id="reportsEmpty" style="display:none;">No reports generated yet. Run tests to generate compliance reports.</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api/shieldverify';
+    let token = localStorage.getItem('sv_token');
+    let currentUser = null;
+
+    // Auth check on load
+    if (token) {
+      loadDashboard();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Login failed';
+          errEl.style.display = 'block';
+          return;
+        }
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('sv_token', token);
+        showDashboard(data.user);
+        loadDashboardData();
+      } catch (err) {
+        errEl.textContent = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+      }
+    });
+
+    function logout() {
+      token = null;
+      currentUser = null;
+      localStorage.removeItem('sv_token');
+      document.getElementById('authGate').style.display = '';
+      document.getElementById('dashboardContent').style.display = 'none';
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_BASE}/dashboard`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (res.status === 401) { logout(); return; }
+        const data = await res.json();
+        currentUser = data.user;
+        showDashboard(data.user);
+        renderDashboard(data);
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+        logout();
+      }
+    }
+
+    async function loadDashboardData() {
+      try {
+        const res = await fetch(`${API_BASE}/dashboard`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        renderDashboard(data);
+      } catch (err) {
+        console.error('Data load error:', err);
+      }
+    }
+
+    function showDashboard(user) {
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('dashboardContent').style.display = '';
+      document.getElementById('tierBadge').textContent = user.tier;
+      document.getElementById('userEmail').textContent = user.email;
+    }
+
+    function renderDashboard(data) {
+      // Stats
+      document.getElementById('statServers').textContent = data.stats.totalServers;
+      document.getElementById('statTests').textContent = data.stats.totalTests;
+      document.getElementById('statPassRate').textContent = data.stats.passRate + '%';
+      const resScore = data.stats.avgResilienceScore;
+      document.getElementById('statResilience').textContent = resScore > 0 ? resScore : '-';
+
+      // Servers
+      const serversBody = document.getElementById('serversBody');
+      const serversEmpty = document.getElementById('serversEmpty');
+      if (data.servers.length === 0) {
+        serversBody.innerHTML = '';
+        serversEmpty.style.display = '';
+      } else {
+        serversEmpty.style.display = 'none';
+        serversBody.innerHTML = data.servers.map(s => `
+          <tr>
+            <td>${esc(s.name)}</td>
+            <td>${esc(s.backupType)}</td>
+            <td>${s.lastTestAt ? new Date(s.lastTestAt).toLocaleDateString() : 'Never'}</td>
+            <td><span class="status-badge status-${s.lastTestStatus || 'pending'}">${s.lastTestStatus || 'pending'}</span></td>
+          </tr>
+        `).join('');
+      }
+
+      // Tests
+      const testsBody = document.getElementById('testsBody');
+      const testsEmpty = document.getElementById('testsEmpty');
+      if (data.tests.length === 0) {
+        testsBody.innerHTML = '';
+        testsEmpty.style.display = '';
+      } else {
+        testsEmpty.style.display = 'none';
+        testsBody.innerHTML = data.tests.map(t => {
+          const resClass = t.resilienceScore >= 80 ? 'resilience-high' : t.resilienceScore >= 60 ? 'resilience-med' : 'resilience-low';
+          return `
+            <tr>
+              <td>${new Date(t.createdAt).toLocaleDateString()}</td>
+              <td>${esc(t.serverId)}</td>
+              <td>${esc(t.backupType)}</td>
+              <td>${t.checksumMatch ? '✅ Match' : '❌ Mismatch'}</td>
+              <td><span class="resilience-score ${resClass}">${t.resilienceScore}</span></td>
+              <td><span class="status-badge status-${t.status}">${t.status}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Reports (load separately)
+      loadReports();
+    }
+
+    async function loadReports() {
+      try {
+        const res = await fetch(`${API_BASE}/reports`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const reportsBody = document.getElementById('reportsBody');
+        const reportsEmpty = document.getElementById('reportsEmpty');
+        if (data.reports.length === 0) {
+          reportsBody.innerHTML = '';
+          reportsEmpty.style.display = '';
+        } else {
+          reportsEmpty.style.display = 'none';
+          reportsBody.innerHTML = data.reports.map(r => `
+            <tr>
+              <td>${esc(r.name)}</td>
+              <td>${esc(r.framework)}</td>
+              <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+              <td><a href="#" style="color:var(--accent);text-decoration:none;font-weight:600;">Download</a></td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Reports load error:', err);
+      }
+    }
+
+    function showAddServer() {
+      alert('Server management coming soon. Contact verify@edgeiqlabs.com to add servers.');
+    }
+
+    async function runNewTest() {
+      if (!currentUser) return;
+      const serverId = prompt('Enter server ID to test:');
+      if (!serverId) return;
+      const backupType = prompt('Backup type (veeam/acronis/s3/azure):', 's3') || 's3';
+
+      try {
+        const res = await fetch(`${API_BASE}/verify`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ serverId, backupType }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert('Test failed: ' + (data.error || 'Unknown error'));
+          return;
+        }
+        alert(`Test complete! Status: ${data.test.status}\nResilience Score: ${data.test.resilienceScore}`);
+        loadDashboardData();
+      } catch (err) {
+        alert('Network error running test.');
+      }
+    }
+
+    function esc(str) {
+      const div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+  </script>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
