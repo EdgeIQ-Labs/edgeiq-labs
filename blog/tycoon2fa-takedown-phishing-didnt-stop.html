@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Tycoon2FA Got Taken Down. Phishing Didn't Stop. — EdgeIQ Labs</title>
+  <meta name="description" content="Microsoft and Europol disrupted Tycoon2FA in March 2026. CAPTCHA-gated phishing dropped 95%. Then attackers adapted. Here's what replaced it and what small teams should do now."/>
+  <meta property="og:title" content="Tycoon2FA Got Taken Down. Phishing Didn't Stop."/>
+  <meta property="og:description" content="The biggest phishing-as-a-service platform got dismantled. Six months later, the ecosystem rebuilt itself differently. What changed and what didn't."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/tycoon2fa-takedown-phishing-didnt-stop.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/tycoon2fa-takedown-phishing-didnt-stop.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Tycoon2FA Got Taken Down. Phishing Didn't Stop.","datePublished":"2026-11-02","dateModified":"2026-11-02","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.red{color:#ff6b6b;background:#1f1010;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">EdgeIQ<span>Labs</span></a>
+    <div class="nav__links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/services.html">Services</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav__cta">Get Protected</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag">Phishing</span>
+      <span class="tag">Threat Intel</span>
+      <span class="tag">MFA Bypass</span>
+    </div>
+    <h1>Tycoon2FA Got Taken Down. Phishing Didn't Stop.</h1>
+    <div class="meta">
+      <span>November 2, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>In March 2026, Microsoft, Europol, and Trend Micro took down Tycoon2FA. It was one of the largest phishing-as-a-service platforms operating at the time. The disruption worked. CAPTCHA-gated phishing dropped from 76% of campaigns to 12% by June. Overall Tycoon2FA activity fell 95% from its November 2025 peak.</p>
+
+    <p>That's the good news. The bad news is that six months later, phishing hasn't gone away. It just changed shape.</p>
+
+    <p>CrowdStrike reported in March that Tycoon2FA infrastructure persisted even after the takedown. Domains registered as recently as February 2026 were still serving phishing pages. No single replacement service emerged at the same scale, but attackers diversified their delivery channels instead of consolidating around a new platform.</p>
+
+    <p>This is what successful disruption actually looks like. Not elimination. Redistribution.</p>
+
+    <h2>What Tycoon2FA Was and Why It Mattered</h2>
+
+    <p>Tycoon2FA wasn't just another phishing kit. It specialized in adversary-in-the-middle attacks that bypassed multi-factor authentication. Victims would click a link, land on a convincing login page, enter their credentials and MFA code, and the platform would capture the session token in real time. The attacker could then log in as that user without needing the password or second factor again.</p>
+
+    <p>The service operated alongside other criminal infrastructure. RedVDS provided cheap virtual machines for hosting phishing pages. Other services handled mass email delivery and malware distribution. Together they formed an ecosystem where each component had specialists, and taking down one node forced adaptation across the whole chain.</p>
+
+    <p>Microsoft disrupted RedVDS in January 2026. That degraded Tycoon2FA's hosting capacity before the main takedown even happened. By the time law enforcement seized domains and servers in March, the platform was already weakened. The sustained pressure is what made the difference, not any single operation.</p>
+
+    <h2>What Changed After the Takedown</h2>
+
+    <p>Microsoft's Q2 2026 threat intelligence report documented measurable shifts:</p>
+
+    <ul>
+      <li><strong>CAPTCHA-gated phishing declined sharply.</strong> Tycoon2FA relied heavily on CAPTCHAs to block automated security scanners from detecting their pages. Without the platform, fewer campaigns used this technique.</li>
+      <li><strong>QR code phishing dropped.</strong> Tycoon2FA popularized QR codes in emails to bypass email gateway URL inspection. This tactic lost momentum without the infrastructure supporting it.</li>
+      <li><strong>Delivery channels diversified.</strong> Attackers shifted toward SMS, Teams messages, and social media DMs instead of concentrating on email. No single channel absorbed the displaced volume.</li>
+      <li><strong>No dominant successor emerged.</strong> Smaller services exist, but none reached Tycoon2FA's scale or reliability by mid-2026.</li>
+    </ul>
+
+    <p>That last point matters. Disruption raises costs for attackers. They have to rebuild, find new hosting, test new tools, and establish trust with customers who just watched their previous vendor get seized. That friction buys defenders time.</p>
+
+    <p>But friction isn't permanent. Attackers adapt because the economics still work. Session token theft beats credential stuffing. AitM beats traditional phishing. Until the underlying techniques stop working, someone will build tooling to automate them.</p>
+
+    <div class="callout warn">
+      <strong>If you rely solely on MFA for protection:</strong> Standard push-based and TOTP MFA does not stop AitM attacks. The attacker proxies the real login page and captures the session after the user completes authentication. Only FIDO2/WebAuthn hardware keys and passkeys are resistant to this attack class. If your threat model includes targeted phishing, upgrade your MFA.
+    </div>
+
+    <h2>What Small Teams Should Do Right Now</h2>
+
+    <p>You don't need to track every phishing-as-a-service platform by name. You need controls that work regardless of which specific kit is trending this month.</p>
+
+    <p><strong>Move to phishing-resistant MFA.</strong> FIDO2 security keys (YubiKey, Feitian) or platform authenticators (passkeys on phones/laptops) cannot be phished through AitM proxies. The cryptographic binding to the original domain means the attacker's fake site can't complete the authentication flow. This is the single highest-impact change for stopping session token theft.</p>
+
+    <p><strong>Monitor for impossible travel and new device sign-ins.</strong> Even if an attacker steals a session token, they're connecting from a different IP and device than the legitimate user. Alert on concurrent sessions from geographically distant locations or sign-ins from unrecognized devices within minutes of a legitimate login.</p>
+
+    <p><strong>Check OAuth app grants regularly.</strong> AitM attacks often result in attackers adding persistent OAuth applications to compromised accounts so they retain access after the session expires. Audit connected apps in Google Workspace and Microsoft 365 monthly. Revoke anything you don't recognize.</p>
+
+    <p><strong>Don't assume email gateways catch everything.</strong> Tycoon2FA's decline didn't mean email became safe. Attackers moved to other channels because email filtering improved, not because phishing stopped working. Train employees to recognize suspicious requests regardless of delivery method.</p>
+
+    <p><strong>Test your own defenses.</strong> Run phishing simulations that include AitM-style scenarios, not just credential harvesting. If your team passes traditional phishing tests but would hand over a session token to a proxy page, your training has a gap.</p>
+
+    <div class="cta-box">
+      <h3>Find Out If Your Domain Is Being Spoofed</h3>
+      <p>EdgeIQ BrandGuard monitors for lookalike domains and phishing kits using your brand. Free scanner checks your DMARC, SPF, and DKIM setup in seconds.</p>
+      <a href="/brandguard/" class="btn">Run Free Scan →</a>
+    </div>
+
+    <h2>The Bigger Picture</h2>
+
+    <p>Tycoon2FA's story is encouraging and frustrating at the same time. Encouraging because coordinated disruption works. Law enforcement and industry partnerships can meaningfully degrade criminal infrastructure. The 95% drop in activity wasn't theoretical; it showed up in campaign volumes across the entire ecosystem.</p>
+
+    <p>Frustrating because the underlying problem persists. As long as session tokens are valuable and MFA can be proxied, someone will build the tooling. Microsoft's own report notes that threat actors continued diversifying delivery channels throughout Q2 2026. The ecosystem adapted in real time.</p>
+
+    <p>For small businesses, the practical takeaway is that you can't wait for takedowns to protect you. Disruption buys time, but your controls need to work against the next platform too. Phishing-resistant authentication, continuous monitoring, and regular access audits don't depend on knowing which criminal service is currently dominant.</p>
+
+    <p>The attackers will keep adapting. So should you.</p>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:48px auto;max-width:580px;">
+    <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">Threat intel, attack breakdowns, and practical guides. No fluff, unsubscribe anytime.</p>
+    <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+      <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+      <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+    </form>
+    <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+    <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+    <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;color:var(--muted);font-size:0.82rem;">
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;">← Back to Blog</a>
+  </div>
+</div>
+
+<script>
+document.querySelector('.nav__hamburger').addEventListener('click', function() {
+  document.querySelector('.nav__links').classList.toggle('open');
+});
+</script>
+</body>
+</html>
