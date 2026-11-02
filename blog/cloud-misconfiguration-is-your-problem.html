@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Your Cloud Provider Isn't Securing Your Stuff — And That's on You — EdgeIQ Labs</title>
+  <meta name="description" content="31% of cloud breaches come from misconfigurations. 82% of those are human error. Your cloud provider won't fix your settings for you. Here's what actually matters."/>
+  <meta property="og:title" content="Your Cloud Provider Isn't Securing Your Stuff"/>
+  <meta property="og:description" content="Cloud infrastructure attacks climbed 21% this year. Most aren't sophisticated hacks — they're open S3 buckets and forgotten test servers. Fix yours before someone else finds them."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/cloud-misconfiguration-is-your-problem.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/cloud-misconfiguration-is-your-problem.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Your Cloud Provider Isn't Securing Your Stuff — And That's on You","datePublished":"2026-11-02","dateModified":"2026-11-02","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.red{color:#ff6b6b;background:#1f1010;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">EdgeIQ<span>Labs</span></a>
+    <div class="nav__links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/services.html">Services</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav__cta">Get Protected</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag red">Cloud Security</span>
+      <span class="tag">Misconfiguration</span>
+      <span class="tag">SMB</span>
+    </div>
+    <h1>Your Cloud Provider Isn't Securing Your Stuff — And That's on You</h1>
+    <div class="meta">
+      <span>November 2, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>Here's a number that should bother anyone running workloads in AWS, Azure, or GCP: <strong>31% of cloud breaches happen because of misconfigurations</strong>. Not zero-days. Not nation-state actors. Someone left a setting wrong.</p>
+
+    <p>Another one: 82% of those misconfigurations are caused by human error, not software bugs. And 32% of cloud assets sit completely unmonitored, each carrying an average of 115 vulnerabilities. Many haven't been patched in six months or more.</p>
+
+    <p>If you're thinking "my cloud provider handles security," you've misunderstood the deal. AWS, Azure, and Google secure the infrastructure underneath your workloads. They don't secure what you put on top of it. That boundary is where most small businesses get burned.</p>
+
+    <h2>The Shared Responsibility Model Is Real (Whether You Read It or Not)</h2>
+
+    <p>Every major cloud provider publishes a shared responsibility model. The wording varies but the principle is identical: the provider secures the cloud, you secure what's in the cloud. Compute instances, storage buckets, database configurations, IAM policies, network security groups, encryption keys — all yours.</p>
+
+    <p>This isn't buried in fine print. It's front-page documentation. But most small businesses deploy resources using default settings, follow tutorials that skip hardening steps, and never revisit configurations after initial setup. The result is environments that work perfectly until someone probes them.</p>
+
+    <p>I've seen this pattern dozens of times. A startup spins up an S3 bucket for log storage during development. They set it to public-read so their CI pipeline can access it without credentials. Six months later, the bucket contains customer PII and nobody remembers changing the permissions. An attacker finds it through automated scanning. The breach notification costs more than the company made last quarter.</p>
+
+    <p>No vulnerability was exploited. No credential was stolen. Someone just forgot to flip a switch back.</p>
+
+    <h2>What Attackers Actually Target in Cloud Environments</h2>
+
+    <p>Based on incident reports from Wiz, Google Cloud's threat intelligence team, and multiple breach databases from H1 2026, here's what gets compromised most often:</p>
+
+    <ul>
+      <li><strong>Publicly accessible storage buckets</strong> with sensitive data and no access logging enabled</li>
+      <li><strong>Overprivileged service accounts</strong> that applications use with admin-level permissions instead of scoped roles</li>
+      <li><strong>Unpatched container images</strong> pulled from public registries without vulnerability scanning</li>
+      <li><strong>Exposed management interfaces</strong> (databases, admin panels, SSH) reachable from 0.0.0.0/0</li>
+      <li><strong>Hardcoded credentials</strong> in application code, environment variables, or configuration files committed to version control</li>
+      <li><strong>Disabled or misconfigured logging</strong> that prevents detection after compromise</li>
+    </ul>
+
+    <p>Notice what's missing from this list. Advanced persistent threats. Supply chain compromises. Zero-click exploits. Those exist, but they account for a tiny fraction of actual incidents affecting small businesses. The vast majority of cloud breaches exploit basic hygiene failures that free tools can detect.</p>
+
+    <div class="callout warn">
+      <strong>The third-party problem:</strong> 48% of cloud breaches now involve a third-party vendor or supply chain component. If you grant a SaaS tool access to your cloud environment via API key or service account, their security posture becomes yours. Audit every external integration quarterly.
+    </div>
+
+    <h2>A Practical Checklist for Small Teams</h2>
+
+    <p>You don't need a cloud security team to close the most dangerous gaps. You need a routine. Here's what to check monthly:</p>
+
+    <h3>Week 1: Identity and Access</h3>
+    <ul>
+      <li>List all IAM users and service accounts. Disable or delete any that haven't been used in 90 days.</li>
+      <li>Check for admin/root privileges assigned directly to users rather than through roles.</li>
+      <li>Verify MFA is enforced for every human account, no exceptions.</li>
+      <li>Rotate API keys and access tokens older than 90 days.</li>
+    </ul>
+
+    <h3>Week 2: Network Exposure</h3>
+    <ul>
+      <li>Scan for resources with public IP addresses or 0.0.0.0/0 inbound rules.</li>
+      <li>Verify management ports (SSH, RDP, database ports) are restricted to known IPs or VPN-only.</li>
+      <li>Check load balancers and reverse proxies for unintended backend exposure.</li>
+    </ul>
+
+    <h3>Week 3: Data Protection</h3>
+    <ul>
+      <li>Audit storage bucket permissions. Flag anything publicly readable or writable.</li>
+      <li>Confirm encryption at rest is enabled for databases and object storage.</li>
+      <li>Verify backup retention policies match your compliance requirements.</li>
+    </ul>
+
+    <h3>Week 4: Monitoring and Detection</h3>
+    <ul>
+      <li>Confirm logging is enabled for compute, storage, and identity services.</li>
+      <li>Test alert delivery — do notifications actually reach someone who can respond?</li>
+      <li>Review recent alerts for false positives that have been silently ignored.</li>
+    </ul>
+
+    <p>This takes about two hours per month for a typical small-business environment. Two hours to prevent the kind of breach that makes news headlines and costs hundreds of thousands in response expenses.</p>
+
+    <h2>When Manual Checks Aren't Enough</h2>
+
+    <p>The checklist above works until your environment grows past a handful of resources. Once you're managing dozens of instances across multiple regions, manual audits become unreliable. People forget things. Configurations drift between checks. New resources get deployed without going through the review process.</p>
+
+    <p>This is where continuous monitoring earns its keep. Automated tools scan for misconfigurations daily (or hourly), alert when new risks appear, and track remediation progress over time. They don't replace human judgment, but they catch the stuff humans miss when they're busy keeping the business running.</p>
+
+    <p>For small businesses, the choice usually comes down to three options:</p>
+
+    <ul>
+      <li><strong>Native cloud tools</strong> (AWS Security Hub, Azure Defender, GCP Security Command Center) — free or low-cost for basic checks, but limited cross-cloud visibility</li>
+      <li><strong>Open-source scanners</strong> (Prowler, ScoutSuite, CloudSploit) — powerful but require setup and maintenance expertise</li>
+      <li><strong>Managed platforms</strong> like EdgeIQ Pulse — designed for teams without dedicated security staff, with prioritized alerts and plain-language remediation guidance</li>
+    </ul>
+
+    <p>Any of these beats doing nothing. Pick whichever fits your team's capacity and stick with it. Consistency matters more than perfection.</p>
+
+    <div class="cta-box">
+      <h3>Catch Misconfigurations Before Attackers Do</h3>
+      <p>EdgeIQ Pulse scans your cloud infrastructure daily for exposed resources, weak IAM policies, and missing encryption. Alerts go straight to your inbox with fix instructions. Free tier covers small environments.</p>
+      <a href="/pulse/" class="btn">Start Free Scan →</a>
+    </div>
+
+    <h2>The Bottom Line</h2>
+
+    <p>Cloud providers give you incredible infrastructure. They also give you enough rope to hang yourself. The shared responsibility model isn't a suggestion — it's the operating reality whether you acknowledge it or not.</p>
+
+    <p>Most cloud breaches affecting small businesses aren't sophisticated attacks. They're preventable mistakes that compound over time. The good news: prevention doesn't require a security budget or a dedicated team. It requires discipline, a repeatable process, and tools that fill the gaps when human attention runs out.</p>
+
+    <p>Start with the monthly checklist. Automate what you can. Treat configuration reviews as operational maintenance, not optional security theater. Your cloud environment will be more secure than 90% of small businesses within a few weeks.</p>
+
+    <p>That's not hyperbole. That's the baseline most attackers count on you not meeting.</p>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:48px auto;max-width:580px;">
+    <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">Cloud hardening guides, CVE alerts, and practical checklists. No fluff, unsubscribe anytime.</p>
+    <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+      <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+      <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+    </form>
+    <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+    <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+    <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;color:var(--muted);font-size:0.82rem;">
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;">← Back to Blog</a>
+  </div>
+</div>
+
+<script>
+document.querySelector('.nav__hamburger').addEventListener('click', function() {
+  document.querySelector('.nav__links').classList.toggle('open');
+});
+</script>
+</body>
+</html>
