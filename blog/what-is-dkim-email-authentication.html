@@ -160,6 +160,28 @@
   </div>
 </article></div>
 <div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Continuous Email Security Monitoring</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">SMB Essentials includes email header phishing analysis + monthly security reports. 14-day free trial.</p><a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener" class="btn btn-primary">Start Free Trial →</a></div>
+
+  <!-- Giscus Comments -->
+  <div style="max-width:800px;margin:48px auto 0;padding:0 20px;">
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
 <footer><div class="container"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/inbox-shield/">Inbox Shield</a><a href="/free-dmarc-checker/">DMARC Checker</a><a href="/privacy/">Privacy</a><p style="margin-top:12px;">© 2026 EdgeIQ Labs</p></div></footer>
 <script>
 function sub(){var e=(document.getElementById('e').value||'').trim();if(!e||e.indexOf('@')<0)return;document.getElementById('ok').style.display='block';document.getElementById('e').disabled=true;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:location.href})}).catch(function(){});}
