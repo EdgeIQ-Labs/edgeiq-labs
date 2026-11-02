@@ -188,11 +188,17 @@ scanBtn.addEventListener('click', async () => {
   scanBtn.innerHTML = '<span class="spinner"></span>Scanning dependencies...';
   document.getElementById('result-card').classList.remove('visible');
 
+  // Normalize owner/repo shorthand to full GitHub URL
+  let normalizedUrl = url;
+  if (/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(url)) {
+    normalizedUrl = 'https://github.com/' + url;
+  }
+
   try {
     const res = await fetch('/api/license-audit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url: normalizedUrl }),
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
