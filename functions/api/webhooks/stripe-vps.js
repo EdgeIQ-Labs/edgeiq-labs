@@ -123,8 +123,12 @@ async function sendCredentialsEmail(resendKey, email, name, plan, os, ip, sshPor
     </table>
   </div>
   <div style="background:#1a1a2e;border-left:3px solid #2dd4bf;padding:16px;margin:20px 0;border-radius:0 4px 4px 0;">
-    <p style="margin:0 0 8px;font-weight:700;color:#2dd4bf;">Connect now:</p>
-    <code style="background:#0b0f14;padding:8px 12px;border-radius:4px;display:block;font-size:14px;color:#e2e8f0;">ssh -p ${sshPort} root@${ip}</code>
+    <p style="margin:0 0 8px;font-weight:700;color:#2dd4bf;">Connect via SSH:</p>
+    <code style="background:#0b0f14;padding:8px 12px;border-radius:4px;display:block;font-size:14px;color:#e2e8f0;">ssh -p ${sshPort} root@vps.edgeiqlabs.com</code>
+  </div>
+  <div style="background:#1a1a2e;border-left:3px solid #a78bfa;padding:16px;margin:20px 0;border-radius:0 4px 4px 0;">
+    <p style="margin:0 0 8px;font-weight:700;color:#a78bfa;">Browser Terminal:</p>
+    <p style="margin:0;font-size:14px;color:#e2e8f0;">Access your VPS directly from your browser at <a href="https://vps-ssh.edgeiqlabs.com" style="color:#2dd4bf;">https://vps-ssh.edgeiqlabs.com</a>. You'll receive a one-time login code at this email address.</p>
   </div>
   <p style="font-size:13px;color:#64748b;margin-top:32px;">
     Save your password somewhere safe — we don't store it in plain text.<br>
@@ -305,14 +309,91 @@ export async function onRequestPost({ request, env }) {
       console.error(`SSH fix failed for CT ${vmid} (non-fatal): ${sshErr.message}`);
     }
 
-    // 6. Send credentials email with PUBLIC IP
+    // 6. Add pfSense NAT + firewall rule for WAN → PVE SSH path
+    try {
+      if (env.PFSENSE_SSH_KEY || env.PFSENSE_PASSWORD) {
+        const pveIp = PVE_HOST;
+        const natRuleXml = `<rule><id></id><ipprotocol>inet</ipprotocol><protocol>tcp</protocol><source><any></any></source><destination><any></any><port>${sshPort}</port></destination><target>${pveIp}</target><local-port>${sshPort}</local-port><descr><![CDATA[VPS SSH CT${vmid}]]></descr><natreflection>disable</natreflection></rule>`;
+        const fwRuleXml = `<rule><id></id><tracker>${Math.floor(Date.now()/1000)}</tracker><type>pass</type><interface>wan</interface><ipprotocol>inet</ipprotocol><protocol>tcp</protocol><source><any></any></source><destination><address>${pveIp}</address><port>${sshPort}</port></destination><descr><![CDATA[VPS SSH CT${vmid}]]></descr></rule>`;
+        // Use PVE as jump host to run sed on pfSense via SSH
+        const pfCmd = [
+          `sshpass -p "${env.PFSENSE_PASSWORD || ''}" ssh -o StrictHostKeyChecking=no admin@10.18.157.1 'cp /conf/config.xml /conf/config.xml.bak.auto'`,
+          `sshpass -p "${env.PFSENSE_PASSWORD || ''}" ssh -o StrictHostKeyChecking=no admin@10.18.157.1 'sed -i \"/<\\/nat>/i\\ ${natRuleXml.replace(/"/g, '\\"')}\" /conf/config.xml'`,
+          `sshpass -p "${env.PFSENSE_PASSWORD || ''}" ssh -o StrictHostKeyChecking=no admin@10.18.157.1 'sed -i \"/<filter>/a\\ ${fwRuleXml.replace(/"/g, '\\"')}\" /conf/config.xml'`,
+          `sshpass -p "${env.PFSENSE_PASSWORD || ''}" ssh -o StrictHostKeyChecking=no admin@10.18.157.1 '/etc/rc.filter_configure'`
+        ].join(' && ');
+        await pveRequest(`/nodes/${PVE_NODE}/execute`, 'POST', env.PVE_API_TOKEN, { command: pfCmd });
+        console.log(`pfSense NAT+FW rules added for CT ${vmid}: port ${sshPort}`);
+      } else {
+        console.warn('No PFSENSE_PASSWORD env var — skipping pfSense NAT/FW rules');
+      }
+    } catch (pfErr) {
+      console.error(`pfSense config failed (non-fatal): ${pfErr.message}`);
+    }
+
+    // 7. Install ttyd for browser terminal access
+    try {
+      const ttydCmd = `apt-get update -qq && apt-get install -y -qq ttyd && echo 'TTYD_OPTIONS="-i 0.0.0.0 -p 7681 -O login"' > /etc/default/ttyd && systemctl enable ttyd && systemctl start ttyd`;
+      await pveRequest(`/nodes/${PVE_NODE}/lxc/${vmid}/exec`, 'POST', env.PVE_API_TOKEN, {
+        command: ttydCmd,
+      });
+      console.log(`ttyd installed and started for CT ${vmid} on port 7681`);
+    } catch (ttydErr) {
+      console.error(`ttyd install failed (non-fatal): ${ttydErr.message}`);
+    }
+
+    // 8. Add customer email to Cloudflare Access "Allow VPS Customers" policy
+    try {
+      if (env.CF_ACCESS_TOKEN) {
+        const accountId = '632b16163d95a11698f8542b418ba236';
+        const policyId = 'cff0d7d4-64ed-400e-ac13-9a1dd1fdef09';
+        // Fetch current policy
+        const polResp = await fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${accountId}/access/policies/${policyId}`,
+          { headers: { Authorization: `Bearer ${env.CF_ACCESS_TOKEN}` }, signal: AbortSignal.timeout(10000) }
+        );
+        if (polResp.ok) {
+          const polData = await polResp.json();
+          const policy = polData.result;
+          const include = policy.include || [];
+          const existingEmails = include.filter(r => r.email).map(r => r.email.email);
+          if (!existingEmails.includes(customerEmail)) {
+            include.push({ email: { email: customerEmail } });
+            const updatePayload = { name: policy.name, decision: policy.decision, include, precedence: policy.precedence || 1 };
+            const updResp = await fetch(
+              `https://api.cloudflare.com/client/v4/accounts/${accountId}/access/policies/${policyId}`,
+              {
+                method: 'PUT',
+                headers: { Authorization: `Bearer ${env.CF_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatePayload),
+                signal: AbortSignal.timeout(10000),
+              }
+            );
+            if (updResp.ok) {
+              console.log(`Added ${customerEmail} to CF Access Allow VPS Customers policy`);
+            } else {
+              const errBody = await updResp.text();
+              console.error(`CF Access policy update failed: ${errBody}`);
+            }
+          } else {
+            console.log(`${customerEmail} already in CF Access policy`);
+          }
+        }
+      } else {
+        console.warn('No CF_ACCESS_TOKEN env var — skipping Access policy update');
+      }
+    } catch (accessErr) {
+      console.error(`CF Access policy update failed (non-fatal): ${accessErr.message}`);
+    }
+
+    // 9. Send credentials email with PUBLIC IP
     await sendCredentialsEmail(
       env.RESEND_API_KEY, customerEmail, customerName,
       plan, os, PUBLIC_IP, sshPort, password, siteUrl
     );
     console.log(`Sent VPS credentials to ${customerEmail}`);
 
-    // 6. Save VMID + IP back to Stripe subscription metadata for /account/ dashboard
+    // 10. Save VMID + IP back to Stripe subscription metadata for /account/ dashboard
     try {
       const custResp = await fetch(
         `https://api.stripe.com/v1/customers?email=${encodeURIComponent(customerEmail)}&limit=1`,
