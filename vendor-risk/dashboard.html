@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EdgeIQ Vendor Risk | Dashboard</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --card: #12121a;
+  --border: #1e1e2e;
+  --accent: #3dd9ff;
+  --success: #00ff66;
+  --warning: #ffaa00;
+  --danger: #ff4444;
+  --text: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --sidebar-w: 260px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+
+/* Login Screen */
+#login-screen { position: fixed; inset: 0; z-index: 1000; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.login-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 48px; width: 100%; max-width: 420px; text-align: center; }
+.login-card h1 { font-size: 24px; margin-bottom: 8px; color: var(--accent); }
+.login-card p { color: var(--text-muted); margin-bottom: 32px; font-size: 14px; }
+.login-card input { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; margin-bottom: 16px; outline: none; transition: border-color 0.2s; }
+.login-card input:focus { border-color: var(--accent); }
+.login-card button { width: 100%; padding: 12px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+.login-card button:hover { opacity: 0.9; }
+.login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+
+/* Layout */
+#app { display: none; min-height: 100vh; }
+.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w); background: var(--card); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
+.sidebar-logo { padding: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+.sidebar-logo .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--bg); font-size: 16px; }
+.sidebar-logo span { font-size: 16px; font-weight: 600; }
+.sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+.nav-item:hover, .nav-item.active { background: rgba(61,217,255,0.08); color: var(--text); }
+.nav-item.active { color: var(--accent); }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+.logout-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; border: none; background: none; width: 100%; text-align: left; }
+.logout-btn:hover { background: rgba(255,68,68,0.08); color: var(--danger); }
+
+.main { margin-left: var(--sidebar-w); padding: 32px; max-width: 1400px; }
+.page-header { margin-bottom: 32px; }
+.page-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
+.page-header p { color: var(--text-muted); font-size: 14px; }
+
+/* Stat Cards */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.stat-card .label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .value { font-size: 32px; font-weight: 700; }
+.stat-card .sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.stat-card.accent .value { color: var(--accent); }
+.stat-card.success .value { color: var(--success); }
+.stat-card.warning .value { color: var(--warning); }
+.stat-card.danger .value { color: var(--danger); }
+
+/* Grid Layout */
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+@media (max-width: 1100px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.panel-header h2 { font-size: 16px; font-weight: 600; }
+.panel-header .badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: rgba(61,217,255,0.1); color: var(--accent); }
+
+/* Risk Matrix Placeholder */
+.matrix-container { width: 100%; aspect-ratio: 16/10; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.matrix-label { color: var(--text-muted); font-size: 14px; text-align: center; }
+.matrix-dot { position: absolute; width: 10px; height: 10px; border-radius: 50%; opacity: 0.8; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 12px 16px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+.severity { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.severity.critical { background: rgba(255,68,68,0.15); color: var(--danger); }
+.severity.high { background: rgba(255,170,0,0.15); color: var(--warning); }
+.severity.medium { background: rgba(61,217,255,0.15); color: var(--accent); }
+.severity.low { background: rgba(0,255,102,0.15); color: var(--success); }
+
+/* Alerts Feed */
+.alert-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.alert-item:last-child { border-bottom: none; }
+.alert-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.alert-dot.critical { background: var(--danger); }
+.alert-dot.high { background: var(--warning); }
+.alert-dot.medium { background: var(--accent); }
+.alert-content .alert-title { font-size: 14px; margin-bottom: 2px; }
+.alert-content .alert-meta { font-size: 12px; color: var(--text-muted); }
+
+/* Progress Tracker */
+.tracker-item { margin-bottom: 16px; }
+.tracker-item:last-child { margin-bottom: 0; }
+.tracker-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.tracker-label span:last-child { color: var(--text-muted); }
+.progress-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 20px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="width:48px;height:48px;background:var(--accent);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--bg);font-size:22px;margin-bottom:20px;">E</div>
+    <h1>EdgeIQ Vendor Risk</h1>
+    <p>Enter your API key to access the dashboard</p>
+    <input type="password" id="api-key-input" placeholder="sk-vendor-..." autocomplete="off">
+    <button onclick="handleLogin()">Authenticate</button>
+    <div class="login-error" id="login-error">Invalid API key. Please try again.</div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">E</div>
+      <span>Vendor Risk</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Vendors
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Assessments
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Alerts
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="handleLogout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="page-header">
+      <h1>Risk Dashboard</h1>
+      <p>Real-time vendor risk posture &amp; compliance monitoring</p>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card accent">
+        <div class="label">Vendors Monitored</div>
+        <div class="value">247</div>
+        <div class="sub">+12 this month</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="label">Risk Score Average</div>
+        <div class="value">64.2</div>
+        <div class="sub">Medium risk tier</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="label">Critical Alerts</div>
+        <div class="value">8</div>
+        <div class="sub">3 unresolved &gt; 48h</div>
+      </div>
+      <div class="stat-card success">
+        <div class="label">Assessments Due</div>
+        <div class="value">14</div>
+        <div class="sub">Next due in 3 days</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Risk Matrix -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Vendor Risk Matrix</h2>
+          <span class="badge">Live</span>
+        </div>
+        <div class="matrix-container" id="risk-matrix">
+          <div class="matrix-label">Impact vs. Likelihood Scatter Plot<br><span style="font-size:12px;opacity:0.6;">247 vendors plotted · Updated 2 min ago</span></div>
+        </div>
+      </div>
+
+      <!-- Assessment Tracker -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Assessment Completion</h2>
+          <span class="badge">Q4 2026</span>
+        </div>
+        <div class="tracker-item">
+          <div class="tracker-label"><span>SOC 2 Type II Reviews</span><span>78%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--accent);"></div></div>
+        </div>
+        <div class="tracker-item">
+          <div class="tracker-label"><span>GDPR Compliance Audits</span><span>92%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:92%;background:var(--success);"></div></div>
+        </div>
+        <div class="tracker-item">
+          <div class="tracker-label"><span>Penetration Test Reviews</span><span>45%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%;background:var(--warning);"></div></div>
+        </div>
+        <div class="tracker-item">
+          <div class="tracker-label"><span>Vendor Self-Assessments</span><span>61%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:61%;background:var(--accent);"></div></div>
+        </div>
+        <div class="tracker-item">
+          <div class="tracker-label"><span>Insurance Certificate Verification</span><span>88%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:88%;background:var(--success);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- High-Risk Vendors Table -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>High-Risk Vendors</h2>
+          <span class="badge">Top 6</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Vendor</th><th>Category</th><th>Risk Score</th><th>Severity</th><th>Last Review</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>CloudSync Pro</td><td>Cloud Storage</td><td>92</td><td><span class="severity critical">Critical</span></td><td>Oct 28</td></tr>
+              <tr><td>DataFlow Inc</td><td>Data Processing</td><td>87</td><td><span class="severity critical">Critical</span></td><td>Oct 25</td></tr>
+              <tr><td>NexGen Payments</td><td>Fintech</td><td>81</td><td><span class="severity high">High</span></td><td>Nov 01</td></tr>
+              <tr><td>SecureAuth Ltd</td><td>Identity</td><td>76</td><td><span class="severity high">High</span></td><td>Oct 30</td></tr>
+              <tr><td>MetricsHub</td><td>Analytics</td><td>72</td><td><span class="severity medium">Medium</span></td><td>Nov 02</td></tr>
+              <tr><td>DevOps Collective</td><td>CI/CD</td><td>68</td><td><span class="severity medium">Medium</span></td><td>Oct 29</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Alerts -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Recent Alerts</h2>
+          <span class="badge">Last 24h</span>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot critical"></div>
+          <div class="alert-content">
+            <div class="alert-title">CloudSync Pro SOC 2 certificate expired</div>
+            <div class="alert-meta">Critical · 2 hours ago · Auto-escalated</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot critical"></div>
+          <div class="alert-content">
+            <div class="alert-title">DataFlow Inc breach detected in dark web scan</div>
+            <div class="alert-meta">Critical · 5 hours ago · Incident team notified</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot high"></div>
+          <div class="alert-content">
+            <div class="alert-title">NexGen Payments risk score increased 18pts</div>
+            <div class="alert-meta">High · 8 hours ago · Under review</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot high"></div>
+          <div class="alert-content">
+            <div class="alert-title">SecureAuth Ltd failed quarterly penetration test</div>
+            <div class="alert-meta">High · 12 hours ago · Remediation requested</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot medium"></div>
+          <div class="alert-content">
+            <div class="alert-title">MetricsHub GDPR DPA renewal pending</div>
+            <div class="alert-meta">Medium · 18 hours ago · Awaiting signature</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot medium"></div>
+          <div class="alert-content">
+            <div class="alert-title">DevOps Collective sub-processor added without notice</div>
+            <div class="alert-meta">Medium · 22 hours ago · Contract review triggered</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Mock API key validation
+const VALID_KEYS = ['sk-vendor-demo', 'sk-vendor-test', 'sk-vendor-edgeiq'];
+
+function handleLogin() {
+  const input = document.getElementById('api-key-input');
+  const error = document.getElementById('login-error');
+  const key = input.value.trim();
+  
+  if (!key || !key.startsWith('sk-vendor-')) {
+    error.style.display = 'block';
+    error.textContent = 'API key must start with sk-vendor-';
+    return;
+  }
+  
+  // Accept any properly formatted key for demo
+  if (key.length >= 12) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderMatrixDots();
+  } else {
+    error.style.display = 'block';
+    error.textContent = 'Invalid API key. Please try again.';
+  }
+}
+
+function handleLogout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+// Enter key support
+document.getElementById('api-key-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleLogin();
+});
+
+// Generate scatter plot dots
+function renderMatrixDots() {
+  const container = document.getElementById('risk-matrix');
+  const colors = ['var(--danger)', 'var(--warning)', 'var(--accent)', 'var(--success)'];
+  const weights = [0.1, 0.25, 0.35, 0.3]; // distribution
+  
+  for (let i = 0; i < 40; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'matrix-dot';
+    
+    // Weighted random color
+    let r = Math.random(), cumulative = 0, colorIdx = 0;
+    for (let j = 0; j < weights.length; j++) {
+      cumulative += weights[j];
+      if (r <= cumulative) { colorIdx = j; break; }
+    }
+    
+    dot.style.background = colors[colorIdx];
+    dot.style.left = (5 + Math.random() * 90) + '%';
+    dot.style.top = (5 + Math.random() * 90) + '%';
+    dot.style.width = (6 + Math.random() * 8) + 'px';
+    dot.style.height = dot.style.width;
+    container.appendChild(dot);
+  }
+}
+
+// Nav item click handling
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

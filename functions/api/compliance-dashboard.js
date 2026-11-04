@@ -1,0 +1,463 @@
+/**
+ * Compliance Shield Dashboard - GET /api/compliance-dashboard
+ * Serves the embedded dashboard SPA.
+ */
+export async function onRequest(context) {
+  const { request } = context;
+  if (request.method !== 'GET') {
+    return new Response('Method not allowed', { status: 405 });
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Shield — EdgeIQ Labs</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #1e1e2e;
+    --accent: #3dd9ff;
+    --success: #00ff66;
+    --warning: #ffaa00;
+    --danger: #ff4444;
+    --text: #e4e4e7;
+    --muted: #888899;
+    --font: system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.5; min-height: 100vh; }
+  a { color: var(--accent); text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; }
+
+  /* Login Screen */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+  }
+  .login-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 48px 40px; width: 100%; max-width: 420px;
+    text-align: center;
+  }
+  .login-card h1 { font-size: 24px; margin-bottom: 8px; color: var(--accent); }
+  .login-card p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .login-card input {
+    width: 100%; padding: 12px 16px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    font-size: 14px; margin-bottom: 16px; outline: none; transition: border-color 0.2s;
+  }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-card button {
+    width: 100%; padding: 12px; border-radius: 8px; border: none;
+    background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px;
+    transition: opacity 0.2s;
+  }
+  .login-card button:hover { opacity: 0.9; }
+  .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; min-height: 20px; }
+
+  /* App Layout */
+  #app { display: none; min-height: 100vh; }
+  #app.active { display: flex; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px; background: var(--card); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 24px 20px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--bg); font-size: 18px;
+  }
+  .logo-text { font-size: 16px; font-weight: 600; }
+  .logo-text span { color: var(--accent); }
+
+  .nav-items { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: 8px; color: var(--muted); font-size: 14px; font-weight: 500;
+    transition: all 0.15s; border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: rgba(61,217,255,0.08); color: var(--text); }
+  .nav-item.active { background: rgba(61,217,255,0.12); color: var(--accent); }
+  .nav-icon { width: 20px; text-align: center; font-size: 16px; }
+
+  .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+  .logout-btn {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: 8px; color: var(--danger); font-size: 14px; font-weight: 500;
+    transition: all 0.15s; border: none; background: none; width: 100%; text-align: left;
+  }
+  .logout-btn:hover { background: rgba(255,68,68,0.08); }
+
+  /* Main Content */
+  .main { margin-left: 260px; flex: 1; padding: 32px; max-width: 1400px; }
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { color: var(--muted); font-size: 14px; }
+
+  /* Stat Cards */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px; margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-label { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 32px; font-weight: 700; }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.success { color: var(--success); }
+  .stat-value.warning { color: var(--warning); }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* Section */
+  .section { margin-bottom: 32px; }
+  .section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+  /* Progress Bars */
+  .framework-list { display: flex; flex-direction: column; gap: 16px; }
+  .framework-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px;
+  }
+  .fw-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .fw-name { font-weight: 600; font-size: 15px; }
+  .fw-pct { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .progress-track {
+    height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 4px; transition: width 0.6s ease;
+  }
+  .fill-hipaa { background: linear-gradient(90deg, var(--accent), #2ab8d6); }
+  .fill-soc2 { background: linear-gradient(90deg, var(--success), #00cc52); }
+  .fill-gdpr { background: linear-gradient(90deg, var(--warning), #cc8800); }
+
+  /* Control Matrix */
+  .matrix-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;
+  }
+  .matrix-cell {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; text-align: center; transition: border-color 0.2s;
+  }
+  .matrix-cell:hover { border-color: var(--accent); }
+  .matrix-status {
+    width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-bottom: 8px;
+  }
+  .status-pass { background: var(--success); box-shadow: 0 0 8px rgba(0,255,102,0.4); }
+  .status-warn { background: var(--warning); box-shadow: 0 0 8px rgba(255,170,0,0.4); }
+  .status-fail { background: var(--danger); box-shadow: 0 0 8px rgba(255,68,68,0.4); }
+  .matrix-label { font-size: 13px; font-weight: 500; }
+  .matrix-id { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Audit Tasks */
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+    transition: border-color 0.2s;
+  }
+  .task-item:hover { border-color: var(--accent); }
+  .task-date {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; text-align: center; min-width: 64px;
+  }
+  .task-month { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; }
+  .task-day { font-size: 20px; font-weight: 700; }
+  .task-info { flex: 1; }
+  .task-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .task-meta { font-size: 12px; color: var(--muted); }
+  .task-badge {
+    font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .badge-high { background: rgba(255,68,68,0.15); color: var(--danger); }
+  .badge-med { background: rgba(255,170,0,0.15); color: var(--warning); }
+  .badge-low { background: rgba(0,255,102,0.15); color: var(--success); }
+
+  /* Document Library */
+  .doc-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;
+  }
+  .doc-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px; transition: border-color 0.2s; cursor: pointer;
+  }
+  .doc-card:hover { border-color: var(--accent); }
+  .doc-icon { font-size: 28px; margin-bottom: 12px; }
+  .doc-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .doc-meta { font-size: 12px; color: var(--muted); }
+  .doc-status { font-size: 11px; font-weight: 600; margin-top: 8px; display: inline-block; padding: 2px 8px; border-radius: 4px; }
+  .doc-current { background: rgba(0,255,102,0.12); color: var(--success); }
+  .doc-review { background: rgba(255,170,0,0.12); color: var(--warning); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { width: 220px; }
+    .main { margin-left: 220px; padding: 24px; }
+  }
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="margin-bottom:20px;">
+      <div class="logo-icon" style="margin:0 auto 12px;width:48px;height:48px;font-size:24px;">CS</div>
+    </div>
+    <h1>Compliance Shield</h1>
+    <p>Enter your EdgeIQ API key to access the dashboard</p>
+    <input type="password" id="api-key-input" placeholder="eq_live_xxxxxxxxxxxxxxxx" autocomplete="off">
+    <button onclick="handleLogin()">Authenticate</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">CS</div>
+      <div class="logo-text">Compliance<span>Shield</span></div>
+    </div>
+    <nav class="nav-items">
+      <button class="nav-item active"><span class="nav-icon">📊</span> Dashboard</button>
+      <button class="nav-item"><span class="nav-icon">🛡️</span> Controls</button>
+      <button class="nav-item"><span class="nav-icon">🔍</span> Audits</button>
+      <button class="nav-item"><span class="nav-icon">📄</span> Documents</button>
+      <button class="nav-item"><span class="nav-icon">⚙️</span> Settings</button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="handleLogout()"><span class="nav-icon">🚪</span> Log Out</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="page-header">
+      <h1>Compliance Dashboard</h1>
+      <p>Real-time compliance posture across all frameworks • Last synced 4 min ago</p>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Compliance Framework</div>
+        <div class="stat-value accent">3 Active</div>
+        <div class="stat-sub">HIPAA, SOC2, GDPR</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Overall Score</div>
+        <div class="stat-value success">87%</div>
+        <div class="stat-sub">↑ 4% from last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Controls Implemented</div>
+        <div class="stat-value">142 / 168</div>
+        <div class="stat-sub">26 controls remaining</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Next Audit Date</div>
+        <div class="stat-value warning">Jan 15</div>
+        <div class="stat-sub">SOC2 Type II • 71 days away</div>
+      </div>
+    </div>
+
+    <!-- Framework Progress -->
+    <div class="section">
+      <div class="section-title">Framework Compliance Progress</div>
+      <div class="framework-list">
+        <div class="framework-item">
+          <div class="fw-header">
+            <span class="fw-name">HIPAA Security Rule</span>
+            <span class="fw-pct">92%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill fill-hipaa" style="width:92%"></div></div>
+        </div>
+        <div class="framework-item">
+          <div class="fw-header">
+            <span class="fw-name">SOC2 Type II</span>
+            <span class="fw-pct">84%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill fill-soc2" style="width:84%"></div></div>
+        </div>
+        <div class="framework-item">
+          <div class="fw-header">
+            <span class="fw-name">GDPR Article 32</span>
+            <span class="fw-pct">78%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill fill-gdpr" style="width:78%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Status Matrix -->
+    <div class="section">
+      <div class="section-title">Control Status Matrix</div>
+      <div class="matrix-grid" id="matrix-grid"></div>
+    </div>
+
+    <!-- Upcoming Audit Tasks -->
+    <div class="section">
+      <div class="section-title">Upcoming Audit Tasks</div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-date"><div class="task-month">Nov</div><div class="task-day">18</div></div>
+          <div class="task-info"><div class="task-title">Access Control Review</div><div class="task-meta">HIPAA §164.312(a)(1) • Assigned to J. Martinez</div></div>
+          <span class="task-badge badge-high">High</span>
+        </div>
+        <div class="task-item">
+          <div class="task-date"><div class="task-month">Nov</div><div class="task-day">25</div></div>
+          <div class="task-info"><div class="task-title">Encryption At Rest Verification</div><div class="task-meta">SOC2 CC6.1 • Assigned to A. Chen</div></div>
+          <span class="task-badge badge-high">High</span>
+        </div>
+        <div class="task-item">
+          <div class="task-date"><div class="task-month">Dec</div><div class="task-day">02</div></div>
+          <div class="task-info"><div class="task-title">Data Processing Agreement Audit</div><div class="task-meta">GDPR Art.28 • Assigned to R. Patel</div></div>
+          <span class="task-badge badge-med">Medium</span>
+        </div>
+        <div class="task-item">
+          <div class="task-date"><div class="task-month">Dec</div><div class="task-day">10</div></div>
+          <div class="task-info"><div class="task-title">Incident Response Drill</div><div class="task-meta">HIPAA §164.308(a)(6) • Assigned to S. Kim</div></div>
+          <span class="task-badge badge-med">Medium</span>
+        </div>
+        <div class="task-item">
+          <div class="task-date"><div class="task-month">Dec</div><div class="task-day">20</div></div>
+          <div class="task-info"><div class="task-title">Vendor Risk Assessment Update</div><div class="task-meta">SOC2 CC9.2 • Assigned to J. Martinez</div></div>
+          <span class="task-badge badge-low">Low</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Library Preview -->
+    <div class="section">
+      <div class="section-title">Document Library</div>
+      <div class="doc-grid">
+        <div class="doc-card">
+          <div class="doc-icon">📋</div>
+          <div class="doc-name">Risk Assessment Report</div>
+          <div class="doc-meta">Updated Oct 28, 2026 • PDF 2.4 MB</div>
+          <span class="doc-status doc-current">Current</span>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">🔐</div>
+          <div class="doc-name">Access Control Policy</div>
+          <div class="doc-meta">Updated Oct 15, 2026 • PDF 1.1 MB</div>
+          <span class="doc-status doc-current">Current</span>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">🏥</div>
+          <div class="doc-name">BAA Template</div>
+          <div class="doc-meta">Updated Sep 30, 2026 • DOCX 840 KB</div>
+          <span class="doc-status doc-review">Under Review</span>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">📊</div>
+          <div class="doc-name">SOC2 Evidence Package</div>
+          <div class="doc-meta">Updated Nov 01, 2026 • ZIP 48 MB</div>
+          <span class="doc-status doc-current">Current</span>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">🇪🇺</div>
+          <div class="doc-name">DPIA Documentation</div>
+          <div class="doc-meta">Updated Aug 22, 2026 • PDF 3.2 MB</div>
+          <span class="doc-status doc-review">Under Review</span>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">🚨</div>
+          <div class="doc-name">Incident Response Plan</div>
+          <div class="doc-meta">Updated Oct 05, 2026 • PDF 1.8 MB</div>
+          <span class="doc-status doc-current">Current</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Mock controls data
+  const controls = [
+    { id: 'AC-1', label: 'Access Control', status: 'pass' },
+    { id: 'AC-2', label: 'User Provisioning', status: 'pass' },
+    { id: 'AU-1', label: 'Audit Logging', status: 'pass' },
+    { id: 'CC-6.1', label: 'Encryption At Rest', status: 'warn' },
+    { id: 'CC-6.7', label: 'Data Classification', status: 'pass' },
+    { id: 'CC-7.2', label: 'Vulnerability Mgmt', status: 'pass' },
+    { id: 'CC-8.1', label: 'Change Management', status: 'fail' },
+    { id: 'CC-9.2', label: 'Vendor Management', status: 'warn' },
+    { id: 'IR-1', label: 'Incident Response', status: 'pass' },
+    { id: 'PHI-1', label: 'PHI Encryption', status: 'pass' },
+    { id: 'PHI-2', label: 'Minimization', status: 'pass' },
+    { id: 'GDPR-32', label: 'Processing Security', status: 'warn' },
+  ];
+
+  // Render matrix
+  const matrixGrid = document.getElementById('matrix-grid');
+  controls.forEach(c => {
+    const cell = document.createElement('div');
+    cell.className = 'matrix-cell';
+    cell.innerHTML = \`<div class="matrix-status status-\${c.status}"></div><div class="matrix-label">\${c.label}</div><div class="matrix-id">\${c.id}</div>\`;
+    matrixGrid.appendChild(cell);
+  });
+
+  // Login logic
+  function handleLogin() {
+    const input = document.getElementById('api-key-input');
+    const error = document.getElementById('login-error');
+    const key = input.value.trim();
+    if (!key) { error.textContent = 'Please enter an API key.'; return; }
+    if (!key.startsWith('eq_')) { error.textContent = 'Invalid key format. Expected eq_live_... or eq_test_...'; return; }
+    error.textContent = '';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('active');
+  }
+
+  function handleLogout() {
+    document.getElementById('app').classList.remove('active');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('api-key-input').value = '';
+    document.getElementById('login-error').textContent = '';
+  }
+
+  // Allow Enter key on login
+  document.getElementById('api-key-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  // Nav item click handling
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>`;
+
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache, must-revalidate',
+    },
+  });
+}

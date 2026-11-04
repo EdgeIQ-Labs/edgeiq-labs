@@ -1,422 +1,538 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShieldBuild Dashboard — EdgeIQ Labs</title>
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="stylesheet" href="/css/design-system.css" />
-  <style>
-    .sb-dash-header { padding: var(--space-xl) 0; border-bottom: 1px solid var(--border); margin-bottom: var(--space-xl); }
-    .sb-dash-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .sb-dash-header p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
-    .sb-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-xl); }
-    .sb-stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-lg); text-align: center; }
-    .sb-stat-card .value { font-size: 2rem; font-weight: 800; color: var(--accent); }
-    .sb-stat-card .label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-    .sb-section { margin-bottom: var(--space-xl); }
-    .sb-section h2 { font-size: 1.2rem; margin-bottom: var(--space-md); display: flex; align-items: center; gap: 8px; }
-    .sb-card-list { display: flex; flex-direction: column; gap: var(--space-sm); }
-    .sb-card-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-md); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-    .sb-card-item .title { font-weight: 600; }
-    .sb-card-item .meta { font-size: 0.85rem; color: var(--muted); }
-    .sb-badge-status { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
-    .sb-badge-status.open { background: rgba(255,107,107,0.15); color: var(--red); }
-    .sb-badge-status.closed { background: rgba(61,225,158,0.15); color: var(--green); }
-    .sb-badge-status.investigating { background: rgba(255,179,71,0.15); color: var(--yellow); }
-    .sb-calendar-item { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); }
-    .sb-calendar-date { min-width: 60px; text-align: center; }
-    .sb-calendar-date .day { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
-    .sb-calendar-date .month { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
-    .sb-calendar-info .title { font-weight: 600; font-size: 0.95rem; }
-    .sb-calendar-info .type { font-size: 0.78rem; color: var(--muted); text-transform: capitalize; }
-    .sb-calendar-days { font-size: 0.8rem; margin-left: auto; white-space: nowrap; }
-    .sb-calendar-days.urgent { color: var(--red); font-weight: 700; }
-    .sb-calendar-days.soon { color: var(--yellow); }
-    .sb-calendar-days.ok { color: var(--green); }
-    .sb-form { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-lg); }
-    .sb-form label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; margin-top: var(--space-md); }
-    .sb-form label:first-child { margin-top: 0; }
-    .sb-form input, .sb-form select, .sb-form textarea { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.9rem; font-family: var(--font-sans); }
-    .sb-form textarea { min-height: 80px; resize: vertical; }
-    .sb-form button { margin-top: var(--space-lg); }
-    .sb-login-wrap { max-width: 400px; margin: 80px auto; padding: var(--space-xl); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); }
-    .sb-login-wrap h1 { text-align: center; margin-bottom: var(--space-lg); font-size: 1.4rem; }
-    .sb-tabs { display: flex; gap: 4px; margin-bottom: var(--space-lg); border-bottom: 1px solid var(--border); }
-    .sb-tab { padding: 10px 20px; cursor: pointer; color: var(--muted); font-size: 0.9rem; border-bottom: 2px solid transparent; transition: all 0.15s; }
-    .sb-tab:hover { color: var(--text); }
-    .sb-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .sb-tab-content { display: none; }
-    .sb-tab-content.active { display: block; }
-    @media (max-width: 700px) {
-      .sb-stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .sb-card-item { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShieldBuild Dashboard | EdgeIQ Labs</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #1e1e2e;
+    --accent: #3dd9ff;
+    --success: #00ff66;
+    --warning: #ffaa00;
+    --danger: #ff4444;
+    --text: #e0e0e0;
+    --text-muted: #888;
+    --font: system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  a { text-decoration: none; color: inherit; }
+
+  /* Login Screen */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+  }
+  .login-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 48px 40px; width: 100%; max-width: 420px;
+    text-align: center;
+  }
+  .login-card h1 { font-size: 28px; margin-bottom: 8px; color: var(--accent); }
+  .login-card p { color: var(--text-muted); margin-bottom: 32px; font-size: 14px; }
+  .login-card input {
+    width: 100%; padding: 14px 16px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    font-size: 15px; outline: none; transition: border-color 0.2s;
+  }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-card button {
+    width: 100%; margin-top: 20px; padding: 14px; border: none;
+    border-radius: 8px; background: var(--accent); color: #000;
+    font-weight: 700; font-size: 15px; cursor: pointer; transition: opacity 0.2s;
+  }
+  .login-card button:hover { opacity: 0.85; }
+  .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; min-height: 20px; }
+
+  /* App Layout */
+  #app { display: none; min-height: 100vh; }
+  #app.active { display: flex; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px; min-height: 100vh; background: var(--card);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-header { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 18px; color: #000;
+  }
+  .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-text span { color: var(--accent); }
+
+  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-muted);
+    transition: all 0.15s ease; cursor: pointer;
+  }
+  .nav-item:hover, .nav-item.active { background: rgba(61,217,255,0.08); color: var(--accent); }
+  .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .nav-divider { height: 1px; background: var(--border); margin: 12px 4px; }
+  .logout { margin-top: auto; }
+  .logout:hover { background: rgba(255,68,68,0.08) !important; color: var(--danger) !important; }
+
+  /* Main Content */
+  .main { margin-left: 260px; flex: 1; padding: 32px 40px; max-width: 1400px; }
+  .page-header { margin-bottom: 32px; }
+  .page-header h2 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { color: var(--text-muted); font-size: 14px; }
+
+  /* Stat Cards */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px; margin-bottom: 36px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .stat-value { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+  .stat-sub.up { color: var(--success); }
+  .stat-sub.down { color: var(--danger); }
+
+  /* Section Headers */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-size: 18px; font-weight: 700; }
+
+  /* Project Cards Grid */
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px; margin-bottom: 40px;
+  }
+  .project-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: border-color 0.2s;
+  }
+  .project-card:hover { border-color: var(--accent); }
+  .project-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+  .project-name { font-size: 16px; font-weight: 700; }
+  .project-repo { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .status-badge {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .status-compliant { background: rgba(0,255,102,0.12); color: var(--success); }
+  .status-warning { background: rgba(255,170,0,0.12); color: var(--warning); }
+  .status-critical { background: rgba(255,68,68,0.12); color: var(--danger); }
+  .status-review { background: rgba(61,217,255,0.12); color: var(--accent); }
+  .project-meta { display: flex; gap: 16px; margin-top: 16px; }
+  .meta-item { font-size: 12px; color: var(--text-muted); }
+  .meta-item strong { color: var(--text); font-weight: 600; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+  /* Pipeline Table */
+  .table-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 40px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+  }
+  td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(61,217,255,0.03); }
+  .pipeline-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-success { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .dot-fail { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  .dot-running { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Security Gauge */
+  .gauge-section { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+  .gauge-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px; flex: 1; min-width: 280px; display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+  }
+  .gauge-svg { width: 180px; height: 180px; }
+  .gauge-bg { fill: none; stroke: var(--border); stroke-width: 12; }
+  .gauge-fill { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .gauge-text { font-size: 36px; font-weight: 800; fill: var(--text); }
+  .gauge-label { font-size: 12px; fill: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .gauge-title { font-size: 16px; font-weight: 700; margin-top: 16px; }
+  .gauge-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 20px; }
+  .breakdown-item { display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .breakdown-item:last-child { border-bottom: none; }
+
+  /* Mobile Toggle */
+  .mobile-toggle {
+    display: none; position: fixed; top: 16px; left: 16px; z-index: 200;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px; cursor: pointer; color: var(--text);
+  }
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 90;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 24px 20px; padding-top: 64px; }
+    .mobile-toggle { display: block; }
+    .overlay.active { display: block; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .projects-grid { grid-template-columns: 1fr; }
+    .gauge-section { flex-direction: column; }
+  }
+  @media (max-width: 500px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-  <!-- Nav -->
-  <nav class="nav-bar">
-    <div class="nav-inner">
-      <a href="/" class="nav-brand">
-        <img src="/assets/img/logo-icon.png" alt="EdgeIQ" class="nav-logo-img" onerror="this.style.display='none'" />
-        <div class="nav-wordmark">
-          <span class="nav-brand-name">Edge<span>IQ</span> Labs</span>
-          <span class="nav-brand-tag">ShieldBuild</span>
-        </div>
-      </a>
-      <div class="nav-links">
-        <a href="/shieldbuild/">Product</a>
-        <a href="#" id="logoutBtn" style="display:none;">Log Out</a>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:12px">
+      <div class="logo-icon">S</div>
+      <div class="logo-text" style="font-size:22px">Shield<span>Build</span></div>
+    </div>
+    <h1>Welcome Back</h1>
+    <p>Enter your EdgeIQ API key to access the dashboard</p>
+    <input type="password" id="api-key-input" placeholder="sk-edgeiq-..." autocomplete="off">
+    <button onclick="handleLogin()">Authenticate</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Mobile Toggle -->
+  <div class="mobile-toggle" onclick="toggleSidebar()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div class="logo-text">Shield<span>Build</span></div>
       </div>
     </div>
-  </nav>
+    <nav class="nav">
+      <div class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-page="projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Projects
+      </div>
+      <div class="nav-item" data-page="pipelines">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        Pipelines
+      </div>
+      <div class="nav-item" data-page="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item logout" onclick="handleLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </div>
+    </nav>
+  </aside>
 
-  <main class="container">
-    <!-- Login Form -->
-    <div id="loginView">
-      <div class="sb-login-wrap">
-        <h1>🔐 ShieldBuild Login</h1>
-        <div class="sb-form">
-          <label>Email</label>
-          <input type="email" id="loginEmail" placeholder="demo@edgeiqlabs.com" />
-          <label>Password</label>
-          <input type="password" id="loginPassword" placeholder="Enter password" />
-          <button class="btn btn-primary" style="width:100%;margin-top:20px;" onclick="doLogin()">Sign In</button>
-          <p id="loginError" style="color:var(--red);font-size:0.85rem;margin-top:12px;text-align:center;display:none;"></p>
+  <!-- Main Content -->
+  <main class="main">
+    <div class="page-header">
+      <h2>Dashboard</h2>
+      <p>Secure development & compliance automation overview</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Active Projects</div>
+        <div class="stat-value">12</div>
+        <div class="stat-sub up">↑ 3 this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Deployments This Month</div>
+        <div class="stat-value">47</div>
+        <div class="stat-sub up">↑ 18% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Security Checks Passed</div>
+        <div class="stat-value" style="color:var(--success)">1,284</div>
+        <div class="stat-sub up">99.2% pass rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open Issues</div>
+        <div class="stat-value" style="color:var(--warning)">8</div>
+        <div class="stat-sub down">↑ 2 since yesterday</div>
+      </div>
+    </div>
+
+    <!-- Security Score Gauge -->
+    <div class="section-header">
+      <div class="section-title">Security Posture</div>
+    </div>
+    <div class="gauge-section">
+      <div class="gauge-card">
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+          <circle class="gauge-fill" cx="60" cy="60" r="50"
+            stroke="var(--success)"
+            stroke-dasharray="314.16"
+            stroke-dashoffset="25.13"
+            transform="rotate(-90 60 60)"/>
+          <text class="gauge-text" x="60" y="58" text-anchor="middle" dominant-baseline="central">92</text>
+          <text class="gauge-label" x="60" y="78" text-anchor="middle">SCORE</text>
+        </svg>
+        <div class="gauge-title">Overall Compliance Score</div>
+        <div class="gauge-desc">Across all active projects</div>
+        <div class="breakdown-grid">
+          <div class="breakdown-item"><span>SAST Scans</span><strong style="color:var(--success)">96%</strong></div>
+          <div class="breakdown-item"><span>Dependency Audit</span><strong style="color:var(--success)">94%</strong></div>
+          <div class="breakdown-item"><span>Secret Detection</span><strong style="color:var(--success)">100%</strong></div>
+          <div class="breakdown-item"><span>License Compliance</span><strong style="color:var(--warning)">87%</strong></div>
+        </div>
+      </div>
+      <div class="gauge-card">
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+          <circle class="gauge-fill" cx="60" cy="60" r="50"
+            stroke="var(--accent)"
+            stroke-dasharray="314.16"
+            stroke-dashoffset="50.27"
+            transform="rotate(-90 60 60)"/>
+          <text class="gauge-text" x="60" y="58" text-anchor="middle" dominant-baseline="central">84</text>
+          <text class="gauge-label" x="60" y="78" text-anchor="middle">SCORE</text>
+        </svg>
+        <div class="gauge-title">Pipeline Health</div>
+        <div class="gauge-desc">Average success rate (30d)</div>
+        <div class="breakdown-grid">
+          <div class="breakdown-item"><span>Build Success</span><strong style="color:var(--success)">97%</strong></div>
+          <div class="breakdown-item"><span>Test Coverage</span><strong style="color:var(--accent)">82%</strong></div>
+          <div class="breakdown-item"><span>Deploy Freq</span><strong style="color:var(--success)">Daily</strong></div>
+          <div class="breakdown-item"><span>MTTR</span><strong style="color:var(--warning)">2.4h</strong></div>
         </div>
       </div>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboardView" style="display:none;">
-      <div class="sb-dash-header">
-        <h1 id="dashGreeting">Dashboard</h1>
-        <p id="dashTier"></p>
-      </div>
-
-      <!-- Stats -->
-      <div class="sb-stats-grid" id="statsGrid"></div>
-
-      <!-- Tabs -->
-      <div class="sb-tabs">
-        <div class="sb-tab active" onclick="switchTab('sites')">Job Sites</div>
-        <div class="sb-tab" onclick="switchTab('incidents')">Incidents</div>
-        <div class="sb-tab" onclick="switchTab('calendar')">Calendar</div>
-        <div class="sb-tab" onclick="switchTab('osha300')">OSHA 300</div>
-        <div class="sb-tab" onclick="switchTab('newincident')">+ New Incident</div>
-      </div>
-
-      <!-- Job Sites Tab -->
-      <div id="tab-sites" class="sb-tab-content active">
-        <div class="sb-section">
-          <h2>🏗️ Active Job Sites</h2>
-          <div class="sb-card-list" id="sitesList"></div>
+    <!-- Projects -->
+    <div class="section-header">
+      <div class="section-title">Projects</div>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">payments-api</div><div class="project-repo">github.com/edgeiq/payments-api</div></div>
+          <div class="status-badge status-compliant">Compliant</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:96%;background:var(--success)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>96</strong></div>
+          <div class="meta-item">Issues: <strong>0</strong></div>
+          <div class="meta-item">Last scan: <strong>2h ago</strong></div>
         </div>
       </div>
-
-      <!-- Incidents Tab -->
-      <div id="tab-incidents" class="sb-tab-content">
-        <div class="sb-section">
-          <h2>🚨 Incident Reports</h2>
-          <div class="sb-card-list" id="incidentsList"></div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">auth-service</div><div class="project-repo">github.com/edgeiq/auth-service</div></div>
+          <div class="status-badge status-compliant">Compliant</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:94%;background:var(--success)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>94</strong></div>
+          <div class="meta-item">Issues: <strong>1</strong></div>
+          <div class="meta-item">Last scan: <strong>4h ago</strong></div>
         </div>
       </div>
-
-      <!-- Calendar Tab -->
-      <div id="tab-calendar" class="sb-tab-content">
-        <div class="sb-section">
-          <h2>📅 Compliance Calendar</h2>
-          <div class="sb-card-list" id="calendarList"></div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">customer-portal</div><div class="project-repo">github.com/edgeiq/customer-portal</div></div>
+          <div class="status-badge status-warning">Warning</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--warning)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>78</strong></div>
+          <div class="meta-item">Issues: <strong>4</strong></div>
+          <div class="meta-item">Last scan: <strong>1h ago</strong></div>
         </div>
       </div>
-
-      <!-- OSHA 300 Tab -->
-      <div id="tab-osha300" class="sb-tab-content">
-        <div class="sb-section">
-          <h2>📄 OSHA 300 Log Generator</h2>
-          <div class="sb-form">
-            <label>Year</label>
-            <select id="oshaYear">
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-            </select>
-            <label>Job Site (optional)</label>
-            <select id="oshaSite"><option value="">All Sites</option></select>
-            <button class="btn btn-primary" onclick="generateOSHA300()">Generate OSHA 300 Log</button>
-          </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">ml-pipeline</div><div class="project-repo">github.com/edgeiq/ml-pipeline</div></div>
+          <div class="status-badge status-review">In Review</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:65%;background:var(--accent)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>65</strong></div>
+          <div class="meta-item">Issues: <strong>3</strong></div>
+          <div class="meta-item">Last scan: <strong>30m ago</strong></div>
         </div>
       </div>
-
-      <!-- New Incident Tab -->
-      <div id="tab-newincident" class="sb-tab-content">
-        <div class="sb-section">
-          <h2>🚨 New Incident Report</h2>
-          <div class="sb-form">
-            <label>Job Site</label>
-            <select id="incidentSite"></select>
-            <label>Type</label>
-            <select id="incidentType">
-              <option value="injury">Injury</option>
-              <option value="near_miss">Near Miss</option>
-              <option value="property_damage">Property Damage</option>
-              <option value="environmental">Environmental</option>
-            </select>
-            <label>Date</label>
-            <input type="date" id="incidentDate" />
-            <label>Location on Site</label>
-            <input type="text" id="incidentLocation" placeholder="e.g., North scaffolding, Floor 3" />
-            <label>Description</label>
-            <textarea id="incidentDesc" placeholder="Describe what happened..."></textarea>
-            <label>Severity</label>
-            <select id="incidentSeverity">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-              <option value="critical">Critical</option>
-            </select>
-            <label>Corrective Actions</label>
-            <textarea id="incidentCorrective" placeholder="Actions taken or planned..."></textarea>
-            <button class="btn btn-primary" onclick="submitIncident()">Submit Incident Report</button>
-            <p id="incidentResult" style="font-size:0.85rem;margin-top:12px;display:none;"></p>
-          </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">infra-terraform</div><div class="project-repo">github.com/edgeiq/infra-terraform</div></div>
+          <div class="status-badge status-critical">Critical</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--danger)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>42</strong></div>
+          <div class="meta-item">Issues: <strong>7</strong></div>
+          <div class="meta-item">Last scan: <strong>15m ago</strong></div>
         </div>
       </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">docs-site</div><div class="project-repo">github.com/edgeiq/docs-site</div></div>
+          <div class="status-badge status-compliant">Compliant</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:99%;background:var(--success)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>99</strong></div>
+          <div class="meta-item">Issues: <strong>0</strong></div>
+          <div class="meta-item">Last scan: <strong>6h ago</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline Runs -->
+    <div class="section-header">
+      <div class="section-title">Recent Pipeline Runs</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Pipeline</th>
+            <th>Project</th>
+            <th>Branch</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Triggered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">security-scan-full</td>
+            <td>payments-api</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-success"></span>Passed</span></td>
+            <td>4m 32s</td>
+            <td style="color:var(--text-muted)">12 min ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">deploy-staging</td>
+            <td>auth-service</td>
+            <td style="color:var(--text-muted)">develop</td>
+            <td><span class="pipeline-status"><span class="dot dot-running"></span>Running</span></td>
+            <td>2m 18s</td>
+            <td style="color:var(--text-muted)">Just now</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">compliance-check</td>
+            <td>customer-portal</td>
+            <td style="color:var(--text-muted)">feat/oauth</td>
+            <td><span class="pipeline-status"><span class="dot dot-fail"></span>Failed</span></td>
+            <td>6m 45s</td>
+            <td style="color:var(--text-muted)">1h ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">dependency-audit</td>
+            <td>ml-pipeline</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-success"></span>Passed</span></td>
+            <td>1m 58s</td>
+            <td style="color:var(--text-muted)">2h ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">secret-scan</td>
+            <td>infra-terraform</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-fail"></span>Failed</span></td>
+            <td>0m 47s</td>
+            <td style="color:var(--text-muted)">3h ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">build-and-test</td>
+            <td>docs-site</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-success"></span>Passed</span></td>
+            <td>3m 12s</td>
+            <td style="color:var(--text-muted)">4h ago</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </main>
+</div>
 
-  <footer style="border-top:1px solid var(--border);padding:var(--space-xl) 0;text-align:center;color:var(--muted);font-size:0.85rem;margin-top:var(--space-3xl);">
-    <div class="container">
-      <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="mailto:safety@edgeiqlabs.com" style="color:var(--accent);">safety@edgeiqlabs.com</a></p>
-    </div>
-  </footer>
+<script>
+  // Mock auth — any non-empty key starting with sk- is accepted for demo
+  function handleLogin() {
+    const key = document.getElementById('api-key-input').value.trim();
+    const err = document.getElementById('login-error');
+    if (!key) { err.textContent = 'Please enter an API key'; return; }
+    if (!key.startsWith('sk-')) { err.textContent = 'Invalid key format. Expected sk-...'; return; }
+    err.textContent = '';
+    sessionStorage.setItem('shieldbuild_key', key);
+    showApp();
+  }
 
-  <script src="/assets/js/theme.js"></script>
-  <script>
-    const API_BASE = '/api/shieldbuild';
-    let authToken = localStorage.getItem('sb_token');
-    let dashData = null;
+  function showApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('active');
+  }
 
-    // Init
-    (async function() {
-      if (authToken) {
-        await loadDashboard();
-      } else {
-        document.getElementById('loginView').style.display = 'block';
-      }
-      document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        localStorage.removeItem('sb_token');
-        location.reload();
-      });
-      // Set default date for incident form
-      document.getElementById('incidentDate').valueAsDate = new Date();
-    })();
+  function handleLogout() {
+    sessionStorage.removeItem('shieldbuild_key');
+    document.getElementById('app').classList.remove('active');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('api-key-input').value = '';
+  }
 
-    async function doLogin() {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      const errEl = document.getElementById('loginError');
-      errEl.style.display = 'none';
+  // Persist session
+  if (sessionStorage.getItem('shieldbuild_key')) showApp();
 
-      try {
-        const res = await fetch(`${API_BASE}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          errEl.textContent = data.error || 'Login failed';
-          errEl.style.display = 'block';
-          return;
-        }
-        authToken = data.token;
-        localStorage.setItem('sb_token', authToken);
-        await loadDashboard();
-      } catch (e) {
-        errEl.textContent = 'Network error. Please try again.';
-        errEl.style.display = 'block';
-      }
-    }
+  // Enter key on login
+  document.getElementById('api-key-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
 
-    async function loadDashboard() {
-      try {
-        const res = await fetch(`${API_BASE}/dashboard`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        if (res.status === 401) {
-          localStorage.removeItem('sb_token');
-          location.reload();
-          return;
-        }
-        dashData = await res.json();
-        renderDashboard();
-      } catch (e) {
-        console.error('Dashboard load error:', e);
-      }
-    }
+  // Nav items
+  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+      // Close mobile sidebar
+      if (window.innerWidth <= 900) toggleSidebar();
+    });
+  });
 
-    function renderDashboard() {
-      document.getElementById('loginView').style.display = 'none';
-      document.getElementById('dashboardView').style.display = 'block';
-      document.getElementById('logoutBtn').style.display = 'inline';
-
-      const u = dashData.user;
-      document.getElementById('dashGreeting').textContent = `Welcome, ${u.name || u.email}`;
-      document.getElementById('dashTier').textContent = `${u.tier.charAt(0).toUpperCase() + u.tier.slice(1)} Plan`;
-
-      // Stats
-      const s = dashData.stats;
-      document.getElementById('statsGrid').innerHTML = `
-        <div class="sb-stat-card"><div class="value">${s.totalSites}</div><div class="label">Job Sites</div></div>
-        <div class="sb-stat-card"><div class="value">${s.totalIncidents}</div><div class="label">Incidents</div></div>
-        <div class="sb-stat-card"><div class="value">${s.upcomingInspections}</div><div class="label">Upcoming Inspections</div></div>
-        <div class="sb-stat-card"><div class="value">${s.expiringSoon}</div><div class="label">Expiring Soon</div></div>
-        <div class="sb-stat-card"><div class="value">${s.complianceScore}%</div><div class="label">Compliance Score</div></div>
-      `;
-
-      // Sites
-      const sitesHtml = dashData.jobSites.map(site => `
-        <div class="sb-card-item">
-          <div>
-            <div class="title">${esc(site.name)}</div>
-            <div class="meta">${esc(site.address || '')} · ${site.status || 'active'}</div>
-          </div>
-          <span class="sb-badge-status ${site.status === 'active' ? 'closed' : 'open'}">${site.status || 'active'}</span>
-        </div>
-      `).join('') || '<p style="color:var(--muted);">No job sites configured yet.</p>';
-      document.getElementById('sitesList').innerHTML = sitesHtml;
-
-      // Populate site dropdowns
-      const siteOptions = dashData.jobSites.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
-      document.getElementById('incidentSite').innerHTML = siteOptions;
-      document.getElementById('oshaSite').innerHTML = '<option value="">All Sites</option>' + siteOptions;
-
-      // Incidents
-      renderIncidents();
-
-      // Calendar
-      renderCalendar();
-    }
-
-    function renderIncidents() {
-      const html = dashData.incidents.map(inc => `
-        <div class="sb-card-item">
-          <div>
-            <div class="title">${esc(inc.type.replace('_', ' '))} — ${esc(inc.location || 'N/A')}</div>
-            <div class="meta">${inc.date} · ${esc(inc.description.substring(0, 80))}${inc.description.length > 80 ? '...' : ''}</div>
-          </div>
-          <span class="sb-badge-status ${inc.status}">${inc.status}</span>
-        </div>
-      `).join('') || '<p style="color:var(--muted);">No incidents recorded.</p>';
-      document.getElementById('incidentsList').innerHTML = html;
-    }
-
-    function renderCalendar() {
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const html = dashData.calendar.map(entry => {
-        const d = new Date(entry.date);
-        const daysClass = entry.daysUntilExpiry <= 7 ? 'urgent' : entry.daysUntilExpiry <= 30 ? 'soon' : 'ok';
-        const daysText = entry.daysUntilExpiry < 0 ? `${Math.abs(entry.daysUntilExpiry)}d overdue` : entry.daysUntilExpiry === 0 ? 'Today' : `${entry.daysUntilExpiry}d away`;
-        return `
-          <div class="sb-calendar-item">
-            <div class="sb-calendar-date">
-              <div class="day">${d.getDate()}</div>
-              <div class="month">${months[d.getMonth()]}</div>
-            </div>
-            <div class="sb-calendar-info">
-              <div class="title">${esc(entry.title)}</div>
-              <div class="type">${entry.type}</div>
-            </div>
-            <div class="sb-calendar-days ${daysClass}">${daysText}</div>
-          </div>
-        `;
-      }).join('') || '<p style="color:var(--muted);">No calendar entries.</p>';
-      document.getElementById('calendarList').innerHTML = html;
-    }
-
-    function switchTab(name) {
-      document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.sb-tab-content').forEach(c => c.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById(`tab-${name}`).classList.add('active');
-    }
-
-    async function submitIncident() {
-      const resultEl = document.getElementById('incidentResult');
-      resultEl.style.display = 'none';
-      const payload = {
-        siteId: document.getElementById('incidentSite').value,
-        type: document.getElementById('incidentType').value,
-        date: document.getElementById('incidentDate').value,
-        location: document.getElementById('incidentLocation').value,
-        description: document.getElementById('incidentDesc').value,
-        severity: document.getElementById('incidentSeverity').value,
-        correctiveActions: document.getElementById('incidentCorrective').value,
-      };
-      if (!payload.siteId || !payload.description) {
-        resultEl.textContent = 'Please fill in required fields (site, description).';
-        resultEl.style.color = 'var(--red)';
-        resultEl.style.display = 'block';
-        return;
-      }
-      try {
-        const res = await fetch(`${API_BASE}/incident`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          resultEl.textContent = data.error || 'Failed to submit';
-          resultEl.style.color = 'var(--red)';
-        } else {
-          resultEl.textContent = '✅ Incident report submitted successfully!';
-          resultEl.style.color = 'var(--green)';
-          // Clear form
-          document.getElementById('incidentLocation').value = '';
-          document.getElementById('incidentDesc').value = '';
-          document.getElementById('incidentCorrective').value = '';
-          // Reload dashboard
-          await loadDashboard();
-        }
-        resultEl.style.display = 'block';
-      } catch (e) {
-        resultEl.textContent = 'Network error. Please try again.';
-        resultEl.style.color = 'var(--red)';
-        resultEl.style.display = 'block';
-      }
-    }
-
-    async function generateOSHA300() {
-      const year = document.getElementById('oshaYear').value;
-      const siteId = document.getElementById('oshaSite').value;
-      try {
-        const res = await fetch(`${API_BASE}/osha300/generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-          body: JSON.stringify({ year: parseInt(year), siteId: siteId || undefined })
-        });
-        if (!res.ok) {
-          alert('Failed to generate OSHA 300 log');
-          return;
-        }
-        const html = await res.text();
-        const w = window.open('', '_blank');
-        w.document.write(html);
-        w.document.close();
-      } catch (e) {
-        alert('Error generating OSHA 300 log');
-      }
-    }
-
-    function esc(s) {
-      if (!s) return '';
-      const d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
-    }
-  </script>
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+  }
+</script>
 </body>
 </html>

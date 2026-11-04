@@ -1,0 +1,7 @@
+
+/shieldinvoice/dashboard/ /api/shieldinvoice-dashboard 200
+/shieldverify/dashboard/ /api/shieldverify-dashboard 200
+/shieldbuild/dashboard/ /api/shieldbuild-dashboard 200
+/compliance/dashboard/ /api/compliance-dashboard 200
+/shieldfill/dashboard/ /api/shieldfill-dashboard 200
+/vendor-risk/dashboard/ /api/vendor-risk-dashboard 200
