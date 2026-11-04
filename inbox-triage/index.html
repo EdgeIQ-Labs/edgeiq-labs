@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inbox Triage by EdgeIQ Labs — AI Email Classification for Small Business</title>
+  <meta name="description" content="Stop drowning in email. Inbox Triage auto-classifies, drafts replies, and routes messages using AI. From $19/mo. No new inbox to learn.">
+  <link rel="stylesheet" href="/css/design-system.css?v=10">
+  <script src="/js/theme.js"></script>
+  <style>
+    .triage-hero { padding: 120px 0 80px; text-align: center; }
+    .triage-hero h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; margin-bottom: 16px; }
+    .triage-hero h1 span { color: var(--color-accent); }
+    .triage-hero p { font-size: 1.15rem; color: var(--color-text-secondary); max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+    .triage-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 720px; margin: 0 auto; padding: 0 20px; }
+    .plan-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 32px; text-align: left; }
+    .plan-card h3 { font-size: 1.3rem; margin-bottom: 4px; }
+    .plan-card .price { font-size: 2rem; font-weight: 800; color: var(--color-accent); margin-bottom: 16px; }
+    .plan-card .price span { font-size: 0.9rem; color: var(--color-text-secondary); font-weight: 400; }
+    .plan-card ul { list-style: none; padding: 0; margin: 0 0 24px; }
+    .plan-card li { padding: 6px 0; color: var(--color-text-secondary); font-size: 0.95rem; }
+    .plan-card li::before { content: "✓ "; color: var(--color-accent); font-weight: 700; }
+    .triage-flow { max-width: 800px; margin: 80px auto; padding: 0 20px; }
+    .flow-step { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 32px; }
+    .flow-num { width: 40px; height: 40px; border-radius: 50%; background: var(--color-accent); color: #071018; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .flow-content h4 { margin: 0 0 4px; font-size: 1.1rem; }
+    .flow-content p { margin: 0; color: var(--color-text-secondary); font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/">
+        <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+        <div class="nav-wordmark">
+          <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+          <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/tools/">Dev Tools</a>
+        <a href="/compliance/">Compliance</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/blog/">Blog</a>
+        <a href="/pricing/" class="nav-cta">Get Protected</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="triage-hero container">
+      <h1>Your inbox is smarter than you think.<br><span>We just had to teach it.</span></h1>
+      <p>Inbox Triage sits between your domain email and Gmail/Outlook. It classifies every message, drafts replies from your knowledge base, and routes what matters — so you only see what needs you.</p>
+      <a href="#plans" class="btn btn-primary" style="font-size:1.1rem;padding:14px 32px;">Start 14-Day Free Trial</a>
+    </section>
+
+    <section class="triage-flow">
+      <h2 style="text-align:center;margin-bottom:48px;font-size:1.6rem;">How it works</h2>
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <h4>Connect your mailbox</h4>
+          <p>Add a forwarding rule or secondary MX record. Takes 2 minutes. You never leave Gmail or Outlook.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <h4>AI classifies every email</h4>
+          <p>Support, sales, spam, urgent — tagged automatically with priority levels P0 through P3. Powered by your own KB docs.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <h4>Drafts land in your queue</h4>
+          <p>Review, edit, approve, or reject AI-generated replies before they send. Full human-in-the-loop control.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <h4>P0 alerts hit instantly</h4>
+          <p>Critical emails trigger push notifications to your phone. Nothing urgent slips through the cracks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" style="padding:80px 0;background:var(--color-bg-elevated);">
+      <h2 style="text-align:center;margin-bottom:48px;font-size:1.6rem;">Simple pricing. No per-seat tax.</h2>
+      <div class="triage-plans">
+        <div class="plan-card">
+          <h3>Starter</h3>
+          <div class="price">$19<span>/mo</span></div>
+          <ul>
+            <li>500 emails triaged/month</li>
+            <li>AI classification + priority tagging</li>
+            <li>Custom routing rules</li>
+            <li>P0 push alerts (Bark/ntfy)</li>
+            <li>Email digest summaries</li>
+          </ul>
+          <a href="/api/inbox-triage/checkout?plan=starter" class="btn btn-primary" style="width:100%;text-align:center;">Start Free Trial</a>
+        </div>
+        <div class="plan-card" style="border-color:var(--color-accent);">
+          <h3>Pro <span style="font-size:0.75rem;background:var(--color-accent);color:#071018;padding:2px 8px;border-radius:12px;font-weight:700;">POPULAR</span></h3>
+          <div class="price">$29<span>/mo</span></div>
+          <ul>
+            <li>Unlimited emails triaged</li>
+            <li>Everything in Starter</li>
+            <li>AI draft replies from your KB</li>
+            <li>Human-in-the-loop approval queue</li>
+            <li>KB document upload (PDF/text)</li>
+            <li>Audit log + usage analytics</li>
+          </ul>
+          <a href="/api/inbox-triage/checkout?plan=pro" class="btn btn-primary" style="width:100%;text-align:center;">Start Free Trial</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" style="padding:80px 20px;text-align:center;">
+      <h2 style="margin-bottom:16px;">Built on infrastructure you already trust</h2>
+      <p style="color:var(--color-text-secondary);max-width:600px;margin:0 auto 32px;line-height:1.6;">Inbox Triage runs on EdgeIQ's Mailflare email engine, Cloudflare Workers, and Resend delivery. No third-party API margins. No vendor lock-in. Your data stays on your stack.</p>
+      <a href="/compliance/" class="btn" style="border:1px solid var(--color-border);padding:10px 24px;border-radius:8px;color:var(--color-text-primary);text-decoration:none;">Explore Compliance Suite →</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
