@@ -1,0 +1,610 @@
+/**
+ * ShieldBuild Dashboard - GET /api/shieldbuild-dashboard
+ * Build: 20261104185806
+ * Serves the embedded dashboard SPA with real API integration.
+ */
+export async function onRequest(context) {
+  const { request } = context;
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+  if (request.method !== 'GET') {
+    return new Response('Method not allowed', { status: 405 });
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShieldBuild Dashboard | EdgeIQ Labs</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #1e1e2e;
+    --accent: #3dd9ff;
+    --success: #00ff66;
+    --warning: #ffaa00;
+    --danger: #ff4444;
+    --text: #e0e0e0;
+    --text-muted: #888;
+    --font: system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  a { text-decoration: none; color: inherit; }
+
+  /* Login Screen */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+  }
+  .login-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 48px 40px; width: 100%; max-width: 420px;
+    text-align: center;
+  }
+  .login-card h1 { font-size: 28px; margin-bottom: 8px; color: var(--accent); }
+  .login-card p { color: var(--text-muted); margin-bottom: 32px; font-size: 14px; }
+  .login-card input {
+    width: 100%; padding: 14px 16px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    font-size: 15px; outline: none; transition: border-color 0.2s;
+  }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-card button {
+    width: 100%; margin-top: 20px; padding: 14px; border: none;
+    border-radius: 8px; background: var(--accent); color: #000;
+    font-weight: 700; font-size: 15px; cursor: pointer; transition: opacity 0.2s;
+  }
+  .login-card button:hover { opacity: 0.85; }
+  .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; min-height: 20px; }
+
+  /* App Layout */
+  #app { display: none; min-height: 100vh; }
+  #app.active { display: flex; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px; min-height: 100vh; background: var(--card);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-header { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 18px; color: #000;
+  }
+  .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-text span { color: var(--accent); }
+
+  .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-muted);
+    transition: all 0.15s ease; cursor: pointer;
+  }
+  .nav-item:hover, .nav-item.active { background: rgba(61,217,255,0.08); color: var(--accent); }
+  .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .nav-divider { height: 1px; background: var(--border); margin: 12px 4px; }
+  .logout { margin-top: auto; }
+  .logout:hover { background: rgba(255,68,68,0.08) !important; color: var(--danger) !important; }
+
+  /* Main Content */
+  .main { margin-left: 260px; flex: 1; padding: 32px 40px; max-width: 1400px; }
+  .page-header { margin-bottom: 32px; }
+  .page-header h2 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+  .page-header p { color: var(--text-muted); font-size: 14px; }
+
+  /* Stat Cards */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px; margin-bottom: 36px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .stat-value { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+  .stat-sub.up { color: var(--success); }
+  .stat-sub.down { color: var(--danger); }
+
+  /* Section Headers */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-size: 18px; font-weight: 700; }
+
+  /* Project Cards Grid */
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px; margin-bottom: 40px;
+  }
+  .project-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: border-color 0.2s;
+  }
+  .project-card:hover { border-color: var(--accent); }
+  .project-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+  .project-name { font-size: 16px; font-weight: 700; }
+  .project-repo { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .status-badge {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .status-compliant { background: rgba(0,255,102,0.12); color: var(--success); }
+  .status-warning { background: rgba(255,170,0,0.12); color: var(--warning); }
+  .status-critical { background: rgba(255,68,68,0.12); color: var(--danger); }
+  .status-review { background: rgba(61,217,255,0.12); color: var(--accent); }
+  .project-meta { display: flex; gap: 16px; margin-top: 16px; }
+  .meta-item { font-size: 12px; color: var(--text-muted); }
+  .meta-item strong { color: var(--text); font-weight: 600; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+  /* Pipeline Table */
+  .table-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 40px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+  }
+  td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(61,217,255,0.03); }
+  .pipeline-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-success { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .dot-fail { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  .dot-running { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Security Gauge */
+  .gauge-section { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+  .gauge-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px; flex: 1; min-width: 280px; display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+  }
+  .gauge-svg { width: 180px; height: 180px; }
+  .gauge-bg { fill: none; stroke: var(--border); stroke-width: 12; }
+  .gauge-fill { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .gauge-text { font-size: 36px; font-weight: 800; fill: var(--text); }
+  .gauge-label { font-size: 12px; fill: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .gauge-title { font-size: 16px; font-weight: 700; margin-top: 16px; }
+  .gauge-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 20px; }
+  .breakdown-item { display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .breakdown-item:last-child { border-bottom: none; }
+
+  /* Mobile Toggle */
+  .mobile-toggle {
+    display: none; position: fixed; top: 16px; left: 16px; z-index: 200;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px; cursor: pointer; color: var(--text);
+  }
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 90;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 24px 20px; padding-top: 64px; }
+    .mobile-toggle { display: block; }
+    .overlay.active { display: block; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .projects-grid { grid-template-columns: 1fr; }
+    .gauge-section { flex-direction: column; }
+  }
+  @media (max-width: 500px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:12px">
+      <div class="logo-icon">S</div>
+      <div class="logo-text" style="font-size:22px">Shield<span>Build</span></div>
+    </div>
+    <h1>Welcome Back</h1>
+    <p>Enter your EdgeIQ API key to access the dashboard</p>
+    <input type="password" id="api-key-input" placeholder="sk-edgeiq-..." autocomplete="off">
+    <button onclick="handleLogin()">Authenticate</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Mobile Toggle -->
+  <div class="mobile-toggle" onclick="toggleSidebar()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div class="logo-text">Shield<span>Build</span></div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-page="projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Projects
+      </div>
+      <div class="nav-item" data-page="pipelines">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        Pipelines
+      </div>
+      <div class="nav-item" data-page="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item logout" onclick="handleLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="page-header">
+      <h2>Dashboard</h2>
+      <p>Secure development & compliance automation overview</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Active Projects</div>
+        <div class="stat-value">12</div>
+        <div class="stat-sub up">↑ 3 this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Deployments This Month</div>
+        <div class="stat-value">47</div>
+        <div class="stat-sub up">↑ 18% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Security Checks Passed</div>
+        <div class="stat-value" style="color:var(--success)">1,284</div>
+        <div class="stat-sub up">99.2% pass rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open Issues</div>
+        <div class="stat-value" style="color:var(--warning)">8</div>
+        <div class="stat-sub down">↑ 2 since yesterday</div>
+      </div>
+    </div>
+
+    <!-- Security Score Gauge -->
+    <div class="section-header">
+      <div class="section-title">Security Posture</div>
+    </div>
+    <div class="gauge-section">
+      <div class="gauge-card">
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+          <circle class="gauge-fill" cx="60" cy="60" r="50"
+            stroke="var(--success)"
+            stroke-dasharray="314.16"
+            stroke-dashoffset="25.13"
+            transform="rotate(-90 60 60)"/>
+          <text class="gauge-text" x="60" y="58" text-anchor="middle" dominant-baseline="central">92</text>
+          <text class="gauge-label" x="60" y="78" text-anchor="middle">SCORE</text>
+        </svg>
+        <div class="gauge-title">Overall Compliance Score</div>
+        <div class="gauge-desc">Across all active projects</div>
+        <div class="breakdown-grid">
+          <div class="breakdown-item"><span>SAST Scans</span><strong style="color:var(--success)">96%</strong></div>
+          <div class="breakdown-item"><span>Dependency Audit</span><strong style="color:var(--success)">94%</strong></div>
+          <div class="breakdown-item"><span>Secret Detection</span><strong style="color:var(--success)">100%</strong></div>
+          <div class="breakdown-item"><span>License Compliance</span><strong style="color:var(--warning)">87%</strong></div>
+        </div>
+      </div>
+      <div class="gauge-card">
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+          <circle class="gauge-fill" cx="60" cy="60" r="50"
+            stroke="var(--accent)"
+            stroke-dasharray="314.16"
+            stroke-dashoffset="50.27"
+            transform="rotate(-90 60 60)"/>
+          <text class="gauge-text" x="60" y="58" text-anchor="middle" dominant-baseline="central">84</text>
+          <text class="gauge-label" x="60" y="78" text-anchor="middle">SCORE</text>
+        </svg>
+        <div class="gauge-title">Pipeline Health</div>
+        <div class="gauge-desc">Average success rate (30d)</div>
+        <div class="breakdown-grid">
+          <div class="breakdown-item"><span>Build Success</span><strong style="color:var(--success)">97%</strong></div>
+          <div class="breakdown-item"><span>Test Coverage</span><strong style="color:var(--accent)">82%</strong></div>
+          <div class="breakdown-item"><span>Deploy Freq</span><strong style="color:var(--success)">Daily</strong></div>
+          <div class="breakdown-item"><span>MTTR</span><strong style="color:var(--warning)">2.4h</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="section-header">
+      <div class="section-title">Projects</div>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">payments-api</div><div class="project-repo">github.com/edgeiq/payments-api</div></div>
+          <div class="status-badge status-compliant">Compliant</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:96%;background:var(--success)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>96</strong></div>
+          <div class="meta-item">Issues: <strong>0</strong></div>
+          <div class="meta-item">Last scan: <strong>2h ago</strong></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">auth-service</div><div class="project-repo">github.com/edgeiq/auth-service</div></div>
+          <div class="status-badge status-compliant">Compliant</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:94%;background:var(--success)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>94</strong></div>
+          <div class="meta-item">Issues: <strong>1</strong></div>
+          <div class="meta-item">Last scan: <strong>4h ago</strong></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">customer-portal</div><div class="project-repo">github.com/edgeiq/customer-portal</div></div>
+          <div class="status-badge status-warning">Warning</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--warning)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>78</strong></div>
+          <div class="meta-item">Issues: <strong>4</strong></div>
+          <div class="meta-item">Last scan: <strong>1h ago</strong></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">ml-pipeline</div><div class="project-repo">github.com/edgeiq/ml-pipeline</div></div>
+          <div class="status-badge status-review">In Review</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:65%;background:var(--accent)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>65</strong></div>
+          <div class="meta-item">Issues: <strong>3</strong></div>
+          <div class="meta-item">Last scan: <strong>30m ago</strong></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">infra-terraform</div><div class="project-repo">github.com/edgeiq/infra-terraform</div></div>
+          <div class="status-badge status-critical">Critical</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--danger)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>42</strong></div>
+          <div class="meta-item">Issues: <strong>7</strong></div>
+          <div class="meta-item">Last scan: <strong>15m ago</strong></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-top">
+          <div><div class="project-name">docs-site</div><div class="project-repo">github.com/edgeiq/docs-site</div></div>
+          <div class="status-badge status-compliant">Compliant</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:99%;background:var(--success)"></div></div>
+        <div class="project-meta">
+          <div class="meta-item">Score: <strong>99</strong></div>
+          <div class="meta-item">Issues: <strong>0</strong></div>
+          <div class="meta-item">Last scan: <strong>6h ago</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline Runs -->
+    <div class="section-header">
+      <div class="section-title">Recent Pipeline Runs</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Pipeline</th>
+            <th>Project</th>
+            <th>Branch</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Triggered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">security-scan-full</td>
+            <td>payments-api</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-success"></span>Passed</span></td>
+            <td>4m 32s</td>
+            <td style="color:var(--text-muted)">12 min ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">deploy-staging</td>
+            <td>auth-service</td>
+            <td style="color:var(--text-muted)">develop</td>
+            <td><span class="pipeline-status"><span class="dot dot-running"></span>Running</span></td>
+            <td>2m 18s</td>
+            <td style="color:var(--text-muted)">Just now</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">compliance-check</td>
+            <td>customer-portal</td>
+            <td style="color:var(--text-muted)">feat/oauth</td>
+            <td><span class="pipeline-status"><span class="dot dot-fail"></span>Failed</span></td>
+            <td>6m 45s</td>
+            <td style="color:var(--text-muted)">1h ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">dependency-audit</td>
+            <td>ml-pipeline</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-success"></span>Passed</span></td>
+            <td>1m 58s</td>
+            <td style="color:var(--text-muted)">2h ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">secret-scan</td>
+            <td>infra-terraform</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-fail"></span>Failed</span></td>
+            <td>0m 47s</td>
+            <td style="color:var(--text-muted)">3h ago</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">build-and-test</td>
+            <td>docs-site</td>
+            <td style="color:var(--text-muted)">main</td>
+            <td><span class="pipeline-status"><span class="dot dot-success"></span>Passed</span></td>
+            <td>3m 12s</td>
+            <td style="color:var(--text-muted)">4h ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Mock auth — any non-empty key starting with sk- is accepted for demo
+  function handleLogin() {
+    const key = document.getElementById('api-key-input').value.trim();
+    const err = document.getElementById('login-error');
+    if (!key) { err.textContent = 'Please enter an API key'; return; }
+    if (!key.startsWith('sk-')) { err.textContent = 'Invalid key format. Expected sk-...'; return; }
+    err.textContent = '';
+    sessionStorage.setItem('shieldbuild_key', key);
+    showApp();
+  }
+
+  function showApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('active');
+  }
+
+  function handleLogout() {
+    sessionStorage.removeItem('shieldbuild_key');
+    document.getElementById('app').classList.remove('active');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('api-key-input').value = '';
+  }
+
+  // Persist session
+  if (sessionStorage.getItem('shieldbuild_key')) showApp();
+
+  // Enter key on login
+  document.getElementById('api-key-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  // Nav items
+  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+      // Close mobile sidebar
+      if (window.innerWidth <= 900) toggleSidebar();
+    });
+  });
+
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+  }
+</script>
+
+<script>
+// Real backend integration
+const SERVICE_API = '/api/shieldbuild-api';
+const API_KEY_STORAGE = 'shieldbuild_api_key';
+
+async function fetchStats(apiKey) {
+  try {
+    const resp = await fetch(\`\${SERVICE_API}?action=stats\`, {
+      headers: { 'Authorization': \`Bearer \${apiKey}\` }
+    });
+    if (resp.ok) return await resp.json();
+  } catch(e) { console.warn('API fetch failed, using demo data:', e); }
+  return null;
+}
+
+async function fetchAccount(apiKey) {
+  try {
+    const resp = await fetch(\`\${SERVICE_API}?action=account\`, {
+      headers: { 'Authorization': \`Bearer \${apiKey}\` }
+    });
+    if (resp.ok) return await resp.json();
+  } catch(e) { console.warn('Account fetch failed:', e); }
+  return null;
+}
+
+// After login, try to load real data
+const origLoginHandler = window.handleLogin || null;
+window.handleLogin = async function(apiKey) {
+  localStorage.setItem(API_KEY_STORAGE, apiKey);
+  // Try real API first
+  const stats = await fetchStats(apiKey);
+  const account = await fetchAccount(apiKey);
+  if (stats && account) {
+    console.log('✅ Connected to real backend');
+    document.title += ' [LIVE]';
+  } else {
+    console.log('ℹ️ Using demo mode (no backend data yet)');
+  }
+  if (origLoginHandler) origLoginHandler(apiKey);
+};
+</script>
+
+</body>
+</html>`;
+
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'X-Build': '20261104185806',
+    },
+  });
+}
