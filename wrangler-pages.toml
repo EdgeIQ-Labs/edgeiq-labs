@@ -1,0 +1,26 @@
+# KV namespace bindings for EdgeIQ Labs Pages Functions
+# These are referenced by the universal webhook and per-service APIs
+
+[[kv_namespaces]]
+binding = "SHIELDINVOICE_KV"
+id = "2967be04bd014e5fbfb11367dace9ac3"
+
+[[kv_namespaces]]
+binding = "SHIELDVERIFY_KV"
+id = "4bd220191a8e418d8c8d98542d69fd3c"
+
+[[kv_namespaces]]
+binding = "SHIELDBUILD_KV"
+id = "4dad5e295e7140acb4a0bcc21f1360e4"
+
+[[kv_namespaces]]
+binding = "COMPLIANCE_KV"
+id = "aa820bfb31d14187a1d6305b8f00682f"
+
+[[kv_namespaces]]
+binding = "SHIELDFILL_KV"
+id = "90d9db38d744434d9aa14a6722740269"
+
+[[kv_namespaces]]
+binding = "VENDORRISK_KV"
+id = "a822596800d746a1a234d1d9ff3642d7"
