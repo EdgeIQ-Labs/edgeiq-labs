@@ -5,6 +5,15 @@
  */
 export async function onRequest(context) {
   const { request } = context;
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
   if (request.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
   }
