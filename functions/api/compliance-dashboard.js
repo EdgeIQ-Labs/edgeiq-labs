@@ -1,6 +1,7 @@
 /**
  * Compliance Shield Dashboard - GET /api/compliance-dashboard
- * Serves the embedded dashboard SPA.
+ * Build: 20261104185806
+ * Serves the embedded dashboard SPA with real API integration.
  */
 export async function onRequest(context) {
   const { request } = context;
@@ -500,7 +501,8 @@ window.handleLogin = async function(apiKey) {
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, must-revalidate',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'X-Build': '20261104185806',
     },
   });
 }
