@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free HIPAA Compliance Checklist for Small Healthcare Practices | EdgeIQ Labs</title>
+  <meta name="description" content="Download our free HIPAA gap assessment checklist. Covers the 12 most commonly missed requirements for dental, optometry, chiropractic, and therapy practices. Self-assess in 15 minutes.">
+  <link rel="stylesheet" href="/design-system.css">
+  <style>
+    .checklist-hero {
+      text-align: center;
+      padding: 4rem 1.5rem 3rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .checklist-hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .checklist-hero .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted-foreground);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .checklist-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      max-width: 640px;
+      margin: 0 auto 3rem;
+    }
+    .checklist-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .checklist-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5rem;
+    }
+    .checklist-card li {
+      padding: 0.5rem 0;
+      padding-left: 1.8rem;
+      position: relative;
+      color: var(--muted-foreground);
+    }
+    .checklist-card li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .download-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #071018;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 16px 40px;
+      border-radius: 9px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .download-btn:hover { opacity: 0.9; }
+    .pdf-preview {
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .pdf-preview iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .cta-section {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .cta-section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+    }
+    .cta-section p {
+      color: var(--muted-foreground);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      max-width: 800px;
+      margin: 2rem auto 0;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .service-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .service-card .price {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .service-card p {
+      font-size: 0.85rem;
+      color: var(--muted-foreground);
+      margin-top: 0.4rem;
+    }
+    @media (max-width: 600px) {
+      .checklist-hero h1 { font-size: 1.6rem; }
+      .checklist-card { padding: 1.5rem; }
+      .pdf-preview iframe { height: 400px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">EdgeIQ Labs</a>
+      <div class="nav-links">
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/compliance/">Compliance</a>
+        <a href="/products/">Products</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="checklist-hero">
+      <h1>Free HIPAA Gap Assessment Checklist</h1>
+      <p class="subtitle">The 12 most commonly missed HIPAA requirements for small healthcare practices. Self-assess your compliance posture in about 15 minutes — no account needed.</p>
+    </section>
+
+    <section class="checklist-card">
+      <h2>What's Inside</h2>
+      <ul>
+        <li>Patient email encryption & secure messaging gaps</li>
+        <li>Business Associate Agreement (BAA) verification</li>
+        <li>Risk assessment documentation requirements</li>
+        <li>Access control & audit logging standards</li>
+        <li>Breach notification timeline compliance</li>
+        <li>Staff training & sanction policy documentation</li>
+        <li>Physical security & workstation safeguards</li>
+        <li>Vendor management & third-party risk controls</li>
+        <li>Data backup & disaster recovery requirements</li>
+        <li>Minimum necessary standard implementation</li>
+        <li>Patient rights & access request procedures</li>
+        <li>Privacy notice & authorization form compliance</li>
+      </ul>
+      <div style="text-align:center">
+        <a href="/compliance-shield/assets/hipaa-gap-checklist-2026.pdf" class="download-btn" download>Download the Checklist (PDF) →</a>
+      </div>
+    </section>
+
+    <section class="pdf-preview">
+      <iframe src="/compliance-shield/assets/hipaa-gap-checklist-2026.pdf" title="HIPAA Gap Assessment Checklist Preview"></iframe>
+    </section>
+
+    <section class="cta-section">
+      <h2>Found Gaps? We Can Help Fix Them.</h2>
+      <p>If the checklist turns up issues, we offer hands-on compliance support built for small practices — not enterprise boilerplate.</p>
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>Compliance Starter</h3>
+          <span class="price">$299/mo</span>
+          <p>Guided remediation, quarterly audits, and BAA tracking.</p>
+        </div>
+        <div class="service-card">
+          <h3>Compliance Pro</h3>
+          <span class="price">$499/mo</span>
+          <p>Continuous monitoring, incident response, vendor assessments, and full HIPAA coverage.</p>
+        </div>
+      </div>
+      <p style="margin-top:1.5rem"><a href="/compliance/" style="color:var(--accent);text-decoration:underline">Learn more about Compliance Shield →</a></p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 EdgeIQ Labs · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p>
+    </div>
+  </footer>
+</body>
+</html>
