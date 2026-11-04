@@ -451,6 +451,49 @@ export async function onRequest(context) {
     });
   });
 </script>
+
+<script>
+// Real backend integration
+const SERVICE_API = '/api/compliance-api';
+const API_KEY_STORAGE = 'compliance_api_key';
+
+async function fetchStats(apiKey) {
+  try {
+    const resp = await fetch(\`\${SERVICE_API}?action=stats\`, {
+      headers: { 'Authorization': \`Bearer \${apiKey}\` }
+    });
+    if (resp.ok) return await resp.json();
+  } catch(e) { console.warn('API fetch failed, using demo data:', e); }
+  return null;
+}
+
+async function fetchAccount(apiKey) {
+  try {
+    const resp = await fetch(\`\${SERVICE_API}?action=account\`, {
+      headers: { 'Authorization': \`Bearer \${apiKey}\` }
+    });
+    if (resp.ok) return await resp.json();
+  } catch(e) { console.warn('Account fetch failed:', e); }
+  return null;
+}
+
+// After login, try to load real data
+const origLoginHandler = window.handleLogin || null;
+window.handleLogin = async function(apiKey) {
+  localStorage.setItem(API_KEY_STORAGE, apiKey);
+  // Try real API first
+  const stats = await fetchStats(apiKey);
+  const account = await fetchAccount(apiKey);
+  if (stats && account) {
+    console.log('✅ Connected to real backend');
+    document.title += ' [LIVE]';
+  } else {
+    console.log('ℹ️ Using demo mode (no backend data yet)');
+  }
+  if (origLoginHandler) origLoginHandler(apiKey);
+};
+</script>
+
 </body>
 </html>`;
 
