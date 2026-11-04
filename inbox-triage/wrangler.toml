@@ -5,11 +5,11 @@ compatibility_date = "2026-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "inbox-triage"
-database_id = "PLACEHOLDER_D1_ID"
+database_id = "6222134e-0133-4215-9875-7ec888f0e2e2"
 
 [[kv_namespaces]]
 binding = "CACHE_KV"
-id = "PLACEHOLDER_KV_ID"
+id = "4348e1d21434446b94aeb03d6899c222"
 
 [[r2_buckets]]
 binding = "KB_BUCKET"

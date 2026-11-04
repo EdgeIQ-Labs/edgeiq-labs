@@ -132,7 +132,7 @@ async function handleStats(env, customerId) {
 async function handleCheckoutRedirect(request, env) {
   const url = new URL(request.url);
   const plan = url.searchParams.get('plan') || 'starter';
-  const priceMap = { starter: 'price_inbox_starter', pro: 'price_inbox_pro' };
+  const priceMap = { starter: 'price_1UY6wJRC1NZ20yDTDwJKHkoY', pro: 'price_1UY6wKRC1NZ20yDTv82U7JIC' };
 
   if (!env.STRIPE_SECRET_KEY) {
     return new Response(JSON.stringify({ error: 'Checkout not configured' }), { status: 501 });
