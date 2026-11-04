@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Zeabur Is Shutting Down After Two Breaches. Where Do You Go? — EdgeIQ Labs</title>
+  <meta name="description" content="Zeabur is shutting down December 31 after attackers used plaintext credentials from an August breach to steal 3.2M environment variables. If you host there, move now and rotate everything."/>
+  <meta property="og:title" content="Zeabur Is Shutting Down After Two Breaches. Where Do You Go?"/>
+  <meta property="og:description" content="Developer hosting platform Zeabur is closing after two breaches in two months exposed 321K accounts and 3.2M secrets. Here's what happened, why it matters, and how to migrate safely."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/zeabur-shutdown-migrate-before-december.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/zeabur-shutdown-migrate-before-december.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Zeabur Is Shutting Down After Two Breaches. Where Do You Go?","datePublished":"2026-11-04","dateModified":"2026-11-04","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.red{color:#ff6b6b;background:#1f1010;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">EdgeIQ<span>Labs</span></a>
+    <div class="nav__links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/services.html">Services</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav__cta">Get Protected</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag red">Data Breach</span>
+      <span class="tag">Hosting</span>
+      <span class="tag">Cloud Security</span>
+    </div>
+    <h1>Zeabur Is Shutting Down After Two Breaches. Where Do You Go?</h1>
+    <div class="meta">
+      <span>November 4, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>Zeabur is turning off the lights. The developer hosting platform announced it will shut down all shared clusters and dedicated servers by December 31, 2026. Some services start pausing on December 1. The reason isn't a business pivot or a funding dry spell. It's that attackers broke in twice in two months, stole 3.2 million environment variable records and 321,810 user accounts, and the company decided it couldn't keep running safely.</p>
+
+    <p>If you host anything on Zeabur, you have about eight weeks to move. But moving your code is the easy part. The hard part is figuring out which of your secrets are already in someone else's hands.</p>
+
+    <h2>What Actually Happened</h2>
+
+    <p>The first breach was in August 2026. Details were limited at the time, but attackers got access to internal systems and, critically, walked away with plaintext administrator credentials and cloud access keys.</p>
+
+    <p>The second breach came between October 14 and 15. Same attackers, same stolen credentials from August. Except this time they used them to walk into Zeabur's shared hosting clusters across nine global regions. They gained root access to 101 GCP servers. They added their own SSH keys to 50 of those servers. They attached 16 customer disk copies to virtual machines they controlled.</p>
+
+    <p>The admin tokens they used hadn't been rotated since January 2024. Nearly three years without a credential change on infrastructure that holds other people's secrets. The admin portals were publicly accessible on the internet. No MFA. No IP restrictions.</p>
+
+    <p>When you store environment variables for thousands of developers, those variables contain database passwords, API keys, Stripe tokens, AWS credentials, OAuth secrets. Everything a developer pastes into a config panel so their app can talk to other services. Zeabur had 3.2 million of these records. Attackers took them.</p>
+
+    <div class="callout warn">
+      <strong>If you use or used Zeabur:</strong> Every secret you stored as an environment variable should be considered compromised. Not might be. Should be. Rotate your database passwords, API keys, payment processor tokens, and third-party service credentials before you finish migrating. Moving to a new host while keeping the same secrets just moves the attacker's access with you.
+    </div>
+
+    <h2>The Timeline That Matters</h2>
+
+    <p>December 31 sounds far away. It isn't. Here's the actual schedule:</p>
+
+    <ul>
+      <li><strong>December 1, 2026:</strong> Dedicated servers stop accepting renewals and begin shutting down based on individual expiry dates. Shared clusters pause all services. You can manually resume them to back up data, but they're not running normally.</li>
+      <li><strong>December 31, 2026:</strong> Everything stops. All remaining dedicated servers and shared clusters go dark permanently.</li>
+    </ul>
+
+    <p>Zeabur hasn't announced when data gets deleted or what the final export deadline is. Don't wait to find out. Treat December 1 as your real deadline, not December 31.</p>
+
+    <h2>Why This Isn't Just a Zeabur Problem</h2>
+
+    <p>Railway reported its own security incident on October 21, one day after Zeabur published its shutdown guide suggesting Railway as an alternative. Attackers may have accessed decrypted environment variables and API keys there too. Railway paused all deployments while investigating.</p>
+
+    <p>Two developer hosting platforms. Two breaches involving environment variable exposure. Within the same month. The pattern is clear: platforms that aggregate secrets for thousands of tenants are high-value targets, and the security practices at some of them are shockingly basic. Plaintext credentials. Tokens that never expire. Admin panels open to the internet.</p>
+
+    <p>This is the problem with trusting any single hosted platform to hold every secret your applications need. When that platform fails, the blast radius covers every service connected to it. Your database, your payment processor, your email provider, your CI/CD pipeline. One breach becomes twenty incidents across your stack.</p>
+
+    <h2>Where to Move</h2>
+
+    <p>You have three realistic options depending on what you run and how much control you want.</p>
+
+    <p><strong>Another managed platform.</strong> Render, Fly.io, Northflank, DigitalOcean App Platform. These give you push-to-deploy workflows similar to what Zeabur offered. The trade-off is the same trust model: you hand them your secrets and hope their security team is better than Zeabur's was. Given the Railway incident this month, that's not a guarantee.</p>
+
+    <p><strong>Self-hosted PaaS.</strong> Coolify, Dokku, CapRover. You rent a VPS, install the platform, and manage deployments yourself. You keep full control over where your secrets live. A small VPS running Coolify handles most MVP stacks without trouble. The catch is that patching becomes your job. You're responsible for OS updates, dependency management, and securing the admin interface. If that sounds like a lot, it is. But it's also the only option where you know exactly who has access to your environment variables.</p>
+
+    <p><strong>A plain VPS with Docker Compose.</strong> Strip away the PaaS layer entirely. Rent a server, write a compose file, deploy. Maximum control, maximum responsibility. Works well if you have a few services and don't need automatic deployments from GitHub.</p>
+
+    <p>Whatever you pick, do two things during the migration: rotate every secret that lived on Zeabur, and audit what those secrets had access to. A leaked database password means nothing if you've already changed it. A leaked Stripe key means chargebacks if you haven't.</p>
+
+    <h2>The Migration Checklist</h2>
+
+    <ul>
+      <li><strong>Export your data now.</strong> Don't wait for December. Pull databases, configs, and deployment logs while services are still running normally.</li>
+      <li><strong>Inventory every environment variable.</strong> Make a list of every secret stored in Zeabur. Database URLs, API keys, webhook secrets, OAuth tokens, SMTP credentials. All of it.</li>
+      <li><strong>Rotate everything on the list.</strong> Generate new credentials at each provider. Update your new hosting environment with the fresh values. Revoke the old ones.</li>
+      <li><strong>Check for unauthorized access.</strong> Look at login history, API call logs, and billing dashboards for every service whose credentials were on Zeabur. Attackers had those secrets since at least mid-October.</li>
+      <li><strong>Review IAM permissions.</strong> If you gave Zeabur cloud access keys (AWS, GCP), revoke them immediately. Check whether anyone used them to create new IAM users or spin up resources you didn't authorize.</li>
+      <li><strong>Set up monitoring on the new host.</strong> Whatever you move to, make sure you'll know if something looks wrong. Log forwarding, alerting on unusual traffic patterns, basic SIEM coverage.</li>
+    </ul>
+
+    <div class="cta-box">
+      <h3>Need a Place to Land?</h3>
+      <p>If you're tired of trusting platforms with your secrets, self-hosting on a dedicated VPS puts you back in control. EdgeIQ VPS plans start at $4/mo for a Nano instance (1 vCPU, 512MB RAM, 10GB SSD) and scale up from there. Pair it with our Wazuh SIEM integration for log monitoring, or use our free DNS and DMARC scanners to verify your domain security after migration. Bot hosting starts at $5/mo if you're running Discord bots that need a stable home.</p>
+      <a href="/vps/" class="btn">See VPS Plans →</a>
+    </div>
+
+    <h2>The Lesson Nobody Wants to Hear</h2>
+
+    <p>Zeabur's failure wasn't sophisticated. Nobody cracked an encryption algorithm or found a zero-day in the kernel. The attackers used credentials that were sitting in plaintext and hadn't been changed in almost three years. They walked through admin portals that were open to the entire internet.</p>
+
+    <p>These are mistakes that get made because convenience wins. Rotating tokens is annoying. Restricting admin access adds friction to your workflow. Storing secrets in plaintext makes debugging easier. Every shortcut makes sense in the moment until it doesn't.</p>
+
+    <p>If you run any kind of infrastructure, look at your own setup right now. When did you last rotate your admin credentials? Are your management interfaces exposed to the internet? Are your secrets encrypted at rest, or are they plaintext in a config file somewhere? The questions aren't comfortable, but they beat finding out the answers from a breach notification email.</p>
+
+    <p>Eight weeks. Start today.</p>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:48px auto;max-width:580px;">
+    <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">CVE alerts, attack breakdowns, and practical guides. No fluff, unsubscribe anytime.</p>
+    <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+      <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+      <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+    </form>
+    <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+    <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+    <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <!-- Giscus Comments -->
+  <div style="max-width:800px;margin:48px auto 0;padding:0 20px;">
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;color:var(--muted);font-size:0.82rem;">
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;">← Back to Blog</a>
+  </div>
+</div>
+
+<script>
+document.querySelector('.nav__hamburger').addEventListener('click', function() {
+  document.querySelector('.nav__links').classList.toggle('open');
+});
+</script>
+</body>
+</html>
