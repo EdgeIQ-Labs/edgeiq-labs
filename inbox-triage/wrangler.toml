@@ -15,7 +15,6 @@ id = "4348e1d21434446b94aeb03d6899c222"
 binding = "KB_BUCKET"
 bucket_name = "inbox-triage-kb"
 
-
 [dev]
 port = 8787
 local_protocol = "http"
