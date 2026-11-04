@@ -1,309 +1,324 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendor Risk Assessment — HIPAA-Native Vendor Management | EdgeIQ Labs</title>
-  <meta name="description" content="Track, assess, and monitor third-party vendors with HIPAA BAA tracking, AI auto-fill from public evidence, and cross-product intelligence from Compliance Shield + PhishSim. From $499/mo." />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="stylesheet" href="/css/design-system.css" />
-  <style>
-    /* Page-specific overrides using design tokens */
-    .vr-hero { padding: var(--space-3xl) 0 var(--space-2xl); text-align: center; }
-    .vr-hero h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.15; margin-bottom: var(--space-md); }
-    .vr-hero h1 span { color: var(--accent); }
-    .vr-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto var(--space-lg); line-height: 1.7; }
-    .vr-badge-row { display: flex; gap: var(--space-sm); justify-content: center; margin-bottom: var(--space-lg); flex-wrap: wrap; }
-
-    /* Pricing grid */
-    .vr-pricing { padding: var(--space-3xl) 0; }
-    .vr-pricing h2 { text-align: center; font-size: 2rem; margin-bottom: var(--space-xs); }
-    .vr-pricing .subtitle { text-align: center; color: var(--muted); margin-bottom: var(--space-2xl); }
-    .vr-pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-lg); }
-    .vr-price-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-xl); position: relative; display: flex; flex-direction: column; }
-    .vr-price-card.featured { border-color: var(--accent); box-shadow: var(--shadow-glow); }
-    .vr-price-card.featured::after { content: 'POPULAR'; position: absolute; top: 12px; right: 12px; background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 12px; }
-    .vr-price-card h3 { font-size: 1.2rem; margin-bottom: var(--space-xs); }
-    .vr-price-card .price { font-size: 2.2rem; font-weight: 800; color: var(--accent); margin: var(--space-sm) 0 var(--space-md); }
-    .vr-price-card .price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
-    .vr-price-card ul { list-style: none; margin: 0 0 var(--space-lg); flex: 1; }
-    .vr-price-card li { padding: 6px 0; font-size: 0.88rem; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; }
-    .vr-price-card li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
-
-    /* Feature grid */
-    .vr-features { padding: var(--space-3xl) 0; border-top: 1px solid var(--border); }
-    .vr-features h2 { text-align: center; font-size: 1.8rem; margin-bottom: var(--space-2xl); }
-    .vr-feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-lg); }
-    .vr-feature-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-lg); }
-    .vr-feature-card h3 { font-size: 1.05rem; margin-bottom: var(--space-sm); display: flex; align-items: center; gap: 8px; }
-    .vr-feature-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
-
-    /* Comparison table */
-    .vr-compare { padding: var(--space-3xl) 0; border-top: 1px solid var(--border); }
-    .vr-compare h2 { text-align: center; font-size: 1.8rem; margin-bottom: var(--space-2xl); }
-    .vr-compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .vr-compare-table th, .vr-compare-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; }
-    .vr-compare-table th { color: var(--muted); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .vr-compare-table td:first-child { font-weight: 600; color: var(--text); }
-    .vr-compare-table tr:last-child td { border-bottom: none; }
-    .check { color: var(--green); font-weight: 700; }
-    .cross { color: var(--muted); opacity: 0.5; }
-    .highlight-col { background: rgba(61,217,255,0.04); }
-
-    /* FAQ */
-    .vr-faq { padding: var(--space-3xl) 0; border-top: 1px solid var(--border); }
-    .vr-faq h2 { text-align: center; font-size: 1.8rem; margin-bottom: var(--space-2xl); }
-    .vr-faq-item { max-width: 720px; margin: 0 auto var(--space-lg); }
-    .vr-faq-item h3 { font-size: 1rem; margin-bottom: var(--space-sm); }
-    .vr-faq-item p { font-size: 0.92rem; color: var(--muted); line-height: 1.7; }
-
-    /* CTA */
-    .vr-cta { padding: var(--space-3xl) 0; text-align: center; border-top: 1px solid var(--border); }
-    .vr-cta h2 { font-size: 1.6rem; margin-bottom: var(--space-sm); }
-    .vr-cta p { color: var(--muted); margin-bottom: var(--space-lg); font-size: 0.95rem; }
-
-    @media (max-width: 700px) {
-      .vr-hero h1 { font-size: 1.8rem; }
-      .vr-compare-table { font-size: 0.8rem; }
-      .vr-compare-table th, .vr-compare-table td { padding: 8px 10px; }
-    }
-  </style>
-</head>
-<body>
-  <!-- Nav -->
-  <nav class="nav-bar">
-    <div class="nav-inner">
-      <a href="/" class="nav-brand">
-        <img src="/assets/img/logo-icon.png" alt="EdgeIQ" class="nav-logo-img" onerror="this.style.display='none'" />
-        <div class="nav-wordmark">
-          <span class="nav-brand-name">Edge<span>IQ</span> Labs</span>
-          <span class="nav-brand-tag">Cybersecurity · Compliance</span>
-        </div>
-      </a>
-      <div class="nav-links">
-        <a href="/">Home</a>
+1|<!DOCTYPE html>
+2|<html lang="en" data-theme="dark">
+3|<head>
+4|  <meta charset="UTF-8" />
+5|  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+6|  <title>Vendor Risk Assessment — HIPAA-Native Vendor Management | EdgeIQ Labs</title>
+7|  <meta name="description" content="Track, assess, and monitor third-party vendors with HIPAA BAA tracking, AI auto-fill from public evidence, and cross-product intelligence from Compliance Shield + PhishSim. From $499/mo." />
+8|  <link rel="icon" type="image/png" href="/favicon.png" />
+9|  <link rel="stylesheet" href="/css/design-system.css" />
+10|  <style>
+11|    /* Page-specific overrides using design tokens */
+12|    .vr-hero { padding: var(--space-3xl) 0 var(--space-2xl); text-align: center; }
+13|    .vr-hero h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.15; margin-bottom: var(--space-md); }
+14|    .vr-hero h1 span { color: var(--accent); }
+15|    .vr-hero p { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin: 0 auto var(--space-lg); line-height: 1.7; }
+16|    .vr-badge-row { display: flex; gap: var(--space-sm); justify-content: center; margin-bottom: var(--space-lg); flex-wrap: wrap; }
+17|
+18|    /* Pricing grid */
+19|    .vr-pricing { padding: var(--space-3xl) 0; }
+20|    .vr-pricing h2 { text-align: center; font-size: 2rem; margin-bottom: var(--space-xs); }
+21|    .vr-pricing .subtitle { text-align: center; color: var(--muted); margin-bottom: var(--space-2xl); }
+22|    .vr-pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-lg); }
+23|    .vr-price-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-xl); position: relative; display: flex; flex-direction: column; }
+24|    .vr-price-card.featured { border-color: var(--accent); box-shadow: var(--shadow-glow); }
+25|    .vr-price-card.featured::after { content: 'POPULAR'; position: absolute; top: 12px; right: 12px; background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 800; padding: 3px 10px; border-radius: 12px; }
+26|    .vr-price-card h3 { font-size: 1.2rem; margin-bottom: var(--space-xs); }
+27|    .vr-price-card .price { font-size: 2.2rem; font-weight: 800; color: var(--accent); margin: var(--space-sm) 0 var(--space-md); }
+28|    .vr-price-card .price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+29|    .vr-price-card ul { list-style: none; margin: 0 0 var(--space-lg); flex: 1; }
+30|    .vr-price-card li { padding: 6px 0; font-size: 0.88rem; color: var(--muted); display: flex; align-items: flex-start; gap: 8px; }
+31|    .vr-price-card li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+32|
+33|    /* Feature grid */
+34|    .vr-features { padding: var(--space-3xl) 0; border-top: 1px solid var(--border); }
+35|    .vr-features h2 { text-align: center; font-size: 1.8rem; margin-bottom: var(--space-2xl); }
+36|    .vr-feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-lg); }
+37|    .vr-feature-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-lg); }
+38|    .vr-feature-card h3 { font-size: 1.05rem; margin-bottom: var(--space-sm); display: flex; align-items: center; gap: 8px; }
+39|    .vr-feature-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+40|
+41|    /* Comparison table */
+42|    .vr-compare { padding: var(--space-3xl) 0; border-top: 1px solid var(--border); }
+43|    .vr-compare h2 { text-align: center; font-size: 1.8rem; margin-bottom: var(--space-2xl); }
+44|    .vr-compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+45|    .vr-compare-table th, .vr-compare-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; }
+46|    .vr-compare-table th { color: var(--muted); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+47|    .vr-compare-table td:first-child { font-weight: 600; color: var(--text); }
+48|    .vr-compare-table tr:last-child td { border-bottom: none; }
+49|    .check { color: var(--green); font-weight: 700; }
+50|    .cross { color: var(--muted); opacity: 0.5; }
+51|    .highlight-col { background: rgba(61,217,255,0.04); }
+52|
+53|    /* FAQ */
+54|    .vr-faq { padding: var(--space-3xl) 0; border-top: 1px solid var(--border); }
+55|    .vr-faq h2 { text-align: center; font-size: 1.8rem; margin-bottom: var(--space-2xl); }
+56|    .vr-faq-item { max-width: 720px; margin: 0 auto var(--space-lg); }
+57|    .vr-faq-item h3 { font-size: 1rem; margin-bottom: var(--space-sm); }
+58|    .vr-faq-item p { font-size: 0.92rem; color: var(--muted); line-height: 1.7; }
+59|
+60|    /* CTA */
+61|    .vr-cta { padding: var(--space-3xl) 0; text-align: center; border-top: 1px solid var(--border); }
+62|    .vr-cta h2 { font-size: 1.6rem; margin-bottom: var(--space-sm); }
+63|    .vr-cta p { color: var(--muted); margin-bottom: var(--space-lg); font-size: 0.95rem; }
+64|
+65|    @media (max-width: 700px) {
+66|      .vr-hero h1 { font-size: 1.8rem; }
+67|      .vr-compare-table { font-size: 0.8rem; }
+68|      .vr-compare-table th, .vr-compare-table td { padding: 8px 10px; }
+69|    }
+70|  </style>
+71|</head>
+72|<body>
+73|  <!-- Nav -->
+74|  <nav class="nav-bar">
+75|    <div class="nav-inner">
+76|      <a href="/" class="nav-brand">
+77|        <img src="/assets/img/logo-icon.png" alt="EdgeIQ" class="nav-logo-img" onerror="this.style.display='none'" />
+78|        <div class="nav-wordmark">
+79|          <span class="nav-brand-name">Edge<span>IQ</span> Labs</span>
+80|          <span class="nav-brand-tag">Cybersecurity · Compliance</span>
+81|        </div>
+82|      </a>
+83|      <div class="nav-links">
+84|        <a href="/">Home</a>
+85|        <a href="/products/">Products</a>
+86|        <a href="/compliance-shield/">Compliance Shield</a>
+87|        <a href="/phishsim/">PhishSim</a>
+88|        <a href="/blog/">Blog</a>
+89|        <a href="mailto:compliance@edgeiqlabs.com" class="btn btn-primary" style="padding:8px 18px;font-size:0.88rem;">Contact</a>
+90|      </div>
+91|    </div>
+92|  </nav>
+93|
+94|  <main class="container">
+95|    <!-- Hero -->
+96|    <section class="vr-hero">
+97|      <div class="vr-badge-row">
+98|        <span class="badge" style="background:#0f2535;border-color:#1e4060;color:var(--accent);font-weight:700;">🏥 HIPAA-Native</span>
+99|        <span class="badge" style="background:#1a1a2e;border-color:#3d3d6e;color:#a78bfa;font-weight:700;">NEW PRODUCT</span>
+100|        <span class="badge" style="background:#10261b;border-color:#24523a;color:var(--green);font-weight:700;">AI Auto-Fill</span>
+101|      </div>
+102|      <h1>Vendor risk management<br><span>built for healthcare & SMBs</span></h1>
+103|      <p>Track BAAs, assess third-party risk, and monitor vendor compliance without the $10K enterprise bundle. Cross-product intelligence from Compliance Shield + PhishSim included.</p>
+104|      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+105|        <a class="btn btn-primary" href="#pricing">View pricing →</a>
+106|        <a class="btn btn-secondary" href="mailto:compliance@edgeiqlabs.com?subject=Vendor%20Risk%20Demo">Request demo</a>
+107|      </div>
+108|      <p style="margin-top:16px;font-size:0.85rem;color:var(--muted);">No sales calls · Email-only support · Self-serve onboarding</p>
+109|    </section>
+110|
+111|    <!-- Feature Grid -->
+112|    <section class="vr-features">
+113|      <h2>Everything you need to manage vendor risk</h2>
+114|      <div class="vr-feature-grid">
+115|        <div class="vr-feature-card">
+116|          <h3>📋 BAA Lifecycle Tracking</h3>
+117|          <p>Expiry alerts, missing clause detection, and subcontractor BAA chaining. Never miss a Business Associate Agreement renewal again.</p>
+118|        </div>
+119|        <div class="vr-feature-card">
+120|          <h3>🤖 AI Auto-Fill from Public Evidence</h3>
+121|          <p>Pull SOC2 reports, HITRUST certs, breach history, and privacy policies to pre-populate assessments. Cut assessment time by 60%.</p>
+122|        </div>
+123|        <div class="vr-feature-card">
+124|          <h3>🔗 Cross-Product Intelligence</h3>
+125|          <p>Vendor risk scores automatically factor in your Compliance Shield audit results and PhishSim staff training completion rates.</p>
+126|        </div>
+127|        <div class="vr-feature-card">
+128|          <h3>🏥 PHI Handling Classification</h3>
+129|          <p>Tag vendors by PHI access level (full, limited, none) with automatic control mapping to HIPAA Security Rule requirements.</p>
+130|        </div>
+131|        <div class="vr-feature-card">
+132|          <h3>📊 Audit-Ready Exports</h3>
+133|          <p>One-click PDF/CSV export of vendor inventory + assessment status for OCR audits. White-label available on Enterprise.</p>
+134|        </div>
+135|        <div class="vr-feature-card">
+136|          <h3>🔄 Continuous Monitoring</h3>
+137|          <p>Quarterly or monthly re-assessment triggers, certification expiry alerts, and automatic risk escalation on Repo Scanner findings.</p>
+138|        </div>
+139|      </div>
+140|    </section>
+141|
+142|    <!-- Pricing -->
+143|    <section class="vr-pricing" id="pricing">
+144|      <h2>Transparent, self-serve pricing</h2>
+145|      <p class="subtitle">No contracts · Cancel anytime · BAA included on all paid tiers</p>
+146|      <div class="vr-pricing-grid">
+147|        <div class="vr-price-card">
+148|          <h3>Starter</h3>
+149|          <div class="price">$499<span>/mo</span></div>
+150|          <ul>
+151|            <li>Up to 15 vendors tracked</li>
+152|            <li>10 assessments per month</li>
+153|            <li>AI auto-fill from public evidence</li>
+154|            <li>BAA tracking + expiry alerts</li>
+155|            <li>Quarterly continuous monitoring</li>
+156|            <li>Audit-ready PDF exports</li>
+157|            <li>Email support (48h SLA)</li>
+158|          </ul>
+159|          <a href="/api/vendor-watch-signup?plan=starter" class="btn btn-secondary" style="width:100%;text-align:center;">Get Started</a>
+160|        </div>
+161|        <div class="vr-price-card featured">
+162|          <h3>Professional</h3>
+163|          <div class="price">$999<span>/mo</span></div>
+164|          <ul>
+165|            <li>Up to 50 vendors tracked</li>
+166|            <li>Unlimited assessments</li>
+167|            <li>Everything in Starter</li>
+168|            <li>Full cross-product signals</li>
+169|            <li>Monthly continuous monitoring</li>
+170|            <li>PDF + CSV + API exports</li>
+171|            <li>SSO / SAML authentication</li>
+172|            <li>Email support (24h SLA)</li>
+173|          </ul>
+174|          <a href="/api/vendor-watch-signup?plan=pro" class="btn btn-primary" style="width:100%;text-align:center;">Get Professional</a>
+175|        </div>
+176|        <div class="vr-price-card">
+177|          <h3>Enterprise</h3>
+178|          <div class="price">Custom</div>
+179|          <ul>
+180|            <li>Unlimited vendors</li>
+181|            <li>Everything in Professional</li>
+182|            <li>Real-time continuous monitoring</li>
+183|            <li>Custom integration & rules engine</li>
+184|            <li>White-label audit reports</li>
+185|            <li>Dedicated Customer Success Manager</li>
+186|            <li>SLA guarantees</li>
+187|          </ul>
+188|          <a href="mailto:compliance@edgeiqlabs.com?subject=Vendor%20Risk%20Enterprise" class="btn btn-secondary" style="width:100%;text-align:center;">Contact Sales</a>
+189|        </div>
+190|      </div>
+191|    </section>
+192|
+193|    <!-- Comparison Table -->
+194|    <section class="vr-compare">
+195|      <h2>How we compare</h2>
+196|      <div style="overflow-x:auto;">
+197|        <table class="vr-compare-table">
+198|          <thead>
+199|            <tr>
+200|              <th>Capability</th>
+201|              <th class="highlight-col">EdgeIQ Vendor Risk</th>
+202|              <th>UpGuard</th>
+203|              <th>Vanta</th>
+204|              <th>SecurityScorecard</th>
+205|            </tr>
+206|          </thead>
+207|          <tbody>
+208|            <tr>
+209|              <td>HIPAA BAA tracking</td>
+210|              <td class="highlight-col"><span class="check">✓ Native</span></td>
+211|              <td>Add-on</td>
+212|              <td>Add-on</td>
+213|              <td>Limited</td>
+214|            </tr>
+215|            <tr>
+216|              <td>Standalone pricing</td>
+217|              <td class="highlight-col"><span class="check">$499/mo</span></td>
+218|              <td>$10K+/yr</td>
+219|              <td>$10K+/yr</td>
+220|              <td>$15K+/yr</td>
+221|            </tr>
+222|            <tr>
+223|              <td>Cross-product signals</td>
+224|              <td class="highlight-col"><span class="check">✓ Compliance Shield + PhishSim</span></td>
+225|              <td><span class="cross">✗</span></td>
+226|              <td><span class="cross">✗</span></td>
+227|              <td><span class="cross">✗</span></td>
+228|            </tr>
+229|            <tr>
+230|              <td>AI auto-fill from public evidence</td>
+231|              <td class="highlight-col"><span class="check">✓</span></td>
+232|              <td>Partial</td>
+233|              <td><span class="cross">✗</span></td>
+234|              <td><span class="check">✓</span></td>
+235|            </tr>
+236|            <tr>
+237|              <td>Self-serve onboarding</td>
+238|              <td class="highlight-col"><span class="check">✓</span></td>
+239|              <td>Sales-gated</td>
+240|              <td>Sales-gated</td>
+241|              <td>Sales-gated</td>
+242|            </tr>
+243|            <tr>
+244|              <td>Small practice focus</td>
+245|              <td class="highlight-col"><span class="check">✓</span></td>
+246|              <td>Enterprise-first</td>
+247|              <td>Mid-market</td>
+248|              <td>Enterprise-first</td>
+249|            </tr>
+250|            <tr>
+251|              <td>Email-only support</td>
+252|              <td class="highlight-col"><span class="check">✓</span></td>
+253|              <td>Phone/Slack</td>
+254|              <td>Phone/Slack</td>
+255|              <td>Phone/Slack</td>
+256|            </tr>
+257|          </tbody>
+258|        </table>
+259|      </div>
+260|    </section>
+261|
+262|    <!-- FAQ -->
+263|    <section class="vr-faq">
+264|      <h2>Frequently asked questions</h2>
+265|      <div class="vr-faq-item">
+266|        <h3>Is this suitable for small healthcare practices?</h3>
+267|        <p>Yes. Vendor Risk is designed specifically for small healthcare practices (dental, therapy, chiropractic, optometry, med spa) and SMBs that need HIPAA-compliant vendor management without enterprise pricing or complexity.</p>
+268|      </div>
+269|      <div class="vr-faq-item">
+270|        <h3>Do I need Compliance Shield or PhishSim to use this?</h3>
+271|        <p>No. Vendor Risk works standalone. However, if you also use Compliance Shield or PhishSim, cross-product signals automatically enrich your vendor risk scores at no extra cost.</p>
+272|      </div>
+273|      <div class="vr-faq-item">
+274|        <h3>What happens when a BAA expires?</h3>
+275|        <p>You receive email alerts at 90, 30, and 7 days before expiry. Expired BAAs automatically downgrade the vendor's risk score and flag them in your audit-ready reports.</p>
+276|      </div>
+277|      <div class="vr-faq-item">
+278|        <h3>Can I import my existing vendor list?</h3>
+279|        <p>Yes. Upload a CSV with vendor names and domains. AI will automatically pull public evidence (SOC2, HITRUST, breach history) to pre-populate each vendor profile.</p>
+280|      </div>
+281|      <div class="vr-faq-item">
+282|        <h3>Is there a contract or commitment?</h3>
+283|        <p>No. All tiers are month-to-month with no contracts. Cancel anytime from your dashboard. Annual billing with 20% discount is available at checkout.</p>
+284|      </div>
+285|      <div class="vr-faq-item">
+286|        <h3>How does AI auto-fill work?</h3>
+287|        <p>Our AI scans vendor websites, public certification registries (SOC2, HITRUST, ISO), the HHS breach portal, and your organization's past assessments to pre-populate questionnaire responses. Low-confidence answers are flagged for human review.</p>
+288|      </div>
+289|    </section>
+290|
+291|    <!-- CTA -->
+292|    <section class="vr-cta">
+293|      <h2>Ready to get your vendor risk under control?</h2>
+294|      <p>Email us to schedule a demo or start your self-serve onboarding today.</p>
+295|      <a class="btn btn-primary" href="mailto:compliance@edgeiqlabs.com?subject=Vendor%20Risk%20Assessment%20Inquiry" style="font-size:1.05rem;padding:16px 32px;">Email compliance@edgeiqlabs.com</a>
+296|      <p style="margin-top:16px;font-size:0.85rem;color:var(--muted);">No phone calls required · Response within 24 hours</p>
+297|    </section>
+298|  </main>
+299|
+300|  <!-- Footer -->
+301|  <footer style="border-top:1px solid var(--border);padding:var(--space-xl) 0;text-align:center;color:var(--muted);font-size:0.85rem;">
+302|    <div class="container">
+303|      <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="/privacy/" style="color:var(--muted);">Privacy</a> | <a href="/terms/" style="color:var(--muted);">Terms</a> | <a href="mailto:compliance@edgeiqlabs.com" style="color:var(--accent);">compliance@edgeiqlabs.com</a></p>
+304|    </div>
+305|  </footer>
+306|
+307|  <script src="/assets/js/theme.js"></script>
+308|<footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>EdgeIQ Labs</strong>
+        <p>Cybersecurity & Hosting Solutions</p>
+      </div>
+      <div class="footer-links">
         <a href="/products/">Products</a>
-        <a href="/compliance-shield/">Compliance Shield</a>
-        <a href="/phishsim/">PhishSim</a>
+        <a href="/pricing/">Pricing</a>
         <a href="/blog/">Blog</a>
-        <a href="mailto:compliance@edgeiqlabs.com" class="btn btn-primary" style="padding:8px 18px;font-size:0.88rem;">Contact</a>
+        <a href="/contact/">Contact</a>
       </div>
-    </div>
-  </nav>
-
-  <main class="container">
-    <!-- Hero -->
-    <section class="vr-hero">
-      <div class="vr-badge-row">
-        <span class="badge" style="background:#0f2535;border-color:#1e4060;color:var(--accent);font-weight:700;">🏥 HIPAA-Native</span>
-        <span class="badge" style="background:#1a1a2e;border-color:#3d3d6e;color:#a78bfa;font-weight:700;">NEW PRODUCT</span>
-        <span class="badge" style="background:#10261b;border-color:#24523a;color:var(--green);font-weight:700;">AI Auto-Fill</span>
-      </div>
-      <h1>Vendor risk management<br><span>built for healthcare & SMBs</span></h1>
-      <p>Track BAAs, assess third-party risk, and monitor vendor compliance without the $10K enterprise bundle. Cross-product intelligence from Compliance Shield + PhishSim included.</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <a class="btn btn-primary" href="#pricing">View pricing →</a>
-        <a class="btn btn-secondary" href="mailto:compliance@edgeiqlabs.com?subject=Vendor%20Risk%20Demo">Request demo</a>
-      </div>
-      <p style="margin-top:16px;font-size:0.85rem;color:var(--muted);">No sales calls · Email-only support · Self-serve onboarding</p>
-    </section>
-
-    <!-- Feature Grid -->
-    <section class="vr-features">
-      <h2>Everything you need to manage vendor risk</h2>
-      <div class="vr-feature-grid">
-        <div class="vr-feature-card">
-          <h3>📋 BAA Lifecycle Tracking</h3>
-          <p>Expiry alerts, missing clause detection, and subcontractor BAA chaining. Never miss a Business Associate Agreement renewal again.</p>
-        </div>
-        <div class="vr-feature-card">
-          <h3>🤖 AI Auto-Fill from Public Evidence</h3>
-          <p>Pull SOC2 reports, HITRUST certs, breach history, and privacy policies to pre-populate assessments. Cut assessment time by 60%.</p>
-        </div>
-        <div class="vr-feature-card">
-          <h3>🔗 Cross-Product Intelligence</h3>
-          <p>Vendor risk scores automatically factor in your Compliance Shield audit results and PhishSim staff training completion rates.</p>
-        </div>
-        <div class="vr-feature-card">
-          <h3>🏥 PHI Handling Classification</h3>
-          <p>Tag vendors by PHI access level (full, limited, none) with automatic control mapping to HIPAA Security Rule requirements.</p>
-        </div>
-        <div class="vr-feature-card">
-          <h3>📊 Audit-Ready Exports</h3>
-          <p>One-click PDF/CSV export of vendor inventory + assessment status for OCR audits. White-label available on Enterprise.</p>
-        </div>
-        <div class="vr-feature-card">
-          <h3>🔄 Continuous Monitoring</h3>
-          <p>Quarterly or monthly re-assessment triggers, certification expiry alerts, and automatic risk escalation on Repo Scanner findings.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pricing -->
-    <section class="vr-pricing" id="pricing">
-      <h2>Transparent, self-serve pricing</h2>
-      <p class="subtitle">No contracts · Cancel anytime · BAA included on all paid tiers</p>
-      <div class="vr-pricing-grid">
-        <div class="vr-price-card">
-          <h3>Starter</h3>
-          <div class="price">$499<span>/mo</span></div>
-          <ul>
-            <li>Up to 15 vendors tracked</li>
-            <li>10 assessments per month</li>
-            <li>AI auto-fill from public evidence</li>
-            <li>BAA tracking + expiry alerts</li>
-            <li>Quarterly continuous monitoring</li>
-            <li>Audit-ready PDF exports</li>
-            <li>Email support (48h SLA)</li>
-          </ul>
-          <a href="https://buy.stripe.com/bJeaEZ65R0SN6w43gk7wB2D" class="btn btn-secondary" style="width:100%;text-align:center;">Get Started</a>
-        </div>
-        <div class="vr-price-card featured">
-          <h3>Professional</h3>
-          <div class="price">$999<span>/mo</span></div>
-          <ul>
-            <li>Up to 50 vendors tracked</li>
-            <li>Unlimited assessments</li>
-            <li>Everything in Starter</li>
-            <li>Full cross-product signals</li>
-            <li>Monthly continuous monitoring</li>
-            <li>PDF + CSV + API exports</li>
-            <li>SSO / SAML authentication</li>
-            <li>Email support (24h SLA)</li>
-          </ul>
-          <a href="https://buy.stripe.com/14A7sNbqbgRL5s0bMQ7wB2E" class="btn btn-primary" style="width:100%;text-align:center;">Get Professional</a>
-        </div>
-        <div class="vr-price-card">
-          <h3>Enterprise</h3>
-          <div class="price">Custom</div>
-          <ul>
-            <li>Unlimited vendors</li>
-            <li>Everything in Professional</li>
-            <li>Real-time continuous monitoring</li>
-            <li>Custom integration & rules engine</li>
-            <li>White-label audit reports</li>
-            <li>Dedicated Customer Success Manager</li>
-            <li>SLA guarantees</li>
-          </ul>
-          <a href="mailto:compliance@edgeiqlabs.com?subject=Vendor%20Risk%20Enterprise" class="btn btn-secondary" style="width:100%;text-align:center;">Contact Sales</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Comparison Table -->
-    <section class="vr-compare">
-      <h2>How we compare</h2>
-      <div style="overflow-x:auto;">
-        <table class="vr-compare-table">
-          <thead>
-            <tr>
-              <th>Capability</th>
-              <th class="highlight-col">EdgeIQ Vendor Risk</th>
-              <th>UpGuard</th>
-              <th>Vanta</th>
-              <th>SecurityScorecard</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>HIPAA BAA tracking</td>
-              <td class="highlight-col"><span class="check">✓ Native</span></td>
-              <td>Add-on</td>
-              <td>Add-on</td>
-              <td>Limited</td>
-            </tr>
-            <tr>
-              <td>Standalone pricing</td>
-              <td class="highlight-col"><span class="check">$499/mo</span></td>
-              <td>$10K+/yr</td>
-              <td>$10K+/yr</td>
-              <td>$15K+/yr</td>
-            </tr>
-            <tr>
-              <td>Cross-product signals</td>
-              <td class="highlight-col"><span class="check">✓ Compliance Shield + PhishSim</span></td>
-              <td><span class="cross">✗</span></td>
-              <td><span class="cross">✗</span></td>
-              <td><span class="cross">✗</span></td>
-            </tr>
-            <tr>
-              <td>AI auto-fill from public evidence</td>
-              <td class="highlight-col"><span class="check">✓</span></td>
-              <td>Partial</td>
-              <td><span class="cross">✗</span></td>
-              <td><span class="check">✓</span></td>
-            </tr>
-            <tr>
-              <td>Self-serve onboarding</td>
-              <td class="highlight-col"><span class="check">✓</span></td>
-              <td>Sales-gated</td>
-              <td>Sales-gated</td>
-              <td>Sales-gated</td>
-            </tr>
-            <tr>
-              <td>Small practice focus</td>
-              <td class="highlight-col"><span class="check">✓</span></td>
-              <td>Enterprise-first</td>
-              <td>Mid-market</td>
-              <td>Enterprise-first</td>
-            </tr>
-            <tr>
-              <td>Email-only support</td>
-              <td class="highlight-col"><span class="check">✓</span></td>
-              <td>Phone/Slack</td>
-              <td>Phone/Slack</td>
-              <td>Phone/Slack</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="vr-faq">
-      <h2>Frequently asked questions</h2>
-      <div class="vr-faq-item">
-        <h3>Is this suitable for small healthcare practices?</h3>
-        <p>Yes. Vendor Risk is designed specifically for small healthcare practices (dental, therapy, chiropractic, optometry, med spa) and SMBs that need HIPAA-compliant vendor management without enterprise pricing or complexity.</p>
-      </div>
-      <div class="vr-faq-item">
-        <h3>Do I need Compliance Shield or PhishSim to use this?</h3>
-        <p>No. Vendor Risk works standalone. However, if you also use Compliance Shield or PhishSim, cross-product signals automatically enrich your vendor risk scores at no extra cost.</p>
-      </div>
-      <div class="vr-faq-item">
-        <h3>What happens when a BAA expires?</h3>
-        <p>You receive email alerts at 90, 30, and 7 days before expiry. Expired BAAs automatically downgrade the vendor's risk score and flag them in your audit-ready reports.</p>
-      </div>
-      <div class="vr-faq-item">
-        <h3>Can I import my existing vendor list?</h3>
-        <p>Yes. Upload a CSV with vendor names and domains. AI will automatically pull public evidence (SOC2, HITRUST, breach history) to pre-populate each vendor profile.</p>
-      </div>
-      <div class="vr-faq-item">
-        <h3>Is there a contract or commitment?</h3>
-        <p>No. All tiers are month-to-month with no contracts. Cancel anytime from your dashboard. Annual billing with 20% discount is available at checkout.</p>
-      </div>
-      <div class="vr-faq-item">
-        <h3>How does AI auto-fill work?</h3>
-        <p>Our AI scans vendor websites, public certification registries (SOC2, HITRUST, ISO), the HHS breach portal, and your organization's past assessments to pre-populate questionnaire responses. Low-confidence answers are flagged for human review.</p>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="vr-cta">
-      <h2>Ready to get your vendor risk under control?</h2>
-      <p>Email us to schedule a demo or start your self-serve onboarding today.</p>
-      <a class="btn btn-primary" href="mailto:compliance@edgeiqlabs.com?subject=Vendor%20Risk%20Assessment%20Inquiry" style="font-size:1.05rem;padding:16px 32px;">Email compliance@edgeiqlabs.com</a>
-      <p style="margin-top:16px;font-size:0.85rem;color:var(--muted);">No phone calls required · Response within 24 hours</p>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer style="border-top:1px solid var(--border);padding:var(--space-xl) 0;text-align:center;color:var(--muted);font-size:0.85rem;">
-    <div class="container">
-      <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="/privacy/" style="color:var(--muted);">Privacy</a> | <a href="/terms/" style="color:var(--muted);">Terms</a> | <a href="mailto:compliance@edgeiqlabs.com" style="color:var(--accent);">compliance@edgeiqlabs.com</a></p>
+      <div class="footer-copy">&copy; 2026 EdgeIQ Labs. All rights reserved.</div>
     </div>
   </footer>
-
-  <script src="/assets/js/theme.js"></script>
 </body>
-</html>
+309|</html>

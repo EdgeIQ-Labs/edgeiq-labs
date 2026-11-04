@@ -1,278 +1,310 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShieldFill — AI Security Questionnaire Auto-Fill | EdgeIQ Labs</title>
-  <meta name="description" content="Stop losing enterprise deals to 200-question security assessments. ShieldFill uses AI to auto-complete 80% of vendor questionnaires from your existing knowledge base." />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <style>
-    :root {
-      --bg: #0a0a0f;
-      --card: #12121a;
-      --border: #1e1e2e;
-      --text: #e4e4e7;
-      --muted: #71717a;
-      --accent: #3dd9ff;
-      --accent-dim: rgba(61,217,255,0.1);
-      --pink: #f472b6;
-      --green: #3de19e;
-      --warn: #f0a83d;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.6; }
-    .container { max-width:900px; margin:0 auto; padding:0 24px; }
-    a { color:var(--accent); text-decoration:none; }
-    a:hover { text-decoration:underline; }
-
-    /* Nav */
-    nav { border-bottom:1px solid var(--border); padding:16px 0; }
-    nav .container { display:flex; align-items:center; justify-content:space-between; }
-    .logo { font-weight:800; font-size:1.1rem; color:var(--text); }
-    .logo span { color:var(--accent); }
-    .nav-links { display:flex; gap:24px; font-size:0.9rem; }
-    .nav-links a { color:var(--muted); }
-    .nav-links a:hover { color:var(--text); text-decoration:none; }
-
-    /* Hero */
-    .hero { padding:80px 0 60px; text-align:center; }
-    .hero h1 { font-size:2.8rem; font-weight:800; line-height:1.15; margin-bottom:20px; }
-    .hero h1 span { color:var(--accent); }
-    .hero p { font-size:1.15rem; color:var(--muted); max-width:600px; margin:0 auto 32px; }
-    .badge-row { display:flex; gap:8px; justify-content:center; margin-bottom:24px; flex-wrap:wrap; }
-    .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:0.78rem; font-weight:700; border:1px solid; }
-    .badge-ai { background:#0f2535; border-color:#1e4060; color:var(--accent); }
-    .badge-new { background:#1a1a2e; border-color:#3d3d6e; color:#a78bfa; }
-
-    /* Upload Card */
-    .upload-section { padding:40px 0 60px; }
-    .upload-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:40px; position:relative; overflow:hidden; }
-    .upload-card::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(61,217,255,0.08),transparent 70%); border-radius:50%; pointer-events:none; }
-    .upload-card h2 { font-size:1.5rem; margin-bottom:8px; }
-    .upload-card .subtitle { color:var(--muted); margin-bottom:24px; font-size:0.95rem; }
-    .form-group { margin-bottom:20px; }
-    .form-group label { display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px; color:var(--text); }
-    .form-group input, .form-group select { width:100%; padding:12px 16px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.95rem; outline:none; transition:border-color 0.2s; }
-    .form-group input:focus { border-color:var(--accent); }
-    .form-group input[type="file"] { padding:10px; cursor:pointer; }
-    .form-group input[type="file"]::file-selector-button { background:var(--accent-dim); color:var(--accent); border:none; padding:6px 14px; border-radius:6px; font-weight:600; cursor:pointer; margin-right:12px; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 28px; border-radius:8px; font-weight:700; font-size:1rem; border:none; cursor:pointer; transition:all 0.2s; }
-    .btn-primary { background:var(--accent); color:#000; }
-    .btn-primary:hover { background:#2bc4e8; transform:translateY(-1px); }
-    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-    .btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text); }
-    .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
-    .form-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
-    .status-msg { margin-top:16px; padding:12px 16px; border-radius:8px; font-size:0.9rem; display:none; }
-    .status-msg.success { display:block; background:rgba(61,225,158,0.1); border:1px solid rgba(61,225,158,0.3); color:var(--green); }
-    .status-msg.error { display:block; background:rgba(240,168,61,0.1); border:1px solid rgba(240,168,61,0.3); color:var(--warn); }
-    .status-msg.loading { display:block; background:var(--accent-dim); border:1px solid rgba(61,217,255,0.3); color:var(--accent); }
-
-    /* Pricing */
-    .pricing { padding:60px 0; }
-    .pricing h2 { text-align:center; font-size:2rem; margin-bottom:12px; }
-    .pricing .subtitle { text-align:center; color:var(--muted); margin-bottom:40px; }
-    .pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
-    .price-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:32px; position:relative; }
-    .price-card.featured { border-color:var(--accent); }
-    .price-card.featured::after { content:'POPULAR'; position:absolute; top:12px; right:12px; background:var(--accent); color:#000; font-size:0.7rem; font-weight:800; padding:3px 10px; border-radius:12px; }
-    .price-card h3 { font-size:1.2rem; margin-bottom:4px; }
-    .price-card .price { font-size:2.2rem; font-weight:800; color:var(--accent); margin:12px 0; }
-    .price-card .price span { font-size:0.9rem; font-weight:400; color:var(--muted); }
-    .price-card ul { list-style:none; margin:16px 0 24px; }
-    .price-card li { padding:6px 0; font-size:0.88rem; color:var(--muted); display:flex; align-items:center; gap:8px; }
-    .price-card li::before { content:'✓'; color:var(--green); font-weight:700; }
-
-    /* How it works */
-    .how-it-works { padding:60px 0; border-top:1px solid var(--border); }
-    .how-it-works h2 { text-align:center; font-size:1.8rem; margin-bottom:40px; }
-    .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:24px; }
-    .step { text-align:center; }
-    .step-num { width:48px; height:48px; background:var(--accent-dim); color:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; margin:0 auto 16px; }
-    .step h3 { font-size:1rem; margin-bottom:8px; }
-    .step p { font-size:0.88rem; color:var(--muted); }
-
-    /* Footer */
-    footer { border-top:1px solid var(--border); padding:32px 0; text-align:center; color:var(--muted); font-size:0.85rem; }
-
-    @media(max-width:600px) {
-      .hero h1 { font-size:1.8rem; }
-      .upload-card { padding:24px; }
-      .pricing-grid { grid-template-columns:1fr; }
-    }
-  </style>
-</head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="/" class="logo">Edge<span>IQ</span> Labs</a>
+1|<!DOCTYPE html>
+2|<html lang="en">
+3|<head>
+4|  <meta charset="UTF-8" />
+5|  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+6|  <title>ShieldFill — AI Security Questionnaire Auto-Fill | EdgeIQ Labs</title>
+7|  <meta name="description" content="Stop losing enterprise deals to 200-question security assessments. ShieldFill uses AI to auto-complete 80% of vendor questionnaires from your existing knowledge base." />
+8|  <link rel="icon" type="image/png" href="/favicon.png" />
+9|  <style>
+10|    :root {
+11|      --bg: #0a0a0f;
+12|      --card: #12121a;
+13|      --border: #1e1e2e;
+14|      --text: #e4e4e7;
+15|      --muted: #71717a;
+16|      --accent: #3dd9ff;
+17|      --accent-dim: rgba(61,217,255,0.1);
+18|      --pink: #f472b6;
+19|      --green: #3de19e;
+20|      --warn: #f0a83d;
+21|    }
+22|    * { margin:0; padding:0; box-sizing:border-box; }
+23|    body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.6; }
+24|    .container { max-width:900px; margin:0 auto; padding:0 24px; }
+25|    a { color:var(--accent); text-decoration:none; }
+26|    a:hover { text-decoration:underline; }
+27|
+28|    /* Nav */
+29|    nav { border-bottom:1px solid var(--border); padding:16px 0; }
+30|    nav .container { display:flex; align-items:center; justify-content:space-between; }
+31|    .logo { font-weight:800; font-size:1.1rem; color:var(--text); }
+32|    .logo span { color:var(--accent); }
+33|    .nav-links { display:flex; gap:24px; font-size:0.9rem; }
+34|    .nav-links a { color:var(--muted); }
+35|    .nav-links a:hover { color:var(--text); text-decoration:none; }
+36|
+37|    /* Hero */
+38|    .hero { padding:80px 0 60px; text-align:center; }
+39|    .hero h1 { font-size:2.8rem; font-weight:800; line-height:1.15; margin-bottom:20px; }
+40|    .hero h1 span { color:var(--accent); }
+41|    .hero p { font-size:1.15rem; color:var(--muted); max-width:600px; margin:0 auto 32px; }
+42|    .badge-row { display:flex; gap:8px; justify-content:center; margin-bottom:24px; flex-wrap:wrap; }
+43|    .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:0.78rem; font-weight:700; border:1px solid; }
+44|    .badge-ai { background:#0f2535; border-color:#1e4060; color:var(--accent); }
+45|    .badge-new { background:#1a1a2e; border-color:#3d3d6e; color:#a78bfa; }
+46|
+47|    /* Upload Card */
+48|    .upload-section { padding:40px 0 60px; }
+49|    .upload-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:40px; position:relative; overflow:hidden; }
+50|    .upload-card::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(61,217,255,0.08),transparent 70%); border-radius:50%; pointer-events:none; }
+51|    .upload-card h2 { font-size:1.5rem; margin-bottom:8px; }
+52|    .upload-card .subtitle { color:var(--muted); margin-bottom:24px; font-size:0.95rem; }
+53|    .form-group { margin-bottom:20px; }
+54|    .form-group label { display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px; color:var(--text); }
+55|    .form-group input, .form-group select { width:100%; padding:12px 16px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.95rem; outline:none; transition:border-color 0.2s; }
+56|    .form-group input:focus { border-color:var(--accent); }
+57|    .form-group input[type="file"] { padding:10px; cursor:pointer; }
+58|    .form-group input[type="file"]::file-selector-button { background:var(--accent-dim); color:var(--accent); border:none; padding:6px 14px; border-radius:6px; font-weight:600; cursor:pointer; margin-right:12px; }
+59|    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 28px; border-radius:8px; font-weight:700; font-size:1rem; border:none; cursor:pointer; transition:all 0.2s; }
+60|    .btn-primary { background:var(--accent); color:#000; }
+61|    .btn-primary:hover { background:#2bc4e8; transform:translateY(-1px); }
+62|    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+63|    .btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text); }
+64|    .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+65|    .form-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
+66|    .status-msg { margin-top:16px; padding:12px 16px; border-radius:8px; font-size:0.9rem; display:none; }
+67|    .status-msg.success { display:block; background:rgba(61,225,158,0.1); border:1px solid rgba(61,225,158,0.3); color:var(--green); }
+68|    .status-msg.error { display:block; background:rgba(240,168,61,0.1); border:1px solid rgba(240,168,61,0.3); color:var(--warn); }
+69|    .status-msg.loading { display:block; background:var(--accent-dim); border:1px solid rgba(61,217,255,0.3); color:var(--accent); }
+70|
+71|    /* Pricing */
+72|    .pricing { padding:60px 0; }
+73|    .pricing h2 { text-align:center; font-size:2rem; margin-bottom:12px; }
+74|    .pricing .subtitle { text-align:center; color:var(--muted); margin-bottom:40px; }
+75|    .pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
+76|    .price-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:32px; position:relative; }
+77|    .price-card.featured { border-color:var(--accent); }
+78|    .price-card.featured::after { content:'POPULAR'; position:absolute; top:12px; right:12px; background:var(--accent); color:#000; font-size:0.7rem; font-weight:800; padding:3px 10px; border-radius:12px; }
+79|    .price-card h3 { font-size:1.2rem; margin-bottom:4px; }
+80|    .price-card .price { font-size:2.2rem; font-weight:800; color:var(--accent); margin:12px 0; }
+81|    .price-card .price span { font-size:0.9rem; font-weight:400; color:var(--muted); }
+82|    .price-card ul { list-style:none; margin:16px 0 24px; }
+83|    .price-card li { padding:6px 0; font-size:0.88rem; color:var(--muted); display:flex; align-items:center; gap:8px; }
+84|    .price-card li::before { content:'✓'; color:var(--green); font-weight:700; }
+85|
+86|    /* How it works */
+87|    .how-it-works { padding:60px 0; border-top:1px solid var(--border); }
+88|    .how-it-works h2 { text-align:center; font-size:1.8rem; margin-bottom:40px; }
+89|    .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:24px; }
+90|    .step { text-align:center; }
+91|    .step-num { width:48px; height:48px; background:var(--accent-dim); color:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; margin:0 auto 16px; }
+92|    .step h3 { font-size:1rem; margin-bottom:8px; }
+93|    .step p { font-size:0.88rem; color:var(--muted); }
+94|
+95|    /* Footer */
+96|    footer { border-top:1px solid var(--border); padding:32px 0; text-align:center; color:var(--muted); font-size:0.85rem; }
+97|
+98|    @media(max-width:600px) {
+99|      .hero h1 { font-size:1.8rem; }
+100|      .upload-card { padding:24px; }
+101|      .pricing-grid { grid-template-columns:1fr; }
+102|    }
+103|  </style>
+104|</head>
+105|<body>
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/">
+        <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+        <div class="nav-wordmark">
+          <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+          <div class="nav-brand-tag">Cybersecurity . Hosting</div>
+        </div>
+      </a>
       <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/services/">Services</a>
-        <a href="/tools/">Tools</a>
+        <a href="/products/">Products</a>
+        <a href="/pricing/">Pricing</a>
         <a href="/blog/">Blog</a>
+        <a href="/contact/" class="nav-cta">Contact</a>
       </div>
     </div>
   </nav>
-
-  <section class="hero">
-    <div class="container">
-      <div class="badge-row">
-        <span class="badge badge-ai">🤖 AI-Powered</span>
-        <span class="badge badge-new">NEW SERVICE</span>
+106|  <nav>
+107|    <div class="container">
+108|      <a href="/" class="logo">Edge<span>IQ</span> Labs</a>
+109|      <div class="nav-links">
+110|        <a href="/">Home</a>
+111|        <a href="/services/">Services</a>
+112|        <a href="/tools/">Tools</a>
+113|        <a href="/blog/">Blog</a>
+114|      </div>
+115|    </div>
+116|  </nav>
+117|
+118|  <section class="hero">
+119|    <div class="container">
+120|      <div class="badge-row">
+121|        <span class="badge badge-ai">🤖 AI-Powered</span>
+122|        <span class="badge badge-new">NEW SERVICE</span>
+123|      </div>
+124|      <h1>Stop losing deals to<br><span>security questionnaires</span></h1>
+125|      <p>Your prospects send 200-question vendor assessments. Your team spends 10–40 hours answering them. ShieldFill auto-completes 80% from your knowledge base — so you close deals in days, not weeks.</p>
+126|    </div>
+127|  </section>
+128|
+129|  <section class="upload-section">
+130|    <div class="container">
+131|      <div class="upload-card">
+132|        <h2>Upload Your Questionnaire</h2>
+133|        <p class="subtitle">We'll auto-fill it and email back the completed spreadsheet within minutes.</p>
+134|        <form id="shieldfill-form" enctype="multipart/form-data">
+135|          <div class="form-group">
+136|            <label for="email">Your Email *</label>
+137|            <input type="email" id="email" name="email" placeholder="you@company.com" required />
+138|          </div>
+139|          <div class="form-group">
+140|            <label for="file">Questionnaire File (.xlsx) *</label>
+141|            <input type="file" id="file" name="file" accept=".xlsx,.xls" required />
+142|          </div>
+143|          <div class="form-actions">
+144|            <button type="submit" class="btn btn-primary" id="submit-btn">🚀 Auto-Fill My Questionnaire</button>
+145|          </div>
+146|          <div id="status" class="status-msg"></div>
+147|        </form>
+148|      </div>
+149|    </div>
+150|  </section>
+151|
+152|  <section class="how-it-works">
+153|    <div class="container">
+154|      <h2>How ShieldFill Works</h2>
+155|      <div class="steps">
+156|        <div class="step">
+157|          <div class="step-num">1</div>
+158|          <h3>Upload</h3>
+159|          <p>Drop your Excel questionnaire and provide your email address.</p>
+160|        </div>
+161|        <div class="step">
+162|          <div class="step-num">2</div>
+163|          <h3>AI Matches</h3>
+164|          <p>Our AI searches your knowledge base and fills answers with confidence scores.</p>
+165|        </div>
+166|        <div class="step">
+167|          <div class="step-num">3</div>
+168|          <h3>Review</h3>
+169|          <p>Get the completed file via email. Low-confidence answers are highlighted for review.</p>
+170|        </div>
+171|        <div class="step">
+172|          <div class="step-num">4</div>
+173|          <h3>Submit</h3>
+174|          <p>Send the completed questionnaire to your prospect and close the deal.</p>
+175|        </div>
+176|      </div>
+177|    </div>
+178|  </section>
+179|
+180|  <section class="pricing" id="pricing">
+181|    <div class="container">
+182|      <h2>Simple, Transparent Pricing</h2>
+183|      <p class="subtitle">No contracts. Cancel anytime. Per-company pricing.</p>
+184|      <div class="pricing-grid">
+185|        <div class="price-card">
+186|          <h3>Starter</h3>
+187|          <div class="price">$499<span>/mo</span></div>
+188|          <ul>
+189|            <li>10 questionnaires/month</li>
+190|            <li>Knowledge base (up to 500 entries)</li>
+191|            <li>Email delivery</li>
+192|            <li>Excel & PDF export</li>
+193|            <li>Human review flagging</li>
+194|          </ul>
+195|          <a href="/api/shieldfill/checkout?plan=starter" class="btn btn-secondary" style="width:100%;text-align:center;">Get Started</a>
+196|        </div>
+197|        <div class="price-card featured">
+198|          <h3>Professional</h3>
+199|          <div class="price">$999<span>/mo</span></div>
+200|          <ul>
+201|            <li>Unlimited questionnaires</li>
+202|            <li>Unlimited knowledge base</li>
+203|            <li>Priority processing</li>
+204|            <li>API access</li>
+205|            <li>Dedicated support</li>
+206|            <li>Custom integrations</li>
+207|          </ul>
+208|          <a href="https://buy.stripe.com/9B64gB79VeJDcUs0487wB2C" class="btn btn-primary" style="width:100%;text-align:center;">Get Professional</a>
+209|        </div>
+210|        <div class="price-card">
+211|          <h3>Enterprise</h3>
+212|          <div class="price">Custom</div>
+213|          <ul>
+214|            <li>Everything in Professional</li>
+215|            <li>On-premise deployment option</li>
+216|            <li>SLA guarantees</li>
+217|            <li>SOC2/HIPAA/ISO templates</li>
+218|            <li>White-label option</li>
+219|          </ul>
+220|          <a href="mailto:sales@edgeiqlabs.com?subject=ShieldFill Enterprise" class="btn btn-secondary" style="width:100%;text-align:center;">Contact Sales</a>
+221|        </div>
+222|      </div>
+223|    </div>
+224|  </section>
+225|
+226|  <footer>
+227|    <div class="container">
+228|      <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="/privacy/">Privacy</a> | <a href="/terms/">Terms</a></p>
+229|    </div>
+230|  </footer>
+231|
+232|  <script>
+233|    document.getElementById('shieldfill-form').addEventListener('submit', async (e) => {
+234|      e.preventDefault();
+235|      const btn = document.getElementById('submit-btn');
+236|      const status = document.getElementById('status');
+237|      const email = document.getElementById('email').value;
+238|      const fileInput = document.getElementById('file');
+239|
+240|      if (!fileInput.files.length) {
+241|        status.className = 'status-msg error';
+242|        status.textContent = 'Please select an Excel file.';
+243|        return;
+244|      }
+245|
+246|      btn.disabled = true;
+247|      btn.textContent = '⏳ Processing...';
+248|      status.className = 'status-msg loading';
+249|      status.textContent = 'Uploading and analyzing your questionnaire... This typically takes 30-60 seconds.';
+250|
+251|      const formData = new FormData();
+252|      formData.append('email', email);
+253|      formData.append('file', fileInput.files[0]);
+254|
+255|      try {
+256|        const res = await fetch('/api/shieldfill/upload', { method: 'POST', body: formData });
+257|        const data = await res.json();
+258|
+259|        if (res.ok && data.success) {
+260|          status.className = 'status-msg success';
+261|          status.innerHTML = `✅ <strong>Success!</strong> Processed ${data.questions_processed} questions (${data.kb_hits} KB matches).<br>Check your inbox at <strong>${email}</strong> for the completed questionnaire.`;
+262|          btn.textContent = '✅ Sent!';
+263|        } else {
+264|          status.className = 'status-msg error';
+265|          status.textContent = `❌ Error: ${data.error || 'Unknown error occurred'}`;
+266|          btn.disabled = false;
+267|          btn.textContent = '🚀 Auto-Fill My Questionnaire';
+268|        }
+269|      } catch (err) {
+270|        status.className = 'status-msg error';
+271|        status.textContent = `❌ Network error: ${err.message}. Please try again.`;
+272|        btn.disabled = false;
+273|        btn.textContent = '🚀 Auto-Fill My Questionnaire';
+274|      }
+275|    });
+276|  </script>
+277|<footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>EdgeIQ Labs</strong>
+        <p>Cybersecurity & Hosting Solutions</p>
       </div>
-      <h1>Stop losing deals to<br><span>security questionnaires</span></h1>
-      <p>Your prospects send 200-question vendor assessments. Your team spends 10–40 hours answering them. ShieldFill auto-completes 80% from your knowledge base — so you close deals in days, not weeks.</p>
-    </div>
-  </section>
-
-  <section class="upload-section">
-    <div class="container">
-      <div class="upload-card">
-        <h2>Upload Your Questionnaire</h2>
-        <p class="subtitle">We'll auto-fill it and email back the completed spreadsheet within minutes.</p>
-        <form id="shieldfill-form" enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="email">Your Email *</label>
-            <input type="email" id="email" name="email" placeholder="you@company.com" required />
-          </div>
-          <div class="form-group">
-            <label for="file">Questionnaire File (.xlsx) *</label>
-            <input type="file" id="file" name="file" accept=".xlsx,.xls" required />
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" id="submit-btn">🚀 Auto-Fill My Questionnaire</button>
-          </div>
-          <div id="status" class="status-msg"></div>
-        </form>
+      <div class="footer-links">
+        <a href="/products/">Products</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
       </div>
-    </div>
-  </section>
-
-  <section class="how-it-works">
-    <div class="container">
-      <h2>How ShieldFill Works</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h3>Upload</h3>
-          <p>Drop your Excel questionnaire and provide your email address.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h3>AI Matches</h3>
-          <p>Our AI searches your knowledge base and fills answers with confidence scores.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3>Review</h3>
-          <p>Get the completed file via email. Low-confidence answers are highlighted for review.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <h3>Submit</h3>
-          <p>Send the completed questionnaire to your prospect and close the deal.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="pricing" id="pricing">
-    <div class="container">
-      <h2>Simple, Transparent Pricing</h2>
-      <p class="subtitle">No contracts. Cancel anytime. Per-company pricing.</p>
-      <div class="pricing-grid">
-        <div class="price-card">
-          <h3>Starter</h3>
-          <div class="price">$499<span>/mo</span></div>
-          <ul>
-            <li>10 questionnaires/month</li>
-            <li>Knowledge base (up to 500 entries)</li>
-            <li>Email delivery</li>
-            <li>Excel & PDF export</li>
-            <li>Human review flagging</li>
-          </ul>
-          <a href="https://buy.stripe.com/9B6eVf51N8lf2fO0487wB2B" class="btn btn-secondary" style="width:100%;text-align:center;">Get Started</a>
-        </div>
-        <div class="price-card featured">
-          <h3>Professional</h3>
-          <div class="price">$999<span>/mo</span></div>
-          <ul>
-            <li>Unlimited questionnaires</li>
-            <li>Unlimited knowledge base</li>
-            <li>Priority processing</li>
-            <li>API access</li>
-            <li>Dedicated support</li>
-            <li>Custom integrations</li>
-          </ul>
-          <a href="https://buy.stripe.com/9B64gB79VeJDcUs0487wB2C" class="btn btn-primary" style="width:100%;text-align:center;">Get Professional</a>
-        </div>
-        <div class="price-card">
-          <h3>Enterprise</h3>
-          <div class="price">Custom</div>
-          <ul>
-            <li>Everything in Professional</li>
-            <li>On-premise deployment option</li>
-            <li>SLA guarantees</li>
-            <li>SOC2/HIPAA/ISO templates</li>
-            <li>White-label option</li>
-          </ul>
-          <a href="mailto:sales@edgeiqlabs.com?subject=ShieldFill Enterprise" class="btn btn-secondary" style="width:100%;text-align:center;">Contact Sales</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-      <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="/privacy/">Privacy</a> | <a href="/terms/">Terms</a></p>
+      <div class="footer-copy">&copy; 2026 EdgeIQ Labs. All rights reserved.</div>
     </div>
   </footer>
-
-  <script>
-    document.getElementById('shieldfill-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      const status = document.getElementById('status');
-      const email = document.getElementById('email').value;
-      const fileInput = document.getElementById('file');
-
-      if (!fileInput.files.length) {
-        status.className = 'status-msg error';
-        status.textContent = 'Please select an Excel file.';
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = '⏳ Processing...';
-      status.className = 'status-msg loading';
-      status.textContent = 'Uploading and analyzing your questionnaire... This typically takes 30-60 seconds.';
-
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('file', fileInput.files[0]);
-
-      try {
-        const res = await fetch('/api/shieldfill/upload', { method: 'POST', body: formData });
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          status.className = 'status-msg success';
-          status.innerHTML = `✅ <strong>Success!</strong> Processed ${data.questions_processed} questions (${data.kb_hits} KB matches).<br>Check your inbox at <strong>${email}</strong> for the completed questionnaire.`;
-          btn.textContent = '✅ Sent!';
-        } else {
-          status.className = 'status-msg error';
-          status.textContent = `❌ Error: ${data.error || 'Unknown error occurred'}`;
-          btn.disabled = false;
-          btn.textContent = '🚀 Auto-Fill My Questionnaire';
-        }
-      } catch (err) {
-        status.className = 'status-msg error';
-        status.textContent = `❌ Network error: ${err.message}. Please try again.`;
-        btn.disabled = false;
-        btn.textContent = '🚀 Auto-Fill My Questionnaire';
-      }
-    });
-  </script>
 </body>
-</html>
+278|</html>
