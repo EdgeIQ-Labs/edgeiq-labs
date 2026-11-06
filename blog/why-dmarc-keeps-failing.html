@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Your DMARC Record Keeps Failing (And How to Actually Fix It) — EdgeIQ Labs</title>
+  <meta name="description" content="DMARC keeps failing even after setup? Learn the real causes: SPF alignment issues, third-party sender gaps, DKIM selector rotation, and forwarding breaks." />
+  <meta property="og:title" content="Why Your DMARC Record Keeps Failing (And How to Actually Fix It)" />
+  <meta property="og:description" content="DMARC keeps failing even after setup? The real causes aren't what most guides tell you." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/why-dmarc-keeps-failing.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Why Your DMARC Record Keeps Failing (And How to Actually Fix It)" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/why-dmarc-keeps-failing.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Why Your DMARC Record Keeps Failing (And How to Actually Fix It)","description":"DMARC keeps failing even after setup? Learn the real causes: SPF alignment issues, third-party sender gaps, DKIM selector rotation, and forwarding breaks.","datePublished":"2026-11-06","dateModified":"2026-11-06","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/compliance/" style="color:#3dd9ff;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a>
+  <a href="/inbox-shield/" class="mob-cta">Check Your DMARC →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Email Security</span><span class="tag">DMARC</span></div>
+      <h1>Why Your DMARC Record Keeps Failing (And How to Actually Fix It)</h1>
+      <p class="lead">You published a DMARC record. You set the policy. And yet your aggregate reports still show failures, or worse, legitimate mail is getting rejected. The problem isn't that DMARC is broken — it's that something in your email authentication chain is misaligned, and standard setup guides don't cover these failure modes.</p>
+    </div>
+
+    <h2>The alignment trap nobody warns you about</h2>
+    <p>DMARC doesn't just check whether SPF or DKIM passes. It checks whether they <em>align</em> with the From: header domain. This distinction causes more persistent DMARC failures than any other single issue.</p>
+
+    <p>SPF authenticates the envelope sender (the Return-Path domain), not the From: address your recipient sees. If your marketing platform sends from <code>bounces.marketingplatform.com</code> but your From: header says <code>newsletters@yourdomain.com</code>, SPF passes for the bounce domain but fails alignment for your visible domain. DMARC rejects the message unless DKIM saves it.</p>
+
+    <p>DKIM alignment works differently but has its own pitfalls. The <code>d=</code> domain in the DKIM signature must match or be a subdomain of the From: header domain under relaxed alignment, or match exactly under strict alignment. Many organizations set strict alignment (<code>adkim=s</code>) without realizing their third-party senders sign with a different domain, breaking every message from those sources.</p>
+
+    <div class="callout warn">
+      <strong>Diagnostic check:</strong> Pull your latest DMARC aggregate report and filter for SPF pass + DMARC fail. Those are alignment failures, not authentication failures. The sending IP passed SPF for <em>some</em> domain — just not yours.
+    </div>
+
+    <h2>Third-party senders you forgot about</h2>
+    <p>Your DMARC audit found Mailchimp and Salesforce. But did it find the HR platform sending offer letters? The ticketing system auto-replying as <code>support@yourdomain.com</code>? The legacy on-prem Exchange server that still handles internal notifications? The SaaS tool your sales team signed up for last quarter without telling IT?</p>
+
+    <p>Every one of these is a potential DMARC failure source. Third-party platforms fall into two categories:</p>
+
+    <ul>
+      <li><strong>Platforms that support custom DKIM signing:</strong> You add their public key to your DNS, they sign with your domain, alignment passes. This is the correct path.</li>
+      <li><strong>Platforms that don't support custom DKIM:</strong> They send from their own infrastructure with their own domain in the DKIM signature. Unless they also rewrite the From: header to their domain (which some do), messages will fail DMARC when sent "from" your domain.</li>
+    </ul>
+
+    <p>The second category is where silent failures accumulate. These senders may represent 5-15% of your outbound volume, enough to prevent moving to p=reject but small enough to hide in aggregate noise.</p>
+
+    <h2>SPF record structural problems</h2>
+    <p>SPF has a hard limit of 10 DNS lookups per evaluation. Each <code>include:</code>, <code>a:</code>, <code>mx:</code>, and <code>redirect=</code> mechanism consumes one lookup. Exceed the limit and SPF returns a permerror, which DMARC treats as a fail.</p>
+
+    <p>This problem compounds silently. You add Microsoft 365 (1 lookup), Google Workspace (1 lookup), Mailchimp (1 lookup), SendGrid (1 lookup), your own MX records (1 lookup), and a few <code>a:</code> records for legacy servers. Suddenly you're at 11 lookups and every inbound check fails, but only intermittently because some resolvers cache partial results.</p>
+
+    <p>SPF flattening services solve this by resolving all includes to IP addresses and publishing a flat record. But flattening introduces its own failure mode: if a third-party sender changes their IP ranges and you don't re-flatten, your SPF record becomes stale and starts rejecting legitimate mail from that sender.</p>
+
+    <h2>DKIM selector rotation and expiration</h2>
+    <p>DKIM keys should be rotated regularly — quarterly at minimum, monthly for high-volume senders. But rotation creates a window where old signatures fail verification if the old public key is removed from DNS too quickly.</p>
+
+    <p>The correct rotation sequence is:</p>
+    <ol>
+      <li>Publish the new public key under a new selector</li>
+      <li>Configure the sending system to sign with the new private key</li>
+      <li>Wait for all in-flight messages signed with the old key to be delivered (typically 72 hours)</li>
+      <li>Remove the old public key from DNS</li>
+    </ol>
+
+    <p>Skip step three and you'll see a spike in DKIM failures that correlates exactly with your rotation timestamp. This looks like a DMARC failure in aggregate reports because DKIM was the only passing authentication method for those messages.</p>
+
+    <p>Some platforms handle rotation automatically. Others require manual coordination between DNS and mail server configuration. If you manage multiple sending systems, track selector lifecycles explicitly rather than assuming automation covers everything.</p>
+
+    <h2>Forwarding and mailing list breakage</h2>
+    <p>Email forwarding breaks SPF by design. When a user sets up auto-forwarding from their corporate mailbox to a personal account, the forwarding server becomes the new SMTP sender. SPF checks the forwarding server's IP against your domain's SPF record, finds no match, and fails.</p>
+
+    <p>DKIM survives forwarding if the message body and headers aren't modified. But many forwarding systems and mailing lists rewrite headers, add footers, or modify content in ways that invalidate DKIM signatures. The result is messages that were properly authenticated at origin but fail both SPF and DKIM by the time they reach the final recipient.</p>
+
+    <p>There's no universal fix for this. ARC (Authenticated Received Chain) was designed to preserve authentication results through intermediaries, but adoption is incomplete. For known forwarding paths, the practical solution is ensuring DKIM signing is robust enough to survive transit, or accepting that forwarded mail will occasionally fail and adjusting your monitoring thresholds accordingly.</p>
+
+    <h2>When monitoring matters more than configuration</h2>
+    <p>Most DMARC failures aren't caused by broken initial setup. They're caused by drift — a new SaaS integration, an expired DKIM key, a flattened SPF record going stale, a department spinning up a shadow email channel. Configuration gets you to baseline. Continuous monitoring keeps you there.</p>
+
+    <p><a href="/inbox-shield/">EdgeIQ Inbox Shield</a> grades your SPF, DMARC, DKIM, and MX configuration on demand and tracks changes over time. The free tier gives you an instant security grade plus a weekly digest. Pro adds daily monitoring and alerts when DKIM selectors rotate or your authentication posture weakens, so you catch regressions before they become delivery failures or spoofing opportunities.</p>
+
+    <div class="cta-box">
+      <h2>Stop guessing why DMARC keeps failing</h2>
+      <p>Inbox Shield shows exactly what's broken in your email authentication stack and alerts you when it degrades. Free instant scan, no credit card required.</p>
+      <a href="/inbox-shield/" class="cta-btn">Scan Your Email Security →</a>
+      <p style="margin-top:10px;font-size:0.78rem;color:#4a6080;">Free tier available · Pro $15/mo for daily monitoring</p>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/inbox-shield/">Inbox Shield</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+document.querySelector('.nav-hamburger').addEventListener('click',toggleMobileMenu);
+</script>
+</body>
+</html>

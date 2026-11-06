@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>What Is Attack Surface Monitoring (And Why Weekly Scans Aren't Enough)</title>
+  <meta name="description" content="Attack surface monitoring explained for small businesses. What it covers, why point-in-time scans miss things, and how continuous monitoring catches what annual audits don't."/>
+  <meta property="og:title" content="What Is Attack Surface Monitoring"/>
+  <meta property="og:description" content="Why weekly scans aren't enough and how continuous monitoring catches what annual audits miss."/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/what-is-attack-surface-monitoring.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/what-is-attack-surface-monitoring.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is Attack Surface Monitoring","datePublished":"2026-11-06","dateModified":"2026-11-06","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:800;margin:44px 0 14px;color:var(--color-text-primary,#e8eef7);}
+    .prose h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;}
+    .prose p{margin-bottom:16px;color:#d0dce9;line-height:1.7;}
+    .prose ul,.prose ol{margin:0 0 16px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--color-text-primary,#e8eef7);}
+    .prose a{color:var(--color-accent,#b47aff);text-decoration:none;}
+    .prose a:hover{text-decoration:underline;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:#3dd9ff;font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:#9fb0c7;font-size:0.88rem;margin-bottom:32px;}
+    .cta-block{background:linear-gradient(135deg,#150e22 0%,#0b0f14 100%);border:1px solid #b47aff;border-radius:14px;padding:32px;margin:48px 0;text-align:center;}
+    .cta-block h3{font-size:1.3rem;font-weight:800;margin-bottom:10px;color:#e8eef7;}
+    .cta-block p{color:#9fb0c7;margin-bottom:22px;font-size:0.95rem;}
+    .cta-block a{background:#b47aff;color:#071018;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;}
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav__inner"><a href="/" class="nav__logo"><img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" height="40"/></a><div class="nav__links"><a href="/free-tools/">Free Tools</a><a href="/tools/">Dev Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/" class="nav__actions">Products</a></div></div></nav>
+  <main class="container container--narrow">
+    <div class="hero">
+      <div class="tag-row"><span class="tag">ASM</span><span class="tag">Monitoring</span></div>
+      <h1>What Is Attack Surface Monitoring (And Why Weekly Scans Aren't Enough)</h1>
+      <div class="meta"><span>November 6, 2026</span><span>EdgeIQ Labs</span></div>
+    </div>
+    <article class="prose">
+      <p>Your attack surface is everything an attacker can reach from the outside. Every open port, every exposed API endpoint, every misconfigured S3 bucket, every forgotten subdomain running an old version of WordPress. If it responds to a request from the public internet, it is part of your attack surface.</p>
+
+      <p>Attack surface monitoring is the practice of continuously discovering and tracking those external-facing assets. Not just listing them once, but watching for changes. The goal is simple: know what is exposed before someone else finds it first.</p>
+
+      <h2>What Attack Surface Monitoring Actually Covers</h2>
+
+      <p>Most small businesses think they know what they have exposed. They are usually wrong. A proper attack surface scan covers more than just your main website.</p>
+
+      <ul>
+        <li><strong>Open ports and services:</strong> SSH on port 22, RDP on 3389, databases listening on public IPs, debug interfaces left open after deployment.</li>
+        <li><strong>Subdomains:</strong> dev.example.com, staging.example.com, api-v1.example.com. These often run older code with known vulnerabilities and get forgotten.</li>
+        <li><strong>TLS certificates:</strong> Expired certs, weak ciphers, mismatched domains. Certificate issues signal neglect and sometimes enable interception.</li>
+        <li><strong>DNS records:</strong> Dangling CNAMEs pointing to unclaimed cloud resources, MX records exposing internal mail infrastructure, TXT records leaking configuration details.</li>
+        <li><strong>HTTP headers and configurations:</strong> Missing security headers, verbose error messages, directory listings enabled, default admin panels accessible.</li>
+        <li><strong>Exposed credentials and secrets:</strong> API keys in public repositories, .env files served by misconfigured web servers, backup archives containing database dumps.</li>
+        <li><strong>Technology fingerprinting:</strong> Identifying specific software versions so you can match them against known CVEs.</li>
+      </ul>
+
+      <p>A single scan gives you a snapshot. But snapshots age fast.</p>
+
+      <h2>Why Point-in-Time Scans Fail</h2>
+
+      <p>You ran a vulnerability scan last quarter. You got a clean report. You filed it away. Three weeks later, a developer pushed a new service to production without telling anyone. It had a default password and an unpatched Log4j instance. Nobody noticed until it showed up in a breach notification email.</p>
+
+      <p>This is the fundamental problem with periodic scanning. Your attack surface is not static. It changes every time someone:</p>
+
+      <ul>
+        <li>Deploys new infrastructure</li>
+        <li>Opens a firewall rule for testing and forgets to close it</li>
+        <li>Spins up a temporary environment that becomes permanent</li>
+        <li>Renews or replaces a TLS certificate incorrectly</li>
+        <li>Adds a third-party integration that exposes new endpoints</li>
+        <li>Decommissions a server but leaves DNS records pointing to the old IP</li>
+      </ul>
+
+      <p>Weekly scans catch some of this. Monthly scans catch less. Annual penetration tests catch almost none of it in real time. By the time your next scheduled scan runs, the window of exposure has already been open for days or weeks.</p>
+
+      <h2>What Changes Between Scans That Matters</h2>
+
+      <p>The dangerous changes are rarely dramatic. They are small, incremental, and easy to miss when you are only looking at raw scan output.</p>
+
+      <p>A new open port appears on a server that previously had only HTTPS. A subdomain that returned 404 now returns 200 with a login page. A TLS certificate expires and gets replaced with a self-signed one. An HTTP response header that previously included Strict-Transport-Security disappears after a config change. A new CNAME record points to an Azure blob storage container that does not exist yet, creating a subdomain takeover opportunity.</p>
+
+      <p>Each of these changes is benign in isolation. Each represents a potential entry point when combined with the right exploit. The problem is not the individual finding. The problem is that nobody is watching for the delta.</p>
+
+      <h2>How Diff-Based Alerting Works</h2>
+
+      <p>Diff-based alerting solves the noise problem. Traditional scanners dump hundreds of findings every run. Most are unchanged from last time. Security teams learn to ignore the reports because the signal-to-noise ratio is terrible.</p>
+
+      <p>Instead of reporting everything, diff-based monitoring compares each new scan against the previous baseline. It alerts only when something changes. A new port opens. A certificate expires. A previously unseen subdomain resolves. A security header disappears. A new technology fingerprint appears.</p>
+
+      <p>This approach has two advantages. First, it reduces alert fatigue. You get notified about actual changes, not repeated confirmations of known state. Second, it creates an audit trail of how your attack surface evolves over time. You can see exactly when a risky configuration appeared and correlate it with deployment logs or change tickets.</p>
+
+      <p>The technical implementation is straightforward: store structured scan results, compute set differences between consecutive runs, and surface only the additions, removals, and modifications. The hard part is maintaining consistent scanner coverage and reliable baselines across all asset types.</p>
+
+      <h2>Continuous Monitoring vs. Compliance Theater</h2>
+
+      <p>Many organizations treat attack surface management as a compliance checkbox. They run quarterly scans, generate PDF reports, and hand them to auditors. This satisfies requirements but does not reduce risk.</p>
+
+      <p>Real attack surface monitoring is operational, not ceremonial. It integrates into your existing workflow. Alerts go to Slack or email where engineers actually see them. Findings link to remediation steps, not just CVE numbers. Historical data lets you verify that fixes actually worked instead of assuming they did.</p>
+
+      <p>The difference shows up in incident response. When something goes wrong, teams with continuous monitoring can answer "when did this exposure start?" in seconds. Teams relying on periodic scans have to guess based on the last clean report and the first sign of compromise.</p>
+
+      <h2>Practical Coverage for Small Teams</h2>
+
+      <p>You do not need enterprise tooling to get meaningful attack surface monitoring. You need consistent coverage of the basics and a process for acting on findings.</p>
+
+      <p>Start with external reconnaissance against your own domains. Enumerate subdomains, check open ports, validate TLS configurations, inspect HTTP responses, and look for exposed secrets. Run these checks on a schedule that matches your deployment frequency. If you ship code daily, weekly scans are the minimum. If you ship multiple times per day, consider daily scans.</p>
+
+      <p>Track results over time. Build baselines. Alert on deviations. Review findings weekly even when there are no alerts, because slow drift matters too. And make sure whoever receives the alerts has authority and time to fix things.</p>
+
+      <p><a href="/pulse/">EdgeIQ Pulse</a> automates this workflow. The free tier monitors one domain with six scanners on a weekly schedule. Pro adds daily scans, thirteen scanners, and five domains. Business tiers include Slack integration for teams that want alerts where work happens. All tiers use diff-based alerting so you only hear about actual changes.</p>
+    </article>
+    <div class="cta-block">
+      <h3>Start monitoring your attack surface for free</h3>
+      <p>EdgeIQ Pulse runs 6-13 scanners weekly with diff-based alerts so you only hear when something actually changes.</p>
+      <a href="/pulse/">Try Pulse Free →</a>
+    </div>
+  </main>
+  <footer class="footer"><div class="footer__inner"><p>&copy; 2026 EdgeIQ Labs</p></div></footer>
+  <script src="/js/theme.js"></script>
+</body>
+</html>
