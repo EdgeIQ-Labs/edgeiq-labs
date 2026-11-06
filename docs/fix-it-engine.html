@@ -1,5 +1,234 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Fix-It Engine — EdgeIQ Docs</title><meta name="description" content="Automate remediation steps from EdgeIQ findings."/><style>:root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142}*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}.container{max-width:900px;margin:0 auto;padding:0 20px}nav{border-bottom:1px solid var(--border);background:rgba(11,15,20,.92)}.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 0;gap:20px}.brand{font-weight:800;color:var(--text);text-decoration:none}.brand span{color:var(--accent)}.links a{color:var(--muted);text-decoration:none;margin-left:12px}.hero{padding:44px 0 22px}.hero h1{font-size:clamp(1.8rem,5vw,2.5rem)}.hero p{color:var(--muted);margin-top:8px}.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0}.card h2{margin-bottom:10px}.card p,.card li{color:var(--muted)}ul,ol{margin:8px 0 12px 20px}code{background:rgba(61,217,255,.1);color:var(--accent);padding:2px 6px;border-radius:4px}.related a{color:var(--accent);text-decoration:none}.footer{border-top:1px solid var(--border);margin-top:34px;padding:20px 0;color:var(--muted);font-size:.85rem}</style><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
-</head><body><nav><div class="container"><div class="nav-inner"><a href="../" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="../">Tools</a><a href="../blog/">Blog</a><a href="./">Docs</a><a href="../#contact">Contact</a></div></div></div></nav><section class="hero"><div class="container"><h1>Fix-It Engine</h1><p>Automate remediation steps from EdgeIQ findings.</p></div></section><main class="container"><div class="card"><h2>Setup</h2><p>Enable Fix-It with any compatible tool plan and define action policies per severity.</p><ul><li>Auto SSL Renew</li><li>Header Auto-Fix</li><li>GitHub Issue Creator</li></ul></div>
-<div class="card"><h2>How to Use</h2><ol><li>Set approval mode (auto vs human-review).</li><li>Map findings to actions and cooldown windows.</li><li>Run in dry-run for 7 days before full automation.</li></ol></div>
-<div class="card"><h2>Troubleshooting</h2><ul><li><strong>Too many actions:</strong> raise severity threshold and add dedupe.</li><li><strong>No actions firing:</strong> verify webhook/credential config.</li></ul></div>
-<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div><div class="footer">© 2026 EdgeIQ Labs Docs</div></main></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix-It Engine Documentation | EdgeIQ Labs</title>
+    <link rel="stylesheet" href="/css/design-system.css?v=10">
+    <meta property="og:title" content="Fix-It Engine Documentation">
+    <meta property="og:description" content="Complete reference documentation for Fix-It Engine: automated remediation, setup, API, approval modes, and troubleshooting.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/fix-it-engine.html">
+    <meta property="og:type" content="article">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Fix-It Engine Documentation",
+      "description": "Technical reference for configuring and using Fix-It Engine to automate remediation of EdgeIQ scanner findings.",
+      "url": "https://edgeiqlabs.com/docs/fix-it-engine.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "EdgeIQ Labs"
+      }
+    }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">EdgeIQ Labs</a>
+            <ul class="navbar-menu">
+                <li><a href="/free-tools">Free Tools</a></li>
+                <li><a href="/dev-tools">Dev Tools</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/docs">Docs</a></li>
+                <li><a href="/products">Products</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container container--narrow prose">
+        <h1>Fix-It Engine Documentation</h1>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>Fix-It Engine is a $9/mo add-on available with any compatible EdgeIQ scanner tool. It bridges the gap between finding a problem and fixing it by automating common remediation steps directly from scan results.</p>
+        </section>
+
+        <section id="supported-actions">
+            <h2>Supported Actions</h2>
+            <ul>
+                <li><strong>Auto SSL Renewal:</strong> Automatically renews expiring certificates via Let's Encrypt when linked with CertWatch Pro</li>
+                <li><strong>Header Auto-Fix:</strong> Injects missing security headers (HSTS, CSP, X-Frame-Options) into server configs</li>
+                <li><strong>GitHub Issue Creator:</strong> Opens issues in your repo with finding details, severity, and suggested fix</li>
+                <li><strong>Webhook Dispatch:</strong> Sends structured payloads to your CI/CD pipeline or ticketing system</li>
+                <li><strong>DNS Record Correction:</strong> Fixes misconfigured SPF/DKIM/DMARC records via API (requires provider credentials)</li>
+            </ul>
+        </section>
+
+        <section id="setup">
+            <h2>Setup</h2>
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Active subscription to any compatible EdgeIQ scanner (UptimePing, XSS Scanner, Port Scanner, etc.)</li>
+                <li>Fix-It Engine add-on enabled in your dashboard ($9/mo)</li>
+                <li>Provider-specific credentials configured per action type</li>
+            </ul>
+
+            <h3>Enabling Per-Tool</h3>
+            <ol>
+                <li>Navigate to your scanner dashboard</li>
+                <li>Open <strong>Settings</strong> → <strong>Integrations</strong> → <strong>Fix-It Engine</strong></li>
+                <li>Toggle actions individually (each action can be enabled/disabled independently)</li>
+                <li>Configure credentials for each enabled action</li>
+            </ol>
+
+            <h3>Approval Modes</h3>
+            <ul>
+                <li><strong>Dry Run (default):</strong> Logs what would happen without executing. Recommended for first 7 days.</li>
+                <li><strong>Human Review:</strong> Creates a pending action queue requiring manual approval before execution.</li>
+                <li><strong>Auto-Approve:</strong> Executes immediately for findings below a configurable severity threshold.</li>
+            </ul>
+        </section>
+
+        <section id="configuration">
+            <h2>Configuration</h2>
+            <h3>Severity Thresholds</h3>
+            <p>Set per-action severity cutoffs. Example: auto-fix only critical and high findings, queue medium for review, ignore low.</p>
+
+            <h3>Cooldown Windows</h3>
+            <p>Prevent duplicate actions on the same finding within a configurable window (default: 24 hours).</p>
+
+            <h3>Action Policies (YAML)</h3>
+            <pre><code>actions:
+  ssl_renew:
+    enabled: true
+    mode: auto-approve
+    severity_min: high
+    cooldown: 48h
+  header_fix:
+    enabled: true
+    mode: human-review
+    targets:
+      - nginx
+      - cloudflare
+  github_issue:
+    enabled: true
+    mode: auto-approve
+    repo: myorg/security-findings
+    labels: [auto-generated, fix-it]</code></pre>
+        </section>
+
+        <section id="github-oauth">
+            <h2>GitHub OAuth Flow</h2>
+            <p>For GitHub Issue Creator:</p>
+            <ol>
+                <li>Click <strong>Connect GitHub</strong> in Fix-It settings</li>
+                <li>Authorize EdgeIQ Labs OAuth app</li>
+                <li>Select repositories to grant issue-write access</li>
+                <li>Tokens are stored encrypted; EdgeIQ never accesses your code</li>
+            </ol>
+        </section>
+
+        <section id="api-reference">
+            <h2>API Reference</h2>
+            <h3>POST /api/fix-it/execute</h3>
+            <p>Trigger a specific remediation action.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>finding_id</code></td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>ID of the scanner finding to remediate</td>
+                    </tr>
+                    <tr>
+                        <td><code>action</code></td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Action type (e.g., ssl_renew, header_fix, github_issue)</td>
+                    </tr>
+                    <tr>
+                        <td><code>dry_run</code></td>
+                        <td>boolean</td>
+                        <td>No</td>
+                        <td>Simulate without executing (default: false)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>Response:</strong> <code>{ "status": "queued", "action_id": "uuid-v4" }</code></p>
+
+            <h3>GET /api/fix-it/actions/ACTION_ID</h3>
+            <p>Check action status. Replace <code>ACTION_ID</code> with the actual action identifier.</p>
+            <p><strong>Returns:</strong> pending, approved, executing, completed, failed</p>
+
+            <h3>GET /api/fix-it/queue</h3>
+            <p>List all pending actions awaiting human review.</p>
+        </section>
+
+        <section id="billing">
+            <h2>Billing</h2>
+            <ul>
+                <li>$9/mo add-on, billed alongside your primary scanner subscription</li>
+                <li>Cancels independently without affecting scanner access</li>
+                <li>No per-action fees; unlimited remediations within plan limits</li>
+            </ul>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>Troubleshooting</h2>
+            <dl>
+                <dt><strong>Actions not firing</strong></dt>
+                <dd>Verify credentials are valid and action is enabled for the specific tool.</dd>
+
+                <dt><strong>SSL renewal fails</strong></dt>
+                <dd>Ensure domain resolves to a server you control and port 80 is accessible.</dd>
+
+                <dt><strong>GitHub issues not created</strong></dt>
+                <dd>Check OAuth token has not expired; re-authorize if needed.</dd>
+
+                <dt><strong>Too many duplicate actions</strong></dt>
+                <dd>Increase cooldown window or raise severity threshold.</dd>
+
+                <dt><strong>Header fixes breaking site</strong></dt>
+                <dd>Use dry-run mode first; review generated config before applying.</dd>
+            </dl>
+        </section>
+
+        <section id="related-tools">
+            <h2>Related Tools</h2>
+            <ul>
+                <li><a href="/docs/certwatch-pro.html">CertWatch Pro</a> (SSL monitoring + auto-renewal)</li>
+                <li><a href="/docs/uptimeping.html">UptimePing</a> (header detection)</li>
+                <li><a href="/docs/xss-scanner.html">XSS Scanner</a> (CSP validation)</li>
+            </ul>
+        </section>
+
+        <section id="pricing">
+            <h2>Pricing</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Price</th>
+                        <th>Features</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Fix-It Engine Add-on</td>
+                        <td>$9/month</td>
+                        <td>All remediation actions, unlimited executions, webhook dispatch, GitHub integration</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Add Fix-It Engine from your <a href="/dashboard/billing">billing dashboard</a>. Requires an active compatible scanner subscription.</p>
+        </section>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Enable Fix-It Engine</h3><p>Automate remediation for $9/mo</p><a href="/dashboard/integrations/fix-it" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Enable Now →</a></div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
