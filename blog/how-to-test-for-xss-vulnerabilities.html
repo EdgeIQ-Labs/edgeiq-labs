@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Test for XSS Vulnerabilities (And Why Most Scanners Miss Them) — EdgeIQ Labs</title>
+  <meta name="description" content="Learn how to test for XSS vulnerabilities including reflected, stored, and DOM-based variants. Understand WAF bypass techniques, blind XSS detection, and why automated scanners fail on dynamic apps." />
+  <meta property="og:title" content="How to Test for XSS Vulnerabilities (And Why Most Scanners Miss Them)" />
+  <meta property="og:description" content="Most XSS scanners miss dynamic applications. Learn proper testing methodology for reflected, stored, and DOM-based XSS." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/how-to-test-for-xss-vulnerabilities.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Test for XSS Vulnerabilities (And Why Most Scanners Miss Them)" />
+  <meta name="twitter:description" content="Most XSS scanners miss dynamic applications. Learn proper testing methodology for reflected, stored, and DOM-based XSS." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-test-for-xss-vulnerabilities.html" />
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; --warn:#f0a83d; --danger:#ff4d4d; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+    .nav-logo-img { height:60px; width:auto; border-radius:10px; }
+    .nav-wordmark { display:flex; flex-direction:column; line-height:1.1; }
+    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--text); }
+    .nav-brand-name span { color:var(--accent); }
+    .nav-brand-tag { font-size:0.68rem; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:8px 16px !important; border-radius:8px !important; }
+    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:20px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.2; margin-bottom:16px; }
+    .tag { display:inline-block; background:rgba(61,217,255,.08); border:1px solid rgba(61,217,255,.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.1rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; }
+    h2 { font-size:1.5rem; margin:34px 0 14px; }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul { margin:0 0 18px 22px; }
+    .check { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; margin:12px 0; }
+    .check h3 { color:var(--text); margin-bottom:8px; }
+    .badge-danger { display:inline-block; font-size:.72rem; border-radius:999px; padding:2px 8px; margin-left:8px; color:var(--danger); border:1px solid rgba(255,77,77,.35); background:rgba(255,77,77,.12); }
+    .badge-warn { display:inline-block; font-size:.72rem; border-radius:999px; padding:2px 8px; margin-left:8px; color:var(--warn); border:1px solid rgba(240,168,61,.35); background:rgba(240,168,61,.12); }
+    .cta-box { background:var(--card); border:1px solid var(--accent); border-radius:14px; padding:26px; margin:36px 0; text-align:center; }
+    .cta-btn { display:inline-block; background:var(--accent); color:#071018; font-weight:700; padding:11px 22px; border-radius:10px; text-decoration:none; }
+    code { background:rgba(61,217,255,.1); color:var(--accent); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+    .warning-box { background:rgba(255,77,77,.08); border:1px solid rgba(255,77,77,.3); border-radius:10px; padding:18px; margin:20px 0; }
+
+    /* Nav override — standardized */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "How to Test for XSS Vulnerabilities (And Why Most Scanners Miss Them)",
+    "description": "Learn how to test for XSS vulnerabilities including reflected, stored, and DOM-based variants. Understand WAF bypass techniques, blind XSS detection, and why automated scanners fail on dynamic apps.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-11-06",
+    "dateModified": "2026-11-06",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/how-to-test-for-xss-vulnerabilities.html"
+    }
+  }
+  </script>
+
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Test for XSS Vulnerabilities (And Why Most Scanners Miss Them) \u2014 EdgeIQ Labs",
+  "description": "Learn how to test for XSS vulnerabilities including reflected, stored, and DOM-based variants. Understand WAF bypass techniques, blind XSS detection, and why automated scanners fail on dynamic apps.",
+  "url": "https://edgeiqlabs.com/blog/how-to-test-for-xss-vulnerabilities.html",
+  "publisher": {
+    "@type": "Organization",
+    "name": "EdgeIQ Labs",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://edgeiqlabs.com/favicon.png"
+    }
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "EdgeIQ Labs"
+  },
+  "image": "https://edgeiqlabs.com/og-preview.png"
+}
+</script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 10 min read &nbsp;·&nbsp; <span class="tag">XSS</span><span class="tag">Web Security</span></div>
+      <h1>How to Test for XSS Vulnerabilities (And Why Most Scanners Miss Them)</h1>
+      <p class="lead">Cross-site scripting remains one of the most prevalent web vulnerabilities, yet most automated scanners fail to detect it in modern applications. Here is how to test properly.</p>
+    </div>
+
+    <p>You run a vulnerability scan against your web application. The report comes back clean. Two weeks later, a bug bounty researcher demonstrates account takeover through an XSS vulnerability that exists on your profile settings page. The scanner missed it because the payload only executes after three JavaScript event handlers fire in sequence. This scenario repeats constantly across the industry.</p>
+
+    <p>Testing for XSS vulnerabilities requires understanding the three distinct types, recognizing where automated tools fail, and applying manual verification techniques that match how modern applications actually render content.</p>
+
+    <h2>The Three Types of XSS You Must Test For</h2>
+
+    <p>Each XSS variant has different attack vectors, different testing methodologies, and different risk profiles. Treating them as interchangeable leads to incomplete assessments.</p>
+
+    <div class="check">
+      <h3>Reflected XSS</h3>
+      <p>The malicious script arrives via URL parameter or form submission and gets reflected back in the HTTP response without proper encoding. Testing requires identifying every reflection point, determining the output context (HTML body, attribute value, JavaScript string), and crafting payloads specific to that context. A reflection inside a quoted attribute requires breaking out of the quotes before injecting script tags. A reflection inside existing JavaScript requires closing the current statement first.</p>
+    </div>
+
+    <div class="check">
+      <h3>Stored XSS</h3>
+      <p>The payload persists on the server and executes whenever any user views the affected content. Comment fields, usernames, product descriptions, support tickets, and file metadata are common storage points. Testing requires submitting payloads through every input field and then viewing those inputs through every possible rendering path. A username might be safe when displayed on a profile page but vulnerable when rendered in an admin dashboard with different encoding rules.</p>
+    </div>
+
+    <div class="check">
+      <h3>DOM-Based XSS</h3>
+      <p>The vulnerability exists entirely in client-side JavaScript. The server never sees the malicious input. Instead, JavaScript reads from sources like <code>document.location</code>, <code>document.referrer</code>, or <code>window.name</code> and writes to dangerous sinks like <code>innerHTML</code>, <code>document.write</code>, or <code>eval()</code>. Automated scanners that only analyze server responses cannot detect this category. Testing requires reading the JavaScript source, tracing data flow from sources to sinks, and constructing URLs that trigger unsafe execution paths.</p>
+    </div>
+
+    <h2>Why Automated Scanners Fail on Modern Applications</h2>
+
+    <p>Most XSS scanners operate by sending payloads and checking if they appear unencoded in the response. This approach worked for server-rendered PHP applications in 2010. It fails for modern architectures for several reasons.</p>
+
+    <div class="warning-box">
+      <strong>The rendering gap:</strong> Single-page applications render content through JavaScript frameworks. The initial HTML response contains minimal markup. Content appears after API calls complete and components mount. A scanner analyzing the raw HTTP response sees an empty shell. The XSS vulnerability exists in how the JavaScript processes API data, not in what the server initially returns.
+    </div>
+
+    <p>Additional failure modes include:</p>
+    <ul>
+      <li>Event-driven execution where payloads only trigger after specific user interactions like clicks, scrolls, or form submissions</li>
+      <li>Multi-step flows where the vulnerable page only loads after completing prior steps in a wizard or checkout process</li>
+      <li>API-driven content where JSON responses get parsed and inserted into the DOM through template engines with inconsistent sanitization</li>
+      <li>Third-party widgets and embedded content that introduce separate rendering contexts with their own security boundaries</li>
+      <li>Conditional logic where vulnerabilities only manifest for specific user roles, feature flags, or A/B test variants</li>
+    </ul>
+
+    <h2>WAF Bypass Techniques That Matter in Testing</h2>
+
+    <p>Web Application Filters block common XSS patterns. Effective testing requires knowing which bypasses work against real defenses, not just theoretical ones.</p>
+
+    <p>Case variation and encoding tricks rarely work anymore. Modern WAFs normalize input before inspection. What does work includes:</p>
+
+    <ul>
+      <li>Context-aware mutations where the payload uses valid syntax for the specific injection point rather than generic script tags</li>
+      <li>Event handler chaining using less-monitored events like <code>onfocus</code>, <code>onmouseover</code>, or <code>ontoggle</code> instead of <code>onload</code> and <code>onerror</code></li>
+      <li>JavaScript protocol handlers in attributes that accept URLs, combined with whitespace characters that WAFs strip inconsistently</li>
+      <li>Template literal injection in applications using backtick strings, where WAFs expect traditional quote delimiters</li>
+      <li>SVG and MathML namespaces that allow script execution through element names WAFs do not recognize as dangerous</li>
+    </ul>
+
+    <p>When testing, document which bypasses succeed against each target. This information determines whether your WAF provides meaningful protection or merely creates false confidence.</p>
+
+    <h2>Detecting Blind XSS</h2>
+
+    <p>Blind XSS occurs when the payload executes in a context you cannot directly observe. An admin panel renders user-submitted data differently than the public site. A log viewer displays request parameters without encoding. A PDF generator processes HTML input server-side.</p>
+
+    <p>Testing for blind XSS requires out-of-band confirmation methods:</p>
+
+    <ul>
+      <li>Callback servers that receive HTTP requests when payloads execute, confirming execution timing and source IP</li>
+      <li>DNS exfiltration where payloads resolve unique subdomains, proving execution even when HTTP callbacks are blocked</li>
+      <li>Time-based delays using synchronous operations that cause measurable response latency differences</li>
+      <li>Data exfiltration to external endpoints that confirm both execution and access to sensitive values like cookies or tokens</li>
+    </ul>
+
+    <p>Submit blind XSS payloads through every input vector: contact forms, support tickets, file uploads, feedback widgets, error reports, and API endpoints. Then monitor your callback infrastructure for hours or days. Many blind XSS vulnerabilities trigger during asynchronous processing cycles unrelated to your submission timing.</p>
+
+    <h2>A Practical Testing Methodology</h2>
+
+    <p>Structure your XSS testing in phases that build coverage systematically.</p>
+
+    <p>First, map all input vectors. Enumerate URL parameters, form fields, headers, API endpoints, and file upload handlers. Document where each input appears in responses and through which rendering paths.</p>
+
+    <p>Second, classify output contexts. For each reflection or storage point, determine whether the output lands in HTML body content, attribute values, JavaScript strings, CSS contexts, or URL schemes. Each context requires different payload structures and different encoding bypasses.</p>
+
+    <p>Third, test with context-appropriate payloads. Use polyglot strings that validate multiple contexts simultaneously. Progress to targeted payloads once you understand the specific escaping mechanisms in use.</p>
+
+    <p>Fourth, verify execution in actual browsers. Confirm that payloads execute in Chrome, Firefox, and Safari. Some browser-specific parsing quirks create vulnerabilities that exist in one engine but not others.</p>
+
+    <p>Fifth, assess impact. Determine what the executed JavaScript can access: session tokens, CSRF protections, sensitive DOM content, or privileged API endpoints. Not all XSS carries equal risk.</p>
+
+    <h2>Professional-Grade XSS Testing Without the Overhead</h2>
+
+    <p>Manual XSS testing works. It also consumes significant time, especially across large applications with hundreds of input vectors and complex rendering logic. Most teams lack dedicated application security staff who can perform thorough manual assessments regularly.</p>
+
+    <p>XSS Scanner Pro addresses the gap between inadequate automated scanning and resource-intensive manual testing. It handles DOM-based detection through headless browser execution, supports blind XSS callback integration, tests WAF bypass variations automatically, and maintains state across multi-step application flows. The scanner understands modern JavaScript frameworks and traces data flow through client-side rendering pipelines.</p>
+
+    <p>XSS Scanner Pro is available for $39 lifetime or $19/month. Teams running regular security assessments against dynamic applications find the lifetime option pays for itself within the first few scans compared to consultant hourly rates or missed vulnerabilities.</p>
+
+    <div class="cta-box">
+      <p style="color:var(--muted);margin-bottom:12px;">Test for XSS vulnerabilities the way attackers actually do.</p>
+      <a href="/products/#lifetime-plans" class="cta-btn">Get XSS Scanner Pro →</a>
+    </div>
+
+    
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+
+  </div>
+<footer style="border-top:1px solid var(--border);padding:36px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>

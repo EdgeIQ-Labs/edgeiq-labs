@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Find Hidden API Endpoints Attackers Already Know About — EdgeIQ Labs</title>
+  <meta name="description" content="Learn how to find hidden API endpoints using passive JS parsing, active fuzzing, and OpenAPI spec gap analysis. Undocumented endpoints are attack vectors defenders miss." />
+  <meta property="og:title" content="How to Find Hidden API Endpoints Attackers Already Know About" />
+  <meta property="og:description" content="Undocumented API endpoints are attack vectors. Here is how to find them before attackers exploit them." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/how-to-find-hidden-api-endpoints.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Find Hidden API Endpoints Attackers Already Know About" />
+  <meta name="twitter:description" content="Undocumented API endpoints are attack vectors. Here is how to find them before attackers exploit them." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-find-hidden-api-endpoints.html" />
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; --warn:#f0a83d; --danger:#ff4d4d; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+    .nav-logo-img { height:60px; width:auto; border-radius:10px; }
+    .nav-wordmark { display:flex; flex-direction:column; line-height:1.1; }
+    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--text); }
+    .nav-brand-name span { color:var(--accent); }
+    .nav-brand-tag { font-size:0.68rem; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:8px 16px !important; border-radius:8px !important; }
+    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:20px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.2; margin-bottom:16px; }
+    .tag { display:inline-block; background:rgba(61,217,255,.08); border:1px solid rgba(61,217,255,.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.1rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; }
+    h2 { font-size:1.5rem; margin:34px 0 14px; }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul { margin:0 0 18px 22px; }
+    .check { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; margin:12px 0; }
+    .check h3 { color:var(--text); margin-bottom:8px; }
+    .badge-danger { display:inline-block; font-size:.72rem; border-radius:999px; padding:2px 8px; margin-left:8px; color:var(--danger); border:1px solid rgba(255,77,77,.35); background:rgba(255,77,77,.12); }
+    .badge-warn { display:inline-block; font-size:.72rem; border-radius:999px; padding:2px 8px; margin-left:8px; color:var(--warn); border:1px solid rgba(240,168,61,.35); background:rgba(240,168,61,.12); }
+    .cta-box { background:var(--card); border:1px solid var(--accent); border-radius:14px; padding:26px; margin:36px 0; text-align:center; }
+    .cta-btn { display:inline-block; background:var(--accent); color:#071018; font-weight:700; padding:11px 22px; border-radius:10px; text-decoration:none; }
+    code { background:rgba(61,217,255,.1); color:var(--accent); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+    .warning-box { background:rgba(255,77,77,.08); border:1px solid rgba(255,77,77,.3); border-radius:10px; padding:18px; margin:20px 0; }
+
+    /* Nav override — standardized */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "How to Find Hidden API Endpoints Attackers Already Know About",
+    "description": "Learn how to find hidden API endpoints using passive JS parsing, active fuzzing, and OpenAPI spec gap analysis. Undocumented endpoints are attack vectors defenders miss.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-11-06",
+    "dateModified": "2026-11-06",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/how-to-find-hidden-api-endpoints.html"
+    }
+  }
+  </script>
+
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Find Hidden API Endpoints Attackers Already Know About \u2014 EdgeIQ Labs",
+  "description": "Learn how to find hidden API endpoints using passive JS parsing, active fuzzing, and OpenAPI spec gap analysis. Undocumented endpoints are attack vectors defenders miss.",
+  "url": "https://edgeiqlabs.com/blog/how-to-find-hidden-api-endpoints.html",
+  "publisher": {
+    "@type": "Organization",
+    "name": "EdgeIQ Labs",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://edgeiqlabs.com/favicon.png"
+    }
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "EdgeIQ Labs"
+  },
+  "image": "https://edgeiqlabs.com/og-preview.png"
+}
+</script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">API Security</span><span class="tag">Recon</span></div>
+      <h1>How to Find Hidden API Endpoints Attackers Already Know About</h1>
+      <p class="lead">Your public API documentation lists 42 endpoints. Your application actually exposes 117. The 75 undocumented endpoints are where attackers find their way in.</p>
+    </div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;max-width:700px;margin:0 auto 32px;padding:10px 14px;background:rgba(18,25,35,0.55);border:1px solid var(--border);border-radius:10px;font-size:0.78rem;color:var(--muted);">
+  <span>🔒 <strong style="color:var(--text);">Privacy-first</strong> · scans never stored</span>
+  <span>⚡ Powered by <strong style="color:var(--text);">Cloudflare</strong></span>
+  <span>💳 <strong style="color:var(--text);">Stripe-secured</strong> payments</span>
+  <span>🆓 No credit card for free tools</span>
+</div>
+
+
+    <p>Modern web applications communicate through APIs. Every button click, form submission, and data refresh triggers HTTP requests to backend services. Organizations publish API documentation for external consumers, maintain internal specs for development teams, and assume these documents capture the complete attack surface. They rarely do.</p>
+
+    <p>Hidden API endpoints exist in every non-trivial application. Debug routes left enabled after deployment. Legacy endpoints preserved for backward compatibility. Administrative interfaces intended for internal use but accessible from the public internet. Third-party integration callbacks that accept unvalidated input. These endpoints lack documentation, bypass standard security reviews, and often implement weaker authentication than their documented counterparts. Learning how to find hidden API endpoints is not an academic exercise; it is fundamental to understanding your real attack surface.</p>
+
+    <h2>Why Undocumented Endpoints Are Attack Vectors</h2>
+
+    <p>Security controls follow documentation. WAF rules protect known paths. Rate limiting applies to documented endpoints. Authentication middleware wraps routes listed in specifications. When an endpoint exists outside this framework, it operates without the safeguards applied to everything else.</p>
+
+    <p>Attackers understand this asymmetry. Rather than brute-forcing documented endpoints protected by multiple defense layers, they search for the forgotten routes that developers assumed nobody would find. A password reset endpoint at <code>/api/v1/auth/reset</code> might enforce rate limiting and CAPTCHA, while a legacy endpoint at <code>/api/internal/user/password-update</code> accepts POST requests with no throttling because it was built for an admin dashboard that no longer exists. Both accomplish the same action. Only one has defenses.</p>
+
+    <p>This pattern repeats across vulnerability classes. SQL injection targets appear in parameterized query gaps on undocumented search endpoints. Mass assignment vulnerabilities surface in update routes that accept arbitrary JSON fields because validation logic was never written for internal-only interfaces. Information disclosure happens through debug endpoints that return stack traces, configuration values, or database schemas when hit with specific parameters.</p>
+
+    <h2>Passive Discovery Through JavaScript Parsing</h2>
+
+    <div class="check">
+      <h3>Mining Client-Side Code Without Sending Requests</h3>
+      <p>Single-page applications embed API endpoint references directly in JavaScript bundles. Frameworks like React, Vue, and Angular compile route definitions, fetch calls, and axios configurations into minified assets served to every visitor. These files contain the complete map of how the frontend communicates with the backend, including endpoints never mentioned in public documentation.</p>
+      <p>Extracting endpoints from JavaScript requires parsing rather than simple regex matching. Minification obscures patterns, dynamic string construction fragments paths across variables, and conditional logic hides environment-specific routes. Dedicated parsers reconstruct these references by analyzing abstract syntax trees, tracking string concatenation, and resolving template literals. The output is a deduplicated list of API paths extracted entirely from publicly accessible assets.</p>
+      <p>This approach is passive. No requests reach your backend servers during extraction. It reveals only what clients already know, which means it misses server-only routes, but it provides high-confidence candidates without triggering rate limits or alerting defensive systems. For organizations assessing their own infrastructure, JavaScript parsing establishes a baseline of client-visible endpoints before active testing begins.</p>
+    </div>
+
+    <h2>Active Fuzzing Techniques</h2>
+
+    <p>Passive extraction captures client-known endpoints. Active fuzzing discovers everything else. This technique sends systematic requests to candidate paths, measuring responses to distinguish valid endpoints from noise.</p>
+
+    <p>Effective fuzzing starts with intelligent wordlists. Generic dictionaries produce excessive false positives. Targeted wordlists derive candidates from observed naming conventions, technology stack fingerprints, and common framework defaults. If your application uses Express.js patterns like <code>/api/v1/users/:id</code>, fuzzing should test variations such as <code>/api/v1/users/admin</code>, <code>/api/v1/users/export</code>, and <code>/api/v1/users/bulk-delete</code> rather than random strings.</p>
+
+    <p>Response analysis separates signal from noise. Valid endpoints return consistent status codes, response lengths, or timing signatures distinct from default 404 handlers. Calibrating baselines against known-invalid paths prevents false positives from catch-all routes or custom error pages. Parameter fuzzing extends discovery beyond path enumeration, identifying hidden functionality within known endpoints by testing undocumented query parameters, headers, and body fields.</p>
+
+    <p>Rate management matters. Aggressive fuzzing triggers defensive mechanisms and risks service disruption. Throttling requests, distributing load across time windows, and respecting robots.txt directives balance thoroughness with operational safety. Internal assessments can test more aggressively than external reconnaissance, but even internal testing benefits from controlled pacing to avoid masking real issues with rate-limit artifacts.</p>
+
+    <h2>OpenAPI Specification Gaps</h2>
+
+    <p>Many organizations adopt OpenAPI (formerly Swagger) specifications to document APIs formally. These specs drive automated documentation generation, client SDK creation, and contract testing. They also create false confidence when treated as comprehensive inventories.</p>
+
+    <p>Specifications drift from implementation. Developers add endpoints during sprints without updating specs. Hotfixes introduce emergency routes that bypass normal documentation workflows. Microservices expose internal endpoints for inter-service communication that never appear in consumer-facing specs. Version mismatches accumulate when multiple spec files govern different services without centralized reconciliation.</p>
+
+    <p>Auditing spec coverage requires comparing declared endpoints against actual traffic. Network logs reveal which paths receive requests regardless of documentation status. Proxy configurations show routed paths independent of spec declarations. Discrepancies between documented and observed endpoints indicate either outdated documentation or undocumented functionality. Both represent security gaps requiring investigation.</p>
+
+    <p>Spec files themselves sometimes leak hidden endpoints. Development artifacts committed to repositories may contain staging or debug routes excluded from production documentation. Backup copies of specs retain deprecated endpoints still functional in deployed systems. Searching version control history and artifact storage for spec variants uncovers endpoints removed from current documentation but present in running code.</p>
+
+    <div class="eq-cta-mid" style="background:linear-gradient(135deg,#0d1a26,#0b1520);border:1px solid rgba(61,217,255,0.25);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Automate API Endpoint Discovery</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">Continuous JS parsing, smart fuzzing, and spec gap detection without manual scripting.</p><a href="/products/#micro-saas" class="btn btn-primary">Explore API Endpoint Discovery →</a></div>
+
+    <h2>Correlating Discovery Into Actionable Intelligence</h2>
+
+    <p>Raw endpoint lists require triage. Not every undocumented path represents immediate risk. Prioritization depends on several factors:</p>
+
+    <ul>
+      <li>Does the endpoint accept user input or modify state?</li>
+      <li>Is authentication enforced consistently with documented equivalents?</li>
+      <li>Does the endpoint handle sensitive data types like credentials, PII, or financial records?</li>
+      <li>Are there signs of abandonment such as verbose errors, outdated response formats, or missing security headers?</li>
+      <li>Does the endpoint appear in client-side code, suggesting intentional exposure despite lacking documentation?</li>
+    </ul>
+
+    <p>Documenting ownership and purpose for each discovered endpoint creates accountability. Endpoints without clear owners should be treated as security liabilities until verified safe. Decommissioning unused endpoints reduces attack surface more effectively than attempting to secure forgotten functionality. For endpoints that must remain active, applying the same security standards as documented routes closes the gap attackers exploit.</p>
+
+    <h2>Making Discovery Continuous</h2>
+
+    <p>One-time enumeration establishes a baseline, but APIs evolve continuously. New features introduce endpoints. Refactors rename paths without updating all references. Dependencies add callback URLs. Without ongoing monitoring, your endpoint inventory becomes stale within release cycles.</p>
+
+    <p>Effective programs integrate endpoint discovery into regular security operations. Automated scanning runs on schedules aligned with deployment pipelines. Alerts trigger when new endpoints appear in JavaScript bundles or when traffic logs show paths absent from specifications. Integration with CI/CD workflows ensures endpoint changes enter review processes rather than shipping silently.</p>
+
+    <p>This shift from periodic assessment to continuous visibility transforms API security from reactive cleanup to proactive defense. Teams catch undocumented endpoints during development rather than during incident response. Security reviews account for actual exposed functionality rather than assumed boundaries defined by outdated documentation.</p>
+
+    
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+    <div class="cta-box">
+      <h3 style="margin-bottom:10px;">API Endpoint Discovery</h3>
+      <p style="color:var(--muted);margin-bottom:16px;">JS parsing, smart fuzzing, spec gap detection, and continuous monitoring in one tool. Just $9/month.</p>
+      <a href="/products/#micro-saas" class="cta-btn">Get API Endpoint Discovery →</a>
+    </div>
+
+  </div>
+  <div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Complete API Attack Surface Visibility</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">Stop guessing what endpoints attackers can reach. Map every route, detect gaps, and monitor continuously.</p><a href="/products/#micro-saas" class="btn btn-primary">View Pricing Plans →</a></div>
+<footer style="border-top:1px solid var(--border);padding:36px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>

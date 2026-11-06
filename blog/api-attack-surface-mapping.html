@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Attack Surface Mapping: Finding the Endpoints You Forgot About — EdgeIQ Labs</title>
+  <meta name="description" content="API attack surface mapping finds undocumented endpoints, shadow APIs, and forgotten admin panels before attackers do. Learn how automated discovery works and why continuous monitoring beats one-time audits." />
+  <meta property="og:title" content="API Attack Surface Mapping: Finding the Endpoints You Forgot About" />
+  <meta property="og:description" content="API attack surface mapping finds undocumented endpoints, shadow APIs, and forgotten admin panels before attackers do." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/api-attack-surface-mapping.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="API Attack Surface Mapping: Finding the Endpoints You Forgot About" />
+  <meta name="twitter:description" content="API attack surface mapping finds undocumented endpoints, shadow APIs, and forgotten admin panels before attackers do." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/api-attack-surface-mapping.html" />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --text: #e8eef7;
+      --muted: #9fb0c7;
+      --accent: #3dd9ff;
+      --border: #233142;
+      --ok: #70f0a8;
+      --warn: #f0a83d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container { max-width: 740px; margin: 0 auto; padding: 0 20px; }
+    nav {
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0;
+      background: rgba(11,15,20,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; gap: 20px; }
+    .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-logo-img { height: 60px; width: auto; border-radius: 10px; }
+    .nav-wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+    .nav-brand-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: var(--text); }
+    .nav-brand-name span { color: var(--accent); }
+    .nav-brand-tag { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.95rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 8px 16px !important; border-radius: 8px !important; }
+    .nav-cta:hover { opacity: 0.88; }
+    .article-header { padding: 64px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+    .article-header h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin-bottom: 16px; }
+    .article-meta { font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 20px; }
+    .tag { display: inline-block; background: rgba(61,217,255,0.08); border: 1px solid rgba(61,217,255,0.2); color: var(--accent); font-size: 0.7rem; border-radius: 5px; padding: 3px 8px; margin-right: 6px; font-family: monospace; }
+    .lead { font-size: 1.1rem; color: var(--text); margin-bottom: 28px; border-left: 3px solid var(--accent); padding-left: 18px; }
+    h2 { font-size: 1.5rem; margin: 36px 0 14px; }
+    h3 { font-size: 1.15rem; margin: 24px 0 10px; color: var(--accent); }
+    p { color: var(--muted); margin-bottom: 18px; }
+    ul, ol { color: var(--muted); margin: 0 0 18px 22px; }
+    li { margin-bottom: 8px; }
+    code { background: rgba(61,217,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; color: var(--accent); }
+    pre { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; overflow-x: auto; margin: 18px 0; }
+    pre code { background: none; padding: 0; color: var(--text); font-size: 0.85rem; }
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+    .step-number { font-size: 0.72rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    .step-card h3 { margin-top: 0; color: var(--text); }
+    .cta-box {
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 28px;
+      margin: 40px 0;
+      text-align: center;
+    }
+    .cta-box h3 { color: var(--text); font-size: 1.2rem; margin-bottom: 10px; }
+    .cta-box p { color: var(--muted); margin-bottom: 18px; }
+    .cta-btn { display: inline-block; background: var(--accent); color: #071018; font-weight: 700; padding: 11px 22px; border-radius: 10px; text-decoration: none; }
+    .footer-cta { padding: 48px 0; border-top: 1px solid var(--border); margin-top: 48px; text-align: center; }
+
+    /* Nav override — standardized */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "API Attack Surface Mapping: Finding the Endpoints You Forgot About",
+    "description": "API attack surface mapping finds undocumented endpoints, shadow APIs, and forgotten admin panels before attackers do.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-11-06",
+    "dateModified": "2026-11-06",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/api-attack-surface-mapping.html"
+    }
+  }
+  </script>
+
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 6 min read &nbsp;·&nbsp; <span class="tag">API Security</span><span class="tag">ASM</span></div>
+      <h1>API Attack Surface Mapping: Finding the Endpoints You Forgot About</h1>
+      <p class="lead">Your API documentation lists 40 endpoints. Your actual attack surface has 120. The difference between those two numbers is where breaches happen. API attack surface mapping closes that gap.</p>
+    </div>
+
+    <p>Every organization with an API has an attack surface problem. The question is whether you know what yours looks like or whether an attacker will be the one to show you. API attack surface mapping is the process of discovering, cataloging, and continuously monitoring every endpoint your APIs expose — including the ones nobody documented, the ones nobody remembers building, and the ones that were supposed to be internal but aren't.</p>
+
+    <h2>What an API Attack Surface Actually Is</h2>
+    <p>An API attack surface is the complete set of endpoints, parameters, authentication mechanisms, and data flows that an external actor can interact with across your API infrastructure. It includes:</p>
+    <ul>
+      <li><strong>Documented public endpoints</strong> — the ones in your OpenAPI spec or developer portal</li>
+      <li><strong>Undocumented endpoints</strong> — routes that exist in code but never made it into documentation</li>
+      <li><strong>Shadow APIs</strong> — APIs deployed outside official channels, often by individual teams or developers</li>
+      <li><strong>Legacy versions</strong> — older API versions still responding at <code>/v1/</code>, <code>/beta/</code>, or deprecated paths</li>
+      <li><strong>Admin and debug endpoints</strong> — internal tooling accidentally exposed to the internet</li>
+      <li><strong>Third-party integrations</strong> — APIs your SaaS vendors expose on your behalf</li>
+    </ul>
+    <p>The attack surface isn't just the list of URLs. It's the combination of endpoints, their authentication state, the data they return, and the actions they allow. An unauthenticated <code>GET /api/users</code> that returns email addresses is part of your attack surface. So is a <code>POST /admin/reset-password</code> endpoint that doesn't verify the requester's identity. Both are dangerous for different reasons, and both are frequently invisible to the teams responsible for securing them.</p>
+
+    <h2>Why Undocumented Endpoints Are Dangerous</h2>
+    <p>Undocumented endpoints represent the highest-risk portion of any API attack surface because they lack three things that documented endpoints typically have: security review, access controls, and monitoring.</p>
+    <p>These endpoints appear for predictable reasons. A developer adds a debug route during troubleshooting and forgets to remove it before merging. A staging API gets deployed to production with test credentials still active. An internal microservice exposes a health check endpoint that also leaks environment variables. A mobile app backend includes an admin function that was never meant to be called from outside the app.</p>
+    <p>None of these endpoints appear in your API gateway configuration. None of them are covered by your WAF rules. None of them show up in your security team's inventory. But they respond to requests, they process input, and they often have weaker defenses than the endpoints you've spent time hardening.</p>
+    <p>Attackers find them through automated discovery. They crawl JavaScript bundles for hardcoded paths. They brute-force common endpoint patterns. They query certificate transparency logs for subdomains like <code>api-staging.yourdomain.com</code>. They read your Swagger documentation when it's accidentally left public. The tools are free, the techniques are well-documented, and the results consistently reveal endpoints that the owning organization didn't know existed.</p>
+
+    <h2>How Automated API Discovery Works</h2>
+    <p>Manual API inventories don't scale. By the time a human finishes documenting every endpoint across every service, new endpoints have already been deployed. Automated API attack surface mapping solves this by combining multiple discovery methods into a continuous process.</p>
+
+    <div class="step-card">
+      <div class="step-number">Passive Discovery</div>
+      <h3>Finding Endpoints Without Sending Requests</h3>
+      <p>Passive discovery identifies API endpoints through publicly available metadata without interacting with your infrastructure directly. Certificate Transparency logs reveal subdomains and hostnames associated with your domain. DNS records expose internal naming conventions. Public code repositories, JavaScript source maps, and archived web pages contain endpoint references. This method finds endpoints that exist in your infrastructure's footprint even if they're not currently indexed or linked.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">Active Enumeration</div>
+      <h3>Testing What Responds</h3>
+      <p>Active enumeration sends targeted requests to discovered hosts using wordlists of common API path patterns, parameter names, and HTTP methods. It identifies which endpoints respond, what authentication they require, and what data they return. Modern tools use adaptive fuzzing that adjusts based on response patterns rather than blindly iterating through static lists.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">Traffic Analysis</div>
+      <h3>Learning From Real Usage</h3>
+      <p>When integrated with API gateways, load balancers, or application logs, traffic analysis identifies endpoints that are actually being called in production — including ones that bypass the gateway entirely. This catches shadow APIs that were deployed directly to cloud instances without going through official infrastructure.</p>
+    </div>
+
+    <h2>Continuous Monitoring vs One-Time Audits</h2>
+    <p>A one-time API audit produces a snapshot. It tells you what your attack surface looked like on the day the audit ran. Within weeks, that snapshot is stale. New endpoints get deployed. Old endpoints get abandoned but not decommissioned. Configuration drift reintroduces vulnerabilities that were previously fixed.</p>
+    <p>Continuous API attack surface monitoring treats discovery as an ongoing process rather than a project. It runs passive and active discovery on a schedule, compares results against previous scans, and alerts when the attack surface changes. New endpoints trigger notifications. Removed endpoints are verified as actually offline. Authentication state changes are flagged for review.</p>
+    <p>The operational difference matters. A one-time audit finds problems that have already existed for months. Continuous monitoring catches problems within hours or days of introduction. For organizations deploying APIs weekly or daily, that gap determines whether you fix issues before exploitation or after.</p>
+
+    <h2>Mapping Your Surface With SurfaceMap</h2>
+    <p>SurfaceMap automates API attack surface mapping at a price point that makes continuous monitoring accessible to teams that can't justify enterprise ASM budgets. It combines passive CT log analysis, JavaScript endpoint extraction, active path enumeration, and scheduled rescans into a single dashboard. Results are categorized by risk level, authentication state, and data sensitivity.</p>
+    <p>SurfaceMap starts at $19/month and covers unlimited domains. It integrates with Slack and email for change alerts, exports findings in JSON and CSV for integration with existing security workflows, and requires no agent installation or API gateway configuration.</p>
+    <p>If you're currently managing your API inventory through spreadsheets, Confluence pages, or hope, SurfaceMap replaces that process with something that actually keeps up with how fast your engineering team ships.</p>
+    <div class="cta-box">
+      <h3>See Your Full API Attack Surface</h3>
+      <p>SurfaceMap discovers undocumented endpoints, shadow APIs, and forgotten admin panels — continuously, starting at $19/mo.</p>
+      <a href="/products/#micro-saas" class="cta-btn">Explore SurfaceMap →</a>
+    </div>
+
+    <h2>The Bottom Line</h2>
+    <p>Your API attack surface is larger than your documentation says it is. The endpoints that cause breaches are almost always the ones nobody thought to secure because nobody remembered they existed. API attack surface mapping makes those endpoints visible. Continuous monitoring keeps them visible. The alternative is waiting for someone else to find them first.</p>
+
+    <div class="footer-cta">
+      <p style="color: var(--muted); margin-bottom: 14px;">Start mapping your API attack surface today with SurfaceMap.</p>
+      <a href="/products/#micro-saas" class="cta-btn">Get SurfaceMap →</a>
+    </div>
+
+  </div>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>

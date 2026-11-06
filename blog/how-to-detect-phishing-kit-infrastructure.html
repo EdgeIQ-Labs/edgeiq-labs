@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Detect Phishing Kit Infrastructure Before Victims Report It — EdgeIQ Labs</title>
+  <meta name="description" content="Learn how to detect phishing kit infrastructure using fingerprinting, hosting pattern analysis, and takedown workflows. Early detection reduces victim count and brand damage." />
+  <meta property="og:title" content="How to Detect Phishing Kit Infrastructure Before Victims Report It" />
+  <meta property="og:description" content="Detect phishing kits before victims report them. Fingerprinting, hosting patterns, and takedown workflows explained." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/how-to-detect-phishing-kit-infrastructure.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Detect Phishing Kit Infrastructure Before Victims Report It" />
+  <meta name="twitter:description" content="Detect phishing kits before victims report them. Fingerprinting, hosting patterns, and takedown workflows explained." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-detect-phishing-kit-infrastructure.html" />
+  <style>
+    :root { --bg:#0b0f14; --card:#121923; --text:#e8eef7; --muted:#9fb0c7; --accent:#3dd9ff; --border:#233142; --warn:#f0a83d; --danger:#ff4d4d; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+    .container { max-width:740px; margin:0 auto; padding:0 20px; }
+    nav { border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,15,20,0.92); backdrop-filter:blur(6px); }
+    .nav-inner { display:flex; justify-content:space-between; align-items:center; padding:10px 0; gap:20px; }
+    .nav-brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+    .nav-logo-img { height:60px; width:auto; border-radius:10px; }
+    .nav-wordmark { display:flex; flex-direction:column; line-height:1.1; }
+    .nav-brand-name { font-weight:800; font-size:1.15rem; color:var(--text); }
+    .nav-brand-name span { color:var(--accent); }
+    .nav-brand-tag { font-size:0.68rem; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-links a { color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; }
+    .nav-cta { background:var(--accent); color:#071018 !important; font-weight:700; padding:8px 16px !important; border-radius:8px !important; }
+    .article-header { padding:64px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .article-meta { font-size:0.82rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:20px; }
+    h1 { font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.2; margin-bottom:16px; }
+    .tag { display:inline-block; background:rgba(61,217,255,.08); border:1px solid rgba(61,217,255,.2); color:var(--accent); font-size:0.7rem; border-radius:5px; padding:3px 8px; margin-right:6px; font-family:monospace; }
+    .lead { font-size:1.1rem; border-left:3px solid var(--accent); padding-left:18px; margin-bottom:24px; }
+    h2 { font-size:1.5rem; margin:34px 0 14px; }
+    p, li { color:var(--muted); }
+    p { margin-bottom:16px; }
+    ul { margin:0 0 18px 22px; }
+    .check { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; margin:12px 0; }
+    .check h3 { color:var(--text); margin-bottom:8px; }
+    .badge-danger { display:inline-block; font-size:.72rem; border-radius:999px; padding:2px 8px; margin-left:8px; color:var(--danger); border:1px solid rgba(255,77,77,.35); background:rgba(255,77,77,.12); }
+    .badge-warn { display:inline-block; font-size:.72rem; border-radius:999px; padding:2px 8px; margin-left:8px; color:var(--warn); border:1px solid rgba(240,168,61,.35); background:rgba(240,168,61,.12); }
+    .cta-box { background:var(--card); border:1px solid var(--accent); border-radius:14px; padding:26px; margin:36px 0; text-align:center; }
+    .cta-btn { display:inline-block; background:var(--accent); color:#071018; font-weight:700; padding:11px 22px; border-radius:10px; text-decoration:none; }
+    code { background:rgba(61,217,255,.1); color:var(--accent); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+    .warning-box { background:rgba(255,77,77,.08); border:1px solid rgba(255,77,77,.3); border-radius:10px; padding:18px; margin:20px 0; }
+
+    /* Nav override — standardized */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 6px 12px; font-size: 0.92rem; border-radius: 8px; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--accent); color: #071018 !important; font-weight: 700; padding: 7px 14px !important; border-radius: 8px !important; white-space: nowrap; flex-shrink: 0; }
+    .nav-cta:hover { opacity: 0.88; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "How to Detect Phishing Kit Infrastructure Before Victims Report It",
+    "description": "Learn how to detect phishing kit infrastructure using fingerprinting, hosting pattern analysis, and takedown workflows. Early detection reduces victim count and brand damage.",
+    "image": "https://edgeiqlabs.com/og-preview.png",
+    "datePublished": "2026-11-06",
+    "dateModified": "2026-11-06",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/how-to-detect-phishing-kit-infrastructure.html"
+    }
+  }
+  </script>
+
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Detect Phishing Kit Infrastructure Before Victims Report It \u2014 EdgeIQ Labs",
+  "description": "Learn how to detect phishing kit infrastructure using fingerprinting, hosting pattern analysis, and takedown workflows. Early detection reduces victim count and brand damage.",
+  "url": "https://edgeiqlabs.com/blog/how-to-detect-phishing-kit-infrastructure.html",
+  "publisher": {
+    "@type": "Organization",
+    "name": "EdgeIQ Labs",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://edgeiqlabs.com/favicon.png"
+    }
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "EdgeIQ Labs"
+  },
+  "image": "https://edgeiqlabs.com/og-preview.png"
+}
+</script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">&#x1F4CA; Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">&#x1F7E2; Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">&#x2709; Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">&#x1F4E1; Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">&#x1F517; Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">&#x1F4CB; Compliance</a>
+  <a class="mob-cta" href="/">Get Started &#x2192;</a>
+</div>
+  <div class="container">
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 8 min read &nbsp;·&nbsp; <span class="tag">Phishing</span><span class="tag">Threat Intel</span></div>
+      <h1>How to Detect Phishing Kit Infrastructure Before Victims Report It</h1>
+      <p class="lead">Phishing kits are commoditized attack infrastructure. Detecting them before campaigns scale requires understanding their fingerprints, hosting patterns, and deployment cycles.</p>
+    </div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;max-width:700px;margin:0 auto 32px;padding:10px 14px;background:rgba(18,25,35,0.55);border:1px solid var(--border);border-radius:10px;font-size:0.78rem;color:var(--muted);">
+  <span>🔒 <strong style="color:var(--text);">Privacy-first</strong> · scans never stored</span>
+  <span>⚡ Powered by <strong style="color:var(--text);">Cloudflare</strong></span>
+  <span>💳 <strong style="color:var(--text);">Stripe-secured</strong> payments</span>
+  <span>🆓 No credit card for free tools</span>
+</div>
+
+
+    <p>Modern phishing is no longer artisanal crime. It is an industrial supply chain where pre-built kits are sold, rented, and deployed at scale. These kits include cloned login pages, credential harvesting backends, reverse proxy configurations for MFA bypass, and admin panels for managing stolen data. Understanding how to detect phishing kit infrastructure means shifting defense left—identifying attack assets during setup rather than after victims submit reports.</p>
+
+    <p>The window between kit deployment and first victim report averages 4-18 hours. During that window, hundreds of credentials may already be harvested. Teams that detect infrastructure during the staging phase prevent entire campaigns rather than mitigating individual incidents. This requires moving beyond URL blacklists toward structural analysis of how phishing kits are built, hosted, and operated.</p>
+
+    <h2>What Makes a Phishing Kit Detectable</h2>
+
+    <p>Phishing kits share architectural patterns because they are software products with development constraints. Kit authors optimize for deployment speed, evasion, and reusability. These optimizations create detectable signatures across multiple layers:</p>
+
+    <ul>
+      <li><strong>File structure consistency:</strong> Kits use predictable directory layouts (<code>/panel/</code>, <code>/api/</code>, <code>/assets/banks/</code>) and filename conventions that persist across variants.</li>
+      <li><strong>JavaScript fingerprints:</strong> Obfuscated loaders, specific DOM manipulation patterns, and anti-analysis checks that differ from legitimate banking or SaaS frontends.</li>
+      <li><strong>Backend behavior:</strong> Credential submission endpoints that forward data to Telegram bots, Discord webhooks, or panel databases rather than legitimate authentication services.</li>
+      <li><strong>Certificate patterns:</strong> Rapid certificate issuance on newly registered domains, often using free CAs with minimal validation.</li>
+      <li><strong>DNS configuration:</strong> Minimal record sets, Cloudflare proxying enabled by default, and nameservers associated with bulletproof hosting providers.</li>
+    </ul>
+
+    <p>These signals are weak individually but strong in combination. A single suspicious file path means little. That same path combined with a 3-day-old domain, Cloudflare proxy, and Telegram webhook integration creates high-confidence detection.</p>
+
+    <h2>Fingerprinting Techniques Beyond URL Matching</h2>
+
+    <div class="check">
+      <h3>Structural Fingerprinting</h3>
+      <p>URL-based detection fails because kits rotate domains hourly. Structural fingerprinting analyzes page composition instead. This includes HTML template hashes, CSS class naming conventions, JavaScript function signatures, and image asset checksums. When a new domain serves a page with identical structure to a known kit variant, detection triggers regardless of domain age or reputation.</p>
+      <p>Advanced fingerprinting extends to behavioral analysis. Legitimate login pages load resources from CDNs, make API calls to authentication services, and set cookies with specific attributes. Phishing kits simulate these behaviors but often miss subtle implementation details—wrong cookie flags, missing CORS headers, or API responses that return static JSON rather than dynamic session tokens.</p>
+    </div>
+
+    <p>Network-level fingerprinting examines TLS handshakes and HTTP response patterns. Kit deployments frequently share cipher suite preferences, header ordering, and server banners that differ from the brands they impersonate. JA3/JA4 hashes cluster phishing infrastructure even when operators change domains and IP addresses.</p>
+
+    <h2>Hosting Pattern Analysis</h2>
+
+    <p>Phishing kit operators select hosting based on cost, abuse tolerance, and deployment automation. This creates observable clustering:</p>
+
+    <ul>
+      <li><strong>Bulletproof hosting providers:</strong> Specific ASNs and hosting companies repeatedly appear in phishing infrastructure. Maintaining provider reputation scores enables predictive blocking.</li>
+      <li><strong>Cloud platform abuse:</strong> Free tiers of legitimate cloud services (Vercel, Netlify, Cloudflare Pages) host kits due to fast deployment and built-in SSL. Detection requires distinguishing legitimate customer sites from phishing deployments within the same IP ranges.</li>
+      <li><strong>Compromised WordPress sites:</strong> Kits injected into vulnerable CMS installations inherit the host's reputation. Detection must identify phishing directories and scripts rather than relying on domain or IP reputation alone.</li>
+      <li><strong>Fast-flux networks:</strong> DNS round-robin configurations that rotate backend IPs every few minutes. Identifying fast-flux requires monitoring DNS response variance over time windows.</li>
+    </ul>
+
+    <p>Hosting analysis also tracks operator tradecraft evolution. When a major hosting provider begins enforcing abuse policies, operators migrate to alternatives. Monitoring these migration patterns provides early warning of new infrastructure waves before they reach scale.</p>
+
+    <h2>Takedown Workflow Realities</h2>
+
+    <p>Detection without takedown capability produces intelligence but not protection. Effective takedown workflows require understanding jurisdictional constraints, provider response times, and evidence requirements.</p>
+
+    <p>Most phishing kits operate on infrastructure where takedowns take 24-72 hours through standard abuse channels. Bulletproof hosting providers ignore requests entirely, requiring upstream network intervention or payment processor pressure. Cloud platforms respond faster (4-24 hours) but require precise evidence packages demonstrating policy violations rather than generic phishing claims.</p>
+
+    <p>Parallel mitigation strategies reduce victim exposure during takedown delays. Browser vendors and security vendors ingest detection feeds to block access at client level. Email security platforms filter messages containing detected kit URLs. DNS sinkholing prevents resolution for users on participating networks. These controls buy time while infrastructure takedowns process.</p>
+
+    <h2>Why Early Detection Reduces Victim Count</h2>
+
+    <p>Phishing campaign success follows exponential curves. Initial testing targets small victim lists to validate kit functionality and evade automated detection. Successful tests trigger mass distribution through spam botnets, SMS campaigns, or social media lures. The difference between detecting a kit during testing versus during mass distribution is often thousands of compromised accounts.</p>
+
+    <p>Early detection also disrupts operator economics. Phishing kits represent investment in development, infrastructure, and distribution. When kits are taken down during staging, operators lose that investment without generating returns. Repeated early disruption forces operators to increase prices, reduce quality, or exit the market. This economic pressure compounds across the ecosystem.</p>
+
+    <p>For defenders, early detection shifts metrics from "mean time to respond" to "campaigns prevented." This matters for executive reporting and resource allocation. Preventing a campaign that would have compromised 500 accounts demonstrates more value than responding to 500 account compromises after the fact.</p>
+
+    <div class="eq-cta-mid" style="background:linear-gradient(135deg,#0d1a26,#0b1520);border:1px solid rgba(61,217,255,0.25);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Automated Phishing Kit Detection</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">Continuous fingerprinting, hosting analysis, and takedown coordination without building internal threat intel pipelines.</p><a href="/products/#micro-saas" class="btn btn-primary">Explore Phishing Kit Detector →</a></div>
+
+    <h2>Building Detection Into Security Operations</h2>
+
+    <p>Integrating phishing kit detection requires balancing automation with analyst oversight. Fully automated systems generate false positives against legitimate sites with similar structures (banking portals, SaaS login pages, e-commerce checkouts). Human review validates detections before triggering takedowns or blocks.</p>
+
+    <p>Effective programs combine multiple signal sources: internal telemetry from email gateways and web proxies, external threat feeds from commercial and open-source providers, and proactive scanning of newly registered domains. Correlation across these sources increases confidence and reduces noise. When three independent signals converge on the same infrastructure, action can proceed with minimal manual review.</p>
+
+    <p>Feedback loops improve detection over time. Analyst dispositions on flagged sites train classification models. Takedown outcomes validate detection accuracy. Victim reports confirm missed detections. This continuous refinement keeps pace with operator adaptation.</p>
+
+    
+    <div style="background:#0d1620;border:1px solid #1e3a5a;border-radius:12px;padding:24px 28px;margin:36px 0;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:#e8eef7;">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:#9fb0c7;margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam — unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:#071018;border:1px solid #233142;border-radius:7px;color:#e8eef7;font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:#3dd9ff;color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+    <div class="cta-box">
+      <h3 style="margin-bottom:10px;">Phishing Kit Detector</h3>
+      <p style="color:var(--muted);margin-bottom:16px;">Structural fingerprinting, hosting pattern analysis, and automated takedown workflows. $9/month for continuous monitoring.</p>
+      <a href="/products/#micro-saas" class="cta-btn">Get Phishing Kit Detector →</a>
+    </div>
+
+  </div>
+  <div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Complete Phishing Infrastructure Visibility</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">Stop reacting to victim reports. Detect kits during staging and prevent campaigns before they scale.</p><a href="/products/#micro-saas" class="btn btn-primary">View Pricing Plans →</a></div>
+<footer style="border-top:1px solid var(--border);padding:36px 0;margin-top:60px;text-align:center;color:var(--muted);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>

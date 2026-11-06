@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain Impersonation Detection: Catching Lookalikes Before They Cost You — EdgeIQ Labs</title>
+  <meta name="description" content="How domain impersonation detection catches typosquatting, lookalike domains, and phishing infrastructure before customers get burned. Practical brand protection for SMBs." />
+  <meta property="og:title" content="Domain Impersonation Detection: Catching Lookalikes Before They Cost You" />
+  <meta property="og:description" content="How domain impersonation detection catches typosquatting, lookalike domains, and phishing infrastructure before customers get burned." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/domain-impersonation-detection.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Domain Impersonation Detection: Catching Lookalikes Before They Cost You" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/domain-impersonation-detection.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Domain Impersonation Detection: Catching Lookalikes Before They Cost You","description":"How domain impersonation detection catches typosquatting, lookalike domains, and phishing infrastructure before customers get burned.","datePublished":"2026-11-06","dateModified":"2026-11-06","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#4da6ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .mob-cta{background:#4da6ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
+    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
+    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
+    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
+    p,li{color:var(--muted);}
+    p{margin-bottom:16px;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:6px;}
+    strong{color:var(--text);}
+    .tag{display:inline-block;background:rgba(77,166,255,0.08);border:1px solid rgba(77,166,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.88em;background:rgba(77,166,255,0.08);padding:2px 5px;border-radius:4px;color:var(--accent);}
+    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.88rem;}
+    th{background:var(--card);color:var(--accent);font-weight:700;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);}
+    td{padding:10px 14px;border-bottom:1px solid rgba(35,49,66,0.5);color:var(--muted);}
+    tr:last-child td{border-bottom:none;}
+    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout.danger{border-left-color:#ff6b7a;}
+    .callout.ok{border-left-color:#3de19e;}
+    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(77,166,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
+    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
+    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
+    footer a{color:#4a6080;text-decoration:none;}
+    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+</head>
+<body>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/docs/">Docs</a>
+      <a href="/products/">Products</a>
+      <a href="/shieldfill/" class="nav-cta">ShieldFill</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">Inbox Shield</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;">Workspace Posture</a>
+    <a href="/compliance/" style="color:#3dd9ff;">Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">BrandGuard</a>
+    <a href="/shieldfill/" style="color:#ff9f43;">ShieldFill</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a>
+  <a href="/shieldfill/" class="mob-cta">Try ShieldFill →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">Brand Protection</span><span class="tag">Phishing</span></div>
+      <h1>Domain Impersonation Detection: Catching Lookalikes Before They Cost You</h1>
+      <p class="lead">Attackers register domains that look like yours to steal credentials, redirect customers, and damage trust. Domain impersonation detection finds these impostors before they reach your users.</p>
+    </div>
+
+    <h2>What domain impersonation actually is</h2>
+    <p>Domain impersonation happens when an attacker registers a domain name designed to deceive people into thinking it belongs to your organization. This isn't theoretical—it's a daily operational reality for businesses of every size. The attacker's goal is simple: exploit the trust your customers have in your brand to extract money, credentials, or sensitive data.</p>
+    <p>The most common form is typosquatting. Someone registers <code>exampel.com</code> instead of <code>example.com</code>, counting on users mistyping the URL. These domains often host credential harvesting pages that mirror your login screen exactly. A tired employee typing quickly doesn't notice the transposed letters until after entering their password.</p>
+    <p>Lookalike domains go further than simple typos. Attackers substitute visually similar characters: replacing 'l' with '1', 'o' with '0', or using internationalized domain names with Cyrillic or Greek characters that render identically to Latin equivalents in most browsers. The domain <code>paypa1.com</code> looks nearly identical to <code>paypal.com</code> in many fonts. Homograph attacks using Unicode can create domains that are byte-for-byte different but pixel-for-pixel identical to legitimate ones.</p>
+    <p>These aren't just registration tricks. Each impersonating domain represents active phishing infrastructure waiting for victims.</p>
+
+    <h2>How phishing infrastructure uses lookalike domains</h2>
+    <p>Impersonating domains serve specific roles in attack chains. Understanding these roles explains why detection matters more than reactive takedowns.</p>
+    <p><strong>Credential harvesting sites</strong> replicate your login page, complete with branding, CSS, and JavaScript. When users enter credentials, the site captures them and either redirects to your real site (so the victim suspects nothing) or displays a fake error message prompting re-entry. Modern kits automatically detect which service the victim expects based on the referring email or link context.</p>
+    <p><strong>Email spoofing support</strong> involves registering domains similar to yours to send emails that appear legitimate at a glance. While SPF, DKIM, and DMARC prevent direct spoofing of your actual domain, attackers use lookalikes knowing that recipients scanning subject lines and sender addresses won't scrutinize every character. An email from <code>support@yourcompany-support.com</code> passes casual inspection even though it's not from your domain.</p>
+    <p><strong>Traffic redirection</strong> uses impersonating domains to intercept users who mistype URLs or click misleading links. The domain might serve ads, install malware, or funnel visitors through affiliate schemes. Even if no credentials are stolen, your brand association with malicious content erodes customer trust.</p>
+    <div class="callout danger">
+      <strong>The timing problem:</strong> Most impersonating domains are registered and deployed within hours. By the time a customer reports phishing or a takedown request processes, the damage is done. Detection must happen before victim contact, not after.
+    </div>
+
+    <h2>Why manual monitoring fails</h2>
+    <p>Checking for impersonators manually doesn't scale. There are over 1,500 top-level domains now, and new registrations happen continuously. Searching trademark databases, WHOIS records, and certificate transparency logs by hand covers only what you already suspect.</p>
+    <p>The volume alone makes this impossible. Thousands of domains register daily containing fragments of popular brand names. Filtering noise from genuine threats requires pattern recognition across multiple signals: registration recency, DNS configuration similarity, SSL certificate metadata, hosting provider reputation, and visual page comparison. No human analyst can evaluate this combination at scale without tooling.</p>
+    <p>Manual checks also miss the registration window where intervention is cheapest. Once an impersonating domain resolves to live phishing content, takedown requests take days to weeks depending on registrar cooperation. During that window, the domain actively harms your customers. Catching domains during registration or DNS propagation—before content goes live—prevents victimization entirely rather than responding to it.</p>
+
+    <h2>How automated domain impersonation detection works</h2>
+    <p>Effective detection combines multiple signal sources to identify suspicious registrations before they reach users.</p>
+    <p><strong>Permutation generation</strong> creates candidate domains algorithmically: character substitutions, adjacent key typos, TLD variations, subdomain additions, and homoglyph replacements. For a typical brand name, this produces hundreds to thousands of candidates worth checking.</p>
+    <p><strong>Registration monitoring</strong> queries WHOIS databases and zone files for newly registered candidates. Fresh registrations matching permutation patterns flag immediately. Older registrations matching your brand but previously unknown suggest dormant infrastructure awaiting activation.</p>
+    <p><strong>DNS and hosting analysis</strong> examines whether flagged domains resolve to IP ranges associated with known phishing hosts, bulletproof hosting providers, or CDN services commonly abused for impersonation campaigns. Domains pointing to parking pages pose less immediate risk than those resolving to active web servers with SSL certificates.</p>
+    <p><strong>Visual similarity scoring</strong> compares rendered pages against your legitimate site using perceptual hashing and DOM structure analysis. High similarity scores combined with suspicious registration patterns indicate active impersonation rather than coincidental naming overlap.</p>
+    <p><strong>Certificate transparency log monitoring</strong> catches domains when SSL certificates issue, often before DNS fully propagates. Since modern browsers require HTTPS for credential entry, certificate issuance reliably precedes phishing deployment. This provides the earliest reliable detection signal available.</p>
+
+    <h2>What happens after detection</h2>
+    <p>Finding impersonators is necessary but insufficient. Response determines whether detection prevents harm.</p>
+    <p>Automated takedown requests to registrars and hosting providers work best when supported by evidence packages: registration timestamps, DNS records, screenshot comparisons, and abuse policy citations. Registrars respond faster to structured reports demonstrating clear trademark infringement or phishing intent than to vague complaints.</p>
+    <p>Blocklist distribution pushes detected domains to security vendors, browser filters, and email gateways. Even before takedown completes, blocking access protects users. Integration with threat intelligence feeds ensures your detection benefits the broader ecosystem while receiving reciprocal data about emerging campaigns targeting your industry.</p>
+    <p>Customer notification protocols matter when impersonators successfully phished victims before detection. Transparent communication about the incident, indicators to watch for, and remediation steps maintains trust better than silence followed by third-party disclosure.</p>
+
+    <h2>Practical brand protection without enterprise complexity</h2>
+    <p>Small and mid-sized businesses face the same impersonation threats as enterprises but lack dedicated brand protection teams. The gap between "no monitoring" and "enterprise-grade solution" used to be enormous. It isn't anymore.</p>
+    <p><a href="/brandguard/"><strong>BrandGuard</strong></a> from EdgeIQ Labs provides continuous domain impersonation detection starting at $14/month. It monitors permutations of your domain across hundreds of TLDs, alerts on suspicious registrations before they go live, and supplies evidence packages for takedowns. No setup calls, no minimum contract terms, no features you won't use.</p>
+    <p>The alternative—waiting for customers to report phishing emails or fraudulent sites—means accepting preventable damage as a cost of doing business. Domain impersonation detection shifts that equation: catch impostors during registration, block them before victim contact, and maintain the trust your brand depends on.</p>
+
+    <div class="cta-box">
+      <h2>Stop impersonators before they reach your customers</h2>
+      <p>BrandGuard monitors for lookalike domains and phishing infrastructure targeting your brand. From $14/mo.</p>
+      <a href="/brandguard/" class="cta-btn">Start Protecting Your Brand →</a>
+    </div>
+  </article>
+</div>
+
+<div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Protect Your Business for $29/mo</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">SSL monitoring, uptime checks, email security, and monthly reports. 14-day free trial.</p><a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener" class="btn btn-primary">Start Free Trial →</a> <a href="/pricing/" class="btn btn-secondary">See All Plans →</a></div>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/shieldfill/">ShieldFill</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:location.href})}).catch(function(){});}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+<script defer src="/js/theme.js"></script>
+</body>
+</html>

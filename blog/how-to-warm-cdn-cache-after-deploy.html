@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Warm Your CDN Cache After Every Deploy — EdgeIQ Labs</title>
+  <meta name="description" content="Learn how to warm CDN cache after deploy to avoid cold cache penalties. Practical guide to HIT/MISS mechanics, sitemap-based warming, and provider-specific detection for Cloudflare, Fastly, and Akamai." />
+  <meta property="og:title" content="How to Warm Your CDN Cache After Every Deploy" />
+  <meta property="og:description" content="Why cold cache kills performance post-deploy and how to fix it with sitemap-based warming across major CDN providers." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/how-to-warm-cdn-cache-after-deploy.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Warm Your CDN Cache After Every Deploy" />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-warm-cdn-cache-after-deploy.html" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Warm Your CDN Cache After Every Deploy","description":"Why cold cache kills performance post-deploy and how to fix it with sitemap-based warming across major CDN providers.","datePublished":"2026-11-06","dateModified":"2026-11-06","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs","logo":{"@type":"ImageObject","url":"https://edgeiqlabs.com/favicon.png"}}}</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#4da6ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+    .container{max-width:740px;margin:0 auto;padding:0 20px;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:20px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1rem;color:var(--text);}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;align-items:center;gap:6px;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:#9fb0c7;border-radius:2px;}
+    .product-strip{background:#0e1621;border-bottom:1px solid #233142;position:sticky;top:56px;z-index:9;}
+    .product-strip-inner{display:flex;align-items:center;gap:2px;padding:5px 0 5px 24px;overflow-x:auto;scrollbar-width:none;max-width:980px;margin:0 auto;}
+    .product-strip-inner::-webkit-scrollbar{display:none;}
+    .product-strip-inner::after{content:"";flex:0 0 28px;}
+    .product-strip-inner a{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:background 0.15s;}
+    .product-strip-inner a:hover{background:rgba(255,255,255,0.06);}
+    .nav-mobile-menu{display:none;flex-direction:column;background:#121923;border-top:1px solid #233142;padding:12px 20px 16px;}
+    .nav-mobile-menu.open{display:flex;}
+    .nav-mobile-menu a{color:#9fb0c7;text-decoration:none;padding:10px 4px;font-size:0.9rem;border-bottom:1px solid rgba(35,49,66,0.5);}
+    .nav-mobile-menu a:last-child{border-bottom:none;}
+    .mob-cta{background:#4da6ff;color:#071018 !important;font-weight:700;text-align:center;padding:11px !important;border-radius:8px;margin-top:12px;border-bottom:none !important;}
+    @media(max-width:720px){.nav-links{display:none;}.nav-hamburger{display:flex;}}
+    .article-header{padding:56px 0 36px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+    .article-meta{font-size:0.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:18px;}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.2;margin-bottom:16px;}
+    h2{font-size:1.35rem;margin:32px 0 12px;color:var(--text);}
+    h3{font-size:1.05rem;margin:22px 0 8px;color:var(--text);}
+    p,li{color:var(--muted);}
+    p{margin-bottom:16px;}
+    ul,ol{margin:0 0 18px 22px;}
+    li{margin-bottom:6px;}
+    strong{color:var(--text);}
+    .tag{display:inline-block;background:rgba(77,166,255,0.08);border:1px solid rgba(77,166,255,0.2);color:var(--accent);font-size:0.7rem;border-radius:5px;padding:3px 8px;margin-right:6px;font-family:monospace;}
+    .lead{font-size:1.05rem;border-left:3px solid var(--accent);padding-left:18px;margin-bottom:24px;color:var(--muted);line-height:1.7;}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.88em;background:rgba(77,166,255,0.08);padding:2px 5px;border-radius:4px;color:var(--accent);}
+    table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.88rem;}
+    th{background:var(--card);color:var(--accent);font-weight:700;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);}
+    td{padding:10px 14px;border-bottom:1px solid rgba(35,49,66,0.5);color:var(--muted);}
+    tr:last-child td{border-bottom:none;}
+    .callout{background:var(--card);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout.danger{border-left-color:#ff6b7a;}
+    .callout.ok{border-left-color:#3de19e;}
+    .cta-box{background:linear-gradient(135deg,#071018 0%,#0a1929 100%);border:1px solid rgba(77,166,255,0.3);border-radius:14px;padding:28px;margin:36px 0;text-align:center;}
+    .cta-box h2{margin-top:0;margin-bottom:10px;font-size:1.2rem;color:var(--text);}
+    .cta-box p{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;font-size:0.95rem;}
+    footer{border-top:1px solid var(--border);padding:28px 20px;text-align:center;font-size:0.82rem;color:#4a6080;}
+    footer a{color:#4a6080;text-decoration:none;}
+    .blog-sub-ok{display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+</head>
+<body>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/docs/">Docs</a>
+      <a href="/products/">Products</a>
+      <a href="/shieldfill/" class="nav-cta">ShieldFill</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">Inbox Shield</a>
+    <a href="/workspace-posture/" style="color:#4da6ff;">Workspace Posture</a>
+    <a href="/compliance/" style="color:#3dd9ff;">Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">BrandGuard</a>
+    <a href="/shieldfill/" style="color:#ff9f43;">ShieldFill</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <a href="/">Home</a><a href="/products/">Products</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a>
+  <a href="/shieldfill/" class="mob-cta">Try ShieldFill →</a>
+</div>
+
+<div class="container">
+  <article>
+    <div class="article-header">
+      <div class="article-meta">November 6, 2026 &nbsp;·&nbsp; 7 min read &nbsp;·&nbsp; <span class="tag">CDN</span><span class="tag">Performance</span></div>
+      <h1>How to Warm Your CDN Cache After Every Deploy</h1>
+      <p class="lead">Deploying new code invalidates your edge cache. The next wave of real users pays the latency penalty while your CDN rebuilds what it already knew. Here's how to shift that cost from users to infrastructure.</p>
+    </div>
+
+    <h2>Why cold cache kills post-deploy performance</h2>
+    <p>Every deployment creates a cache discontinuity. Whether you purge explicitly or rely on versioned asset filenames, the result is identical: edge nodes no longer have valid responses stored for your most-requested URLs. The first request to each endpoint after deploy must travel to origin, wait for processing, and only then populate the edge.</p>
+    <p>This matters because origin servers are typically slower than cached responses by an order of magnitude. A page served from CDN edge in 40ms might take 800ms from origin. When hundreds of unique URLs go cold simultaneously after a deploy, the aggregate effect isn't just individual slow requests—it's origin overload. Database connections saturate, application threads block, and response times degrade even for endpoints that weren't directly requested yet because shared resources are exhausted.</p>
+    <p>The problem compounds with geographic distribution. If your CDN has 200 edge locations and you serve 50 critical pages, that's potentially 10,000 cache misses on the first request cycle. Users in low-traffic regions experience this acutely—their local edge node may not see enough natural traffic to re-warm quickly, leaving them hitting origin for hours or days after each release.</p>
+    <div class="callout danger">
+      <strong>The hidden cost:</strong> Cold cache doesn't just make individual requests slow. It creates correlated load spikes at origin precisely when you're most vulnerable—immediately after pushing new code that might contain bugs or performance regressions.
+    </div>
+
+    <h2>Understanding HIT vs MISS mechanics</h2>
+    <p>CDN cache behavior follows predictable rules, but terminology varies across providers. Understanding the core states helps diagnose warming effectiveness.</p>
+    <p><strong>HIT</strong> means the edge node had a fresh, valid response stored locally. No origin contact occurred. Response time reflects network latency between user and edge plus minimal I/O.</p>
+    <p><strong>MISS</strong> means the edge lacked a usable response. The request traveled to origin (or a higher-tier cache), the response was fetched, stored at edge, and returned. Latency includes full round-trip to origin plus storage write time.</p>
+    <p><strong>REVALIDATION</strong> (sometimes called conditional hit) sits between these states. The edge has a stale response and sends a conditional request to origin using ETag or Last-Modified headers. If origin returns 304 Not Modified, the edge refreshes TTL without transferring the body. This is faster than a full miss but still incurs origin round-trip latency.</p>
+    <p>After a purge or deploy with new asset versions, every URL starts in MISS state. Warming converts high-value URLs back to HIT before real users encounter them. The goal isn't 100% coverage—that's impossible for dynamic sites—but ensuring your top 50-200 most-trafficked pages are pre-populated across relevant edge nodes.</p>
+
+    <h2>Sitemap-based warming: the practical approach</h2>
+    <p>Effective cache warming requires knowing which URLs matter. Sitemaps provide this canonical list better than log analysis or guesswork because they represent intended site structure, not historical accidents.</p>
+    <p>The workflow is straightforward: extract URLs from your production sitemap, filter to cacheable resources (HTML pages, CSS, JS bundles, images), and issue HTTP GET requests through the CDN rather than directly to origin. Each request forces the edge to fetch and store the response. Timing matters—run warming immediately after deploy completes but before marketing emails or social posts drive traffic.</p>
+    <p>Concurrency control prevents overwhelming origin. Sequential requests are safe but slow; aggressive parallelism defeats the purpose by recreating the very load spike you're trying to avoid. Most effective implementations use 5-20 concurrent requests depending on origin capacity, with rate limiting tied to observed response times. If origin latency increases during warming, back off automatically.</p>
+    <p>Prioritization improves ROI. Homepage, product category pages, and high-traffic blog posts should warm first. Archive pages and low-traffic documentation can wait for organic traffic. Weight your URL list by actual analytics data—top 100 pages by monthly visits typically capture 80%+ of traffic for most sites.</p>
+
+    <h2>Detecting cache status across providers</h2>
+    <p>Verification distinguishes successful warming from hopeful guessing. Each major CDN exposes cache status differently via response headers.</p>
+    <table>
+      <tr><th>Provider</th><th>Header</th><th>HIT Value</th><th>MISS Value</th></tr>
+      <tr><td>Cloudflare</td><td><code>cf-cache-status</code></td><td>HIT</td><td>MISS, EXPIRED</td></tr>
+      <tr><td>Fastly</td><td><code>X-Cache</code></td><td>HIT</td><td>MISS</td></tr>
+      <tr><td>Akamai</td><td><code>X-Cache-Status</code></td><td>TCP_HIT</td><td>TCP_MISS</td></tr>
+      <tr><td>Amazon CloudFront</td><td><code>X-Cache</code></td><td>Hit from cloudfront</td><td>Miss from cloudfront</td></tr>
+    </table>
+    <p>Automated verification scripts should sample warmed URLs and confirm HIT status across multiple edge locations. Single-location checks are insufficient—a URL may be warm in US-East but still cold in Asia-Pacific. Use geographically distributed probes or your CDN's analytics API to validate coverage matches your user distribution.</p>
+    <div class="callout ok">
+      <strong>Pro tip:</strong> Log cache status during normal operations too. Tracking HIT ratio over time reveals configuration problems (overly aggressive TTLs, query string variations defeating cache keys) before users complain about performance.
+    </div>
+
+    <h2>Making warming part of your deploy pipeline</h2>
+    <p>Cache warming shouldn't be a manual step anyone remembers to run. Integrate it into CI/CD as a post-deploy job that triggers automatically after health checks pass. The entire process—sitemap extraction, filtered request generation, concurrent fetching with backoff, and verification sampling—should complete within minutes for typical sites.</p>
+    <p>Failure handling matters. If warming fails partially (some URLs return errors, origin times out), alert but don't block the pipeline. Partial warmth is better than none. Track warming success rate as a deploy metric alongside traditional signals like error rates and p99 latency.</p>
+    <p>For teams managing multiple properties or frequent deploys, dedicated tooling eliminates maintenance burden of custom scripts. <a href="/tools/cache-warmer/"><strong>Cache Warmer Pro</strong></a> ($9/mo) handles sitemap parsing, intelligent concurrency, multi-provider header detection, and automated verification without requiring infrastructure setup. Point it at your domain, schedule warming post-deploy via webhook or cron, and get confirmation when your critical paths are warm across edge locations.</p>
+
+    <div class="cta-box">
+      <h2>Stop making users pay for your deploys</h2>
+      <p>Cache Warmer Pro automatically warms your CDN after every release. Sitemap-driven, provider-aware, $9/mo.</p>
+      <a href="/tools/cache-warmer/" class="cta-btn">Try Cache Warmer Pro →</a>
+    </div>
+  </article>
+</div>
+
+<div class="eq-cta-end" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;"><h3 style="margin-bottom:8px;">Protect Your Business for $29/mo</h3><p style="color:#9fb0c7;font-size:0.92rem;margin-bottom:14px;">SSL monitoring, uptime checks, email security, and monthly reports. 14-day free trial.</p><a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener" class="btn btn-primary">Start Free Trial →</a> <a href="/pricing/" class="btn btn-secondary">See All Plans →</a></div>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+<footer>
+  <p><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/shieldfill/">ShieldFill</a> · <a href="/products/">All Products</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+</footer>
+<script>
+function toggleMobileMenu(){var b=document.getElementById('nav-hamburger'),m=document.getElementById('nav-mobile-menu');b.classList.toggle('open');m.classList.toggle('open');}
+function blogEmailSignup(e,form){e.preventDefault();var email=(form.querySelector('input[type=email]')||{}).value||'';email=email.trim();if(!email)return;form.style.display='none';form.parentElement.querySelector('.blog-sub-ok').style.display='block';try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:location.href})}).catch(function(){});}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+<script defer src="/js/theme.js"></script>
+</body>
+</html>
