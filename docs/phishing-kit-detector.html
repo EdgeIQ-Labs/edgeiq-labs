@@ -1,87 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phishing Kit Detector Documentation | EdgeIQ Labs</title>
-    <link rel="stylesheet" href="/css/design-system.css?v=10"/>
-    <meta property="og:title" content="Phishing Kit Detector Documentation | EdgeIQ Labs">
-    <meta property="og:description" content="Complete guide to infrastructure fingerprinting, hosting pattern analysis, and takedown workflows for phishing kit detection.">
-    <meta property="og:url" content="https://edgeiqlabs.com/docs/phishing-kit-detector.html">
-    <meta property="og:type" content="article">
-    <style>
-        :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --border: #334155;
-            --text: #e2e8f0;
-            --muted: #94a3b8;
-            --accent: #38bdf8;
-            --code-bg: #0f172a;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 2rem;
-        }
-        .container { max-width: 900px; margin: 0 auto; }
-        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--accent); }
-        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
-        h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--accent); }
-        p { margin-bottom: 1rem; color: var(--muted); }
-        ul, ol { margin: 0 0 1rem 1.5rem; color: var(--muted); }
-        li { margin-bottom: 0.5rem; }
-        code {
-            background: var(--code-bg);
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9em;
-            border: 1px solid var(--border);
-        }
-        pre {
-            background: var(--code-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin-bottom: 1rem;
-            border: 1px solid var(--border);
-        }
-        pre code { background: none; padding: 0; border: none; }
-        .price-tag {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-left: 0.5rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1rem;
-        }
-        th, td {
-            text-align: left;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-        }
-        th { background: var(--surface); color: var(--accent); }
-        .note {
-            background: var(--surface);
-            border-left: 4px solid var(--accent);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0 4px 4px 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Phishing Kit Detector Documentation | EdgeIQ Labs</title>
+<meta property="og:url" content="https://edgeiqlabs.com/docs/phishing-kit-detector.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
         <h1>Phishing Kit Detector <span class="price-tag">$9/mo</span></h1>
         <p>Infrastructure fingerprinting, hosting pattern analysis, and automated takedown workflow integration for security teams.</p>
 
@@ -165,7 +91,7 @@ takedown:
         <h2>API Reference</h2>
         <h3>GET /v1/detect</h3>
         <p>Analyze a URL or IP for phishing kit indicators.</p>
-        <pre><code>curl -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+        <pre><code>curl -H "Authorization: Bearer ***" \
   "https://api.edgeiqlabs.com/v1/detect?url=https://example.com"</code></pre>
         <p><strong>Response:</strong></p>
         <pre><code>{
@@ -210,5 +136,6 @@ takedown:
         <p>Enterprise plans with API access and priority takedowns available upon request.</p>
     </div>
 <div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Phishing Kit Detector</h3><p>Infrastructure fingerprinting, hosting pattern analysis, and takedown workflows</p><a href="/products/#micro-saas" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
-</body>
-</html>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

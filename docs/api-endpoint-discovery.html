@@ -1,91 +1,14 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Endpoint Discovery | EdgeIQ Labs Documentation</title>
-    <link rel="stylesheet" href="/css/design-system.css?v=10"/>
-    <meta name="description" content="Comprehensive API endpoint discovery through passive JS parsing, active fuzzing, and OpenAPI spec gap analysis. $9/mo.">
-    <meta property="og:title" content="API Endpoint Discovery | EdgeIQ Labs">
-    <meta property="og:description" content="Discover hidden API endpoints with passive parsing, active fuzzing, and spec diffing.">
-    <meta property="og:url" content="https://edgeiqlabs.com/docs/api-endpoint-discovery.html">
-    <meta property="og:type" content="article">
-    <style>
-        :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --border: #334155;
-            --text: #e2e8f0;
-            --muted: #94a3b8;
-            --accent: #38bdf8;
-            --code-bg: #020617;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        h1, h2, h3 { color: #fff; margin-top: 2rem; margin-bottom: 1rem; }
-        h1 { font-size: 2.25rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
-        h2 { font-size: 1.5rem; color: var(--accent); }
-        p { margin-bottom: 1rem; color: var(--muted); }
-        code {
-            background: var(--code-bg);
-            padding: 0.2em 0.4em;
-            border-radius: 4px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9em;
-            color: #fbbf24;
-        }
-        pre {
-            background: var(--code-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-        }
-        pre code { background: none; padding: 0; color: var(--text); }
-        .price-badge {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-        }
-        th, td {
-            text-align: left;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-        th { color: var(--accent); }
-        .warning {
-            background: rgba(251, 191, 36, 0.1);
-            border-left: 3px solid #fbbf24;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 4px 4px 0;
-        }
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
-</head>
-<body>
-    <span class="price-badge">$9/month</span>
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>API Endpoint Discovery | EdgeIQ Labs Documentation</title>
+<meta name="description" content="Comprehensive API endpoint discovery through passive JS parsing, active fuzzing, and OpenAPI spec gap analysis. $9/mo."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/api-endpoint-discovery.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<span class="price-badge">$9/month</span>
     <h1>API Endpoint Discovery</h1>
     
     <h2>Overview</h2>
@@ -142,7 +65,7 @@ edgeiq-api-discover --target https://app.example.com --spec openapi.yaml --outpu
     <h2>API Reference</h2>
     <pre><code>POST /v1/discover
 Content-Type: application/json
-Authorization: Bearer &lt;api_key&gt;
+Authorization: Bearer ***
 
 {
   "target": "https://app.example.com",
@@ -178,5 +101,6 @@ Authorization: Bearer &lt;api_key&gt;
     <p><strong>$9/month</strong> — Includes unlimited passive scans, 10,000 active probes/month, spec diffing for up to 5 specs, and SurfaceMap sync. Enterprise volume pricing available for teams requiring >100k probes/month.</p>
     <p><a href="https://edgeiqlabs.com/pricing">View full pricing details →</a></p>
 <div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get API Endpoint Discovery</h3><p>Passive JS parsing, active fuzzing, and OpenAPI spec gap analysis</p><a href="/products/#micro-saas" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
-</body>
-</html>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>
