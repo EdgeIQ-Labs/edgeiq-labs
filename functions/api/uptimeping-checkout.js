@@ -27,7 +27,7 @@ export async function onRequest(context) {
         'mode': 'subscription',
         'line_items[0][price]': PRICE_ID,
         'line_items[0][quantity]': '1',
-        'success_url': `${url.origin}/uptimeping/?checkout=success`,
+        'success_url': `${url.origin}/checkout/success/?product=uptimeping&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/uptimeping/`,
         'allow_promotion_codes': 'true',
       })

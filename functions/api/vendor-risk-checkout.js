@@ -29,7 +29,7 @@ export async function onRequest(context) {
         'mode': 'subscription',
         'line_items[0][price]': priceId,
         'line_items[0][quantity]': '1',
-        'success_url': `${url.origin}/vendor-risk/?checkout=success`,
+        'success_url': `${url.origin}/checkout/success/?product=vendor-risk&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/vendor-risk/`,
         'allow_promotion_codes': 'true',
       })

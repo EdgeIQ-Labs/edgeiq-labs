@@ -9,7 +9,7 @@
  */
 
 const PRICE_ID = 'price_1UWzQXRC1NZ20yDTtuWhhg8k';
-const SUCCESS_URL = 'https://edgeiqlabs.com/free-license-audit/?upgraded=true';
+const SUCCESS_URL = 'https://edgeiqlabs.com/checkout/success/?product=license-audit&session_id={CHECKOUT_SESSION_ID}';
 const CANCEL_URL = 'https://edgeiqlabs.com/free-license-audit/';
 
 export async function onRequest(context) {

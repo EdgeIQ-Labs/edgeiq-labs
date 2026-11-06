@@ -59,7 +59,7 @@ export async function onRequestPost({ request, env }) {
   // Create Stripe Checkout Session with metadata
   const params = new URLSearchParams({
     mode: 'subscription',
-    success_url: `${siteUrl}/vps/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${siteUrl}/checkout/success/?product=vps&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/vps/`,
     'metadata[plan]': plan,
     'metadata[os]': os,

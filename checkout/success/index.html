@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Successful — EdgeIQ Labs</title>
+  <meta name="description" content="Your EdgeIQ Labs purchase is confirmed. Check your email for credentials and next steps." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://edgeiqlabs.com/checkout/success/" />
+  <meta property="og:title" content="Payment Successful — EdgeIQ Labs" />
+  <meta property="og:description" content="Your EdgeIQ Labs purchase is confirmed. Check your email for credentials and next steps." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Payment Successful — EdgeIQ Labs" />
+  <meta name="twitter:description" content="Your EdgeIQ Labs purchase is confirmed. Check your email for credentials and next steps." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/checkout/success/" />
+  <link rel="stylesheet" href="/css/design-system.css?v=12" />
+  <script defer src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <style>
+    .success-container { max-width: 640px; margin: 80px auto; padding: 0 20px; text-align: center; }
+    .success-icon { font-size: 4rem; margin-bottom: 24px; display: block; }
+    .success-title { font-size: 2rem; font-weight: 700; margin-bottom: 12px; color: var(--color-text-primary); }
+    .success-subtitle { font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 32px; line-height: 1.6; }
+    .next-steps-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 28px; text-align: left; margin-bottom: 24px; }
+    .next-steps-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--color-text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .step-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; font-size: 0.95rem; color: var(--color-text-secondary); line-height: 1.5; }
+    .step-item:last-child { margin-bottom: 0; }
+    .step-number { flex-shrink: 0; width: 24px; height: 24px; background: rgba(61,217,255,0.12); color: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+    .dashboard-link { display: inline-flex; align-items: center; gap: 8px; background: var(--color-accent); color: #071018; font-weight: 700; padding: 14px 28px; border-radius: 8px; text-decoration: none; margin-top: 8px; transition: opacity 0.2s; }
+    .dashboard-link:hover { opacity: 0.88; }
+    .support-note { font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 32px; }
+    .support-note a { color: var(--color-accent); text-decoration: none; }
+    .product-badge { display: inline-block; background: rgba(112,240,168,0.1); color: var(--ok, #70f0a8); font-size: 0.8rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .email-highlight { color: var(--color-text-primary); font-weight: 600; }
+    @media (max-width: 600px) {
+      .success-container { margin: 40px auto; }
+      .success-title { font-size: 1.5rem; }
+      .next-steps-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Design system nav -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="28" height="28" rx="6" fill="#3dd9ff"/><path d="M8 14h12M14 8v12" stroke="#071018" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <span>EdgeIQ Labs</span>
+      </a>
+      <div class="nav-links">
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/products/">Products</a>
+        <a href="/blog/">Blog</a>
+        <a href="/docs/">Docs</a>
+      </div>
+      <a href="/dashboard/" class="nav-cta">Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="success-container">
+    <span class="product-badge" id="productBadge">Purchase Confirmed</span>
+    <span class="success-icon">✅</span>
+    <h1 class="success-title" id="successTitle">You're all set!</h1>
+    <p class="success-subtitle" id="successSubtitle">
+      Your payment was successful. A welcome email with your credentials and setup instructions is on its way to your inbox.
+    </p>
+
+    <div class="next-steps-card">
+      <div class="next-steps-title">What happens next</div>
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div>Check your email within the next 2 minutes. Your welcome email includes login credentials, dashboard links, and a quick-start guide.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div>If you don't see it, check your spam folder or <a href="mailto:support@edgeiqlabs.com" style="color:var(--color-accent);">contact support</a>.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div id="stepThreeText">Log into your dashboard using the link in your email. Your service is already being provisioned.</div>
+      </div>
+    </div>
+
+    <a href="/dashboard/" class="dashboard-link" id="dashboardLink">
+      Go to Dashboard →
+    </a>
+
+    <p class="support-note">
+      Questions? Reply to your welcome email or join our <a href="https://discord.gg/PaP7nsFUJT">Discord</a>.<br/>
+      Secure checkout powered by Stripe · <a href="/">Back to EdgeIQ Labs</a>
+    </p>
+  </div>
+
+  <!-- Design system footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span>EdgeIQ Labs</span>
+        <p>Cybersecurity & Hosting for Small Business</p>
+      </div>
+      <div class="footer-links">
+        <a href="/free-tools/">Free Tools</a>
+        <a href="/products/">Products</a>
+        <a href="/blog/">Blog</a>
+        <a href="/docs/">Docs</a>
+        <a href="mailto:support@edgeiqlabs.com">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Product-specific configuration
+    const PRODUCT_CONFIG = {
+      'vps': {
+        title: 'Your VPS is being provisioned!',
+        subtitle: 'Your server is spinning up now. The welcome email includes your SSH port, root password, and connection instructions.',
+        stepThree: 'Connect via SSH using the credentials in your email. Wazuh SIEM and Checkmk monitoring are pre-installed.',
+        dashboardUrl: '/dashboard/',
+        dashboardLabel: 'Go to Dashboard →'
+      },
+      'phishsim': {
+        title: 'PhishSim is ready!',
+        subtitle: 'Your dedicated phishing simulation instance is being configured. Check your email for your Customer ID and login URL.',
+        stepThree: 'Visit phishsim.edgeiqlabs.com and enter your Customer ID to access your campaign dashboard.',
+        dashboardUrl: '/phishsim/',
+        dashboardLabel: 'Go to PhishSim →'
+      },
+      'compliance': {
+        title: 'Compliance Shield activated!',
+        subtitle: 'Your HIPAA compliance monitoring is now active. The welcome email includes your dashboard credentials and first assessment schedule.',
+        stepThree: 'Log into your compliance dashboard to review your initial risk assessment and action items.',
+        dashboardUrl: '/compliance/dashboard/',
+        dashboardLabel: 'Go to Compliance Dashboard →'
+      },
+      'shieldfill': {
+        title: 'ShieldFill is live!',
+        subtitle: 'Your AI questionnaire responder is ready. Upload your knowledge base docs and start auto-filling security RFPs.',
+        stepThree: 'Access your ShieldFill dashboard to upload KB documents and configure response templates.',
+        dashboardUrl: '/shieldfill/dashboard/',
+        dashboardLabel: 'Go to ShieldFill →'
+      },
+      'vendor-risk': {
+        title: 'Vendor Risk monitoring started!',
+        subtitle: 'Your third-party vendor assessments are now tracking. The welcome email includes your portal access and BAA template.',
+        stepThree: 'Add your vendors in the dashboard to begin continuous security posture monitoring.',
+        dashboardUrl: '/vendor-risk/dashboard/',
+        dashboardLabel: 'Go to Vendor Risk →'
+      },
+      'uptimeping': {
+        title: 'UptimePing is watching!',
+        subtitle: 'Your uptime monitors are being configured. You will receive alerts via email the moment any endpoint goes down.',
+        stepThree: 'Add your URLs in the dashboard to start 5-minute interval monitoring.',
+        dashboardUrl: '/uptimeping/dashboard/',
+        dashboardLabel: 'Go to UptimePing →'
+      },
+      'certwatch': {
+        title: 'CertWatch Pro activated!',
+        subtitle: 'SSL certificate monitoring is now active. You will receive alerts at 30, 14, 7, and 1 day before expiry.',
+        stepThree: 'Add your domains in the dashboard to start tracking certificate expiration dates.',
+        dashboardUrl: '/certwatch/',
+        dashboardLabel: 'Go to CertWatch →'
+      },
+      'shieldbuild': {
+        title: 'ShieldBuild is ready!',
+        subtitle: 'Your OSHA safety compliance tracker is configured. The welcome email includes crew access and checklist templates.',
+        stepThree: 'Set up your job sites and assign crew members in the dashboard.',
+        dashboardUrl: '/shieldbuild/dashboard/',
+        dashboardLabel: 'Go to ShieldBuild →'
+      },
+      'shieldinvoice': {
+        title: 'ShieldInvoice activated!',
+        subtitle: 'AI invoice processing is live. Forward invoices to your dedicated email address for automatic extraction and validation.',
+        stepThree: 'Configure your AP workflow and vendor mappings in the dashboard.',
+        dashboardUrl: '/shieldinvoice/dashboard/',
+        dashboardLabel: 'Go to ShieldInvoice →'
+      },
+      'shieldverify': {
+        title: 'ShieldVerify is running!',
+        subtitle: 'Automated backup integrity testing is now scheduled. You will receive reports after each verification cycle.',
+        stepThree: 'Connect your backup storage in the dashboard to start automated integrity checks.',
+        dashboardUrl: '/shieldverify/dashboard/',
+        dashboardLabel: 'Go to ShieldVerify →'
+      },
+      'sentinel': {
+        title: 'Sentinel QA deployed!',
+        subtitle: 'Your autonomous QA agent is crawling your app. Bug reports will appear in your dashboard as they are found.',
+        stepThree: 'Review findings and export bug reports from your Sentinel dashboard.',
+        dashboardUrl: '/sentinel/dashboard/',
+        dashboardLabel: 'Go to Sentinel →'
+      },
+      'shadow-db': {
+        title: 'Shadow DB mirroring active!',
+        subtitle: 'Your SaaS data is being mirrored to your self-hosted Postgres. AES-256 encryption is enabled by default.',
+        stepThree: 'Verify your data sync status and configure retention policies in the dashboard.',
+        dashboardUrl: '/shadow-db/dashboard/',
+        dashboardLabel: 'Go to Shadow DB →'
+      },
+      'repo-scanner': {
+        title: 'Repo Scanner Pro unlocked!',
+        subtitle: 'Private repo scanning and dependency audits are now active. Use your API key from the welcome email.',
+        stepThree: 'Scan private repositories and view detailed secret detection reports in your dashboard.',
+        dashboardUrl: '/free-repo-scanner/?upgraded=true',
+        dashboardLabel: 'Go to Repo Scanner →'
+      },
+      'cache-warmer': {
+        title: 'Cache Warmer Pro active!',
+        subtitle: 'Server-side CDN warming is now available. Auto-detect sitemaps and warm edge caches after deploys.',
+        stepThree: 'Enter your sitemap URL and start server-side warming from the dashboard.',
+        dashboardUrl: '/tools/cache-warmer/?upgraded=true',
+        dashboardLabel: 'Go to Cache Warmer →'
+      },
+      'license-audit': {
+        title: 'License Audit Pro purchased!',
+        subtitle: 'Full SBOM export and license compliance analysis is ready. Your report will be emailed shortly.',
+        stepThree: 'Download your SBOM report from the link in your welcome email.',
+        dashboardUrl: '/free-license-audit/?upgraded=true',
+        dashboardLabel: 'Go to License Audit →'
+      },
+      'smb-essentials': {
+        title: 'SMB Essentials activated!',
+        subtitle: 'Your managed security monitoring bundle is live. We are configuring your monitoring profile now.',
+        stepThree: 'Expect your first monthly security report within 24 hours. We will email you when setup is complete.',
+        dashboardUrl: '/dashboard/',
+        dashboardLabel: 'Go to Dashboard →'
+      },
+      'smb-plus': {
+        title: 'SMB Plus activated!',
+        subtitle: 'Your premium managed monitoring bundle is live with priority support and expanded reporting.',
+        stepThree: 'Expect your first enhanced monthly report within 24 hours. Priority remediation support is included.',
+        dashboardUrl: '/dashboard/',
+        dashboardLabel: 'Go to Dashboard →'
+      },
+      'default': {
+        title: "You're all set!",
+        subtitle: 'Your payment was successful. A welcome email with your credentials and setup instructions is on its way to your inbox.',
+        stepThree: 'Log into your dashboard using the link in your email. Your service is already being provisioned.',
+        dashboardUrl: '/dashboard/',
+        dashboardLabel: 'Go to Dashboard →'
+      }
+    };
+
+    // Read URL params
+    const params = new URLSearchParams(window.location.search);
+    const product = (params.get('product') || '').toLowerCase().trim();
+    const sessionId = params.get('session_id') || '';
+
+    // Apply product-specific content
+    const config = PRODUCT_CONFIG[product] || PRODUCT_CONFIG['default'];
+    document.getElementById('successTitle').textContent = config.title;
+    document.getElementById('successSubtitle').textContent = config.subtitle;
+    document.getElementById('stepThreeText').textContent = config.stepThree;
+    document.getElementById('dashboardLink').href = config.dashboardUrl;
+    document.getElementById('dashboardLink').textContent = config.dashboardLabel;
+
+    if (product && PRODUCT_CONFIG[product]) {
+      document.getElementById('productBadge').textContent = product.replace(/-/g, ' ') + ' — Confirmed';
+    }
+
+    // Track conversion
+    if (sessionId) {
+      console.log('[EdgeIQ] Checkout success:', product || 'unknown', sessionId.slice(0, 12) + '...');
+    }
+  </script>
+</body>
+</html>

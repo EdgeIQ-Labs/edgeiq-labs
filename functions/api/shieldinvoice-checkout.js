@@ -27,7 +27,7 @@ export async function onRequest(context) {
         'mode': 'subscription',
         'line_items[0][price]': priceId,
         'line_items[0][quantity]': '1',
-        'success_url': `${url.origin}/shieldinvoice/?checkout=success`,
+        'success_url': `${url.origin}/checkout/success/?product=shieldinvoice&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/shieldinvoice/`,
         'allow_promotion_codes': 'true',
       })
