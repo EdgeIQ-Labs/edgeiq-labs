@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CertWatch Pro Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs CertWatch Pro. SSL/TLS certificate monitoring, expiry alerts, chain validation, and misconfiguration detection via Certificate Transparency logs."/>
+<meta property="og:url" content="https://edgeiqlabs.com/docs/certwatch-pro.html"/>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/certwatch-pro.html" />
+<meta property="og:title" content="CertWatch Pro Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs CertWatch Pro. SSL/TLS certificate monitoring, expiry alerts, chain validation, and misconfiguration detection via Certificate Transparency logs." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="CertWatch Pro Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs CertWatch Pro. SSL/TLS certificate monitoring, expiry alerts, chain validation, and misconfiguration detection via Certificate Transparency logs." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+        <h1>CertWatch Pro</h1>
+        <p>Automated SSL/TLS certificate monitoring with expiry alerts, chain validation, and misconfiguration detection powered by Certificate Transparency logs.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 10 certificates</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>CertWatch Pro continuously monitors your SSL/TLS certificates across all domains, tracking expiry dates, chain validity, and configuration issues. Built on Certificate Transparency (CT) log integration, it provides real-time visibility into certificate issuance and revocation without requiring agent installation or server access.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Monitor certificate expiry with alerts at 30, 14, 7, and 1 days before expiration</li>
+            <li>Validate full certificate chains including intermediate and root CAs</li>
+            <li>Detect misconfigurations: incomplete chains, hostname mismatches, weak signatures</li>
+            <li>Track new certificate issuance via CT log monitoring</li>
+            <li>REST API for integration into DevOps workflows and SOAR platforms</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Domains</h3>
+        <p>Add domains to monitor via the dashboard or API. CertWatch Pro automatically discovers subdomains and associated certificates through CT log queries.</p>
+        <pre><code># Add a domain via CLI
+certwatch add example.com
+
+# Add multiple domains
+certwatch add example.com api.example.com mail.example.com
+
+# Import from existing inventory
+certwatch import --file domains.csv</code></pre>
+
+        <h3>Certificate Sources</h3>
+        <table>
+            <tr><th>Source</th><th>Description</th><th>Coverage</th></tr>
+            <tr><td>CT Logs</td><td>Certificate Transparency log aggregation</td><td>All publicly trusted certs</td></tr>
+            <tr><td>Direct Probe</td><td>TLS handshake to specified endpoints</td><td>Custom ports, internal hosts</td></tr>
+            <tr><td>CA APIs</td><td>Direct issuer status checks</td><td>Revocation, OCSP/CRL status</td></tr>
+            <tr><td>DNS CAA</td><td>CAA record validation</td><td>Issuance policy compliance</td></tr>
+        </table>
+        <div class="note">CT log coverage includes all major public CAs. For private/internal CAs, use Direct Probe mode with custom trust stores.</div>
+
+        <h2>Alert Configuration</h2>
+        <h3>Expiry Thresholds</h3>
+        <p>CertWatch Pro sends alerts at configurable intervals before certificate expiration. Default thresholds are optimized for operational response windows.</p>
+        <table>
+            <tr><th>Threshold</th><th>Default</th><th>Use Case</th></tr>
+            <tr><td>30 days</td><td>Enabled</td><td>Planning window for renewal</td></tr>
+            <tr><td>14 days</td><td>Enabled</td><td>Urgent renewal reminder</td></tr>
+            <tr><td>7 days</td><td>Enabled</td><td>Critical action required</td></tr>
+            <tr><td>1 day</td><td>Enabled</td><td>Emergency escalation</td></tr>
+            <tr><td>Custom</td><td>User-defined</td><td>Compliance or SLA requirements</td></tr>
+        </table>
+
+        <h3>Notification Channels</h3>
+        <pre><code># Configure email alerts
+certwatch alert config --channel email --to admin@example.com
+
+# Configure Slack webhook
+certwatch alert config --channel slack --webhook https://hooks.slack.com/services/xxx
+
+# Configure generic webhook
+certwatch alert config --channel webhook --url https://api.example.com/cert-alert
+
+# Test alert delivery
+certwatch alert test --channel email</code></pre>
+        <p>Webhook payloads include certificate details, expiry timestamp, chain status, and direct links to the CertWatch dashboard for remediation.</p>
+
+        <h2>Misconfiguration Detection</h2>
+        <p>CertWatch Pro identifies common TLS misconfigurations that cause browser warnings, security vulnerabilities, or compliance failures.</p>
+        <table>
+            <tr><th>Issue</th><th>Severity</th><th>Description</th></tr>
+            <tr><td>Incomplete Chain</td><td><span class="badge badge-danger">Critical</span></td><td>Missing intermediate CA certificates</td></tr>
+            <tr><td>Hostname Mismatch</td><td><span class="badge badge-danger">Critical</span></td><td>Certificate CN/SAN doesn't match requested host</td></tr>
+            <tr><td>Expired Certificate</td><td><span class="badge badge-danger">Critical</span></td><td>Certificate validity period has ended</td></tr>
+            <tr><td>Weak Signature</td><td><span class="badge badge-warning">High</span></td><td>SHA-1 or MD5 signature algorithm</td></tr>
+            <tr><td>Self-Signed</td><td><span class="badge badge-warning">High</span></td><td>Certificate not issued by trusted CA</td></tr>
+            <tr><td>Revoked</td><td><span class="badge badge-danger">Critical</span></td><td>Certificate revoked via OCSP/CRL</td></tr>
+            <tr><td>Short Key</td><td><span class="badge badge-warning">High</span></td><td>RSA key &lt; 2048 bits or ECC &lt; 224 bits</td></tr>
+            <tr><td>Wildcard Overuse</td><td><span class="badge badge-info">Info</span></td><td>Wildcard cert covering excessive subdomains</td></tr>
+        </table>
+        <div class="note">Misconfiguration scans run automatically on every certificate discovery. Results are included in alert payloads and API responses.</div>
+
+        <h2>API Reference</h2>
+        <p>All CertWatch Pro functionality is available via REST API. Authenticate using your API key in the <code>X-API-Key</code> header.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/certwatch/certs</code></td><td>List monitored certificates</td></tr>
+            <tr><td>POST</td><td><code>/api/certwatch/scan</code></td><td>Trigger immediate certificate scan</td></tr>
+            <tr><td>GET</td><td><code>/api/certwatch/certs/{id}</code></td><td>Get certificate details and chain</td></tr>
+            <tr><td>POST</td><td><code>/api/certwatch/domains</code></td><td>Add domain to monitoring</td></tr>
+            <tr><td>DELETE</td><td><code>/api/certwatch/domains/{domain}</code></td><td>Remove domain from monitoring</td></tr>
+            <tr><td>GET</td><td><code>/api/certwatch/alerts</code></td><td>List recent alerts and status</td></tr>
+            <tr><td>PUT</td><td><code>/api/certwatch/config</code></td><td>Update alert thresholds and channels</td></tr>
+        </table>
+        <h3>Example: List Expiring Certificates</h3>
+        <pre><code>curl -H "X-API-Key: YOUR_API_KEY" \
+  "https://api.edgeiqlabs.com/api/certwatch/certs?expiring_within=30d&status=active"</code></pre>
+        <h3>Example: Trigger Scan</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/api/certwatch/scan \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"domain": "example.com", "ports": [443, 8443]}'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Certificate not appearing in dashboard:</strong> Verify the domain is added and CT log indexing is complete. New certificates may take 15-60 minutes to appear in CT logs. Use Direct Probe mode for immediate verification.</p>
+        <p><strong>False positive chain errors:</strong> Some servers intentionally serve incomplete chains for legacy clients. CertWatch flags these as warnings. Suppress with <code>--ignore-incomplete-chain</code> if validated as intentional.</p>
+        <p><strong>Alerts not delivering:</strong> Test channel configuration with <code>certwatch alert test</code>. Check webhook endpoint returns HTTP 2xx. Email delivery may be delayed 30-60 seconds due to webhook processing.</p>
+        <p><strong>Private CA certificates missing:</strong> CT logs only cover publicly trusted CAs. For internal PKI, configure Direct Probe with custom trust store via <code>certwatch config --trust-store /path/to/ca-bundle.pem</code>.</p>
+        <p><strong>Rate limiting on API calls:</strong> Starter plans allow 100 requests/hour, Pro plans allow 1000 requests/hour. Implement exponential backoff for batch operations. Contact support for higher limits.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 10 certificates</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; 100 certificates</p>
+            </div>
+        </div>
+        <p>Both plans include unlimited scans, CT log monitoring, all alert channels, API access, and priority support. Enterprise plans with custom CA support available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get CertWatch Pro</h3><p>SSL/TLS certificate monitoring, expiry alerts, and misconfiguration detection</p><a href="/products/#lifetime-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

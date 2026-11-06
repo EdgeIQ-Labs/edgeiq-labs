@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UptimePing Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs UptimePing. Multi-location uptime monitoring, instant alerts, status pages, and API integration.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/uptimeping.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/uptimeping.html" />
+<meta property="og:title" content="UptimePing Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs UptimePing. Multi-location uptime monitoring, instant alerts, status pages, and API integration." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="UptimePing Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs UptimePing. Multi-location uptime monitoring, instant alerts, status pages, and API integration." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+        <h1>UptimePing</h1>
+        <p>Global website availability monitoring with instant downtime alerts and public status pages.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 5 sites monitored</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>UptimePing monitors your websites, APIs, and services from multiple global locations to detect outages before your users do. It supports HTTP/HTTPS, TCP port, and DNS checks with configurable intervals and multi-channel alerting. Designed for SaaS teams, DevOps engineers, and MSPs who need reliable uptime visibility without infrastructure overhead.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Checks from 30+ global PoPs (North America, Europe, Asia-Pacific)</li>
+            <li>HTTP(s), TCP, and DNS check types with custom headers/auth</li>
+            <li>Instant alerts via Email, SMS, Slack, Discord, PagerDuty, or webhook</li>
+            <li>Public status pages with real-time metrics and incident history</li>
+            <li>REST API for programmatic monitor management and data export</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding a Monitor</h3>
+        <p>Create a new check via the dashboard or API:</p>
+        <pre><code># Add an HTTP check (every 60 seconds from 3 regions)
+curl -X POST https://api.edgeiqlabs.com/v1/uptimeping/checks \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -d '{
+    "name": "Production API",
+    "type": "http",
+    "target": "https://api.example.com/health",
+    "interval": 60,
+    "regions": ["us-east", "eu-west", "ap-south"],
+    "expected_status": 200,
+    "timeout": 10
+  }'</code></pre>
+
+        <h3>Check Types</h3>
+        <table>
+            <tr><th>Type</th><th>Target Format</th><th>Options</th></tr>
+            <tr><td>HTTP/HTTPS</td><td><code>https://example.com</code></td><td>Method, headers, body, expected status/text</td></tr>
+            <tr><td>TCP</td><td><code>host:port</code></td><td>Connection timeout, TLS verification</td></tr>
+            <tr><td>DNS</td><td><code>A record example.com</code></td><td>Record type, expected value, resolver selection</td></tr>
+        </table>
+
+        <h3>Intervals &amp; Regions</h3>
+        <p>Choose check frequency from 30s to 1 hour. Select specific regions or use <code>auto</code> for geographic distribution. More frequent checks consume more quota but reduce mean-time-to-detect.</p>
+
+        <h2>Alert Channels</h2>
+        <p>Configure one or more notification targets per monitor. Alerts fire on state change (UP → DOWN or DOWN → UP) after confirmation from ≥2 regions to prevent false positives.</p>
+        <table>
+            <tr><th>Channel</th><th>Configuration</th><th>Notes</th></tr>
+            <tr><td>Email</td><td>Address list</td><td>HTML + plain text, digest option</td></tr>
+            <tr><td>SMS</td><td>E.164 phone number</td><td>Via Twilio; carrier fees may apply</td></tr>
+            <tr><td>Slack</td><td>Webhook URL</td><td>Block Kit formatting with metrics</td></tr>
+            <tr><td>Discord</td><td>Webhook URL</td><td>Embed with color-coded status</td></tr>
+            <tr><td>PagerDuty</td><td>Service integration key</td><td>Severity mapping supported</td></tr>
+            <tr><td>Webhook</td><td>Custom URL + headers</td><td>JSON payload with full event context</td></tr>
+        </table>
+        <div class="note">Use <code>POST /api/uptimeping/alerts/test</code> to verify channel delivery before relying on it during incidents.</div>
+
+        <h2>Status Pages</h2>
+        <p>Create a branded public status page at <code>status.yourdomain.com</code> or <code>edgeiqlabs.status.io/your-page</code>. Includes:</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Real-time uptime % and response time graphs (24h/7d/30d/90d)</li>
+            <li>Scheduled maintenance windows with auto-start/end</li>
+            <li>Incident timeline with post-mortem support</li>
+            <li>Subscriber notifications via email/RSS/webhook</li>
+            <li>Custom CNAME, logo, colors, and footer links</li>
+        </ul>
+        <pre><code># Create a status page via API
+curl -X POST https://api.edgeiqlabs.com/v1/uptimeping/status-pages \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -d '{
+    "name": "Acme SaaS Status",
+    "subdomain": "acme-status",
+    "monitors": ["chk_abc123", "chk_def456"],
+    "theme": "dark",
+    "logo_url": "https://acme.com/logo.svg"
+  }'</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All endpoints require Bearer token authentication. Base URL: <code>https://api.edgeiqlabs.com/v1/uptimeping</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/checks</code></td><td>List all monitors with current status</td></tr>
+            <tr><td>POST</td><td><code>/checks</code></td><td>Create a new monitor</td></tr>
+            <tr><td>GET</td><td><code>/checks/{id}</code></td><td>Get monitor details + recent results</td></tr>
+            <tr><td>PATCH</td><td><code>/checks/{id}</code></td><td>Update monitor config</td></tr>
+            <tr><td>DELETE</td><td><code>/checks/{id}</code></td><td>Delete a monitor</td></tr>
+            <tr><td>GET</td><td><code>/checks/{id}/history</code></td><td>Historical uptime/response data</td></tr>
+            <tr><td>POST</td><td><code>/alerts/test</code></td><td>Send test alert to configured channels</td></tr>
+            <tr><td>GET</td><td><code>/status-pages</code></td><td>List status pages</td></tr>
+            <tr><td>POST</td><td><code>/status-pages</code></td><td>Create a status page</td></tr>
+        </table>
+        <h3>Example: Retrieve Check History</h3>
+        <pre><code>curl -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  "https://api.edgeiqlabs.com/v1/uptimeping/checks/chk_abc123/history?range=7d&granularity=1h"</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>False positive downtime alerts:</strong> Increase confirmation threshold to 3 regions or add a secondary check type (e.g., TCP + HTTP). Transient network blips rarely affect multiple PoPs simultaneously.</p>
+        <p><strong>Check failing with timeout:</strong> Verify target is reachable from public internet. Use <code>timeout: 15</code> for slow endpoints. Check if WAF/firewall blocks our IP ranges (list available in dashboard).</p>
+        <p><strong>SMS alerts not arriving:</strong> Confirm E.164 format (+country code). Test with <code>/alerts/test</code>. Carrier delays can reach 5 minutes during peak hours.</p>
+        <p><strong>Status page shows stale data:</strong> Browser cache. Hard refresh (Ctrl+Shift+R) or append <code>?v=timestamp</code>. Data updates every 60s server-side.</p>
+        <p><strong>API returns 429 Too Many Requests:</strong> Rate limit is 100 req/min for Starter, 600 req/min for Pro. Implement exponential backoff. Bulk operations should use batch endpoints where available.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter: 5 sites, 1-min checks, 3 alert channels</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Pro: 50 sites, 30s checks, unlimited channels + status pages</p>
+            </div>
+        </div>
+        <p>All plans include global PoP access, SSL certificate monitoring, and 90-day data retention. Annual billing saves 20%. Team seats and SLA guarantees available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Start Monitoring with UptimePing</h3><p>Global uptime checks, instant alerts, and public status pages from $5/mo</p><a href="/products/#lifetime-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>
