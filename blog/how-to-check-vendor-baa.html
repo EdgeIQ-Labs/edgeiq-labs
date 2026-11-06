@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>How to Check If Your Vendor Has a BAA (And What Happens If They Don't)</title>
+  <meta name="description" content="Step-by-step guide to verifying Business Associate Agreements with healthcare vendors. What to ask for, red flags, and how to track BAA compliance."/>
+  <meta property="og:title" content="How to Check If Your Vendor Has a BAA"/>
+  <meta property="og:description" content="Verify Business Associate Agreements with healthcare vendors before an audit does it for you."/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/how-to-check-vendor-baa.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-check-vendor-baa.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Check If Your Vendor Has a BAA","datePublished":"2026-11-06","dateModified":"2026-11-06","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:800;margin:44px 0 14px;color:var(--color-text-primary,#e8eef7);}
+    .prose h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;}
+    .prose p{margin-bottom:16px;color:#d0dce9;line-height:1.7;}
+    .prose ul,.prose ol{margin:0 0 16px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--color-text-primary,#e8eef7);}
+    .prose a{color:var(--color-accent,#b47aff);text-decoration:none;}
+    .prose a:hover{text-decoration:underline;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:#3dd9ff;font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:#9fb0c7;font-size:0.88rem;margin-bottom:32px;}
+    .cta-block{background:linear-gradient(135deg,#150e22 0%,#0b0f14 100%);border:1px solid #b47aff;border-radius:14px;padding:32px;margin:48px 0;text-align:center;}
+    .cta-block h3{font-size:1.3rem;font-weight:800;margin-bottom:10px;color:#e8eef7;}
+    .cta-block p{color:#9fb0c7;margin-bottom:22px;font-size:0.95rem;}
+    .cta-block a{background:#b47aff;color:#071018;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;}
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav__inner"><a href="/" class="nav__logo"><img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" height="40"/></a><div class="nav__links"><a href="/free-tools/">Free Tools</a><a href="/tools/">Dev Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/" class="nav__actions">Products</a></div></div></nav>
+  <main class="container container--narrow">
+    <div class="hero">
+      <div class="tag-row"><span class="tag">HIPAA</span><span class="tag">Vendor Risk</span></div>
+      <h1>How to Check If Your Vendor Has a BAA (And What Happens If They Don't)</h1>
+      <div class="meta"><span>November 6, 2026</span><span>EdgeIQ Labs</span></div>
+    </div>
+    <article class="prose">
+      <p>If your organization handles protected health information (PHI), every vendor that touches that data needs a signed Business Associate Agreement (BAA). This is not optional. It is a HIPAA requirement, and the Office for Civil Rights (OCR) checks for it during audits. Yet most healthcare organizations discover missing or expired BAAs only after a breach occurs or an auditor asks for them.</p>
+
+      <p>Checking whether a vendor has a valid BAA sounds simple. In practice, it involves tracking contract dates, verifying scope, confirming signatures, and monitoring renewals across dozens or hundreds of vendors. This guide walks through exactly what to look for, where things go wrong, and how to build a verification process that actually holds up under scrutiny.</p>
+
+      <h2>What a BAA Actually Covers</h2>
+      <p>A Business Associate Agreement is a contract between a covered entity (your clinic, hospital, or health plan) and a business associate (any vendor that creates, receives, maintains, or transmits PHI on your behalf). The BAA defines permitted uses and disclosures of PHI, requires safeguards, mandates breach notification timelines, and establishes liability.</p>
+
+      <p>The critical detail: a BAA only covers PHI-related services. If your cloud provider hosts both your marketing website and your patient portal, the BAA applies only to the patient portal environment. General terms of service do not substitute for a BAA. Neither does a statement in a master services agreement saying the vendor "complies with HIPAA." Compliance is not a contractual obligation unless the specific BAA language exists.</p>
+
+      <h2>Where to Find Existing BAAs</h2>
+      <p>Start by checking three locations:</p>
+      <ul>
+        <li><strong>Contract management systems:</strong> Search for documents tagged "BAA," "Business Associate," or "HIPAA Addendum." Many organizations file these separately from the main contract.</li>
+        <li><strong>Email archives:</strong> Search for attachment filenames containing "baa," "hipaa," or "addendum" sent to or from known vendor contacts. Signed PDFs often arrive as email attachments rather than through formal procurement channels.</li>
+        <li><strong>Vendor portals:</strong> Some SaaS providers host executed agreements in their customer dashboard under compliance, legal, or security sections. Log in and check.</li>
+      </ul>
+      <p>If you cannot locate a BAA through these channels, assume one does not exist. Do not accept verbal confirmation or a sales representative's assurance. You need the signed document.</p>
+
+      <h2>What to Verify in Every BAA</h2>
+      <p>Finding a document labeled "BAA" is step one. Step two is confirming it is actually valid and sufficient. Check these elements:</p>
+
+      <h3>Effective Date and Term</h3>
+      <p>Confirm the agreement is currently active. Look for an effective date, expiration date, and renewal clause. Auto-renewal clauses are common but require written notice if either party intends to terminate. An expired BAA provides no protection, even if the vendor relationship continues.</p>
+
+      <h3>Scope of Services</h3>
+      <p>The BAA must specify which services involve PHI. Vague language like "all services provided under this agreement" creates ambiguity during audits. The scope should match the actual services the vendor performs today, not just what was true when the contract was signed three years ago.</p>
+
+      <h3>Required HIPAA Provisions</h3>
+      <p>HIPAA regulations mandate specific BAA provisions. The agreement must address permitted uses and disclosures of PHI, appropriate safeguards, breach reporting requirements (including timelines), subcontractor obligations, termination procedures, and return or destruction of PHI upon contract end. Missing any of these renders the BAA non-compliant regardless of signatures.</p>
+
+      <h3>Authorized Signatures</h3>
+      <p>Verify both parties signed with authorized representatives. Unsigned drafts, emails referencing agreement terms, and purchase orders do not constitute executed BAAs. Digital signature platforms like DocuSign provide audit trails; scanned wet signatures should include dates and legible names.</p>
+
+      <h2>Red Flags That Indicate Problems</h2>
+      <p>Certain patterns suggest your BAA program has gaps:</p>
+      <ul>
+        <li><strong>Vendors claim HIPAA compliance without producing a BAA:</strong> Marketing materials and SOC 2 reports demonstrate security controls, not contractual obligations. These are separate requirements.</li>
+        <li><strong>BAAs older than three years without review:</strong> Regulations change, services evolve, and organizational structures shift. Stale agreements may not reflect current risks or legal requirements.</li>
+        <li><strong>Subcontractors not addressed:</strong> If your vendor uses subcontractors that handle PHI, the BAA must require those subcontractors to sign equivalent agreements. Ask for proof.</li>
+        <li><strong>No central tracking system:</strong> Relying on individual staff members to remember renewal dates guarantees missed deadlines. Spreadsheets fail at scale because they lack automated alerts and version control.</li>
+        <li><strong>Inconsistent templates:</strong> Using different BAA versions across vendors increases legal risk and complicates audits. Standardize on approved templates reviewed by counsel.</li>
+      </ul>
+
+      <h2>What Happens When a Vendor Lacks a BAA</h2>
+      <p>The consequences are concrete and expensive:</p>
+      <ul>
+        <li><strong>Regulatory penalties:</strong> OCR enforcement actions routinely cite missing BAAs as willful neglect. Penalties range from $100,000 to over $1 million per violation category, depending on culpability.</li>
+        <li><strong>Breach notification obligations:</strong> Without a BAA, unauthorized PHI access by a vendor constitutes a reportable breach. You bear full responsibility for notifying affected individuals, HHS, and potentially media outlets.</li>
+        <li><strong>Contractual liability:</strong> Business associates without BAAs have no contractual duty to protect PHI or report breaches promptly. Recovery becomes difficult, and litigation costs add to regulatory fines.</li>
+        <li><strong>Audit failures:</strong> Third-party assessments and payer audits routinely request BAA documentation. Gaps result in failed assessments, lost contracts, and reputational damage.</li>
+      </ul>
+      <p>None of these outcomes are theoretical. OCR publishes enforcement actions monthly, and missing BAAs appear consistently among top violations.</p>
+
+      <h2>Building a Sustainable Verification Process</h2>
+      <p>Manual BAA tracking works until it doesn't. Organizations typically hit the breaking point around 20-30 vendors. Beyond that, spreadsheet-based tracking produces missed expirations, duplicate efforts, and inconsistent documentation.</p>
+
+      <p>An effective process includes:</p>
+      <ul>
+        <li><strong>Centralized repository:</strong> Store all executed BAAs in one searchable location with metadata tagging for vendor name, effective date, expiration date, and service scope.</li>
+        <li><strong>Automated expiry alerts:</strong> Configure notifications 90, 60, and 30 days before expiration. Assign owners responsible for renewal negotiations.</li>
+        <li><strong>Gap analysis:</strong> Regularly compare your vendor list against BAA records to identify vendors handling PHI without executed agreements.</li>
+        <li><strong>Version control:</strong> Track amendments and renewals with clear audit trails showing who approved changes and when.</li>
+        <li><strong>Integration with procurement:</strong> Require BAA execution before new vendors receive PHI access. Block onboarding until compliance is confirmed.</li>
+      </ul>
+
+      <h2>Automating BAA Compliance</h2>
+      <p><a href="/vendor-risk/">Vendor Risk Management by EdgeIQ Labs</a> addresses these challenges directly. The platform tracks third-party vendor assessments and BAA agreements, monitors expiry dates with configurable alerts, identifies gaps between your vendor inventory and executed agreements, and maintains HIPAA-native documentation suitable for auditor review. For organizations managing more than a handful of vendors, automation eliminates the manual overhead that causes compliance failures while providing real-time visibility into your BAA posture.</p>
+
+      <p>The alternative is continuing to manage BAAs reactively—discovering problems during audits or after breaches occur. Neither outcome is acceptable when the tools to prevent them exist.</p>
+    </article>
+    <div class="cta-block">
+      <h3>Stop tracking BAAs in spreadsheets</h3>
+      <p>EdgeIQ Vendor Risk Management automates BAA tracking, expiry alerts, and gap analysis across your entire vendor stack.</p>
+      <a href="/vendor-risk/">See Vendor Risk →</a>
+    </div>
+  </main>
+  <footer class="footer"><div class="footer__inner"><p>&copy; 2026 EdgeIQ Labs</p></div></footer>
+  <script src="/js/theme.js"></script>
+</body>
+</html>

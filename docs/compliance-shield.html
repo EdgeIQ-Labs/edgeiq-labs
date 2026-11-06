@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Compliance Shield Documentation — EdgeIQ Docs</title><meta name="description" content="Reference documentation for EdgeIQ Labs Compliance Shield: HIPAA compliance monitoring for small healthcare organizations."/><link rel="stylesheet" href="../design-system.css?v=10"/><script defer src="../theme.js"></script><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body><nav><div class="container"><div class="nav-inner"><a href="../" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="../">Tools</a><a href="../blog/">Blog</a><a href="./">Docs</a><a href="../#contact">Contact</a></div></div></div></nav><section class="hero"><div class="container container--narrow"><h1>Compliance Shield Documentation</h1><p>HIPAA compliance monitoring reference for small healthcare organizations.</p></div></section><main class="container container--narrow prose">
+
+<h2>Overview</h2>
+<p>Compliance Shield is a continuous HIPAA compliance monitoring service designed for small healthcare practices, clinics, and health-tech startups. It automates evidence collection, control verification, and audit-ready reporting across administrative, physical, and technical safeguards defined in 45 CFR Parts 160 and 164.</p>
+<ul>
+<li><strong>Price:</strong> $299/month per organization (flat rate, up to 50 covered entities).</li>
+<li><strong>Billing:</strong> Monthly or annual; annual prepay applies a 10% discount.</li>
+<li><strong>Data residency:</strong> All monitoring data stored in US-East (AWS us-east-1); no cross-border transfer.</li>
+<li><strong>Retention:</strong> Evidence artifacts retained 7 years by default; configurable per retention policy.</li>
+</ul>
+
+<h2>Setup</h2>
+<ol>
+<li><strong>Organization onboarding:</strong> Complete the intake form with NPI, TIN, business associate agreements (BAAs), and system inventory.</li>
+<li><strong>Integration provisioning:</strong> Connect EHR/EMR API keys, cloud infrastructure accounts (AWS/GCP/Azure), identity provider (Okta/Azure AD), and endpoint management (Jamf/Intune).</li>
+<li><strong>Baseline scan:</strong> Initial full-scope assessment runs within 24 hours of integration completion; results populate the dashboard gap analysis.</li>
+<li><strong>Policy import:</strong> Upload existing HIPAA policies or use built-in templates; map each policy to applicable controls.</li>
+<li><strong>Verification schedule:</strong> Set automated check cadence (daily, weekly, or monthly) per control category.</li>
+</ol>
+
+<h2>Monitored Controls</h2>
+<p>Compliance Shield monitors 87 discrete controls mapped to HIPAA Security Rule standards:</p>
+<ul>
+<li><strong>Access Controls (§164.312(a)(1)):</strong> Unique user IDs, MFA enforcement, role-based access reviews, session timeout configuration, emergency access procedures.</li>
+<li><strong>Audit Controls (§164.312(b)):</strong> Log completeness across EHR, cloud, and identity systems; log retention verification; tamper-evidence checks.</li>
+<li><strong>Integrity Controls (§164.312(c)(1)):</strong> Encryption at rest/transit verification, checksum validation on ePHI exports, database integrity constraints.</li>
+<li><strong>Authentication (§164.312(d)):</strong> Password policy compliance, certificate rotation, SSO configuration drift detection.</li>
+<li><strong>Transmission Security (§164.312(e)(1)):</strong> TLS version enforcement, cipher suite validation, API endpoint encryption status.</li>
+<li><strong>Physical Safeguards (§164.310):</strong> Facility access logs, workstation positioning audits, device disposal chain-of-custody records.</li>
+<li><strong>Administrative Safeguards (§164.308):</strong> Risk assessment currency, workforce training completion rates, contingency plan test results, vendor BAA expiration tracking.</li>
+</ul>
+
+<h2>Alerts</h2>
+<p>Alerts trigger when a monitored control deviates from its expected state or when evidence collection fails.</p>
+<ul>
+<li><strong>Severity levels:</strong> Critical (immediate breach risk), High (control failure requiring action within 24h), Medium (drift requiring remediation within 7 days), Low (informational or upcoming deadline).</li>
+<li><strong>Delivery channels:</strong> Email (default), Slack webhook, PagerDuty (Critical only), SMS (opt-in for Critical/High).</li>
+<li><strong>Suppression rules:</strong> Configure maintenance windows, acknowledged exceptions, or duplicate alert deduplication windows per control.</li>
+<li><strong>Escalation:</strong> Unacknowledged Critical alerts escalate to secondary contacts after 4 hours; High alerts escalate after 24 hours.</li>
+<li><strong>Audit trail:</strong> Every alert includes timestamped evidence snapshot, affected asset identifier, and linked regulatory citation.</li>
+</ul>
+
+<h2>Reports</h2>
+<p>Generate reports from the Dashboard → Reports tab or via API (<code>GET /v1/reports</code>).</p>
+<ul>
+<li><strong>Risk Assessment Report:</strong> Current risk posture, identified gaps, remediation priority matrix, trend over prior 12 months.</li>
+<li><strong>Audit Readiness Report:</strong> Evidence inventory mapped to each HIPAA standard, missing evidence flags, attestation sign-off status.</li>
+<li><strong>Vendor Risk Summary:</strong> BAA status, third-party security questionnaire responses, last audit date, open findings.</li>
+<li><strong>Training Completion Report:</strong> Workforce module completion rates, overdue assignments, quiz score distributions.</li>
+<li><strong>Custom Reports:</strong> Select controls, date range, and format (PDF, CSV, JSON); schedule recurring generation and delivery.</li>
+</ul>
+<p>All reports include cryptographic hash for tamper verification and are signed with your organization’s compliance key.</p>
+
+<h2>Team Management</h2>
+<p>Navigate to Settings → Team to manage users and roles.</p>
+<ul>
+<li><strong>Roles:</strong>
+  <ul>
+    <li><em>Admin:</em> Full access including billing, integrations, and policy editing.</li>
+    <li><em>Compliance Officer:</em> View all controls, generate reports, acknowledge alerts, edit policies.</li>
+    <li><em>Auditor:</em> Read-only access to evidence and reports; no configuration changes.</li>
+    <li><em>IT Staff:</em> View technical controls, receive assigned remediation tasks, upload evidence.</li>
+  </ul>
+</li>
+<li><strong>Inviting members:</strong> Enter email address, assign role, and send invitation; invitees must verify email and complete MFA enrollment before access is granted.</li>
+<li><strong>SSO enforcement:</strong> Enable SAML/OIDC requirement to block password-only logins for your domain.</li>
+<li><strong>Audit log:</strong> All team actions (invites, role changes, removals) logged with actor, timestamp, and IP.</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+<ul>
+<li><strong>Integration sync failures:</strong> Verify API credentials have not expired; check IP allowlist includes Compliance Shield egress ranges (documented in Integrations → Network). Re-authenticate via Settings → Integrations → Refresh Token.</li>
+<li><strong>Missing evidence artifacts:</strong> Confirm source system logging is enabled and retention meets minimum requirements; run Diagnostics → Evidence Collector Test to validate connectivity.</li>
+<li><strong>False positive alerts:</strong> Use Alert → Suppress → Add Exception with justification; exceptions require Compliance Officer approval and expire after 90 days unless renewed.</li>
+<li><strong>Report generation timeout:</strong> Large date ranges or custom reports spanning >1 year may exceed 60-second limit; narrow scope or schedule as async job via API.</li>
+<li><strong>SSO login loop:</strong> Clear browser cookies for <code>*.edgeiqlabs.com</code>; verify IdP assertion consumer service URL matches value in Settings → SSO → Metadata.</li>
+<li><strong>Billing discrepancies:</strong> Invoice line items reflect active entity count at billing cycle start; mid-cycle additions prorate automatically. Contact billing@edgeiqlabs.com with invoice ID for adjustments.</li>
+</ul>
+
+<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div>
+<div class="footer">© 2026 EdgeIQ Labs Docs</div>
+</main></body></html>

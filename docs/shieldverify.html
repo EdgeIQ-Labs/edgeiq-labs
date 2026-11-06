@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldVerify Documentation — EdgeIQ Labs</title>
+  <meta name="description" content="Reference documentation for ShieldVerify third-party security verification service." />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script defer src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/products/">Products</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <main class="container container--narrow prose">
+    <h1>ShieldVerify Documentation</h1>
+
+    <h2 id="overview">Overview</h2>
+    <p>ShieldVerify is a third-party security verification service that independently validates the security posture of your infrastructure, applications, and vendor integrations. Unlike automated scanners, ShieldVerify combines automated testing with manual review to produce a signed verification report suitable for compliance audits, vendor assessments, and customer trust demonstrations.</p>
+    <p>Verification engagements are scoped per target (domain, application, or vendor integration) and produce a deterministic pass/fail outcome with detailed evidence. Reports are cryptographically signed and timestamped for audit integrity.</p>
+
+    <h2 id="initiating">Initiating Verification</h2>
+    <p>To start a ShieldVerify engagement:</p>
+    <ol>
+      <li>Navigate to <strong>Dashboard → ShieldVerify → New Request</strong>.</li>
+      <li>Select the verification scope: <em>Web Application</em>, <em>Infrastructure</em>, <em>Vendor Integration</em>, or <em>Custom</em>.</li>
+      <li>Provide target identifiers (domains, IPs, API endpoints, or vendor names).</li>
+      <li>Upload any required authorization documents (e.g., pentest authorization letters for infrastructure scopes).</li>
+      <li>Choose verification depth: <em>Standard</em> (automated + spot-check) or <em>Deep</em> (full manual validation).</li>
+      <li>Confirm pricing tier and submit the request.</li>
+    </ol>
+    <p>You will receive a confirmation email with an estimated completion window. Standard verifications typically complete within 48 hours; Deep verifications take 5–7 business days.</p>
+
+    <h3>Pricing</h3>
+    <table>
+      <thead><tr><th>Tier</th><th>Scope</th><th>Price</th><th>Turnaround</th></tr></thead>
+      <tbody>
+        <tr><td>Standard</td><td>Single web app or domain</td><td>$299</td><td>48 hours</td></tr>
+        <tr><td>Standard+</td><td>Up to 3 targets, same org</td><td>$749</td><td>72 hours</td></tr>
+        <tr><td>Deep</td><td>Single target, full manual</td><td>$1,499</td><td>5–7 business days</td></tr>
+        <tr><td>Enterprise</td><td>Custom scope, SLA-backed</td><td>Contact sales</td><td>Custom</td></tr>
+      </tbody>
+    </table>
+    <p>All tiers include one free re-verification within 30 days of the original report date.</p>
+
+    <h2 id="checks">Checks Performed</h2>
+    <p>The exact checks depend on scope type. Below is the baseline coverage matrix:</p>
+    <ul>
+      <li><strong>TLS/SSL:</strong> Certificate validity, chain trust, cipher suite strength, HSTS enforcement, OCSP stapling.</li>
+      <li><strong>HTTP Security Headers:</strong> CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.</li>
+      <li><strong>Authentication &amp; Session:</strong> Password policy enforcement, MFA availability, session token entropy, cookie flags.</li>
+      <li><strong>Vulnerability Scan:</strong> OWASP Top 10 automated sweep with false-positive triage.</li>
+      <li><strong>DNS &amp; Email Security:</strong> SPF, DKIM, DMARC alignment; CAA records; DNSSEC validation.</li>
+      <li><strong>Vendor Integration (if applicable):</strong> API key rotation evidence, webhook signature verification, least-privilege scope audit.</li>
+      <li><strong>Data Exposure:</strong> Public bucket/object storage enumeration, source map leakage, debug endpoint detection.</li>
+    </ul>
+    <p>Deep-tier engagements add manual penetration testing, business logic review, and configuration audit against CIS benchmarks.</p>
+
+    <h2 id="results">Reading Results</h2>
+    <p>Each verification produces a structured report with three sections:</p>
+    <ol>
+      <li><strong>Executive Summary:</strong> Pass/Fail verdict, risk score (0–100), and top 3 findings.</li>
+      <li><strong>Detailed Findings:</strong> Each check listed with status (<code>PASS</code>, <code>FAIL</code>, <code>WARN</code>, <code>INFO</code>), evidence (screenshots, raw responses, timestamps), and severity classification.</li>
+      <li><strong>Attestation Block:</strong> Cryptographic signature, verifier identity, timestamp, and report hash for tamper-evidence.</li>
+    </ol>
+    <p>Status definitions:</p>
+    <ul>
+      <li><code>PASS</code> — Control verified and meets baseline requirements.</li>
+      <li><code>FAIL</code> — Control missing or misconfigured; blocks verification.</li>
+      <li><code>WARN</code> — Suboptimal configuration; does not block but reduces risk score.</li>
+      <li><code>INFO</code> — Observational note; no security impact.</li>
+    </ul>
+    <p>A single <code>FAIL</code> results in an overall <strong>Fail</strong> verdict. All failures must be remediated and re-verified to achieve a passing status.</p>
+
+    <h2 id="remediation">Remediation Guidance</h2>
+    <p>Every <code>FAIL</code> and <code>WARN</code> finding includes a remediation block with:</p>
+    <ul>
+      <li><strong>Description:</strong> What is wrong and why it matters.</li>
+      <li><strong>Fix Instructions:</strong> Step-by-step correction specific to your platform (e.g., Nginx config snippet, AWS console path, Cloudflare rule).</li>
+      <li><strong>Validation Command:</strong> A command or test you can run locally to confirm the fix before requesting re-verification.</li>
+      <li><strong>Reference:</strong> Link to relevant standard (OWASP, CIS, RFC) or vendor documentation.</li>
+    </ul>
+    <p>If you use the EdgeIQ Fix-It Engine, compatible findings can be auto-remediated directly from the report. Enable this via <strong>Dashboard → ShieldVerify → Auto-Remediate</strong>.</p>
+
+    <h2 id="reverification">Re-Verification Workflow</h2>
+    <p>After remediating findings:</p>
+    <ol>
+      <li>Open the original report in the dashboard.</li>
+      <li>Click <strong>Request Re-Verification</strong>. This is free within 30 days of the original report.</li>
+      <li>Only previously failed/warned checks are re-executed unless you explicitly request a full rescan.</li>
+      <li>Updated results are appended to the original report with a new attestation block; prior findings are preserved for audit trail.</li>
+    </ol>
+    <p>Re-verification turnaround is typically 24 hours for Standard tier and 48 hours for Deep tier. After 30 days, a new verification request at the applicable tier price is required.</p>
+
+    <h2 id="api">API Access</h2>
+    <p>ShieldVerify exposes a REST API for programmatic access. Authentication uses Bearer tokens generated at <strong>Dashboard → Settings → API Keys</strong>.</p>
+    <pre><code># Initiate verification
+POST /api/v1/shieldverify/requests
+Authorization: Bearer sk_live_xxxxx
+Content-Type: application/json
+
+{
+  "scope_type": "web_application",
+  "target": "app.example.com",
+  "depth": "standard"
+}
+
+# Check status
+GET /api/v1/shieldverify/requests/{request_id}
+
+# Download report (PDF)
+GET /api/v1/shieldverify/reports/{report_id}/pdf
+
+# List all verifications
+GET /api/v1/shieldverify/requests?status=completed&amp;limit=20</code></pre>
+    <p>Rate limits: 60 requests/minute per API key. Webhook notifications for completion events can be configured at <strong>Dashboard → Integrations → Webhooks</strong>.</p>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+    <ul>
+      <li><strong>Verification stuck in "Pending Authorization":</strong> Ensure uploaded authorization documents are valid PDFs under 5 MB and contain matching target identifiers. Re-upload if needed.</li>
+      <li><strong>Report shows unexpected FAIL:</strong> Check the evidence block for timestamp and request headers. If the target was undergoing maintenance during the scan window, file a dispute via <strong>Report → Dispute Finding</strong> with supporting logs.</li>
+      <li><strong>API returns 403:</strong> Verify the API key has ShieldVerify scope enabled. Regenerate keys at <strong>Settings → API Keys</strong> if compromised.</li>
+      <li><strong>Re-verification not picking up fixes:</strong> Confirm changes are deployed to the exact target specified in the original request. CDN caches may serve stale configurations; purge cache before re-verification.</li>
+      <li><strong>Webhook not firing:</strong> Test endpoint reachability via <strong>Integrations → Webhooks → Test</strong>. Ensure response code is 2xx within 10 seconds; timeouts are treated as delivery failures.</li>
+    </ul>
+  </main>
+
+  <footer class="container container--narrow">
+    <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+  </footer>
+</body>
+</html>

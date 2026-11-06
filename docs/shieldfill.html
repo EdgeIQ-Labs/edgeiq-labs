@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldFill Documentation — EdgeIQ Labs</title>
+  <meta name="description" content="Reference documentation for ShieldFill: AI-powered security questionnaire and RFP auto-fill." />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <style>
+    :root { --bg: #0b0f14; --card: #121923; --text: #e8eef7; --muted: #9fb0c7; --accent: #3dd9ff; --border: #233142; --ok: #70f0a8; --warn: #f0a83d; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container--narrow { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+    nav a:hover { color: var(--accent); }
+    .nav-brand { font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+    .nav-brand span { color: var(--accent); }
+    .doc-header { padding: 64px 0 40px; }
+    .doc-header h1 { font-size: 2rem; margin-bottom: 12px; }
+    .doc-header p { color: var(--muted); font-size: 1.05rem; }
+    .prose h2 { font-size: 1.4rem; margin: 48px 0 16px; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+    .prose h3 { font-size: 1.1rem; margin: 24px 0 10px; color: var(--text); }
+    .prose p, .prose li { color: var(--muted); font-size: 0.95rem; margin-bottom: 12px; }
+    .prose ul, .prose ol { padding-left: 24px; margin: 12px 0; }
+    .prose li { margin: 6px 0; }
+    .prose a { color: var(--accent); text-decoration: none; }
+    .prose a:hover { text-decoration: underline; }
+    pre { background: #0a0e13; border: 1px solid var(--border); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.88rem; color: var(--ok); }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    th { color: var(--accent); font-weight: 600; }
+    td { color: var(--muted); }
+    .note { background: rgba(61,217,255,0.06); border-left: 3px solid var(--accent); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .note p { color: var(--text); margin: 0; font-size: 0.9rem; }
+    .warn { background: rgba(240,168,61,0.06); border-left: 3px solid var(--warn); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .warn p { color: var(--text); margin: 0; font-size: 0.9rem; }
+    footer { border-top: 1px solid var(--border); padding: 30px 0; margin-top: 60px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; margin-bottom: 20px; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body data-theme="dark">
+  <nav>
+    <a href="/docs/" class="nav-brand">Edge<span>IQ</span> Docs</a>
+    <div style="display:flex;gap:16px;">
+      <a href="/">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/docs/">Docs</a>
+      <a href="/#contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="container--narrow">
+    <div class="doc-header">
+      <a href="/docs/" class="back-link">← All Guides</a>
+      <h1>ShieldFill Documentation</h1>
+      <p>AI-powered auto-fill for security questionnaires and RFPs using your organization's knowledge base.</p>
+    </div>
+
+    <div class="prose">
+      <h2>Overview</h2>
+      <p>ShieldFill is an AI-driven response engine that automatically fills security questionnaires, vendor risk assessments, and RFPs by retrieving answers from your uploaded knowledge base. It reduces manual effort in compliance and sales cycles by matching questionnaire prompts to verified source material.</p>
+      <ul>
+        <li><strong>Pricing:</strong> $499/month per organization (unlimited questionnaires, up to 500 MB knowledge base storage).</li>
+        <li><strong>Core Function:</strong> Semantic retrieval + answer generation grounded exclusively in your documents.</li>
+        <li><strong>Output:</strong> Draft responses with confidence scores and source citations for human review.</li>
+      </ul>
+
+      <h2>Getting Started</h2>
+      <ol>
+        <li>Sign in at <a href="https://shieldfill.edgeiqlabs.com">shieldfill.edgeiqlabs.com</a>.</li>
+        <li>Navigate to <strong>Settings → API Keys</strong> to generate credentials for integrations.</li>
+        <li>Upload your initial knowledge base documents (see next section).</li>
+        <li>Submit a test questionnaire to validate retrieval accuracy before production use.</li>
+      </ol>
+      <div class="note">
+        <p><strong>Onboarding:</strong> New accounts include a 14-day trial with full feature access. No credit card required until conversion.</p>
+      </div>
+
+      <h2>Uploading Knowledge Base</h2>
+      <p>Your knowledge base is the sole source of truth for generated answers. ShieldFill does not use external training data for responses.</p>
+      <h3>Supported Formats</h3>
+      <table>
+        <thead><tr><th>Format</th><th>Max Size</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>PDF</td><td>50 MB</td><td>Text layer required (scanned PDFs must be OCR'd first)</td></tr>
+          <tr><td>DOCX</td><td>30 MB</td><td>Tables and headers preserved</td></tr>
+          <tr><td>Markdown (.md)</td><td>10 MB</td><td>Ideal for policy docs and runbooks</td></tr>
+          <tr><td>TXT</td><td>10 MB</td><td>Plain text only</td></tr>
+          <tr><td>CSV</td><td>20 MB</td><td>Structured Q&A pairs or control matrices</td></tr>
+        </tbody>
+      </table>
+      <h3>Upload Methods</h3>
+      <ul>
+        <li><strong>Web UI:</strong> Drag-and-drop or file picker at <strong>Knowledge Base → Upload</strong>.</li>
+        <li><strong>API:</strong> POST multipart/form-data to <code>/api/v1/knowledge/documents</code>.</li>
+        <li><strong>Sync:</strong> Connect Google Drive or SharePoint for automatic nightly sync (Settings → Integrations).</li>
+      </ul>
+      <pre><code>curl -X POST https://api.shieldfill.edgeiqlabs.com/api/v1/knowledge/documents \
+  -H "Authorization: Bearer sk_live_..." \
+  -F "file=@security_policy_2026.pdf" \
+  -F "tags=compliance,policies"</code></pre>
+      <div class="warn">
+        <p><strong>Accuracy Dependency:</strong> Outdated or contradictory documents degrade answer quality. Archive superseded files immediately.</p>
+      </div>
+
+      <h2>Submitting Questionnaires</h2>
+      <p>Questionnaires can be submitted as structured files or via manual entry.</p>
+      <h3>Supported Input Formats</h3>
+      <ul>
+        <li><strong>XLSX / CSV:</strong> Column A = question, optional Column B = category/context.</li>
+        <li><strong>JSON:</strong> Array of objects with <code>question</code> and optional <code>context</code> fields.</li>
+        <li><strong>Manual:</strong> Paste questions directly in the web UI.</li>
+      </ul>
+      <h3>Submission Workflow</h3>
+      <ol>
+        <li>Upload questionnaire file or enter questions manually.</li>
+        <li>Select target knowledge base tags (optional filter).</li>
+        <li>Click <strong>Generate Responses</strong>. Processing time averages 2–5 seconds per question.</li>
+        <li>Review draft answers in the Review Queue (see next section).</li>
+      </ol>
+      <pre><code>// JSON submission example
+[
+  { "question": "Describe your incident response process.", "context": "SOC 2 Type II" },
+  { "question": "How is customer data encrypted at rest?" }
+]</code></pre>
+
+      <h2>Reviewing Answers</h2>
+      <p>All AI-generated answers require human validation before export. ShieldFill provides tooling to accelerate review without compromising accuracy.</p>
+      <ul>
+        <li><strong>Confidence Score:</strong> Each answer includes a 0–100% score based on retrieval relevance. Scores below 70% are flagged for priority review.</li>
+        <li><strong>Source Citations:</strong> Click the citation link to jump to the exact passage in the source document.</li>
+        <li><strong>Edit Inline:</strong> Modify any answer directly in the review queue. Edits are tracked in version history.</li>
+        <li><strong>Approve / Reject:</strong> Mark answers as approved or rejected. Rejected answers return to the queue with reviewer notes.</li>
+        <li><strong>Bulk Actions:</strong> Select multiple answers to approve, reject, or re-generate with adjusted parameters.</li>
+      </ul>
+      <div class="note">
+        <p><strong>Export:</strong> Approved answers can be exported in the original questionnaire format (XLSX, CSV, JSON) or as a formatted PDF report.</p>
+      </div>
+
+      <h2>Integrations</h2>
+      <h3>REST API</h3>
+      <p>All ShieldFill functionality is available via REST API. Authenticate with Bearer tokens from Settings → API Keys.</p>
+      <pre><code># Submit questionnaire programmatically
+curl -X POST https://api.shieldfill.edgeiqlabs.com/api/v1/questionnaires \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"questions": ["Describe access control policies."], "kb_tags": ["compliance"]}'</code></pre>
+      <h3>Webhooks</h3>
+      <p>Configure webhooks at <strong>Settings → Webhooks</strong> to receive events when processing completes or reviews are finalized.</p>
+      <table>
+        <thead><tr><th>Event</th><th>Payload Key</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>questionnaire.completed</code></td><td><code>questionnaire_id</code></td><td>All questions processed; ready for review</td></tr>
+          <tr><td><code>review.finalized</code></td><td><code>questionnaire_id</code></td><td>All answers approved/rejected; export available</td></tr>
+          <tr><td><code>kb.sync_completed</code></td><td><code>sync_id</code></td><td>External knowledge base sync finished</td></tr>
+        </tbody>
+      </table>
+      <pre><code>// Webhook payload example
+{
+  "event": "questionnaire.completed",
+  "questionnaire_id": "qn_abc123",
+  "total_questions": 42,
+  "avg_confidence": 0.87,
+  "review_url": "https://shieldfill.edgeiqlabs.com/review/qn_abc123"
+}</code></pre>
+
+      <h2>Troubleshooting</h2>
+      <table>
+        <thead><tr><th>Issue</th><th>Cause</th><th>Resolution</th></tr></thead>
+        <tbody>
+          <tr><td>Low confidence scores (&lt;60%)</td><td>Missing or outdated source material</td><td>Upload current policy docs; archive old versions</td></tr>
+          <tr><td>No answers generated</td><td>Knowledge base empty or tags mismatched</td><td>Verify documents are indexed; remove tag filters</td></tr>
+          <tr><td>PDF upload fails</td><td>Scanned image without text layer</td><td>Run OCR before upload or convert to DOCX</td></tr>
+          <tr><td>Webhook not firing</td><td>Endpoint returns non-2xx or timeout &gt;10s</td><td>Check server logs; ensure HTTPS and valid cert</td></tr>
+          <tr><td>API rate limit errors</td><td>Exceeding 100 req/min threshold</td><td>Implement exponential backoff; contact support for higher limits</td></tr>
+          <tr><td>Answers contradict each other</td><td>Conflicting source documents</td><td>Use document versioning; add metadata tags to distinguish scope</td></tr>
+        </tbody>
+      </table>
+      <div class="warn">
+        <p><strong>Support:</strong> For issues not covered here, email <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> with your organization ID and questionnaire/export IDs.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 EdgeIQ Labs. <a href="/docs/">Back to Docs Index</a></p>
+    </footer>
+  </div>
+
+  <script src="/js/theme.js"></script>
+</body>
+</html>

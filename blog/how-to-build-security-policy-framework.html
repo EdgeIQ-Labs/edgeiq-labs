@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>How to Build a Security Policy Framework From Scratch — EdgeIQ Labs</title>
+  <meta name="description" content="A practical guide to building a security policy framework for SOC 2, client requirements, or internal governance. What auditors look for, common mistakes, and where to start."/>
+  <meta property="og:title" content="How to Build a Security Policy Framework From Scratch"/>
+  <meta property="og:description" content="Building security policies from scratch? Here's what actually goes into a framework, what auditors check, and the mistakes that waste months of work."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/how-to-build-security-policy-framework.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/how-to-build-security-policy-framework.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Build a Security Policy Framework From Scratch","datePublished":"2026-11-06","dateModified":"2026-11-06","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018 !important;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag">Security Policy</span>
+      <span class="tag">Compliance</span>
+    </div>
+    <h1>How to Build a Security Policy Framework From Scratch</h1>
+    <div class="meta">
+      <span>November 6, 2026</span>
+      <span>·</span>
+      <span>10 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>You need a security policy framework. Maybe a customer sent you a vendor questionnaire with 200 questions about your controls. Maybe you're starting SOC 2 preparation and the auditor asked for your written policies. Maybe your board finally decided that "we've never had a breach" isn't a strategy.</p>
+
+    <p>Whatever triggered this, you're now staring at a blank document and wondering what goes in it. This guide covers the actual structure, the decisions you'll make, and where most first attempts fail.</p>
+
+    <h2>What a Security Policy Framework Actually Is</h2>
+
+    <p>A security policy framework is a set of written documents that define how your organization protects information, systems, and people. It's not a single document. It's a hierarchy:</p>
+
+    <ul>
+      <li><strong>Policies</strong> state what must be done and why. They're approved by leadership and change infrequently. Example: "All production systems must require multi-factor authentication."</li>
+      <li><strong>Standards</strong> specify how policies are implemented. They're technical and update more often. Example: "MFA must use TOTP or FIDO2; SMS is not permitted."</li>
+      <li><strong>Procedures</strong> describe step-by-step actions. Example: "To enroll a new employee in MFA, follow these steps in Okta."</li>
+      <li><strong>Guidelines</strong> offer recommendations without mandatory language. Example: "Consider using password managers for personal accounts."</li>
+    </ul>
+
+    <p>Auditors care most about policies and standards. Procedures matter for evidence collection. Guidelines are optional but show maturity.</p>
+
+    <h2>The Core Policies Every Framework Needs</h2>
+
+    <p>Don't try to write 40 policies at once. Start with these eight. They cover what auditors check first and what customers ask about most:</p>
+
+    <ol>
+      <li><strong>Information Security Policy</strong> — The umbrella document. Defines scope, objectives, roles, and management commitment. Everything else references this.</li>
+      <li><strong>Access Control Policy</strong> — Who gets access to what, how access is granted and revoked, least privilege, MFA requirements, privileged account management.</li>
+      <li><strong>Data Classification and Handling Policy</strong> — How you categorize data (public, internal, confidential, restricted), storage requirements, encryption standards, disposal procedures.</li>
+      <li><strong>Incident Response Policy</strong> — What constitutes an incident, reporting timelines, escalation paths, communication protocols, post-incident review requirements.</li>
+      <li><strong>Change Management Policy</strong> — How changes to production systems are requested, reviewed, tested, approved, and rolled back if needed.</li>
+      <li><strong>Vendor Risk Management Policy</strong> — How you evaluate third parties, ongoing monitoring requirements, contract language, termination procedures.</li>
+      <li><strong>Acceptable Use Policy</strong> — What employees can and cannot do with company systems. Covers personal use, prohibited activities, reporting obligations.</li>
+      <li><strong>Business Continuity and Disaster Recovery Policy</strong> — RTO/RPO targets, backup frequency, testing schedules, alternate site requirements.</li>
+    </ol>
+
+    <p>If you're pursuing SOC 2 Type I, these eight will get you through the readiness assessment. Type II requires evidence that you've been following them for 6-12 months, so write them before you think you're ready.</p>
+
+    <h2>Templates vs. Custom: The Honest Tradeoff</h2>
+
+    <p>You have three options for creating policies:</p>
+
+    <p><strong>Download free templates.</strong> NIST, CIS, SANS, and ISACA publish solid starting points. The problem is they're generic. A 40-page NIST template covers federal agencies with thousands of employees. You'll spend more time deleting irrelevant sections than writing useful ones. Templates also lack context specific to your tech stack, team size, and risk profile.</p>
+
+    <p><strong>Hire a consultant.</strong> A good GRC consultant will interview your team, map controls to your actual environment, and produce tailored policies. This costs $15K-$50K depending on scope. Worth it if you're six months from an audit and haven't started. Overkill if you're early-stage and just need baseline coverage.</p>
+
+    <p><strong>Build your own with structured guidance.</strong> Write policies yourself using frameworks as reference, not as copy-paste sources. This takes longer upfront but produces documents your team actually understands and follows. You know your systems better than any template author.</p>
+
+    <div class="callout">
+      <strong>The hybrid approach works best:</strong> Use templates for structure and control mapping. Write custom content based on your real processes. Have a consultant or experienced peer review before finalizing. This balances speed, accuracy, and cost.
+    </div>
+
+    <h2>What Auditors Actually Look For</h2>
+
+    <p>Auditors don't grade policies on prose quality. They check for specific attributes:</p>
+
+    <ul>
+      <li><strong>Approval and ownership.</strong> Every policy needs a named owner, approval date, and review schedule. Unsigned policies are suggestions, not controls.</li>
+      <li><strong>Scope definition.</strong> Does the policy clearly state what systems, people, and data it covers? "All systems" is vague. "All production AWS accounts and associated IAM identities" is auditable.</li>
+      <li><strong>Enforceable language.</strong> "Should" and "may" create ambiguity. "Must" and "will" create testable requirements. Auditors flag excessive use of non-mandatory language.</li>
+      <li><strong>Evidence linkage.</strong> Can you demonstrate compliance with each requirement? If your policy says "backups are tested quarterly," the auditor will ask for the last four test records. Don't write requirements you can't prove.</li>
+      <li><strong>Exception handling.</strong> Real organizations have exceptions. Your policy should define how exceptions are requested, approved, documented, and time-limited. Blanket waivers are findings.</li>
+      <li><strong>Version history.</strong> Show that policies evolve. A policy unchanged since 2019 suggests it's shelfware. Annual reviews with documented updates demonstrate active governance.</li>
+    </ul>
+
+    <p>The most common audit finding isn't missing policies. It's policies that exist on paper but aren't followed in practice. Write what you actually do, then close gaps incrementally. Perfect policies describing fictional processes fail audits.</p>
+
+    <h2>Mistakes That Waste Months</h2>
+
+    <p><strong>Writing everything at once.</strong> Teams draft 30 policies, burn out, and abandon the project. Start with the eight core policies above. Add others as risks emerge or audits demand them.</p>
+
+    <p><strong>Copying without adapting.</strong> Pasting a HIPAA policy when you're a B2B SaaS company creates requirements you'll never meet. Every borrowed section needs validation against your actual environment.</p>
+
+    <p><strong>Ignoring stakeholder input.</strong> Security teams write policies in isolation, then discover engineering can't comply without rebuilding infrastructure. Involve affected teams during drafting. Their pushback reveals feasibility issues before the policy ships.</p>
+
+    <p><strong>Treating policies as one-time deliverables.</strong> Policies decay. New tools introduce unaddressed risks. Regulations change. Staff turnover erodes institutional knowledge. Schedule annual reviews and tie them to your risk assessment cycle.</p>
+
+    <p><strong>Confusing documentation with security.</strong> Written policies reduce risk only when they reflect and enforce real controls. A beautiful access control policy means nothing if offboarding takes two weeks and terminated employees retain VPN access. Fix the process first, document it second.</p>
+
+    <h2>Getting Started Without Getting Stuck</h2>
+
+    <p>Block two hours. Open a document. Write your Information Security Policy first—it forces decisions about scope, objectives, and governance that everything else depends on. Use NIST SP 800-53 Rev. 5 Appendix A as a control catalog, not a template. Pick the controls relevant to your size and risk profile. Draft one policy per week. Review with stakeholders monthly. Approve and publish quarterly.</p>
+
+    <p>Six months from now, you'll have a functional framework. Twelve months from now, you'll have evidence for Type II. Eighteen months from now, you'll wonder why you waited.</p>
+
+    <div class="cta-box">
+      <h3>Build Your Framework Faster</h3>
+      <p>ShieldBuild by EdgeIQ Labs helps organizations create security policy frameworks aligned to SOC 2, ISO 27001, HIPAA, and other standards. Part of the Shield suite alongside ShieldFill, ShieldVerify, and Vendor Risk. Generate tailored policies, track approvals, and maintain version history without consulting fees.</p>
+      <a href="/shieldbuild/" class="btn">Explore ShieldBuild →</a>
+    </div>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:48px auto;max-width:580px;">
+    <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">CVE alerts, attack breakdowns, and practical guides. No fluff, unsubscribe anytime.</p>
+    <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+      <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+      <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+    </form>
+    <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+    <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+    <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;color:var(--muted);font-size:0.82rem;">
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;">← Back to Blog</a>
+  </div>
+</div>
+
+<script src="/js/theme.js"></script>
+<script>
+document.querySelector('.nav-hamburger').addEventListener('click', function() {
+  document.querySelector('.nav-links').classList.toggle('open');
+});
+</script>
+</body>
+</html>

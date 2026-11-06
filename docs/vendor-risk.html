@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Vendor Risk Management — EdgeIQ Labs Docs</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:800;margin:44px 0 14px;color:var(--color-text-primary,#e8eef7);}
+    .prose h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;}
+    .prose p{margin-bottom:16px;color:#d0dce9;line-height:1.7;}
+    .prose ul,.prose ol{margin:0 0 16px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose code{background:#1a2535;padding:2px 6px;border-radius:4px;font-size:0.9em;color:#3dd9ff;}
+    .prose pre{background:#0e1621;border:1px solid #233142;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;}
+    .prose pre code{background:none;padding:0;}
+    .prose a{color:#b47aff;text-decoration:none;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:#9fb0c7;font-size:0.88rem;margin-bottom:32px;}
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav__inner"><a href="/" class="nav__logo"><img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" height="40"/></a><div class="nav__links"><a href="/free-tools/">Free Tools</a><a href="/tools/">Dev Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/" class="nav__actions">Products</a></div></div></nav>
+  <main class="container container--narrow">
+    <div class="hero">
+      <h1>Vendor Risk Management</h1>
+      <div class="meta">Documentation &middot; EdgeIQ Labs</div>
+    </div>
+    <article class="prose">
+      <h2>Overview</h2>
+      <p>EdgeIQ Labs Vendor Risk Management is a compliance tracking platform designed for healthcare organizations and business associates. It centralizes vendor assessments, Business Associate Agreement (BAA) lifecycle management, and continuous risk monitoring into a single dashboard.</p>
+      <p>The system provides structured workflows for onboarding vendors, documenting security posture, tracking contract expiration dates, and maintaining audit-ready records of all third-party relationships.</p>
+
+      <h2>Getting Started</h2>
+      <h3>Pricing</h3>
+      <p>Vendor Risk Management is available at a flat rate of <strong>$499/month</strong>. This tier includes:</p>
+      <ul>
+        <li>Unlimited vendor profiles</li>
+        <li>BAA tracking and storage</li>
+        <li>Automated alerting and notifications</li>
+        <li>Full API access</li>
+        <li>Up to 50 user seats</li>
+      </ul>
+
+      <h3>Initial Setup</h3>
+      <ol>
+        <li>Navigate to <strong>Settings → Organization</strong> and enter your legal entity name, address, and primary compliance officer contact.</li>
+        <li>Configure your notification preferences under <strong>Settings → Alerts</strong>.</li>
+        <li>Invite team members via <strong>Settings → Users</strong> and assign roles (Admin, Reviewer, Viewer).</li>
+        <li>Create your first vendor assessment by selecting <strong>Vendors → Add New</strong>.</li>
+      </ol>
+
+      <h2>Adding Vendors</h2>
+      <p>Each vendor record contains the following required fields:</p>
+      <ul>
+        <li><strong>Vendor Name:</strong> Legal name of the organization.</li>
+        <li><strong>Contact Email:</strong> Primary point of contact for security inquiries.</li>
+        <li><strong>Service Category:</strong> Classification (e.g., Cloud Hosting, SaaS, Medical Device, Billing).</li>
+        <li><strong>Risk Tier:</strong> Internal classification (Low, Medium, High, Critical).</li>
+        <li><strong>BAA Required:</strong> Boolean toggle indicating if PHI is accessed.</li>
+      </ul>
+      <p>Optional fields include SOC 2 report upload, last audit date, and sub-processor list. All file uploads are encrypted at rest using AES-256.</p>
+
+      <h2>BAA Tracking</h2>
+      <p>The BAA module tracks the full lifecycle of Business Associate Agreements:</p>
+      <ul>
+        <li><strong>Status Indicators:</strong> Draft, Sent, Signed, Expired, Terminated.</li>
+        <li><strong>Expiration Alerts:</strong> Configurable warnings at 90, 60, and 30 days prior to contract end.</li>
+        <li><strong>Version History:</strong> Immutable log of all document revisions and signature timestamps.</li>
+        <li><strong>Linked Assessments:</strong> Each BAA is automatically associated with the corresponding vendor risk assessment completed within the same fiscal year.</li>
+      </ul>
+      <p>To upload a BAA, navigate to the vendor profile, select the <strong>Agreements</strong> tab, and drag-and-drop the signed PDF. The system extracts metadata (effective date, termination clause) via OCR for validation.</p>
+
+      <h2>Alerts & Notifications</h2>
+      <p>Notifications are delivered via email and in-app inbox. Alert triggers include:</p>
+      <ul>
+        <li>BAA expiration or missing signature</li>
+        <li>Overdue annual reassessment</li>
+        <li>Critical risk score change (>20% variance)</li>
+        <li>New sub-processor added by vendor</li>
+      </ul>
+      <h3>Webhook Configuration</h3>
+      <p>Configure outbound webhooks under <strong>Settings → Integrations → Webhooks</strong>. Payloads are sent as POST requests with HMAC-SHA256 signatures.</p>
+      <pre><code>{
+  "event": "baa.expiring",
+  "timestamp": "2026-11-06T14:30:00Z",
+  "vendor_id": "vnd_8f7a6b5c",
+  "baa_id": "baa_3d2e1f0a",
+  "days_remaining": 30,
+  "severity": "warning"
+}</code></pre>
+
+      <h2>API Reference</h2>
+      <p>All endpoints require a Bearer token obtained from <strong>Settings → API Keys</strong>. Base URL: <code>https://api.edgeiqlabs.com/v1</code></p>
+      <h3>List Vendors</h3>
+      <pre><code>curl -X GET https://api.edgeiqlabs.com/v1/vendors \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json"</code></pre>
+      <h3>Create Assessment</h3>
+      <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/assessments \
+  -H "Authorization: Bearer sk_live_xxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "vendor_id": "vnd_8f7a6b5c",
+    "assessment_type": "annual",
+    "risk_score": 72,
+    "notes": "SOC 2 Type II reviewed, no exceptions noted."
+  }'</code></pre>
+      <p>Rate limit: 100 requests per minute per API key. Exceeding this returns HTTP 429 with a <code>Retry-After</code> header.</p>
+
+      <h2>Troubleshooting</h2>
+      <h3>Common Issues</h3>
+      <ul>
+        <li><strong>OCR fails on BAA upload:</strong> Ensure the PDF is text-based, not a scanned image. If scanned, use a resolution ≥300 DPI and ensure the document is not rotated.</li>
+        <li><strong>Webhook delivery failures:</strong> Verify your endpoint returns HTTP 2xx within 5 seconds. Non-2xx responses trigger exponential backoff retries (max 8 attempts over 24 hours).</li>
+        <li><strong>Missing vendor in dropdown:</strong> Only active vendors appear in assessment creation. Archived vendors must be restored via <strong>Vendors → Archive</strong> before linking.</li>
+        <li><strong>API key invalid:</strong> Keys prefixed with <code>sk_test_</code> only work against the sandbox environment (<code>https://sandbox.api.edgeiqlabs.com/v1</code>). Production requires <code>sk_live_</code>.</li>
+      </ul>
+      <h3>Support</h3>
+      <p>For issues not covered here, contact support@edgeiqlabs.com with your organization ID and relevant vendor/assessment IDs. Include request IDs from API error responses when applicable.</p>
+    </article>
+  </main>
+  <footer class="footer"><div class="footer__inner"><p>&copy; 2026 EdgeIQ Labs</p></div></footer>
+  <script src="/js/theme.js"></script>
+</body>
+</html>
