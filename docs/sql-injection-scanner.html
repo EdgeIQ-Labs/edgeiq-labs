@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQL Injection Scanner Pro Documentation — EdgeIQ Labs</title>
+  <meta name="description" content="Reference documentation for EdgeIQ Labs SQL Injection Scanner Pro: boolean blind, time-based, UNION SELECT detection, and parameterized query verification." />
+  <meta property="og:title" content="SQL Injection Scanner Pro Documentation — EdgeIQ Labs" />
+  <meta property="og:description" content="Reference documentation for EdgeIQ Labs SQL Injection Scanner Pro: boolean blind, time-based, UNION SELECT detection, and parameterized query verification." />
+  <meta property="og:url" content="https://edgeiqlabs.com/docs/sql-injection-scanner.html" />
+  <meta property="og:type" content="article" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script defer src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/products/">Products</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <main class="container container--narrow prose">
+    <h1>SQL Injection Scanner Pro Documentation</h1>
+
+    <h2 id="overview">Overview</h2>
+    <p>SQL Injection Scanner Pro is a precision security testing tool designed to identify SQL injection vulnerabilities in web applications and APIs. It combines four distinct detection methodologies—boolean blind, time-based, UNION SELECT, and error-based—to uncover both obvious and subtle injection points that single-method scanners miss. Beyond vulnerability detection, it verifies parameterized query implementation to confirm remediation effectiveness.</p>
+    <ul>
+      <li><strong>Pricing:</strong> $39 lifetime license or $19/month subscription.</li>
+      <li><strong>Licensing:</strong> Lifetime licenses include all future feature updates; subscriptions provide priority support and early access to beta detection modules.</li>
+      <li><strong>Deployment:</strong> Standalone CLI binary (Linux, macOS, Windows) with optional REST API mode for CI/CD integration.</li>
+      <li><strong>Compliance alignment:</strong> Findings map to OWASP Top 10 A03:2021 (Injection), CWE-89, and PCI DSS Requirement 6.5.1.</li>
+    </ul>
+
+    <h2 id="quick-start">Quick Start</h2>
+    <ol>
+      <li><strong>Install:</strong> Download the binary for your platform from the dashboard or install via package manager:
+        <pre><code># Homebrew (macOS/Linux)
+brew install edgeiq/tap/sqli-scanner-pro
+
+# Direct download (Linux x86_64)
+curl -fsSL https://dl.edgeiqlabs.com/sqli-scanner-pro/latest/linux-amd64.tar.gz | tar xz
+sudo mv sqli-scanner-pro /usr/local/bin/</code></pre>
+      </li>
+      <li><strong>Authenticate:</strong> Run <code>sqli-scanner-pro auth login</code> to link your license key or subscription account.</li>
+      <li><strong>Run a scan:</strong>
+        <pre><code># Basic scan against a single URL
+sqli-scanner-pro scan --target "https://app.example.com/search?q=test"
+
+# Full scan with all detection methods
+sqli-scanner-pro scan --target "https://app.example.com/api/users" \
+  --methods boolean,time,union,error \
+  --output report.json</code></pre>
+      </li>
+      <li><strong>Review results:</strong> Output includes vulnerable parameters, injection type, confidence score, and proof-of-concept payloads. JSON output integrates with CI pipelines; HTML reports are generated with <code>--format html</code>.</li>
+    </ol>
+
+    <h2 id="detection-methods">Detection Methods</h2>
+    <p>SQL Injection Scanner Pro employs four complementary detection strategies. Each method targets different application behaviors and database response patterns.</p>
+
+    <h3>Boolean Blind Detection</h3>
+    <p>Identifies injection points where the application returns different HTTP responses or page content based on injected boolean conditions. The scanner injects tautologies (<code>' OR '1'='1</code>) and contradictions (<code>' AND '1'='2</code>) to observe behavioral differences without requiring visible error messages or data extraction.</p>
+    <ul>
+      <li><strong>Best for:</strong> Applications that suppress errors but reflect query logic in rendered content.</li>
+      <li><strong>Confidence threshold:</strong> Requires ≥3 consistent differential responses to mark as vulnerable.</li>
+      <li><strong>Limitation:</strong> Cannot extract data directly; confirms vulnerability existence only.</li>
+    </ul>
+
+    <h3>Time-Based Detection</h3>
+    <p>Detects blind injection by measuring response latency after injecting database sleep functions (<code>SLEEP()</code>, <code>pg_sleep()</code>, <code>WAITFOR DELAY</code>). A statistically significant delay (default: &gt;5 seconds beyond baseline) indicates successful payload execution.</p>
+    <ul>
+      <li><strong>Best for:</strong> Fully blind scenarios with no content differentiation or error feedback.</li>
+      <li><strong>Adaptive timing:</strong> Baseline latency is sampled per-target before injection; thresholds adjust for high-latency endpoints.</li>
+      <li><strong>False positive mitigation:</strong> Retests delayed responses 3x; discards results with &gt;30% variance.</li>
+    </ul>
+
+    <h3>UNION SELECT Detection</h3>
+    <p>Attempts to append <code>UNION SELECT</code> clauses to extract column count, data types, and sample data. The scanner auto-detects column arity through incremental probing and matches injected marker strings in response bodies.</p>
+    <ul>
+      <li><strong>Best for:</strong> Confirming exploitable injection and assessing data exposure risk.</li>
+      <li><strong>Safety:</strong> Uses non-destructive marker values only; never extracts real user data during automated scans.</li>
+      <li><strong>Prerequisite:</strong> Target must return query results in the HTTP response body.</li>
+    </ul>
+
+    <h3>Error-Based Detection</h3>
+    <p>Triggers database-specific error messages by injecting malformed SQL syntax. Parses error signatures to identify database engine (MySQL, PostgreSQL, MSSQL, Oracle, SQLite) and confirms injection when stack traces or verbose errors leak to the client.</p>
+    <ul>
+      <li><strong>Best for:</strong> Rapid identification during development/staging where error suppression is incomplete.</li>
+      <li><strong>Fingerprinting:</strong> Error patterns automatically classify the backend RDBMS for targeted payload generation.</li>
+      <li><strong>Note:</strong> Low yield in production environments with proper error handling; combine with boolean/time methods.</li>
+    </ul>
+
+    <h2 id="safe-testing">Safe Testing Configuration</h2>
+    <p>SQL Injection Scanner Pro defaults to non-destructive operation, but misconfiguration can cause unintended side effects. Follow these guidelines for safe testing:</p>
+    <ul>
+      <li><strong>Read-only mode:</strong> Enabled by default (<code>--safe-mode</code>). Blocks any payload containing <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>DROP</code>, <code>ALTER</code>, or <code>EXEC</code>. Override explicitly with <code>--allow-write</code> only in isolated test environments.</li>
+      <li><strong>Rate limiting:</strong> Default 10 requests/second per target. Adjust with <code>--rps &lt;n&gt;</code> to avoid triggering WAFs or degrading service.</li>
+      <li><strong>Authorization:</strong> Always obtain written authorization before scanning third-party systems. The scanner logs all requests with timestamps for audit compliance.</li>
+      <li><strong>Test environment parity:</strong> Validate against staging/QA environments first. Production scans should use read-only mode with reduced concurrency.</li>
+      <li><strong>Data sanitization:</strong> Reports redact extracted data by default. Use <code>--no-redact</code> only when explicit data exposure evidence is required for remediation tickets.</li>
+      <li><strong>Exclusion lists:</strong> Configure <code>--exclude-param &lt;name&gt;</code> to skip sensitive parameters (e.g., payment fields, authentication tokens).</li>
+    </ul>
+
+    <h2 id="database-compatibility">Database Compatibility</h2>
+    <table>
+      <thead><tr><th>Database</th><th>Boolean</th><th>Time-Based</th><th>UNION</th><th>Error-Based</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>MySQL / MariaDB</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>Full support; SLEEP() for time-based</td></tr>
+        <tr><td>PostgreSQL</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>pg_sleep(); stacked queries supported</td></tr>
+        <tr><td>Microsoft SQL Server</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>WAITFOR DELAY; xp_cmdshell detection opt-in</td></tr>
+        <tr><td>Oracle</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>DBMS_LOCK.SLEEP; UTL_HTTP out-of-band optional</td></tr>
+        <tr><td>SQLite</td><td>✓</td><td>⚠</td><td>✓</td><td>✓</td><td>No native sleep; time-based uses heavy computation proxies</td></tr>
+        <tr><td>MongoDB (NoSQL)</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>NoSQLi module; operator injection ($where, $regex)</td></tr>
+      </tbody>
+    </table>
+    <p>The scanner auto-detects database type via error fingerprinting and adjusts payloads accordingly. Manual override available with <code>--db-type &lt;mysql|postgres|mssql|oracle|sqlite|mongodb&gt;</code>.</p>
+
+    <h2 id="api-reference">API Reference</h2>
+    <p>Enable REST API mode with <code>sqli-scanner-pro serve --port 8443</code>. All endpoints require Bearer token authentication.</p>
+
+    <h3>POST /api/v1/scans</h3>
+    <p>Initiate a new scan.</p>
+    <pre><code>{
+  "target": "https://app.example.com/api/users",
+  "methods": ["boolean", "time", "union", "error"],
+  "safe_mode": true,
+  "rps": 10,
+  "headers": {
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIs..."
+  }
+}</code></pre>
+    <p>Returns <code>{"scan_id": "scn_a1b2c3d4", "status": "queued"}</code>.</p>
+
+    <h3>GET /api/v1/scans/{scan_id}</h3>
+    <p>Retrieve scan status and findings.</p>
+    <pre><code>{
+  "scan_id": "scn_a1b2c3d4",
+  "status": "completed",
+  "findings": [
+    {
+      "parameter": "id",
+      "method": "union",
+      "confidence": 0.98,
+      "payload": "' UNION SELECT NULL,NULL,'marker'--",
+      "evidence": "Marker string found in response body at offset 142",
+      "severity": "high",
+      "cwe": "CWE-89"
+    }
+  ],
+  "summary": {
+    "total_parameters_tested": 12,
+    "vulnerable_parameters": 1,
+    "scan_duration_seconds": 47
+  }
+}</code></pre>
+
+    <h3>GET /api/v1/scans/{scan_id}/report</h3>
+    <p>Download full report. Query params: <code>?format=json|html|pdf</code>.</p>
+
+    <h3>POST /api/v1/verify-parameterization</h3>
+    <p>Verify that a specific endpoint uses parameterized queries. Sends benign typed inputs and analyzes query plan leakage or ORM signature patterns.</p>
+    <pre><code>{
+  "endpoint": "https://app.example.com/api/users",
+  "parameters": ["id", "email"],
+  "orm_hint": "prisma"
+}</code></pre>
+    <p>Returns pass/fail per parameter with evidence.</p>
+
+    <h3>Rate Limits</h3>
+    <p>API mode enforces 60 requests/minute per token. Scan concurrency limited to 5 simultaneous scans per license.</p>
+
+    <h2 id="remediation">Remediation Guidance</h2>
+    <p>Every finding includes actionable remediation steps tailored to the detected database and framework:</p>
+    <ul>
+      <li><strong>Parameterized queries:</strong> Replace string concatenation with prepared statements. The scanner provides language-specific examples (Python/psycopg2, Node/pg, Java/JDBC, PHP/PDO, Go/database/sql).</li>
+      <li><strong>ORM usage:</strong> Verify ORM query builders are not bypassed with raw SQL. Enable ORM-safe mode validation via <code>--verify-parameterization</code>.</li>
+      <li><strong>Input validation:</strong> Apply allowlist validation for numeric IDs and enum parameters. Reject unexpected characters before query construction.</li>
+      <li><strong>Least privilege:</strong> Database accounts used by applications should lack DROP, ALTER, and FILE privileges. Scanner flags excessive permissions when error-based detection reveals schema metadata.</li>
+      <li><strong>WAF rules:</strong> Deploy SQLi signature rules as defense-in-depth, not primary control. Recommended CRS rule IDs: 942100–942490.</li>
+      <li><strong>Verification:</strong> Re-scan after remediation using <code>--baseline &lt;previous-report.json&gt;</code> to confirm fix effectiveness and detect regressions.</li>
+    </ul>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+    <ul>
+      <li><strong>No vulnerabilities detected but manual testing confirms injection:</strong> Increase detection sensitivity with <code>--confidence-threshold 0.6</code> (default 0.8). Check if WAF is blocking scanner payloads; use <code>--stealth</code> mode to rotate User-Agent and add randomized delays.</li>
+      <li><strong>High false positive rate:</strong> Enable <code>--strict-validation</code> to require multi-method confirmation. Review findings with confidence &lt;0.8 manually; export low-confidence results separately with <code>--min-confidence 0.8</code>.</li>
+      <li><strong>Scan hangs on time-based detection:</strong> Target may have variable latency. Increase baseline samples with <code>--timing-samples 20</code> or disable time-based method with <code>--methods boolean,union,error</code>.</li>
+      <li><strong>Authentication failures on protected endpoints:</strong> Pass session cookies via <code>--cookie "session=abc123"</code> or headers via <code>--header "Authorization: Bearer ..."</code>. For OAuth flows, use <code>--auth-flow client_credentials</code> with client ID/secret.</li>
+      <li><strong>License activation fails:</strong> Verify system clock is synchronized (NTP). Offline activation available via <code>sqli-scanner-pro auth activate --offline</code> with challenge-response code from dashboard.</li>
+      <li><strong>CI/CD pipeline timeout:</strong> Reduce scope with <code>--max-parameters 20</code> or run async via API mode with webhook callback on completion.</li>
+      <li><strong>Report missing evidence:</strong> Ensure <code>--capture-responses</code> is enabled (default off for storage efficiency). Response bodies stored in <code>~/.sqli-scanner/evidence/</code>; configure retention with <code>--evidence-retention-days 30</code>.</li>
+    </ul>
+
+    <h2 id="pricing">Pricing</h2>
+    <table>
+      <thead><tr><th>Plan</th><th>Price</th><th>Includes</th></tr></thead>
+      <tbody>
+        <tr><td>Lifetime License</td><td>$39 one-time</td><td>All current features, future updates, community support, 1 device activation</td></tr>
+        <tr><td>Monthly Subscription</td><td>$19/month</td><td>Priority email support, early beta access, CI/CD API tokens, up to 5 device activations</td></tr>
+        <tr><td>Team (5 seats)</td><td>$79/month</td><td>All subscription benefits + shared scan history, team dashboard, SSO integration</td></tr>
+        <tr><td>Enterprise</td><td>Contact sales</td><td>Custom SLA, dedicated success manager, on-premise deployment option, audit log export</td></tr>
+      </tbody>
+    </table>
+    <p>All plans include unlimited scans. Lifetime licenses receive feature updates indefinitely; security patches are guaranteed for 3 years post-purchase. Subscriptions can be paused and resumed without penalty.</p>
+
+    <div class="card related">
+      <h2>Related</h2>
+      <a href="index.html">Back to Docs Index</a>
+    </div>
+  </main>
+
+  <footer class="container container--narrow">
+    <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+  </footer>
+</body>
+</html>

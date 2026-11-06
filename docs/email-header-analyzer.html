@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Header Analyzer Documentation — EdgeIQ Labs</title>
+  <meta name="description" content="Reference documentation for the free Email Header Analyzer. Parse email headers for SPF/DKIM/DMARC alignment, Received chain analysis, and spoofing detection." />
+  <meta property="og:title" content="Email Header Analyzer Documentation — EdgeIQ Labs" />
+  <meta property="og:description" content="Free tool to parse email headers for SPF/DKIM/DMARC alignment, Received chain analysis, and spoofing detection." />
+  <meta property="og:url" content="https://edgeiqlabs.com/docs/email-header-analyzer.html" />
+  <meta property="og:type" content="article" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script defer src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/products/">Products</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <main class="container container--narrow prose">
+    <h1>Email Header Analyzer Documentation</h1>
+    <p><strong>Price:</strong> Free &middot; No account required</p>
+
+    <h2 id="overview">Overview</h2>
+    <p>The Email Header Analyzer is a free tool that parses raw email headers to evaluate sender authentication, trace delivery paths, and detect signs of spoofing. It extracts and interprets SPF, DKIM, and DMARC results from <code>Authentication-Results</code> headers, reconstructs the <code>Received</code> chain to visualize hop-by-hop delivery, and flags common indicators of forged or manipulated messages.</p>
+    <p>All processing occurs client-side in your browser. Raw headers are never transmitted to EdgeIQ Labs servers.</p>
+
+    <h2 id="how-to-use">How to Use</h2>
+    <ol>
+      <li>Navigate to the <a href="/products/email-header-analyzer/">Email Header Analyzer</a> page.</li>
+      <li>Copy the full raw headers from an email message (see <a href="#pasting-raw-headers">Pasting Raw Headers</a> below for client-specific instructions).</li>
+      <li>Paste the headers into the input text area.</li>
+      <li>Click <strong>Analyze</strong>.</li>
+      <li>Review the structured output across the Authentication, Received Chain, and Spoofing Indicators tabs.</li>
+    </ol>
+    <p>The tool accepts headers in standard RFC 5322 format. Body content is ignored if included, but pasting only headers reduces noise and speeds parsing.</p>
+
+    <h2 id="pasting-raw-headers">Pasting Raw Headers</h2>
+    <p>Different email clients expose raw headers through different workflows. Below are instructions for common platforms:</p>
+    <table>
+      <thead><tr><th>Client</th><th>Steps</th></tr></thead>
+      <tbody>
+        <tr><td>Gmail</td><td>Open the message → click the three-dot menu (⋮) → <strong>Show original</strong> → copy all text above the body separator, or click <strong>Copy to clipboard</strong>.</td></tr>
+        <tr><td>Outlook (Desktop)</td><td>Double-click the message to open it → <strong>File</strong> → <strong>Properties</strong> → copy the contents of the <strong>Internet headers</strong> box.</td></tr>
+        <tr><td>Outlook (Web / OWA)</td><td>Open the message → click the three-dot menu (⋯) → <strong>View</strong> → <strong>View message details</strong> → copy the full text.</td></tr>
+        <tr><td>Apple Mail</td><td>Select the message → <strong>View</strong> → <strong>Message</strong> → <strong>Raw Source</strong> (or press ⌥⌘U) → copy the header block.</td></tr>
+        <tr><td>Thunderbird</td><td>Select the message → <strong>View</strong> → <strong>Message Source</strong> (or Ctrl+U) → copy everything above the blank line separating headers from body.</td></tr>
+        <tr><td>Yahoo Mail</td><td>Open the message → click the three-dot menu (⋯) → <strong>View raw message</strong> → copy the header section.</td></tr>
+      </tbody>
+    </table>
+    <p>Ensure you include the complete header block starting from the first <code>Received</code>, <code>Return-Path</code>, or <code>Delivered-To</code> line down through the last header before the blank line that separates headers from the message body.</p>
+
+    <h2 id="interpreting-results">Interpreting Results</h2>
+    <p>The analyzer evaluates three core authentication protocols. Each produces a result status that indicates whether the sending server was authorized to send on behalf of the claimed domain.</p>
+
+    <h3>SPF (Sender Policy Framework)</h3>
+    <p>SPF verifies that the connecting IP address is listed in the domain's DNS SPF record.</p>
+    <ul>
+      <li><code>pass</code> — The sending IP is authorized by the envelope sender domain's SPF record.</li>
+      <li><code>fail</code> — The sending IP is explicitly not authorized. Strong indicator of spoofing.</li>
+      <li><code>softfail</code> — The sending IP is not authorized, but the domain owner uses <code>~all</code> instead of <code>-all</code>. Treat as suspicious.</li>
+      <li><code>neutral</code> — The domain's SPF record makes no assertion about this IP.</li>
+      <li><code>none</code> — No SPF record was published for the domain.</li>
+      <li><code>temperror</code> / <code>permerror</code> — A DNS lookup failure or syntax error prevented evaluation.</li>
+    </ul>
+
+    <h3>DKIM (DomainKeys Identified Mail)</h3>
+    <p>DKIM validates a cryptographic signature embedded in the message headers against a public key published in DNS.</p>
+    <ul>
+      <li><code>pass</code> — The signature is valid and the signed headers were not modified in transit.</li>
+      <li><code>fail</code> — The signature exists but does not validate. Indicates tampering or forgery.</li>
+      <li><code>policy</code> — The signature passed cryptographically but violated a domain policy constraint.</li>
+      <li><code>neutral</code> — A DKIM signature is present but could not be evaluated definitively.</li>
+      <li><code>none</code> — No DKIM signature was found in the headers.</li>
+      <li><code>temperror</code> / <code>permerror</code> — DNS retrieval of the public key failed or the signature syntax was invalid.</li>
+    </ul>
+
+    <h3>DMARC (Domain-based Message Authentication, Reporting &amp; Conformance)</h3>
+    <p>DMARC requires that either SPF or DKIM passes <em>and</em> that the authenticated domain aligns with the <code>From</code> header domain.</p>
+    <ul>
+      <li><code>pass</code> — At least one of SPF or DKIM passed with identifier alignment to the From domain.</li>
+      <li><code>fail</code> — Neither SPF nor DKIM passed with alignment. The receiving server should apply the domain's published DMARC policy (<code>p=none</code>, <code>p=quarantine</code>, or <code>p=reject</code>).</li>
+      <li><code>none</code> — No DMARC record was published for the From domain.</li>
+    </ul>
+    <p><strong>Alignment note:</strong> SPF aligns the <code>Return-Path</code> (envelope-from) domain with the <code>From</code> header domain. DKIM aligns the <code>d=</code> signing domain with the <code>From</code> header domain. Alignment can be strict (exact match) or relaxed (organizational domain match). The analyzer reports which alignment mode applies.</p>
+
+    <h2 id="received-chain">Received Chain Analysis</h2>
+    <p>The <code>Received</code> headers form a chronological chain documenting each mail transfer agent (MTA) that handled the message. The analyzer reverses and structures this chain so you can read it top-down from origin to destination.</p>
+    <p>For each hop, the tool extracts and displays:</p>
+    <ul>
+      <li><strong>Timestamp:</strong> When the MTA accepted the message. Gaps between hops may indicate queuing delays or deliberate stalling.</li>
+      <li><strong>Source IP &amp; Hostname:</strong> The connecting IP and its reverse-DNS name. The analyzer performs a forward-confirmed reverse DNS (FCrDNS) check where possible.</li>
+      <li><strong>Receiving Server:</strong> The MTA that logged the hop (e.g., <code>mx.example.com</code>).</li>
+      <li><strong>Protocol:</strong> ESMTP, SMTPS, or internal routing markers.</li>
+    </ul>
+    <p>Warnings are raised when:</p>
+    <ul>
+      <li>A hop's source IP has no PTR record or the PTR does not resolve back to the same IP (FCrDNS mismatch).</li>
+      <li>Timestamps move backward, indicating clock skew or header manipulation.</li>
+      <li>The first (originating) hop IP does not match the IP validated by SPF.</li>
+      <li>Unexpected geographic routing appears (e.g., a domestic message routed through foreign infrastructure).</li>
+    </ul>
+
+    <h2 id="spoofing-indicators">Common Spoofing Indicators</h2>
+    <p>The analyzer flags patterns commonly associated with forged or malicious emails. These indicators supplement, but do not replace, the authentication results above.</p>
+    <ul>
+      <li><strong>From / Return-Path mismatch:</strong> The visible <code>From</code> address differs from the envelope sender in <code>Return-Path</code>. Legitimate mailing lists may cause this, but unexpected mismatches warrant scrutiny.</li>
+      <li><strong>Display name spoofing:</strong> The display name contains an email address that differs from the actual <code>From</code> address (e.g., <code>"ceo@company.com" &lt;attacker@evil.com&gt;</code>).</li>
+      <li><strong>Missing Authentication-Results:</strong> The receiving MTA did not stamp authentication results, making verification impossible from headers alone.</li>
+      <li><strong>SPF fail + DKIM none:</strong> No authentication mechanism validated the sender. High confidence spoofing signal.</li>
+      <li><strong>DMARC fail with p=reject:</strong> The domain owner requested rejection of unauthenticated mail, yet the message was delivered. This suggests the receiving server is non-compliant or the headers were injected post-delivery.</li>
+      <li><strong>Suspicious X-Mailer / User-Agent:</strong> Bulk-mail tools, scripting libraries, or mismatched client identifiers relative to the claimed sender organization.</li>
+      <li><strong>Inconsistent Message-ID domain:</strong> The <code>Message-ID</code> domain does not match the sending infrastructure or the From domain.</li>
+      <li><strong>Received chain anomalies:</strong> Missing hops, duplicate timestamps, or originating IPs from known malicious ranges.</li>
+    </ul>
+    <p>Each indicator is tagged with a severity level: <strong>High</strong> (strong spoofing evidence), <strong>Medium</strong> (suspicious but potentially legitimate), or <strong>Low</strong> (informational).</p>
+
+    <h2 id="export-options">Export Options</h2>
+    <p>After analysis, you can export the results for reporting, sharing, or archival purposes:</p>
+    <ul>
+      <li><strong>JSON:</strong> Structured machine-readable export containing all parsed headers, authentication results, received chain data, and flagged indicators. Suitable for integration with SIEM tools or custom pipelines.</li>
+      <li><strong>CSV:</strong> Tabular format with one row per received hop and summary rows for SPF/DKIM/DMARC status. Opens directly in spreadsheet applications.</li>
+      <li><strong>PDF Report:</strong> Formatted document with executive summary, detailed findings tables, and the reconstructed received chain. Designed for attaching to incident tickets or compliance records.</li>
+      <li><strong>Plain Text:</strong> Annotated text dump of the parsed and interpreted headers. Useful for pasting into ticketing systems or chat channels.</li>
+    </ul>
+    <p>Export buttons appear at the bottom of the results panel after a successful analysis. All exports are generated client-side.</p>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+
+    <h3>"No headers detected" error</h3>
+    <p>The parser could not identify any valid RFC 5322 headers in the input. Common causes:</p>
+    <ul>
+      <li>You pasted the email body instead of the headers. Refer to <a href="#pasting-raw-headers">Pasting Raw Headers</a> for your email client.</li>
+      <li>Headers were copied from a rich-text editor that stripped line breaks. Paste into a plain-text editor first, then re-copy.</li>
+      <li>The input contains only partial headers missing the leading field names.</li>
+    </ul>
+
+    <h3>SPF shows "none" but I know the domain has an SPF record</h3>
+    <p>The analyzer reads the <code>Authentication-Results</code> header stamped by the receiving MTA. If the receiving server did not perform SPF evaluation or did not record it, the analyzer cannot infer the result. Check whether the receiving MTA is configured to stamp authentication results per RFC 8601.</p>
+
+    <h3>DKIM shows "fail" for forwarded emails</h3>
+    <p>Forwarding often breaks DKIM signatures because intermediate MTAs modify headers (e.g., adding <code>Subject: [Fwd:]</code> prefixes or appending list footers). This is expected behavior. In forwarding scenarios, rely on SPF alignment or ARC (Authenticated Received Chain) seals if available.</p>
+
+    <h3>Received chain appears incomplete</h3>
+    <p>Some MTAs strip earlier <code>Received</code> headers for privacy or anti-spam reasons. Internal relay hops within the same organization may also be consolidated. The analyzer works with whatever headers are present; missing hops will be noted as gaps in the timeline.</p>
+
+    <h3>Tool hangs or crashes on paste</h3>
+    <p>Extremely large inputs (e.g., pasting the entire raw message including a multi-megabyte base64 attachment body) can exhaust browser memory. Paste only the header block — everything above the first blank line. If the issue persists, clear the page cache and try again in a private/incognito window.</p>
+
+    <h3>DMARC alignment shows "fail" despite SPF pass</h3>
+    <p>SPF authenticates the <code>Return-Path</code> domain, not the <code>From</code> domain. If these differ (common with mailing lists, transactional email services, and SaaS platforms using custom return paths), SPF passes but DMARC alignment fails unless DKIM provides an aligned pass. Check whether the sending service supports DKIM signing with your From domain.</p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+  </footer>
+</body>
+</html>

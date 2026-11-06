@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Listing Aggregator Documentation | EdgeIQ Labs</title>
+    <meta name="description" content="Complete documentation for EdgeIQ Labs Business Listing Aggregator. NAP consistency audits, duplicate detection, citation drift monitoring, and export tools.">
+    <meta property="og:title" content="Business Listing Aggregator Documentation | EdgeIQ Labs">
+    <meta property="og:description" content="NAP consistency audit, duplicate detection, and citation drift monitoring for local business listings. $9/mo.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/business-listing-aggregator.html">
+    <meta property="og:type" content="article">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #334155;
+            --code-bg: #020617;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        ul, ol { margin-left: 1.5rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+        pre code { background: none; padding: 0; }
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .price { font-size: 2rem; font-weight: bold; color: var(--accent); }
+        .price span { font-size: 1rem; color: var(--text-secondary); font-weight: normal; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .badge-warning { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--text-primary); font-weight: 600; }
+        td { color: var(--text-secondary); }
+        .note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.75rem; }
+            .pricing-card { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Business Listing Aggregator</h1>
+        <p>NAP consistency auditing, duplicate detection, and citation drift monitoring for local business listings.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Cancel anytime &mdash; no commitment</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Business Listing Aggregator continuously monitors your business presence across directories, maps, and review platforms to ensure Name, Address, and Phone (NAP) data stays consistent. Inconsistent citations degrade local search rankings and confuse customers. This tool automates the discovery, comparison, and alerting workflow so you can fix listing errors before they impact revenue.</p>
+        <ul>
+            <li>Audit NAP consistency across 80+ directories and data aggregators</li>
+            <li>Detect duplicate and near-duplicate listings automatically</li>
+            <li>Monitor citation drift with scheduled scans and real-time alerts</li>
+            <li>Export findings as CSV, JSON, or PDF for reporting and remediation</li>
+            <li>REST API for integration into agency dashboards and SEO pipelines</li>
+        </ul>
+
+        <h2>Quick Start</h2>
+        <pre><code># Install via pip
+pip install edgeiq-listing-aggregator
+
+# Run an initial NAP audit for a business
+listing-aggregator audit --name "Acme Plumbing" --phone "555-0100" --address "123 Main St, Austin, TX 78701"
+
+# Scan for duplicates across all tracked directories
+listing-aggregator duplicates scan --business-id biz_abc123
+
+# Enable continuous citation drift monitoring
+listing-aggregator monitor start --business-id biz_abc123 --interval daily --alert-webhook https://hooks.example.com/drift</code></pre>
+        <p>The initial audit typically completes within 2&ndash;5 minutes depending on the number of directories queried. Results are stored locally in <code>~/.edgeiq/listings.db</code> and available immediately via CLI or API.</p>
+
+        <h2>Audit Configuration</h2>
+        <p>Audits compare your canonical NAP data against live directory listings. Configure the scope and behavior of each audit run.</p>
+
+        <h3>Canonical Data Input</h3>
+        <table>
+            <tr><th>Field</th><th>Flag</th><th>Description</th></tr>
+            <tr><td>Business Name</td><td><code>--name</code></td><td>Exact legal or DBA name used as the source of truth</td></tr>
+            <tr><td>Phone Number</td><td><code>--phone</code></td><td>Primary phone in E.164 or local format</td></tr>
+            <tr><td>Street Address</td><td><code>--address</code></td><td>Full street address including suite/unit</td></tr>
+            <tr><td>Website URL</td><td><code>--website</code></td><td>Canonical website for cross-referencing</td></tr>
+        </table>
+
+        <h3>Directory Scope</h3>
+        <p>Control which directories are included in the audit:</p>
+        <pre><code># Audit only top-tier aggregators
+listing-aggregator audit --business-id biz_abc123 --scope aggregators
+
+# Audit specific directories
+listing-aggregator audit --business-id biz_abc123 --directories yelp,google,business-bureau
+
+# Exclude directories known to be stale
+listing-aggregator audit --business-id biz_abc123 --exclude yellowpages-old,manta-legacy</code></pre>
+
+        <h3>Scheduling</h3>
+        <p>Run audits on a recurring schedule using the built-in cron or your system scheduler:</p>
+        <pre><code>listing-aggregator schedule add --business-id biz_abc123 --cron "0 6 * * 1" # Every Monday at 6 AM UTC</code></pre>
+
+        <h2>NAP Matching Rules</h2>
+        <p>Exact string matching fails on real-world directory data. Business Listing Aggregator uses a layered normalization and fuzzy-matching pipeline to accurately compare NAP fields.</p>
+
+        <h3>Normalization Steps</h3>
+        <ol>
+            <li><strong>Case folding:</strong> All text lowercased before comparison.</li>
+            <li><strong>Punctuation stripping:</strong> Periods, commas, and hyphens removed from abbreviations (e.g., &ldquo;St.&rdquo; &rarr; &ldquo;st&rdquo;, &ldquo;Ste 200&rdquo; &rarr; &ldquo;suite 200&rdquo;).</li>
+            <li><strong>Phone normalization:</strong> Stripped to digits only; country codes handled via E.164 parsing.</li>
+            <li><strong>Address standardization:</strong> USPS-style abbreviation expansion (e.g., &ldquo;Rd&rdquo; &rarr; &ldquo;Road&rdquo;, &ldquo;Blvd&rdquo; &rarr; &ldquo;Boulevard&rdquo;).</li>
+        </ol>
+
+        <h3>Match Thresholds</h3>
+        <table>
+            <tr><th>Field</th><th>Algorithm</th><th>Default Threshold</th><th>Override Flag</th></tr>
+            <tr><td>Name</td><td>Token-set ratio + Jaro-Winkler</td><td>0.85</td><td><code>--name-threshold 0.9</code></td></tr>
+            <tr><td>Address</td><td>Normalized Levenshtein</td><td>0.90</td><td><code>--address-threshold 0.8</code></td></tr>
+            <tr><td>Phone</td><td>Digit-exact match</td><td>1.00</td><td><code>--phone-fuzzy</code> (allows extension diffs)</td></tr>
+        </table>
+
+        <div class="note">Lower thresholds increase recall but may produce false positives. For high-volume agency use, start with defaults and tune per client based on initial audit results.</div>
+
+        <h3>Match Statuses</h3>
+        <ul>
+            <li><span class="badge badge-success">Exact</span> &mdash; Normalized values match perfectly.</li>
+            <li><span class="badge badge-warning">Partial</span> &mdash; Score falls between threshold and exact; flagged for manual review.</li>
+            <li><span class="badge badge-danger">Mismatch</span> &mdash; Score below threshold; likely incorrect or outdated listing.</li>
+        </ul>
+
+        <h2>Duplicate Detection</h2>
+        <p>Duplicate listings split reviews, confuse customers, and dilute local search authority. The duplicate detector clusters listings that likely represent the same business entity.</p>
+
+        <h3>Detection Methods</h3>
+        <ul>
+            <li><strong>Geographic proximity:</strong> Listings within 50 meters sharing a similar name are flagged as potential duplicates.</li>
+            <li><strong>Phone overlap:</strong> Identical normalized phone numbers across different directory entries trigger automatic grouping.</li>
+            <li><strong>Name similarity clustering:</strong> DBSCAN-based clustering on normalized name tokens groups variants like &ldquo;Acme Plumbing Co&rdquo; and &ldquo;Acme Plumbing Company&rdquo;.</li>
+            <li><strong>Website backlink:</strong> Listings pointing to the same canonical URL are merged into one cluster regardless of NAP variance.</li>
+        </ul>
+
+        <h3>CLI Usage</h3>
+        <pre><code># Run duplicate scan
+listing-aggregator duplicates scan --business-id biz_abc123
+
+# Review detected clusters interactively
+listing-aggregator duplicates review --business-id biz_abc123
+
+# Merge confirmed duplicates (marks secondary listings for suppression)
+listing-aggregator duplicates merge --cluster-id cl_xyz789 --primary listing_google_001</code></pre>
+
+        <h3>Suppression Workflow</h3>
+        <p>After merging, the tool generates a suppression request file compatible with major aggregators (Data Axle, Neustar/Localeze, Foursquare). Submit these files through each aggregator&rsquo;s portal or via the API if supported.</p>
+
+        <h2>Citation Drift Alerts</h2>
+        <p>Citation drift occurs when a previously consistent listing changes without authorization &mdash; a directory reformats your address, a user suggests an edit, or a scraper overwrites your phone number. Continuous monitoring catches these changes early.</p>
+
+        <h3>Monitoring Setup</h3>
+        <pre><code># Start daily monitoring
+listing-aggregator monitor start --business-id biz_abc123 --interval daily
+
+# Configure alert destinations
+listing-aggregator monitor config --business-id biz_abc123 \
+  --alert-email seo@example.com \
+  --alert-webhook https://hooks.slack.com/services/T00/B00/xxx</code></pre>
+
+        <h3>Alert Types</h3>
+        <table>
+            <tr><th>Event</th><th>Severity</th><th>Description</th></tr>
+            <tr><td>Name changed</td><td><span class="badge badge-danger">High</span></td><td>Directory listing name no longer matches canonical</td></tr>
+            <tr><td>Address modified</td><td><span class="badge badge-danger">High</span></td><td>Street, city, state, or ZIP differs from baseline</td></tr>
+            <tr><td>Phone changed</td><td><span class="badge badge-danger">High</span></td><td>Primary phone number replaced or removed</td></tr>
+            <tr><td>Website URL altered</td><td><span class="badge badge-warning">Medium</span></td><td>Listing points to a different domain</td></tr>
+            <tr><td>New duplicate detected</td><td><span class="badge badge-warning">Medium</span></td><td>A new listing matching this business appeared</td></tr>
+            <tr><td>Listing removed</td><td><span class="badge badge-danger">High</span></td><td>Previously active listing is no longer found</td></tr>
+        </table>
+
+        <h3>Alert Suppression</h3>
+        <p>Suppress noisy alerts during planned migrations or rebrands:</p>
+        <pre><code>listing-aggregator monitor suppress --business-id biz_abc123 --reason "Rebrand in progress" --until 2026-12-31</code></pre>
+        <div class="note">Suppressed alerts are still logged internally and appear in audit history. They are simply not delivered to configured notification channels.</div>
+
+        <h2>Export Formats</h2>
+        <p>Export audit results, duplicate reports, and drift histories for client reporting or downstream processing.</p>
+
+        <h3>Supported Formats</h3>
+        <table>
+            <tr><th>Format</th><th>Flag</th><th>Use Case</th></tr>
+            <tr><td>CSV</td><td><code>--format csv</code></td><td>Spreadsheet analysis, bulk editing, import to CRM</td></tr>
+            <tr><td>JSON</td><td><code>--format json</code></td><td>Programmatic consumption, API pipelines, custom dashboards</td></tr>
+            <tr><td>PDF</td><td><code>--format pdf</code></td><td>Client-facing reports, executive summaries</td></tr>
+        </table>
+
+        <h3>Export Examples</h3>
+        <pre><code># Export full audit to CSV
+listing-aggregator export audit --business-id biz_abc123 --format csv --output ./reports/acme-audit.csv
+
+# Export duplicate clusters to JSON
+listing-aggregator export duplicates --business-id biz_abc123 --format json --output ./reports/acme-dupes.json
+
+# Generate a branded PDF report
+listing-aggregator export report --business-id biz_abc123 --format pdf --logo ./assets/client-logo.png --output ./reports/acme-report.pdf</code></pre>
+
+        <h3>Schema Reference (JSON)</h3>
+        <pre><code>{
+  "business_id": "biz_abc123",
+  "canonical_nap": {
+    "name": "Acme Plumbing",
+    "phone": "+15550100",
+    "address": "123 Main St, Austin, TX 78701"
+  },
+  "listings": [
+    {
+      "directory": "yelp",
+      "url": "https://yelp.com/biz/acme-plumbing-austin",
+      "nap_match": { "name": "exact", "phone": "exact", "address": "partial" },
+      "score": 0.94,
+      "last_seen": "2026-11-05T14:30:00Z"
+    }
+  ],
+  "duplicates": [],
+  "drift_events": []
+}</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is accessible via REST API when running <code>listing-aggregator serve --port 8500</code>.</p>
+
+        <h3>Authentication</h3>
+        <p>Include your API key in the <code>Authorization</code> header:</p>
+        <pre><code>Authorization: Bearer ei_live_xxxxxxxxxxxxxxxx</code></pre>
+
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/businesses</code></td><td>Create a new business profile with canonical NAP</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/businesses/{id}</code></td><td>Retrieve business profile and latest audit status</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/audits</code></td><td>Trigger a new NAP consistency audit</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/audits/{id}</code></td><td>Get audit results including per-directory match scores</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/duplicates/scan</code></td><td>Initiate duplicate detection for a business</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/duplicates/{business_id}/clusters</code></td><td>List detected duplicate clusters</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/monitors</code></td><td>Start citation drift monitoring</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/monitors/{business_id}/events</code></td><td>Retrieve drift event history</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/export</code></td><td>Download audit/duplicate data in specified format</td></tr>
+        </table>
+
+        <h3>Example: Create Business and Trigger Audit</h3>
+        <pre><code>curl -X POST http://localhost:8500/api/v1/businesses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ei_live_xxx" \
+  -d '{
+    "name": "Acme Plumbing",
+    "phone": "+15550100",
+    "address": "123 Main St, Austin, TX 78701",
+    "website": "https://acmeplumbing.com"
+  }'
+
+curl -X POST http://localhost:8500/api/v1/audits \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ei_live_xxx" \
+  -d '{
+    "business_id": "biz_abc123",
+    "scope": "all"
+  }'</code></pre>
+
+        <h3>Rate Limits</h3>
+        <p>API requests are rate-limited to 100 requests per minute per API key. Audit-triggering endpoints (<code>POST /api/v1/audits</code>, <code>POST /api/v1/duplicates/scan</code>) are limited to 10 concurrent jobs per account. Exceeding limits returns HTTP 429 with a <code>Retry-After</code> header.</p>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+
+        <p><strong>Audit returns zero listings found:</strong> Verify the business name isn&rsquo;t overly generic. Add <code>--website</code> to help the crawler disambiguate. Some directories block automated queries; check <code>~/.edgeiq/logs/audit.log</code> for 403/429 responses.</p>
+
+        <p><strong>False positive duplicates:</strong> Businesses with similar names in the same city (e.g., franchise locations) may cluster incorrectly. Increase the geographic proximity threshold with <code>--dup-distance 200</code> (meters) or manually exclude via <code>listing-aggregator duplicates ignore --listing-id dir_123</code>.</p>
+
+        <p><strong>Drift alerts firing constantly:</strong> Some directories normalize addresses differently on every scrape. If a specific directory produces persistent partial-match noise, suppress it: <code>listing-aggregator monitor suppress-dir --business-id biz_abc123 --directory problematic-dir</code>.</p>
+
+        <p><strong>Phone number mismatch despite correct number:</strong> International formatting differences cause digit mismatches. Always provide canonical phone in E.164 format (<code>+15550100</code>). Use <code>--phone-fuzzy</code> to allow extension variations.</p>
+
+        <p><strong>PDF export missing logo or branding:</strong> Ensure the <code>--logo</code> path points to a PNG or SVG under 2MB. Raster images above 1000px wide are auto-scaled. Check <code>~/.edgeiq/logs/export.log</code> for rendering errors.</p>
+
+        <p><strong>API returns 401 Unauthorized:</strong> Confirm your API key hasn&rsquo;t expired or been rotated. Generate a new key at <a href="https://edgeiqlabs.com/account">edgeiqlabs.com/account</a>. Keys prefixed <code>ei_test_</code> only work against sandbox endpoints.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Per business profile monitored</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Subscribe Now</a>
+        </div>
+        <p>The $9/month plan includes:</p>
+        <ul>
+            <li>Unlimited NAP consistency audits per business</li>
+            <li>Duplicate detection across 80+ directories</li>
+            <li>Daily citation drift monitoring with email/webhook alerts</li>
+            <li>CSV, JSON, and PDF exports</li>
+            <li>Full REST API access (100 req/min)</li>
+            <li>Priority email support</li>
+        </ul>
+        <p>Agency plans with multi-business dashboards and volume discounts are available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>. Annual prepay saves 15%.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+</body>
+</html>

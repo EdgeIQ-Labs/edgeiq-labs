@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Security Checker Pro - EdgeIQ Labs</title>
+    <meta property="og:title" content="OAuth Security Checker Pro Documentation">
+    <meta property="og:description" content="Comprehensive OAuth security validation tool for redirect URIs, state tokens, PKCE, and scope analysis.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/oauth-checker.html">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --code-bg: #0f172a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { color: #fff; margin-bottom: 1rem; }
+        h1 { font-size: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; }
+        h2 { font-size: 1.5rem; margin-top: 2.5rem; color: var(--accent); }
+        h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+        p, li { margin-bottom: 0.75rem; color: var(--text); }
+        ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        code {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        .pricing {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .price-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .price-card.highlight { border-color: var(--accent); }
+        .price { font-size: 1.75rem; font-weight: bold; color: var(--accent); margin: 0.5rem 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th { background: var(--surface); color: var(--accent); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>OAuth Security Checker Pro</h1>
+    
+    <h2>Overview</h2>
+    <p>OAuth Security Checker Pro is a comprehensive validation tool designed to identify common misconfigurations and vulnerabilities in OAuth 2.0 and OpenID Connect implementations. It automates critical security checks including redirect URI validation, state token verification, PKCE detection, scope analysis, and token leakage prevention.</p>
+    <p>This tool helps developers and security teams ensure their OAuth flows are properly configured before deployment, reducing the risk of authorization code interception, CSRF attacks, and privilege escalation.</p>
+
+    <h2>Quick Start</h2>
+    <ol>
+        <li>Install via npm: <code>npm install -g @edgeiq/oauth-checker-pro</code></li>
+        <li>Configure your provider endpoints in <code>oauth-config.json</code></li>
+        <li>Run the checker: <code>oauth-checker run --config oauth-config.json</code></li>
+        <li>Review the generated report at <code>./oauth-report.html</code></li>
+    </ol>
+    <pre><code>{
+  "provider": "auth0",
+  "client_id": "your_client_id",
+  "redirect_uris": ["https://app.example.com/callback"],
+  "scopes": ["openid", "profile", "email"]
+}</code></pre>
+
+    <h2>Test Checklist</h2>
+    <h3>Redirect URI Validation</h3>
+    <ul>
+        <li>Verifies all registered redirect URIs use HTTPS (except localhost for development)</li>
+        <li>Detects open redirect vulnerabilities via query parameter manipulation</li>
+        <li>Validates exact match vs. prefix matching behavior</li>
+        <li>Checks for fragment-based redirects that may leak tokens</li>
+    </ul>
+
+    <h3>State Token Checks</h3>
+    <ul>
+        <li>Confirms state parameter is present in authorization requests</li>
+        <li>Validates state is cryptographically random (≥128 bits entropy)</li>
+        <li>Verifies state is bound to user session and validated on callback</li>
+        <li>Detects state reuse across multiple authorization flows</li>
+    </ul>
+
+    <h3>PKCE Detection</h3>
+    <ul>
+        <li>Identifies whether PKCE is supported by the provider</li>
+        <li>Validates code_verifier length (43-128 characters)</li>
+        <li>Checks code_challenge_method is S256 (not plain)</li>
+        <li>Ensures code_verifier is not reused across sessions</li>
+    </ul>
+
+    <h3>Scope Analysis</h3>
+    <ul>
+        <li>Audits requested scopes against principle of least privilege</li>
+        <li>Flags overly broad scopes (e.g., admin, write_all)</li>
+        <li>Validates scope format matches provider specification</li>
+        <li>Detects scope escalation between auth and token requests</li>
+    </ul>
+
+    <h3>Token Leakage Prevention</h3>
+    <ul>
+        <li>Scans for tokens in URL fragments, query strings, or logs</li>
+        <li>Validates tokens are transmitted only over TLS</li>
+        <li>Checks for proper token storage (no localStorage/sessionStorage)</li>
+        <li>Verifies refresh token rotation and binding</li>
+    </ul>
+
+    <h2>Provider Compatibility</h2>
+    <table>
+        <thead>
+            <tr><th>Provider</th><th>Status</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Auth0</td><td>✅ Full</td><td>All checks supported</td></tr>
+            <tr><td>Okta</td><td>✅ Full</td><td>All checks supported</td></tr>
+            <tr><td>Azure AD</td><td>✅ Full</td><td>v2.0 endpoint required</td></tr>
+            <tr><td>Google</td><td>⚠️ Partial</td><td>PKCE optional for web apps</td></tr>
+            <tr><td>GitHub</td><td>⚠️ Partial</td><td>No PKCE support</td></tr>
+            <tr><td>Keycloak</td><td>✅ Full</td><td>All checks supported</td></tr>
+            <tr><td>Cognito</td><td>✅ Full</td><td>All checks supported</td></tr>
+        </tbody>
+    </table>
+
+    <h2>API Reference</h2>
+    <h3>CLI Commands</h3>
+    <pre><code>oauth-checker run --config &lt;path&gt;     # Run full security scan
+oauth-checker validate-uri &lt;uri&gt;      # Validate single redirect URI
+oauth-checker check-pkce &lt;endpoint&gt;   # Test PKCE support
+oauth-checker audit-scopes &lt;config&gt;   # Analyze scope permissions
+oauth-checker export --format json    # Export results as JSON</code></pre>
+
+    <h3>Configuration Options</h3>
+    <ul>
+        <li><code>--strict</code>: Fail on warnings (default: false)</li>
+        <li><code>--timeout</code>: Request timeout in seconds (default: 30)</li>
+        <li><code>--output</code>: Report output path (default: ./oauth-report.html)</li>
+        <li><code>--verbose</code>: Enable detailed logging</li>
+    </ul>
+
+    <h2>Common Misconfigurations</h2>
+    <ul>
+        <li><strong>Wildcard Redirect URIs:</strong> Using <code>https://*.example.com/callback</code> allows subdomain takeover attacks.</li>
+        <li><strong>Missing State Parameter:</strong> Enables CSRF attacks where attackers link victim accounts to attacker-controlled identities.</li>
+        <li><strong>Plain PKCE Method:</strong> Using <code>code_challenge_method=plain</code> exposes the verifier to interception.</li>
+        <li><strong>Overly Broad Scopes:</strong> Requesting <code>admin</code> or <code>write_all</code> when only read access is needed violates least privilege.</li>
+        <li><strong>Token in URL:</strong> Storing access tokens in URL fragments leaks them via browser history and referrer headers.</li>
+        <li><strong>No Refresh Token Rotation:</strong> Reusing refresh tokens enables token theft persistence after revocation.</li>
+    </ul>
+
+    <h2>Troubleshooting</h2>
+    <h3>False Positives</h3>
+    <p>If the tool flags a valid configuration as insecure, verify:</p>
+    <ul>
+        <li>Your provider's documentation confirms the pattern is safe</li>
+        <li>You're using the correct endpoint version (v1 vs v2)</li>
+        <li>Custom domains are properly registered with the provider</li>
+    </ul>
+
+    <h3>Connection Errors</h3>
+    <ul>
+        <li>Ensure your network allows outbound HTTPS to the provider's endpoints</li>
+        <li>Check if corporate proxies require certificate whitelisting</li>
+        <li>Verify client credentials have not expired or been revoked</li>
+    </ul>
+
+    <h3>Incomplete Reports</h3>
+    <p>If certain checks are skipped:</p>
+    <ul>
+        <li>Confirm the provider supports the feature being tested</li>
+        <li>Check that required configuration fields are present</li>
+        <li>Review verbose logs for specific skip reasons</li>
+    </ul>
+
+    <h2>Pricing</h2>
+    <div class="pricing">
+        <div class="price-card highlight">
+            <h3>Lifetime License</h3>
+            <div class="price">$39</div>
+            <p>One-time payment<br>Unlimited scans<br>All future updates<br>Priority support</p>
+        </div>
+        <div class="price-card">
+            <h3>Monthly Subscription</h3>
+            <div class="price">$19/mo</div>
+            <p>Cancel anytime<br>Unlimited scans<br>All features included<br>Email support</p>
+        </div>
+    </div>
+    <p>Both plans include access to all security checks, provider compatibility updates, and HTML/JSON report generation. Enterprise licensing available for teams requiring SSO integration and audit logging.</p>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Researcher Documentation | EdgeIQ Labs</title>
+    <meta property="og:title" content="Lead Researcher Documentation">
+    <meta property="og:description" content="Ethical B2B lead generation from public data sources. CAN-SPAM/GDPR compliant. $9/mo.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/lead-researcher.html">
+    <meta property="og:type" content="article">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --code-bg: #020617;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { color: #fff; margin-top: 2.5rem; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-top: 0; }
+        h2 { font-size: 1.75rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code {
+            background: var(--code-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 0.9em;
+            color: #f472b6;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        pre code { background: none; padding: 0; color: var(--text); }
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .price { font-size: 2.5rem; font-weight: bold; color: #fff; }
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--accent); }
+        ul { margin-bottom: 1rem; padding-left: 1.5rem; color: var(--muted); }
+        li { margin-bottom: 0.5rem; }
+        .compliance-note {
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Lead Researcher</h1>
+<p>Ethical B2B lead generation platform built exclusively on public data sources. Fully CAN-SPAM and GDPR compliant.</p>
+
+<div class="pricing-card">
+    <span class="badge">MONTHLY</span>
+    <div class="price">$9</div>
+    <p>Billed monthly • Cancel anytime • Unlimited searches</p>
+</div>
+
+<h2>Overview</h2>
+<p>Lead Researcher aggregates publicly available business contact information from government registries, professional directories, and open corporate databases. Unlike scraping-based tools, we only index data that organizations have intentionally published for business outreach purposes. Every record includes source attribution and opt-out status verification.</p>
+
+<h2>Setup</h2>
+<pre><code># Install CLI
+pip install edgeiq-lead-researcher
+
+# Authenticate
+elr auth login --api-key YOUR_API_KEY
+
+# Verify installation
+elr ping</code></pre>
+<p>API keys are generated in your dashboard under Settings → API Access. Keys rotate automatically every 90 days.</p>
+
+<h2>Data Sources</h2>
+<ul>
+    <li><strong>SEC EDGAR:</strong> Public company filings with officer contact details</li>
+    <li><strong>State Business Registries:</strong> LLC/corp registration records (all 50 states)</li>
+    <li><strong>Professional Licensing Boards:</strong> Licensed practitioners with public practice addresses</li>
+    <li><strong>Chamber of Commerce Directories:</strong> Member businesses with published contact info</li>
+    <li><strong>Government Vendor Portals:</strong> Registered contractors and grant recipients</li>
+    <li><strong>Open Corporate APIs:</strong> Companies House (UK), EU Business Registers</li>
+</ul>
+<p>All sources are re-indexed weekly. Stale records (>180 days unverified) are automatically archived.</p>
+
+<h2>Search Filters</h2>
+<table>
+    <tr><th>Filter</th><th>Description</th><th>Example</th></tr>
+    <tr><td><code>--industry</code></td><td>NAICS/SIC code or keyword</td><td><code>--industry "SaaS"</code></td></tr>
+    <tr><td><code>--location</code></td><td>City, state, or country</td><td><code>--location "Austin,TX"</code></td></tr>
+    <tr><td><code>--company-size</code></td><td>Employee count range</td><td><code>--company-size "10-50"</code></td></tr>
+    <tr><td><code>--title</code></td><td>Job title keywords</td><td><code>--title "CTO"</code></td></tr>
+    <tr><td><code>--verified-only</code></td><td>Exclude unconfirmed contacts</td><td><code>--verified-only</code></td></tr>
+    <tr><td><code>--optout-excluded</code></td><td>Honor global suppression list</td><td><code>--optout-excluded</code></td></tr>
+</table>
+
+<h2>Export Formats</h2>
+<h3>CSV</h3>
+<pre><code>elr search --industry "FinTech" --location "NYC" --export csv &gt; leads.csv</code></pre>
+<p>Columns: <code>company_name, contact_name, title, email, phone, address, source_url, last_verified</code></p>
+
+<h3>JSON</h3>
+<pre><code>elr search --industry "FinTech" --location "NYC" --export json &gt; leads.json</code></pre>
+<p>Includes nested metadata: source provenance, confidence score, and compliance flags.</p>
+
+<h2>Compliance Notes</h2>
+<div class="compliance-note">
+    <h3>CAN-SPAM Compliance</h3>
+    <p>All exported contacts include a valid physical postal address as required by 15 U.S.C. § 7704. Our system automatically appends unsubscribe links to email templates generated via the CLI. We maintain a real-time suppression list synced daily with DMA and FTC registries.</p>
+</div>
+
+<div class="compliance-note">
+    <h3>GDPR Compliance</h3>
+    <p>EU/EEA contacts are only included when legitimate interest is documented (B2B context + published business contact). Each record contains a <code>legal_basis</code> field. Data subjects can request deletion via <code>elr gdpr delete --email user@example.com</code>, processed within 72 hours.</p>
+</div>
+
+<p>We do not scrape social media profiles, personal emails, or non-business directories. All data is sourced from official publications intended for commercial communication.</p>
+
+<h2>API Reference</h2>
+<table>
+    <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+    <tr><td><code>/v1/search</code></td><td>POST</td><td>Execute filtered lead query</td></tr>
+    <tr><td><code>/v1/leads/{id}</code></td><td>GET</td><td>Retrieve single lead with full provenance</td></tr>
+    <tr><td><code>/v1/export</code></td><td>POST</td><td>Generate downloadable CSV/JSON bundle</td></tr>
+    <tr><td><code>/v1/suppression/check</code></td><td>POST</td><td>Bulk verify opt-out status</td></tr>
+    <tr><td><code>/v1/gdpr/delete</code></td><td>DELETE</td><td>Process data subject erasure request</td></tr>
+</table>
+
+<h2>Troubleshooting</h2>
+<p><strong>Empty search results?</strong> Broaden filters or remove <code>--verified-only</code>. New businesses may take 7-14 days to appear in public registries.</p>
+<p><strong>Rate limited?</strong> Free tier allows 100 requests/hour. Upgrade to $9/mo for 10k/hour. Use <code>--batch</code> flag for large exports to avoid throttling.</p>
+<p><strong>Outdated contact info?</strong> Run <code>elr verify --email user@example.com</code> to trigger real-time validation against MX records and SMTP handshake.</p>
+<p><strong>Missing EU contacts?</strong> Ensure <code>--gdpr-legitimate-interest</code> flag is set. Without it, EU records are excluded by default.</p>
+
+<footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;">
+    &copy; 2026 EdgeIQ Labs. All rights reserved.<br>
+    <a href="https://edgeiqlabs.com">Home</a> • <a href="mailto:support@edgeiqlabs.com">Support</a> • <a href="/docs/compliance-shield.html">Compliance Shield</a>
+</footer>
+
+</body>
+</html>

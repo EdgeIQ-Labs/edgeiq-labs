@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Kit Detector Documentation | EdgeIQ Labs</title>
+    <meta property="og:title" content="Phishing Kit Detector Documentation | EdgeIQ Labs">
+    <meta property="og:description" content="Complete guide to infrastructure fingerprinting, hosting pattern analysis, and takedown workflows for phishing kit detection.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/phishing-kit-detector.html">
+    <meta property="og:type" content="article">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --code-bg: #0f172a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--accent); }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--muted); }
+        ul, ol { margin: 0 0 1rem 1.5rem; color: var(--muted); }
+        li { margin-bottom: 0.5rem; }
+        code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--border);
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+        pre code { background: none; padding: 0; border: none; }
+        .price-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        th { background: var(--surface); color: var(--accent); }
+        .note {
+            background: var(--surface);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Phishing Kit Detector <span class="price-tag">$9/mo</span></h1>
+        <p>Infrastructure fingerprinting, hosting pattern analysis, and automated takedown workflow integration for security teams.</p>
+
+        <h2>Overview</h2>
+        <p>EdgeIQ Labs Phishing Kit Detector identifies and tracks phishing infrastructure by analyzing server fingerprints, hosting provider patterns, and behavioral signals. Unlike traditional URL blocklists, this tool focuses on the underlying kit architecture to detect new campaigns before they are widely reported.</p>
+        <p>Key capabilities include:</p>
+        <ul>
+            <li><strong>Infrastructure Fingerprinting:</strong> Identify specific phishing kit versions and configurations.</li>
+            <li><strong>Hosting Pattern Analysis:</strong> Detect bulletproof hosting providers and ASN clusters commonly used by threat actors.</li>
+            <li><strong>Takedown Workflow:</strong> Streamlined reporting and evidence packaging for registrars and hosting providers.</li>
+            <li><strong>Real-time Alerts:</strong> Configurable notifications via webhook, email, or SIEM integration.</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Installation</h3>
+        <pre><code>pip install edgeiq-phishing-detector
+export EDGEIQ_API_KEY="your_api_key_here"</code></pre>
+        
+        <h3>Configuration</h3>
+        <p>Create a <code>config.yaml</code> in your project root:</p>
+        <pre><code>detection:
+  fingerprint_db: /var/lib/edgeiq/fingerprints.db
+  scan_interval: 300
+  max_concurrent: 10
+
+alerting:
+  webhook_url: https://hooks.slack.com/services/...
+  severity_threshold: medium
+
+takedown:
+  auto_package: true
+  evidence_dir: ./evidence</code></pre>
+
+        <h2>Detection Methods</h2>
+        <h3>Infrastructure Fingerprinting</h3>
+        <p>The detector analyzes HTTP headers, TLS certificates, JavaScript bundles, and directory structures to identify known phishing kits. Fingerprints are updated weekly from our global honeypot network.</p>
+        <ul>
+            <li><strong>Header Analysis:</strong> Unique server signatures and custom X- headers.</li>
+            <li><strong>Asset Hashing:</strong> SHA-256 hashes of login forms, CSS, and JS payloads.</li>
+            <li><strong>Certificate Transparency:</strong> Monitoring CT logs for suspicious domain issuance patterns.</li>
+        </ul>
+
+        <h3>Hosting Pattern Analysis</h3>
+        <p>Identifies infrastructure based on hosting provider reputation, ASN history, and IP neighborhood analysis.</p>
+        <table>
+            <tr><th>Signal</th><th>Description</th><th>Weight</th></tr>
+            <tr><td>ASN Reputation</td><td>Historical abuse score of the autonomous system</td><td>High</td></tr>
+            <tr><td>IP Velocity</td><td>Rate of new domain resolutions to the IP</td><td>Medium</td></tr>
+            <tr><td>Provider Type</td><td>Bulletproof vs. legitimate hosting classification</td><td>High</td></tr>
+        </table>
+
+        <h3>Behavioral Analysis</h3>
+        <p>Monitors runtime behavior including redirect chains, credential harvesting form submissions, and C2 callback patterns to distinguish active kits from parked or defunct pages.</p>
+
+        <h2>Takedown Workflow Integration</h2>
+        <p>Automate the evidence collection and reporting process:</p>
+        <ol>
+            <li><strong>Detection:</strong> Kit identified with confidence score &gt; 0.85.</li>
+            <li><strong>Evidence Packaging:</strong> Screenshots, source code, WHOIS data, and headers archived.</li>
+            <li><strong>Report Generation:</strong> Standardized abuse report formatted for major registrars.</li>
+            <li><strong>Submission:</strong> Optional API-based submission to participating hosting providers.</li>
+        </ol>
+        <div class="note">
+            <strong>Note:</strong> Takedown requests are rate-limited to prevent abuse. Premium plans include priority queue access.
+        </div>
+
+        <h2>Alert Configuration</h2>
+        <p>Configure alerts in <code>config.yaml</code> under the <code>alerting</code> section:</p>
+        <pre><code>alerting:
+  channels:
+    - type: webhook
+      url: https://api.example.com/alerts
+      events: [detection, takedown_complete]
+    - type: email
+      recipients: [soc@example.com]
+      severity: high
+  filters:
+    exclude_asns: [AS12345]
+    min_confidence: 0.7</code></pre>
+
+        <h2>API Reference</h2>
+        <h3>GET /v1/detect</h3>
+        <p>Analyze a URL or IP for phishing kit indicators.</p>
+        <pre><code>curl -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  "https://api.edgeiqlabs.com/v1/detect?url=https://example.com"</code></pre>
+        <p><strong>Response:</strong></p>
+        <pre><code>{
+  "detected": true,
+  "kit_family": "evilproxy",
+  "confidence": 0.92,
+  "infrastructure": {
+    "asn": "AS44444",
+    "hosting": "bulletproof-host",
+    "fingerprint": "ep-v3.2.1"
+  }
+}</code></pre>
+
+        <h2>Export Formats</h2>
+        <p>Detection results and evidence can be exported in multiple formats:</p>
+        <ul>
+            <li><strong>JSON:</strong> Machine-readable detection metadata.</li>
+            <li><strong>STIX 2.1:</strong> For integration with threat intelligence platforms.</li>
+            <li><strong>MHTML:</strong> Self-contained web archive for legal evidence.</li>
+            <li><strong>CSV:</strong> Bulk export for spreadsheet analysis.</li>
+        </ul>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <ul>
+            <li><strong>False Positives:</strong> Adjust <code>min_confidence</code> threshold or add ASN exclusions.</li>
+            <li><strong>Timeout Errors:</strong> Increase <code>scan_timeout</code> in config; some kits use delayed redirects.</li>
+            <li><strong>Missing Fingerprints:</strong> Run <code>edgeiq-update-db</code> to fetch latest signatures.</li>
+        </ul>
+        <h3>Support</h3>
+        <p>For technical issues, contact <a href="mailto:support@edgeiqlabs.com" style="color:var(--accent)">support@edgeiqlabs.com</a> or open a ticket in the dashboard.</p>
+
+        <h2>Pricing</h2>
+        <p><strong>Phishing Kit Detector:</strong> <span class="price-tag">$9/mo</span></p>
+        <ul>
+            <li>Unlimited detections</li>
+            <li>Weekly fingerprint updates</li>
+            <li>Standard takedown workflow</li>
+            <li>Email &amp; webhook alerts</li>
+            <li>Community support</li>
+        </ul>
+        <p>Enterprise plans with API access and priority takedowns available upon request.</p>
+    </div>
+</body>
+</html>

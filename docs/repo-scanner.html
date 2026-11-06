@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repo Scanner Pro Documentation | EdgeIQ Labs</title>
+    <link rel="stylesheet" href="/css/design-system.css?v=10">
+    <meta property="og:title" content="Repo Scanner Pro Documentation">
+    <meta property="og:description" content="Complete reference documentation for Repo Scanner Pro: setup, API parameters, CLI flags, scoring logic, and troubleshooting.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/repo-scanner.html">
+    <meta property="og:type" content="article">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Repo Scanner Pro Documentation",
+      "description": "Technical reference for configuring and using Repo Scanner Pro to audit GitHub repositories for security vulnerabilities.",
+      "url": "https://edgeiqlabs.com/docs/repo-scanner.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "EdgeIQ Labs"
+      }
+    }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">EdgeIQ Labs</a>
+            <ul class="navbar-menu">
+                <li><a href="/free-tools">Free Tools</a></li>
+                <li><a href="/dev-tools">Dev Tools</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/docs">Docs</a></li>
+                <li><a href="/products">Products</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container container--narrow prose">
+        <h1>Repo Scanner Pro Documentation</h1>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>Repo Scanner Pro is an automated security auditing tool that scans GitHub repositories for common misconfigurations and exposed secrets. It performs static analysis on repository structure, configuration files, and dependency manifests to identify security risks.</p>
+        </section>
+
+        <section id="getting-started">
+            <h2>Getting Started</h2>
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>GitHub repository URL (public or private)</li>
+                <li>For private repos: Valid GitHub Personal Access Token with <code>repo</code> scope</li>
+                <li>Active EdgeIQ Labs account</li>
+            </ul>
+
+            <h3>Installation</h3>
+            <pre><code>npm install -g @edgeiq/repo-scanner-pro</code></pre>
+
+            <h3>Authentication</h3>
+            <pre><code>rsp auth login --token YOUR_EDGEIQ_API_KEY</code></pre>
+        </section>
+
+        <section id="free-tier-checks">
+            <h2>Free Tier Checks</h2>
+            <p>The free tier includes 7 automated checks on public repositories only:</p>
+            <ol>
+                <li><strong>Exposed Secrets:</strong> Scans for hardcoded API keys, tokens, and passwords in source code</li>
+                <li><strong>.env File Detection:</strong> Identifies committed environment files containing sensitive variables</li>
+                <li><strong>.gitignore Validation:</strong> Verifies presence and completeness of .gitignore patterns</li>
+                <li><strong>Supabase RLS Policy Check:</strong> Detects tables without Row Level Security policies enabled</li>
+                <li><strong>Default Configuration Files:</strong> Flags production configs with debug mode enabled</li>
+                <li><strong>Public S3 Bucket References:</strong> Identifies hardcoded public bucket URLs in code</li>
+                <li><strong>Dependency License Compliance:</strong> Basic check for known restrictive licenses in top-level dependencies</li>
+            </ol>
+        </section>
+
+        <section id="pro-tier-features">
+            <h2>Pro Tier Features ($9/mo)</h2>
+            <ul>
+                <li><strong>Private Repository Support:</strong> Full scanning capability for private GitHub repos via authenticated access</li>
+                <li><strong>Deep Dependency Audit:</strong> Transitive dependency analysis for known CVEs and vulnerable versions</li>
+                <li><strong>Custom Rule Sets:</strong> Define organization-specific security policies and violation thresholds</li>
+                <li><strong>Historical Scan Tracking:</strong> Compare results across commits and branches over time</li>
+                <li><strong>Webhook Integration:</strong> Automatic re-scanning on push events and PR creation</li>
+                <li><strong>Export Formats:</strong> JSON, SARIF, and CSV output for CI/CD pipeline integration</li>
+            </ul>
+        </section>
+
+        <section id="api-reference">
+            <h2>API Reference</h2>
+            <h3>Endpoint</h3>
+            <pre><code>POST /api/repo-scanner</code></pre>
+
+            <h3>Request Body</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>url</code></td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>Full GitHub repository URL (e.g., https://github.com/org/repo)</td>
+                    </tr>
+                    <tr>
+                        <td><code>branch</code></td>
+                        <td>string</td>
+                        <td>No</td>
+                        <td>Target branch to scan (default: main/master)</td>
+                    </tr>
+                    <tr>
+                        <td><code>depth</code></td>
+                        <td>integer</td>
+                        <td>No</td>
+                        <td>Commit history depth for secret detection (default: 50)</td>
+                    </tr>
+                    <tr>
+                        <td><code>include_dependencies</code></td>
+                        <td>boolean</td>
+                        <td>No</td>
+                        <td>Enable transitive dependency audit (Pro tier only)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Example Request</h3>
+            <pre><code>curl -X POST https://edgeiqlabs.com/api/repo-scanner \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://github.com/example/my-app", "branch": "develop"}'</code></pre>
+
+            <h3>Response Schema</h3>
+            <pre><code>{
+  "scan_id": "uuid-v4",
+  "repository": "example/my-app",
+  "grade": "B",
+  "score": 72,
+  "findings": [
+    {
+      "severity": "high",
+      "check": "exposed_secrets",
+      "file": "src/config.js",
+      "line": 42,
+      "message": "Hardcoded AWS access key detected"
+    }
+  ],
+  "timestamp": "2026-11-06T10:30:00Z"
+}</code></pre>
+        </section>
+
+        <section id="interpreting-results">
+            <h2>Interpreting Results</h2>
+            <h3>Grading Scale</h3>
+            <ul>
+                <li><strong>A (90-100):</strong> No critical or high-severity findings</li>
+                <li><strong>B (80-89):</strong> Minor issues present, no immediate risk</li>
+                <li><strong>C (70-79):</strong> Medium-severity findings requiring attention</li>
+                <li><strong>D (60-69):</strong> High-severity issues detected</li>
+                <li><strong>F (&lt;60):</strong> Critical vulnerabilities or multiple high-severity findings</li>
+            </ul>
+
+            <h3>Scoring Logic</h3>
+            <p>Base score starts at 100. Deductions are applied per finding:</p>
+            <ul>
+                <li><strong>Critical severity:</strong> -30 points</li>
+                <li><strong>High severity:</strong> -15 points</li>
+                <li><strong>Medium severity:</strong> -8 points</li>
+                <li><strong>Low severity:</strong> -3 points</li>
+            </ul>
+            <p>Score floors at 0. Multiple findings of the same type stack cumulatively.</p>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>Troubleshooting</h2>
+            <dl>
+                <dt><strong>Error: Repository not accessible</strong></dt>
+                <dd>Verify the repository URL is correct. For private repos, ensure your GitHub token has <code>repo</code> scope and hasn't expired. Re-authenticate with <code>rsp auth refresh</code>.</dd>
+
+                <dt><strong>Error: Rate limit exceeded</strong></dt>
+                <dd>GitHub API rate limits apply. Free tier allows 10 scans/hour. Pro tier allows 100 scans/hour. Wait before retrying or upgrade your plan.</dd>
+
+                <dt><strong>Scan completes but returns no findings</strong></dt>
+                <dd>This indicates a clean repository. Verify you're scanning the correct branch. Some checks require specific file types to be present (e.g., Supabase RLS check requires migration files).</dd>
+
+                <dt><strong>CLI hangs during authentication</strong></dt>
+                <dd>Check network connectivity and firewall rules. Ensure api.edgeiqlabs.com:443 is whitelisted. Try <code>rsp auth login --verbose</code> for detailed logs.</dd>
+
+                <dt><strong>False positive in secret detection</strong></dt>
+                <dd>Add false positives to <code>.rspignore</code> in repo root using regex patterns. Example: <code>^TEST_API_KEY_.*$</code></dd>
+            </dl>
+        </section>
+
+        <section id="pricing">
+            <h2>Pricing</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Price</th>
+                        <th>Features</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Free</td>
+                        <td>$0</td>
+                        <td>7 checks on public repos, 10 scans/hour</td>
+                    </tr>
+                    <tr>
+                        <td>Pro</td>
+                        <td>$9/month</td>
+                        <td>All checks, private repos, dependency audit, webhooks, unlimited scans</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Upgrade at any time from your <a href="/dashboard/billing">billing dashboard</a>. Pro plans include a 7-day free trial.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

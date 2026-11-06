@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Cache Warmer Pro Documentation — EdgeIQ Labs</title><meta name="description" content="Reference documentation for Cache Warmer Pro: sitemap-based CDN cache warming after deploys. Supports Cloudflare, Fastly, Akamai, and CloudFront."/><meta property="og:url" content="https://edgeiqlabs.com/docs/cache-warmer.html"/><link rel="stylesheet" href="../design-system.css?v=10"/><script defer src="../theme.js"></script><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script></head><body><nav><div class="container"><div class="nav-inner"><a href="../" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="../">Tools</a><a href="../blog/">Blog</a><a href="./">Docs</a><a href="../#contact">Contact</a></div></div></div></nav><section class="hero"><div class="container container--narrow"><h1>Cache Warmer Pro Documentation</h1><p>Sitemap-based CDN cache warming after deploys. $9/mo.</p></div></section><main class="container container--narrow prose">
+
+<h2 id="overview">Overview</h2>
+<p>Cache Warmer Pro automatically warms CDN caches after deployments by crawling your sitemap and issuing purge/warm requests to supported CDNs. It eliminates cold-cache latency spikes post-deploy by proactively fetching critical pages before end users hit them.</p>
+<p>Core capabilities:</p>
+<ul>
+<li><strong>Sitemap Parsing:</strong> Reads standard XML sitemaps (including nested indexes) to discover URLs.</li>
+<li><strong>Multi-CDN support:</strong> Native integration with Cloudflare, Fastly, Akamai, and Amazon CloudFront.</li>
+<li><strong>Concurrency control:</strong> Configurable parallel requests to avoid origin overload.</li>
+<li><strong>Exponential backoff:</strong> Automatic retry with jitter on 429/5xx responses.</li>
+<li><strong>Cache header detection:</strong> Validates <code>cache-status</code>, <code>x-cache</code>, and provider-specific headers to confirm warm hits.</li>
+<li><strong>API-first design:</strong> Trigger warmups programmatically via REST API or webhook.</li>
+</ul>
+
+<h2 id="quick-start">Quick Start</h2>
+<ol>
+<li>Sign up at <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> and obtain your license key from the dashboard.</li>
+<li>Set your license key as an environment variable:<br/><code>export EDGEIQ_LICENSE_KEY=ewr_...</code></li>
+<li>Create a config file (<code>cache-warmer.yaml</code>):
+<pre><code>sitemap_url: https://example.com/sitemap.xml
+cdn: cloudflare
+concurrency: 5
+backoff:
+  max_retries: 3
+  base_delay_ms: 1000
+</code></pre>
+</li>
+<li>Run a warmup:<br/><code>npx @edgeiq/cache-warmer --config cache-warmer.yaml</code></li>
+<li>Verify results in the CLI output or via the <code>/api/cache-warmup</code> status endpoint.</li>
+</ol>
+
+<h2 id="configuration">Configuration</h2>
+<p>All settings are defined in a YAML config file or passed as environment variables.</p>
+
+<h3>Sitemap URL</h3>
+<p>Specify one or more sitemap URLs. Nested sitemap indexes are resolved automatically.</p>
+<pre><code>sitemap_url: https://example.com/sitemap.xml
+# Or multiple:
+sitemap_urls:
+  - https://example.com/sitemap-pages.xml
+  - https://example.com/sitemap-posts.xml
+</code></pre>
+
+<h3>Concurrency</h3>
+<p>Controls how many URLs are warmed in parallel. Default: <code>5</code>. Lower values reduce origin load; higher values speed up warmup for large sitemaps.</p>
+<pre><code>concurrency: 10
+</code></pre>
+<p><strong>Note:</strong> Exceeding your origin’s rate limits may trigger 429s. The backoff system handles retries, but sustained overloads will delay completion.</p>
+
+<h3>Backoff</h3>
+<p>Configures retry behavior for failed requests:</p>
+<pre><code>backoff:
+  max_retries: 3        # Max attempts per URL (default: 3)
+  base_delay_ms: 1000   # Initial delay before first retry (default: 1000)
+  multiplier: 2.0       # Delay multiplier per retry (default: 2.0)
+  max_delay_ms: 30000   # Cap on retry delay (default: 30000)
+</code></pre>
+<p>Delays include ±20% jitter to prevent thundering herd effects.</p>
+
+<h2 id="supported-cdns">Supported CDNs</h2>
+<table>
+<thead><tr><th>CDN</th><th>Purge Method</th><th>Auth Mechanism</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Cloudflare</td><td>Cache Purge API + Zone-level warm</td><td>API Token / Global Key</td><td>Supports wildcard purges; requires Zone ID</td></tr>
+<tr><td>Fastly</td><td>Purge API + Soft-Purge headers</td><td>API Key + Service ID</td><td>Soft-purge marks stale instead of deleting</td></tr>
+<tr><td>Akamai</td><td>CCU v3 Invalidate/Purge</td><td>Client Credentials</td><td>Requires CCU API access; queue-based</td></tr>
+<tr><td>Amazon CloudFront</td><td>CreateInvalidation API</td><td>IAM Role / Access Keys</td><td>Invalidation paths only; warm via GET after purge</td></tr>
+</tbody>
+</table>
+<p>Set <code>cdn: &lt;provider&gt;</code> in config. Provider-specific credentials are read from environment variables (e.g., <code>CLOUDFLARE_API_TOKEN</code>, <code>FASTLY_API_KEY</code>).</p>
+
+<h2 id="cache-header-detection">Cache Header Detection</h2>
+<p>Cache Warmer Pro inspects response headers to verify whether a URL was served from cache or fetched from origin. Supported headers:</p>
+<ul>
+<li><code>cache-status: hit</code> (generic)</li>
+<li><code>x-cache: HIT</code> (CloudFront, Fastly)</li>
+<li><code>cf-cache-status: HIT</code> (Cloudflare)</li>
+<li><code>x-akamai-cache-status: hit</code> (Akamai)</li>
+</ul>
+<p>If no recognized header is present, the tool logs a warning and assumes a miss. Custom header patterns can be added via <code>cache_hit_headers</code> in config:</p>
+<pre><code>cache_hit_headers:
+  - "x-custom-cache: cached"
+  - "x-edge-status: hit"
+</code></pre>
+
+<h2 id="api-reference">API Reference</h2>
+<h3>POST /api/cache-warmup</h3>
+<p>Trigger a cache warmup job programmatically.</p>
+<p><strong>Request:</strong></p>
+<pre><code>POST /api/cache-warmup
+Authorization: Bearer ewr_...
+Content-Type: application/json
+
+{
+  "sitemap_url": "https://example.com/sitemap.xml",
+  "cdn": "cloudflare",
+  "concurrency": 5,
+  "callback_url": "https://your-app.com/webhook/warmup-complete"
+}
+</code></pre>
+<p><strong>Response (202 Accepted):</strong></p>
+<pre><code>{
+  "job_id": "cw_job_abc123",
+  "status": "queued",
+  "estimated_duration_s": 120
+}
+</code></pre>
+<p><strong>Status Check:</strong><br/>
+<code>GET /api/cache-warmup/{job_id}</code> returns current progress, hit/miss counts, and any errors.</p>
+<p><strong>Webhook Payload (on completion):</strong></p>
+<pre><code>{
+  "job_id": "cw_job_abc123",
+  "status": "completed",
+  "urls_processed": 142,
+  "cache_hits": 138,
+  "errors": [
+    {"url": "https://example.com/broken", "error": "404 Not Found"}
+  ]
+}
+</code></pre>
+
+<h2 id="license-key-setup">License Key Setup</h2>
+<p>Your license key authenticates all CLI and API requests. Obtain it from the <a href="https://edgeiqlabs.com/dashboard">EdgeIQ Dashboard</a>.</p>
+<ol>
+<li><strong>CLI:</strong> Set <code>EDGEIQ_LICENSE_KEY</code> in your shell profile or CI secrets.</li>
+<li><strong>API:</strong> Include as <code>Authorization: Bearer &lt;key&gt;</code> header.</li>
+<li><strong>Config file (optional):</strong> Add <code>license_key: ewr_...</code> to YAML (not recommended for shared repos).</li>
+</ol>
+<p>Keys are scoped to your account and can be rotated without downtime. Revoked keys return <code>401 Unauthorized</code>.</p>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3>Common Issues</h3>
+<ul>
+<li><strong>Sitemap parse errors:</strong> Ensure sitemap is valid XML and accessible. Use <code>curl -I &lt;sitemap_url&gt;</code> to verify HTTP 200 and <code>Content-Type: application/xml</code>.</li>
+<li><strong>CDN auth failures:</strong> Verify credentials have purge/warm permissions. For CloudFront, ensure IAM policy includes <code>cloudfront:CreateInvalidation</code>.</li>
+<li><strong>High miss rates:</strong> Origin may be returning <code>no-store</code> or <code>private</code> cache directives. Check <code>Cache-Control</code> headers on affected URLs.</li>
+<li><strong>Timeouts on large sitemaps:</strong> Increase <code>concurrency</code> or split into multiple jobs. Monitor origin load during warmup.</li>
+<li><strong>Webhook not firing:</strong> Confirm <code>callback_url</code> is publicly reachable and accepts POST with JSON body. Timeouts >10s are treated as failures.</li>
+</ul>
+<h3>Debug Mode</h3>
+<p>Enable verbose logging with <code>--debug</code> flag or <code>LOG_LEVEL=debug</code> env var. Outputs full request/response headers, retry attempts, and header detection logic.</p>
+<h3>Support</h3>
+<p>Email <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> with your license key prefix (<code>ewr_...</code>) and job ID. Include debug logs if applicable. Response time: &lt;24 hours.</p>
+
+<h2 id="pricing">Pricing</h2>
+<p><strong>Cache Warmer Pro: $9/month</strong></p>
+<ul>
+<li>Unlimited sitemap URLs</li>
+<li>All supported CDNs</li>
+<li>API access + webhooks</li>
+<li>Priority email support</li>
+</ul>
+<p>No per-request fees. Cancel anytime.</p>
+
+<div class="related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div>
+<div class="footer">© 2026 EdgeIQ Labs Docs</div>
+</main></body></html>

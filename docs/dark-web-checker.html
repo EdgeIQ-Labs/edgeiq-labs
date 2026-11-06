@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dark Web Credential Checker — EdgeIQ Labs Docs</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/docs/dark-web-checker.html"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:800;margin:44px 0 14px;color:var(--color-text-primary,#e8eef7);}
+    .prose h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;}
+    .prose p{margin-bottom:16px;color:#d0dce9;line-height:1.7;}
+    .prose ul,.prose ol{margin:0 0 16px 22px;color:#d0dce9;}
+    .prose li{margin-bottom:8px;}
+    .prose code{background:#1a2535;padding:2px 6px;border-radius:4px;font-size:0.9em;color:#3dd9ff;}
+    .prose pre{background:#0e1621;border:1px solid #233142;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;}
+    .prose pre code{background:none;padding:0;}
+    .prose a{color:#b47aff;text-decoration:none;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:#9fb0c7;font-size:0.88rem;margin-bottom:32px;}
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav__inner"><a href="/" class="nav__logo"><img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" height="40"/></a><div class="nav__links"><a href="/free-tools/">Free Tools</a><a href="/tools/">Dev Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/" class="nav__actions">Products</a></div></div></nav>
+  <main class="container container--narrow">
+    <div class="hero">
+      <h1>Dark Web Credential Checker</h1>
+      <div class="meta">Documentation &middot; EdgeIQ Labs</div>
+    </div>
+    <article class="prose">
+      <h2>Overview</h2>
+      <p>The EdgeIQ Labs Dark Web Credential Checker monitors known breach databases, paste sites, and dark web marketplaces for exposed credentials associated with your organization. When a match is found, the system generates an alert containing the breach source, exposure date, and affected credential hash.</p>
+      <p>This tool does not store plaintext passwords. All monitored credentials are stored as salted SHA-256 hashes. Breach data is queried via k-anonymity to prevent credential leakage during lookups.</p>
+
+      <h2>Setup</h2>
+      <ol>
+        <li>Navigate to <strong>Settings → API Keys</strong> and generate a new key with <code>darkweb:read</code> scope.</li>
+        <li>Store the key securely; it will not be displayed again.</li>
+        <li>Configure your organization domain under <strong>Settings → Organization</strong>. This domain is used to auto-suggest monitored email patterns.</li>
+        <li>Verify ownership of each monitored domain via DNS TXT record or HTTP file challenge before enabling alerts.</li>
+      </ol>
+
+      <h2>Monitored Credentials Configuration</h2>
+      <p>Credentials can be added individually or via bulk import. Supported formats:</p>
+      <ul>
+        <li><strong>Email addresses:</strong> Monitors all breaches containing the exact address.</li>
+        <li><strong>Domain patterns:</strong> <code>*@example.com</code> monitors all current and future addresses at that domain.</li>
+        <li><strong>Username lists:</strong> CSV upload (max 10,000 rows). Must include header row.</li>
+      </ul>
+      <p>To add credentials manually:</p>
+      <pre><code>POST /api/v1/monitored-credentials
+{
+  "type": "email",
+  "value": "admin@example.com",
+  "tags": ["it-admin", "critical"]
+}</code></pre>
+      <p>All values are hashed server-side before storage. The API rejects plaintext passwords; only identifiers (emails, usernames) are accepted.</p>
+
+      <h2>Alert Channels</h2>
+      <p>Configure delivery methods under <strong>Settings → Alert Channels</strong>:</p>
+      <ul>
+        <li><strong>Email:</strong> Default channel. Supports digest mode (daily/weekly summary).</li>
+        <li><strong>Webhook:</strong> POST JSON payload to your endpoint. Includes HMAC-SHA256 signature in <code>X-EdgeIQ-Signature</code> header.</li>
+        <li><strong>Slack:</strong> OAuth integration. Posts to selected channel with interactive buttons for acknowledge/dismiss.</li>
+        <li><strong>PagerDuty:</strong> Creates incident for critical-severity exposures only.</li>
+      </ul>
+      <p>Each channel supports severity filtering (Critical, High, Medium, Low) and tag-based routing.</p>
+
+      <h2>Continuous Monitoring vs One-Time Check</h2>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;color:#d0dce9;">
+        <tr style="border-bottom:1px solid #233142;"><th style="text-align:left;padding:8px;">Feature</th><th style="text-align:left;padding:8px;">One-Time Check</th><th style="text-align:left;padding:8px;">Continuous Monitoring</th></tr>
+        <tr style="border-bottom:1px solid #233142;"><td style="padding:8px;">Execution</td><td style="padding:8px;">Manual trigger via UI or API</td><td style="padding:8px;">Automated every 24 hours</td></tr>
+        <tr style="border-bottom:1px solid #233142;"><td style="padding:8px;">Historical Data</td><td style="padding:8px;">Current snapshot only</td><td style="padding:8px;">Full timeline with trend analysis</td></tr>
+        <tr style="border-bottom:1px solid #233142;"><td style="padding:8px;">Alerts</td><td style="padding:8px;">None (results returned in response)</td><td style="padding:8px;">Configurable channels</td></tr>
+        <tr><td style="padding:8px;">API Endpoint</td><td style="padding:8px;"><code>POST /check</code></td><td style="padding:8px;"><code>GET /monitoring/status</code></td></tr>
+      </table>
+      <p>One-time checks are included in the subscription at no additional cost. Use them for ad-hoc investigations or pre-acquisition due diligence.</p>
+
+      <h2>API Reference</h2>
+      <h3>Authentication</h3>
+      <p>All requests require <code>Authorization: Bearer &lt;api_key&gt;</code> header. Rate limit: 100 requests/minute per key.</p>
+
+      <h3>Endpoints</h3>
+      <pre><code># Run one-time check
+POST /api/v1/check
+Body: { "identifiers": ["user@example.com"] }
+Response: { "matches": [...], "checked_at": "2026-11-06T12:00:00Z" }
+
+# List monitored credentials
+GET /api/v1/monitored-credentials?page=1&limit=50
+Response: { "data": [...], "total": 142 }
+
+# Add credential to monitoring
+POST /api/v1/monitored-credentials
+Body: { "type": "domain_pattern", "value": "*@example.com" }
+
+# Delete monitored credential
+DELETE /api/v1/monitored-credentials/{id}
+
+# Get alert history
+GET /api/v1/alerts?since=2026-10-01&severity=critical
+Response: { "alerts": [...] }</code></pre>
+
+      <h2>Interpreting Results</h2>
+      <p>Each match includes:</p>
+      <ul>
+        <li><strong>Breach Source:</strong> Name or hash of the originating dataset (e.g., <code>Collection #5</code>, <code>PasteBin_2026-09</code>).</li>
+        <li><strong>Exposure Date:</strong> Earliest known appearance in monitored sources.</li>
+        <li><strong>Data Classes:</strong> Types of compromised data (password, email, phone, SSN partial).</li>
+        <li><strong>Severity:</strong> Calculated based on data sensitivity and recency. Critical = password + PII within 90 days.</li>
+        <li><strong>Remediation Status:</strong> Tracks whether password reset was confirmed via integrated IdP or manual acknowledgment.</li>
+      </ul>
+      <p>False positives occur when breached emails match inactive accounts. Use tags to filter legacy systems from active alerting.</p>
+
+      <h2>Troubleshooting</h2>
+      <ul>
+        <li><strong>No results for known breach:</strong> Verify domain ownership is complete. Unverified domains return empty result sets by design.</li>
+        <li><strong>Webhook failures:</strong> Ensure endpoint returns 2xx within 10 seconds. Failed deliveries retry 3x with exponential backoff. Check <strong>Settings → Alert Channels → Logs</strong> for error details.</li>
+        <li><strong>Rate limit exceeded:</strong> Implement client-side throttling. Batch identifier checks using array payloads instead of individual requests.</li>
+        <li><strong>Missing Slack notifications:</strong> Re-authorize OAuth token if workspace permissions changed. Test via <strong>Send Test Alert</strong> button.</li>
+      </ul>
+
+      <h2>Pricing</h2>
+      <p>Dark Web Credential Checker is available at <strong>$9/month</strong> per organization. Includes:</p>
+      <ul>
+        <li>Unlimited monitored credentials</li>
+        <li>Daily automated scans</li>
+        <li>All alert channels (email, webhook, Slack, PagerDuty)</li>
+        <li>Full API access with 100 req/min rate limit</li>
+        <li>90-day alert history retention</li>
+      </ul>
+      <p>No setup fees. Cancel anytime via <strong>Settings → Billing</strong>.</p>
+    </article>
+  </main>
+</body>
+</html>

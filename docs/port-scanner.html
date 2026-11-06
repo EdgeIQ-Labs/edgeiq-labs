@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port Scanner Pro Documentation | EdgeIQ Labs</title>
+    <meta name="description" content="Complete documentation for EdgeIQ Labs Port Scanner Pro. Open port scanning, service banner detection, high-risk port alerts, and continuous monitoring.">
+    <meta property="og:title" content="Port Scanner Pro Documentation | EdgeIQ Labs">
+    <meta property="og:description" content="Open port scanning, service banner detection, high-risk port alerts, and continuous monitoring. $49 lifetime or $19/mo.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/port-scanner.html">
+    <meta property="og:type" content="article">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #334155;
+            --code-bg: #020617;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+        h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+        pre code { background: none; padding: 0; }
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .price { font-size: 2rem; font-weight: bold; color: var(--accent); }
+        .price span { font-size: 1rem; color: var(--text-secondary); font-weight: normal; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .badge-warning { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--text-primary); font-weight: 600; }
+        td { color: var(--text-secondary); }
+        .note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.75rem; }
+            .pricing-card { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Port Scanner Pro</h1>
+        <p>Enterprise-grade network reconnaissance with intelligent service detection and continuous monitoring.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$49 <span>/ lifetime</span></div>
+                <p style="margin:0;">Or $19/month &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Port Scanner Pro provides comprehensive TCP/UDP port scanning with automatic service banner grabbing, high-risk port identification, and scheduled continuous monitoring. Designed for security professionals, sysadmins, and DevOps teams who need reliable network visibility without complex configuration.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Scan single hosts, CIDR ranges, or custom port lists</li>
+            <li>Automatic service banner detection (SSH, HTTP, FTP, SMTP, etc.)</li>
+            <li>Built-in high-risk port database with severity tagging</li>
+            <li>Continuous monitoring with alerting via webhook/email</li>
+            <li>REST API for integration into CI/CD and SOAR workflows</li>
+        </ul>
+
+        <h2>Quick Start</h2>
+        <pre><code># Install via pip
+pip install edgeiq-port-scanner
+
+# Run a basic scan
+port-scanner scan 192.168.1.1
+
+# Scan a range with banner detection
+port-scanner scan 10.0.0.0/24 --banners --top-ports 1000
+
+# Start continuous monitoring
+port-scanner monitor add 192.168.1.1 --interval 3600 --alert-webhook https://hooks.example.com/alert</code></pre>
+
+        <h2>Scan Configuration</h2>
+        <h3>Target Specification</h3>
+        <table>
+            <tr><th>Format</th><th>Example</th><th>Description</th></tr>
+            <tr><td>Single host</td><td><code>192.168.1.1</code></td><td>Scan one IP address</td></tr>
+            <tr><td>CIDR range</td><td><code>10.0.0.0/24</code></td><td>Scan entire subnet</td></tr>
+            <tr><td>Hostname</td><td><code>example.com</code></td><td>DNS resolution + scan</td></tr>
+            <tr><td>Port list</td><td><code>-p 22,80,443,8080</code></td><td>Specific ports only</td></tr>
+            <tr><td>Port range</td><td><code>-p 1-1024</code></td><td>Inclusive range scan</td></tr>
+        </table>
+
+        <h3>Timing Templates</h3>
+        <p>Control scan speed and stealth with timing templates:</p>
+        <table>
+            <tr><th>Template</th><th>Flag</th><th>Use Case</th></tr>
+            <tr><td>Paranoid</td><td><code>-T0</code></td><td>Evasion, very slow (IDS avoidance)</td></tr>
+            <tr><td>Sneaky</td><td><code>-T1</code></td><td>Low-profile internal scans</td></tr>
+            <tr><td>Polite</td><td><code>-T2</code></td><td>Production environments</td></tr>
+            <tr><td>Normal</td><td><code>-T3</code></td><td>Default balanced speed</td></tr>
+            <tr><td>Aggressive</td><td><code>-T4</code></td><td>Fast internal audits</td></tr>
+            <tr><td>Insane</td><td><code>-T5</code></td><td>Maximum speed, trusted networks only</td></tr>
+        </table>
+
+        <h2>Service Banner Detection</h2>
+        <p>When <code>--banners</code> is enabled, Port Scanner Pro connects to open ports and captures the initial service response. Supported protocols include SSH, HTTP/HTTPS, FTP, SMTP, POP3, IMAP, MySQL, PostgreSQL, Redis, and MongoDB.</p>
+        <pre><code>$ port-scanner scan 192.168.1.1 --banners
+PORT     STATE  SERVICE         BANNER
+22/tcp   open   ssh             OpenSSH_8.9p1 Ubuntu-3ubuntu0.6
+80/tcp   open   http            nginx/1.24.0
+443/tcp  open   ssl/http        nginx/1.24.0
+3306/tcp open   mysql           MySQL 8.0.35
+8080/tcp open   http-proxy      Apache Tomcat/9.0.82</code></pre>
+        <div class="note">Banner detection adds ~2-5 seconds per open port. Use <code>--banner-timeout 3</code> to limit wait time on unresponsive services.</div>
+
+        <h2>High-Risk Port List</h2>
+        <p>Port Scanner Pro flags known high-risk ports automatically. These are tagged in output and trigger alerts during continuous monitoring.</p>
+        <table>
+            <tr><th>Port</th><th>Service</th><th>Risk Level</th><th>Notes</th></tr>
+            <tr><td>21</td><td>FTP</td><td><span class="badge badge-danger">Critical</span></td><td>Unencrypted credential transmission</td></tr>
+            <tr><td>23</td><td>Telnet</td><td><span class="badge badge-danger">Critical</span></td><td>Plaintext remote access</td></tr>
+            <tr><td>445</td><td>SMB</td><td><span class="badge badge-danger">Critical</span></td><td>Ransomware/lateral movement vector</td></tr>
+            <tr><td>3389</td><td>RDP</td><td><span class="badge badge-danger">Critical</span></td><td>Brute-force target, BlueKeep-class vulns</td></tr>
+            <tr><td>1433</td><td>MSSQL</td><td><span class="badge badge-warning">High</span></td><td>Database exposure without encryption</td></tr>
+            <tr><td>3306</td><td>MySQL</td><td><span class="badge badge-warning">High</span></td><td>Often misconfigured for remote root</td></tr>
+            <tr><td>6379</td><td>Redis</td><td><span class="badge badge-warning">High</span></td><td>Frequently deployed without auth</td></tr>
+            <tr><td>27017</td><td>MongoDB</td><td><span class="badge badge-warning">High</span></td><td>Historical default no-auth deployments</td></tr>
+            <tr><td>5900</td><td>VNC</td><td><span class="badge badge-warning">High</span></td><td>Weak authentication common</td></tr>
+            <tr><td>11211</td><td>Memcached</td><td><span class="badge badge-warning">High</span></td><td>DDoS amplification vector</td></tr>
+        </table>
+
+        <h2>Continuous Monitoring Setup</h2>
+        <p>Schedule recurring scans to detect new open ports, service changes, or high-risk exposures over time.</p>
+        <pre><code># Add a monitored target (scan every hour)
+port-scanner monitor add 192.168.1.0/24 --interval 3600 --banners
+
+# Configure webhook alerts
+port-scanner monitor config --alert-webhook https://hooks.slack.com/services/xxx
+
+# Configure email alerts
+port-scanner monitor config --alert-email admin@example.com
+
+# List active monitors
+port-scanner monitor list
+
+# View change history
+port-scanner monitor history 192.168.1.1 --last 30d</code></pre>
+        <div class="note">Monitors persist across restarts. State is stored in <code>~/.edgeiq/monitors.db</code>. Use <code>monitor remove &lt;target&gt;</code> to stop tracking.</div>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>port-scanner serve --port 8400</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/scan</code></td><td>Initiate a new scan</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/scan/{id}</code></td><td>Retrieve scan results</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/monitors</code></td><td>List active monitors</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/monitors</code></td><td>Create a new monitor</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/monitors/{id}</code></td><td>Remove a monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/high-risk-ports</code></td><td>List flagged ports database</td></tr>
+        </table>
+        <h3>Example: Trigger Scan via API</h3>
+        <pre><code>curl -X POST http://localhost:8400/api/v1/scan \
+  -H "Content-Type: application/json" \
+  -d '{
+    "target": "192.168.1.1",
+    "ports": "22,80,443,3306,8080",
+    "banners": true,
+    "timing": "T3"
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>No ports detected on known-active host:</strong> Verify firewall rules aren't blocking ICMP or SYN packets. Try <code>--scan-type connect</code> for TCP connect fallback if SYN scanning is filtered.</p>
+        <p><strong>Banner detection hangs:</strong> Reduce timeout with <code>--banner-timeout 2</code>. Some services delay responses to deter scanners.</p>
+        <p><strong>Monitor not alerting:</strong> Test webhook with <code>port-scanner monitor test-alert</code>. Check <code>~/.edgeiq/logs/monitor.log</code> for delivery errors.</p>
+        <p><strong>Permission denied on Linux/macOS:</strong> SYN scanning requires root/CAP_NET_RAW. Run with <code>sudo</code> or use <code>--scan-type connect</code> for unprivileged operation.</p>
+        <p><strong>False positives in high-risk list:</strong> Override with <code>--exclude-risk-ports 3306,5432</code> if those services are intentionally exposed and hardened.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$49 <span>/ lifetime</span></div>
+                <p style="margin:0;">One-time payment. All future updates included.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Cancel anytime. No commitment.</p>
+            </div>
+        </div>
+        <p>Both plans include unlimited scans, continuous monitoring, API access, and priority support. Team licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+</body>
+</html>

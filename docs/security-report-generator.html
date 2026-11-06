@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Security Report Generator Documentation — EdgeIQ Docs</title><meta name="description" content="Reference documentation for EdgeIQ Labs Security Report Generator: automated pentest report generation, risk scoring frameworks, and remediation prioritization."/><meta property="og:title" content="Security Report Generator Documentation | EdgeIQ Labs"/><meta property="og:description" content="Automated pentest report generation, risk scoring frameworks, and remediation prioritization. $9/mo."/><meta property="og:url" content="https://edgeiqlabs.com/docs/security-report-generator.html"/><meta property="og:type" content="article"/><link rel="stylesheet" href="../design-system.css?v=10"/><script defer src="../theme.js"></script><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script></head><body><nav><div class="container"><div class="nav-inner"><a href="../" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="../">Tools</a><a href="../blog/">Blog</a><a href="./">Docs</a><a href="../#contact">Contact</a></div></div></div></nav><section class="hero"><div class="container container--narrow"><h1>Security Report Generator Documentation</h1><p>Automated pentest report generation, risk scoring frameworks, and remediation prioritization.</p></div></section><main class="container container--narrow prose">
+
+<h2>Overview</h2>
+<p>Security Report Generator automates the creation of professional penetration testing reports from raw scan data, manual findings, and vulnerability assessments. It ingests results from popular scanners (Nmap, Burp Suite, Nessus, OpenVAS), enriches them with risk scores, and produces polished deliverables tailored to different audiences—executives, technical teams, or external clients.</p>
+<ul>
+<li><strong>Price:</strong> $9/month per user.</li>
+<li><strong>Billing:</strong> Monthly subscription; cancel anytime.</li>
+<li><strong>Data handling:</strong> All processing occurs in-memory or within your configured workspace. No raw scan data is retained on EdgeIQ servers beyond the active session unless you enable cloud sync.</li>
+<li><strong>Supported inputs:</strong> Nmap XML, Burp Suite XML/JSON, Nessus CSV/XML, OpenVAS XML, custom JSON schema, manual Markdown entries.</li>
+</ul>
+
+<h2>Quick Start</h2>
+<ol>
+<li><strong>Install the CLI:</strong>
+<pre><code>pip install edgeiq-security-report</code></pre>
+</li>
+<li><strong>Initialize a project:</strong>
+<pre><code>sec-report init my-pentest --template executive</code></pre>
+</li>
+<li><strong>Import scan data:</strong>
+<pre><code>sec-report import nmap-scan.xml --format nmap
+sec-report import burp-findings.json --format burp</code></pre>
+</li>
+<li><strong>Add manual findings (optional):</strong>
+<pre><code>sec-report add-finding --title "Broken Authentication" --severity high --cvss 8.1 --description "Session tokens are not invalidated after logout."</code></pre>
+</li>
+<li><strong>Generate the report:</strong>
+<pre><code>sec-report generate --output report.pdf --format pdf</code></pre>
+</li>
+</ol>
+<p>The generated file <code>report.pdf</code> will appear in your current working directory with all imported and manual findings scored, prioritized, and formatted according to the selected template.</p>
+
+<h2>Report Templates</h2>
+<p>Templates control structure, tone, and depth. Select one during <code>init</code> or switch at generation time with <code>--template</code>.</p>
+
+<h3>Executive Template</h3>
+<p>Designed for C-suite and board-level audiences. Focuses on business impact, overall risk posture, and strategic recommendations. Technical details are collapsed into appendices. Includes an executive summary paragraph auto-generated from finding severity distribution, a risk trend chart if historical data is provided, and a top-5 remediation priority list mapped to business objectives.</p>
+
+<h3>Technical Template</h3>
+<p>Intended for engineering, DevOps, and security teams. Every finding includes full reproduction steps, affected endpoints, CVSS vector breakdown, evidence screenshots (if attached), and specific remediation commands or code patches. Findings are grouped by attack surface (network, web application, infrastructure) rather than severity alone.</p>
+
+<h3>Client-Facing Template</h3>
+<p>For consultancies delivering reports to external customers. Combines an accessible executive summary with a detailed technical body. Supports white-label branding (see Branding Customization). Includes a scope-of-work section, methodology description, limitations/caveats page, and a formal sign-off block. Sensitive internal tooling references are automatically sanitized.</p>
+
+<h2>Risk Scoring</h2>
+<p>Each finding is scored using one or more frameworks. The generator normalizes disparate scanner outputs into a unified risk model.</p>
+
+<h3>CVSS v3.1 / v4.0</h3>
+<p>Common Vulnerability Scoring System vectors are parsed directly from scanner output or manually specified. Base, Temporal, and Environmental metrics are supported. When only a base score exists, the system can compute environmental adjustments based on asset criticality tags you assign during import.</p>
+
+<h3>FAIR (Factor Analysis of Information Risk)</h3>
+<p>For organizations using quantitative risk analysis, the FAIR module accepts loss event frequency and probable loss magnitude inputs. These can be entered manually per-finding or derived from historical incident data via <code>sec-report import-fair-data incidents.csv</code>. Output is expressed as annualized loss expectancy (ALE) ranges.</p>
+
+<h3>EPSS (Exploit Prediction Scoring System)</h3>
+<p>CVEs identified in findings are automatically cross-referenced against the latest EPSS dataset to retrieve exploit probability scores. This enriches prioritization: a CVSS 7.5 vulnerability with an EPSS of 0.92 ranks higher than a CVSS 9.0 with an EPSS of 0.01. EPSS data refreshes on each generation run or can be pinned to a specific date for audit consistency.</p>
+
+<h2>Remediation Priority Matrix</h2>
+<p>The generator produces a Remediation Priority Matrix that maps every finding across two axes: <strong>exploitability</strong> (derived from EPSS, CVSS Attack Vector/Complexity, and known public exploits) and <strong>business impact</strong> (derived from CVSS Impact metrics, FAIR ALE, or manual asset-criticality tags).</p>
+<table>
+<tr><th>Quadrant</th><th>Criteria</th><th>Action</th></tr>
+<tr><td>Critical / Immediate</td><td>High exploitability + High impact</td><td>Remediate within 24–72 hours. Assign dedicated resources.</td></tr>
+<tr><td>High / Short-term</td><td>High exploitability + Medium impact, or Low exploitability + High impact</td><td>Remediate within 1–2 sprint cycles.</td></tr>
+<tr><td>Medium / Planned</td><td>Medium exploitability + Medium impact</td><td>Schedule into backlog; apply compensating controls.</td></tr>
+<tr><td>Low / Accept</td><td>Low exploitability + Low impact</td><td>Document acceptance rationale; revisit quarterly.</td></tr>
+</table>
+<p>The matrix is rendered as a visual scatter plot in PDF/HTML exports and as a sortable table in DOCX. You can override quadrant placement for any finding using <code>sec-report set-priority &lt;finding-id&gt; --quadrant critical</code>.</p>
+
+<h2>Branding Customization</h2>
+<p>White-label reports to match your organization or consultancy brand. Create a <code>brand.yaml</code> file in your project root:</p>
+<pre><code>company_name: "Acme Security Consulting"
+logo_path: "./assets/logo.png"
+primary_color: "#1a73e8"
+secondary_color: "#34a853"
+font_family: "Inter, sans-serif"
+header_text: "Confidential — Prepared for {client_name}"
+footer_text: "© 2026 Acme Security Consulting. All rights reserved."
+cover_page: true
+toc_depth: 3</code></pre>
+<p>Apply it at generation time:</p>
+<pre><code>sec-report generate --output report.pdf --format pdf --brand brand.yaml</code></pre>
+<p>The logo is embedded at 300 DPI for print-quality PDF output. Colors propagate to charts, headings, table borders, and the cover page accent bar. Variables like <code>{client_name}</code>, <code>{engagement_date}</code>, and <code>{report_id}</code> are resolved from project metadata set during <code>init</code>.</p>
+
+<h2>Export Formats</h2>
+
+<h3>PDF</h3>
+<p>Print-ready output via WeasyPrint. Supports embedded fonts, vector charts, page numbers, headers/footers, and PDF/A-2b compliance for long-term archival. Password protection available via <code>--pdf-password</code>.</p>
+
+<h3>DOCX</h3>
+<p>Microsoft Word format generated through python-docx. Preserves heading hierarchy, tables, images, and styles so clients can edit or append content. Table of contents is inserted as a Word-native TOC field that updates on open.</p>
+
+<h3>HTML</h3>
+<p>Self-contained single-file HTML with inline CSS and base64-encoded images. No external dependencies required to view. Includes a collapsible sidebar navigation for large reports. Suitable for hosting on internal wikis or sharing via secure link.</p>
+
+<h2>API Reference</h2>
+<p>The Security Report Generator exposes a REST API for CI/CD integration and programmatic report generation. Base URL: <code>https://api.edgeiqlabs.com/v1/reports</code>. Authenticate via Bearer token obtained from your dashboard.</p>
+
+<h3>Create a Report Job</h3>
+<pre><code>POST /v1/reports/jobs
+Content-Type: application/json
+Authorization: Bearer &lt;token&gt;
+
+{
+  "project": "my-pentest",
+  "template": "technical",
+  "format": "pdf",
+  "brand": "default",
+  "findings_url": "https://storage.example.com/findings.json"
+}</code></pre>
+<p>Returns <code>{"job_id": "rpt_abc123", "status": "queued"}</code>.</p>
+
+<h3>Check Job Status</h3>
+<pre><code>GET /v1/reports/jobs/{job_id}
+Authorization: Bearer &lt;token&gt;</code></pre>
+<p>Returns <code>{"status": "completed", "download_url": "...", "expires_at": "2026-11-13T10:00:00Z"}</code>. Download URLs expire after 7 days.</p>
+
+<h3>List Findings</h3>
+<pre><code>GET /v1/reports/projects/{project}/findings?severity=high&amp;page=1&amp;per_page=50
+Authorization: Bearer &lt;token&gt;</code></pre>
+
+<h3>Upload Scan Data</h3>
+<pre><code>POST /v1/reports/projects/{project}/import
+Content-Type: multipart/form-data
+Authorization: Bearer &lt;token&gt;
+
+file=@scan-results.xml
+format=nmap</code></pre>
+
+<h2>Troubleshooting</h2>
+<ul>
+<li><strong>Import parsing errors:</strong> Verify the scanner output format matches the <code>--format</code> flag. Nmap XML must be generated with <code>-oX</code>; Burp exports should use the native XML or JSON format, not HTML. Run <code>sec-report validate input.xml</code> to check schema conformance before importing.</li>
+<li><strong>PDF generation fails on Linux:</strong> Ensure WeasyPrint system dependencies are installed (<code>libpango-1.0-0</code>, <code>libharfbuzz0b</code>, <code>libffi-dev</code>). On minimal containers, install the <code>weasyprint-system-deps</code> metapackage or use the Docker image <code>edgeiq/sec-report:latest</code>.</li>
+<li><strong>Missing EPSS scores:</strong> EPSS lookups require CVE identifiers. If your scanner reports vendor-specific IDs without CVE mapping, EPSS enrichment is skipped for those findings. Manually attach CVEs via <code>sec-report edit-finding &lt;id&gt; --cve CVE-2026-XXXX</code>.</li>
+<li><strong>Brand logo not rendering:</strong> Logo path in <code>brand.yaml</code> must be relative to the project root or an absolute path. PNG and SVG are supported; JPEG may lose transparency on cover pages. Maximum recommended dimensions: 800×200px.</li>
+<li><strong>DOCX table overflow:</strong> Findings with extremely long descriptions or wide CVSS vector strings may exceed page margins. Use <code>--truncate-descriptions 500</code> to cap length, or switch to landscape orientation with <code>--orientation landscape</code>.</li>
+<li><strong>API rate limits:</strong> The API enforces 60 requests per minute per token. For bulk imports, use the multipart upload endpoint which accepts up to 50MB per request rather than submitting individual findings.</li>
+<li><strong>FAIR calculations showing zero ALE:</strong> Ensure both loss event frequency and loss magnitude fields are populated. Missing values default to zero rather than being estimated. Check <code>sec-report fair-summary</code> to identify incomplete entries.</li>
+</ul>
+
+<h2>Pricing</h2>
+<div class="card" style="padding:2rem;margin:1.5rem 0;background:var(--bg-secondary,#1e293b);border:1px solid var(--border,#334155);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+<div>
+<div style="font-size:2rem;font-weight:bold;color:var(--accent,#3b82f6);">$9 <span style="font-size:1rem;color:var(--text-secondary,#94a3b8);font-weight:normal;">/ month</span></div>
+<p style="margin:0.5rem 0 0;color:var(--text-secondary,#94a3b8);">Per user. Cancel anytime. All templates, formats, and API access included.</p>
+</div>
+<a href="https://edgeiqlabs.com/pricing" style="background:var(--accent,#3b82f6);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;text-decoration:none;">Get Started</a>
+</div>
+<p>The $9/month plan includes unlimited report generation, all three templates (executive, technical, client-facing), all export formats (PDF, DOCX, HTML), full API access, EPSS enrichment, CVSS and FAIR scoring, and branding customization. No per-report fees or page limits.</p>
+
+<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div>
+<div class="footer">© 2026 EdgeIQ Labs Docs</div>
+</main></body></html>

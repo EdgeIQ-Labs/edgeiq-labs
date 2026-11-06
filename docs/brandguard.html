@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>BrandGuard Documentation — EdgeIQ Labs</title><meta name="description" content="Reference documentation for EdgeIQ Labs BrandGuard: domain impersonation detection, typosquatting monitoring, and lookalike domain alerts."/><meta property="og:title" content="BrandGuard Documentation — EdgeIQ Labs"/><meta property="og:description" content="Domain impersonation detection, typosquatting monitoring, and lookalike domain alerts at $14/mo."/><meta property="og:url" content="https://edgeiqlabs.com/docs/brandguard.html"/><meta property="og:type" content="article"/><link rel="stylesheet" href="../design-system.css?v=10"/><script defer src="../theme.js"></script><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script></head><body><nav><div class="container"><div class="nav-inner"><a href="../" class="brand">Edge<span>IQ</span> Labs</a><div class="links"><a href="../">Tools</a><a href="../blog/">Blog</a><a href="./">Docs</a><a href="../#contact">Contact</a></div></div></div></nav><section class="hero"><div class="container container--narrow"><h1>BrandGuard Documentation</h1><p>Domain impersonation detection, typosquatting monitoring, and lookalike domain alerts.</p></div></section><main class="container container--narrow prose">
+
+<h2 id="overview">Overview</h2>
+<p>BrandGuard is a continuous brand protection service that monitors the open web for domain impersonation, typosquatting, and lookalike domains targeting your organization. It detects malicious registrations before they reach customers, employees, or partners, reducing phishing risk and brand dilution.</p>
+<ul>
+<li><strong>Price:</strong> $14/month per monitored root domain (flat rate).</li>
+<li><strong>Billing:</strong> Monthly; cancel anytime with no long-term commitment.</li>
+<li><strong>Coverage:</strong> Monitors new gTLDs, ccTLDs, and legacy TLDs across 1,500+ extensions.</li>
+<li><strong>Detection latency:</strong> Newly registered domains are evaluated within 15 minutes of WHOIS propagation.</li>
+</ul>
+<p>Core capabilities include:</p>
+<ul>
+<li><strong>Typosquatting Detection:</strong> Identifies homoglyphs, character swaps, missing hyphens, plural/singular variants, and common misspellings of your brand.</li>
+<li><strong>Lookalike Domain Alerts:</strong> Flags domains using visual similarity, keyword stuffing, or subdomain abuse to mimic your brand.</li>
+<li><strong>Impersonation Scoring:</strong> Each candidate receives a threat score (0–100) based on lexical distance, DNS configuration, hosting infrastructure, and historical abuse patterns.</li>
+<li><strong>Automated Takedown Workflow:</strong> One-click takedown requests to registrars and hosting providers with pre-filled abuse reports.</li>
+<li><strong>API Access:</strong> RESTful API for integrating detections into SIEM, SOAR, or internal security dashboards.</li>
+</ul>
+
+<h2 id="setup">Setup</h2>
+<ol>
+<li><strong>Create account:</strong> Sign up at <a href="https://app.edgeiqlabs.com">app.edgeiqlabs.com</a> and verify your email address.</li>
+<li><strong>Add protected domains:</strong> Navigate to <strong>Settings → Protected Domains</strong> and enter each root domain you want to monitor (e.g., <code>example.com</code>). Wildcards are not supported; add each variant explicitly.</li>
+<li><strong>Configure detection sensitivity:</strong> Adjust the threat score threshold (default: 60) under <strong>Settings → Detection Rules</strong>. Lower thresholds increase coverage but may generate more false positives.</li>
+<li><strong>Set alert channels:</strong> Configure email, Slack, webhook, or PagerDuty notifications under <strong>Settings → Alert Channels</strong>.</li>
+<li><strong>Verify ownership (optional):</strong> Add a TXT record to your DNS to unlock automated takedown authority for your domains. Without verification, takedowns require manual confirmation.</li>
+</ol>
+<p>Monitoring begins immediately after adding a domain. Initial baseline scan completes within 1 hour; ongoing scans run continuously.</p>
+
+<h2 id="monitored-domains">Monitored Domains Configuration</h2>
+<p>Manage your protected domains via <strong>Settings → Protected Domains</strong> or the API (<code>POST /v1/domains</code>).</p>
+<ul>
+<li><strong>Root domains only:</strong> Enter <code>example.com</code>, not <code>www.example.com</code> or <code>*.example.com</code>. Subdomains are automatically included in monitoring scope.</li>
+<li><strong>Multiple domains:</strong> Each root domain counts as one billable unit. Adding <code>example.com</code> and <code>example.net</code> incurs two $14/mo charges.</li>
+<li><strong>Removal:</strong> Deleting a domain stops monitoring immediately and prorates the current billing cycle.</li>
+<li><strong>Historical data:</strong> Detections for removed domains are retained for 90 days for audit purposes, then permanently deleted.</li>
+<li><strong>Bulk import:</strong> Upload a CSV file with one domain per line via <strong>Settings → Bulk Import</strong>. Maximum 100 domains per upload.</li>
+</ul>
+
+<h2 id="detection-rules">Detection Rules</h2>
+<p>BrandGuard applies multiple detection strategies to identify malicious domains:</p>
+<ul>
+<li><strong>Levenshtein Distance:</strong> Flags domains within edit distance ≤2 of your protected domain (configurable). Catches character swaps, insertions, and deletions.</li>
+<li><strong>Homoglyph Matching:</strong> Detects visually similar characters across Unicode scripts (e.g., Cyrillic <code>а</code> vs. Latin <code>a</code>, zero-width spaces).</li>
+<li><strong>Keyword Combination:</strong> Identifies domains combining your brand name with high-risk terms like <code>login</code>, <code>secure</code>, <code>verify</code>, <code>account</code>, <code>support</code>, or <code>update</code>.</li>
+<li><strong>Subdomain Abuse:</strong> Monitors for your brand appearing in subdomains of unrelated domains (e.g., <code>example.phishing-site.com</code>).</li>
+<li><strong>TLD Risk Weighting:</strong> Applies higher threat scores to domains registered in TLDs with historically high abuse rates (e.g., <code>.xyz</code>, <code>.top</code>, <code>.work</code>).</li>
+<li><strong>DNS & Hosting Signals:</strong> Evaluates MX records, SPF/DKIM configuration, hosting provider reputation, and SSL certificate issuance patterns.</li>
+</ul>
+<p>Custom rules can be added via <strong>Settings → Custom Rules</strong> using regex patterns against newly registered domain names. Custom rules trigger alerts independently of the threat score threshold.</p>
+
+<h2 id="alert-channels">Alert Channels</h2>
+<p>Configure notification delivery under <strong>Settings → Alert Channels</strong>:</p>
+<ul>
+<li><strong>Email:</strong> Default channel. Sends digest summaries every 6 hours or instant alerts for Critical threats (score ≥90). Supports multiple recipients and distribution lists.</li>
+<li><strong>Slack:</strong> Post alerts to a specific channel via incoming webhook. Includes threat score, domain link, and one-click takedown button.</li>
+<li><strong>Webhook:</strong> POST JSON payload to any HTTPS endpoint. Payload includes domain, threat score, detection method, timestamp, and WHOIS metadata. Retries failed deliveries up to 3 times with exponential backoff.</li>
+<li><strong>PagerDuty:</strong> Trigger incidents for Critical threats only. Maps threat score to PagerDuty severity.</li>
+<li><strong>SMS:</strong> Opt-in for Critical alerts only. Requires phone number verification. Limited to 10 messages/day to prevent abuse.</li>
+</ul>
+<p>All channels support suppression windows to pause notifications during planned maintenance or known false-positive periods.</p>
+
+<h2 id="takedown-workflow">Takedown Workflow</h2>
+<p>When a malicious domain is confirmed, initiate takedown directly from the dashboard or API:</p>
+<ol>
+<li><strong>Review detection:</strong> Examine the domain’s threat score, registration details, DNS records, and screenshot preview (if available).</li>
+<li><strong>Classify verdict:</strong> Mark as <em>Malicious</em>, <em>Suspicious</em>, <em>Benign</em>, or <em>False Positive</em>. Verdicts train future detection models.</li>
+<li><strong>Generate abuse report:</strong> Click <strong>Takedown → Generate Report</strong> to create a pre-formatted complaint with evidence attachments (WHOIS record, DNS snapshot, phishing page screenshot).</li>
+<li><strong>Submit to registrar/host:</strong> For verified domains, click <strong>Submit Takedown</strong> to send the report directly to the registrar’s abuse contact. Unverified domains display the abuse email address for manual submission.</li>
+<li><strong>Track status:</strong> Monitor takedown progress in <strong>Takedowns → Active Cases</strong>. Status updates (Acknowledged, In Progress, Resolved, Rejected) are pulled automatically via registrar APIs where supported.</li>
+</ol>
+<p>Average takedown time is 48–72 hours for cooperative registrars. BrandGuard escalates unresponsive cases after 5 business days and provides legal template letters for non-compliant providers.</p>
+
+<h2 id="api-reference">API Reference</h2>
+<p>Base URL: <code>https://api.edgeiqlabs.com/v1</code></p>
+<p>Authentication: Bearer token obtained from <strong>Settings → API Keys</strong>.</p>
+<h3>Endpoints</h3>
+<ul>
+<li><code>GET /domains</code> — List all protected domains and their monitoring status.</li>
+<li><code>POST /domains</code> — Add a new protected domain. Body: <code>{"domain": "example.com"}</code>.</li>
+<li><code>DELETE /domains/{domain}</code> — Remove a protected domain.</li>
+<li><code>GET /detections</code> — Retrieve detections filtered by domain, date range, threat score, or verdict. Supports pagination (<code>?page=1&per_page=50</code>).</li>
+<li><code>GET /detections/{id}</code> — Get full detection detail including WHOIS, DNS, and screenshot URLs.</li>
+<li><code>POST /detections/{id}/verdict</code> — Update detection verdict. Body: <code>{"verdict": "malicious", "notes": "Confirmed phishing kit"}</code>.</li>
+<li><code>POST /takedowns</code> — Initiate takedown for a detection. Body: <code>{"detection_id": "det_abc123"}</code>.</li>
+<li><code>GET /takedowns/{id}</code> — Check takedown case status and history.</li>
+</ul>
+<h3>Rate Limits</h3>
+<ul>
+<li>100 requests/minute per API key.</li>
+<li>Exceeding limits returns HTTP 429 with <code>Retry-After</code> header.</li>
+</ul>
+<h3>Webhook Payload Example</h3>
+<pre><code>{
+  "event": "detection.new",
+  "timestamp": "2026-11-06T14:30:00Z",
+  "detection": {
+    "id": "det_xyz789",
+    "domain": "examp1e-login.com",
+    "threat_score": 87,
+    "methods": ["homoglyph", "keyword_combination"],
+    "registered_at": "2026-11-06T14:15:00Z",
+    "registrar": "NameCheap",
+    "protected_domain": "example.com"
+  }
+}
+</code></pre>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li><strong>No detections appearing:</strong> Verify the protected domain is spelled correctly and active. New domains take up to 1 hour to appear in results. Check <strong>Settings → Detection Rules</strong> threshold; raise it temporarily to test sensitivity.</li>
+<li><strong>Excessive false positives:</strong> Increase the threat score threshold or add benign domains to the allowlist under <strong>Settings → Allowlist</strong>. Mark individual detections as <em>False Positive</em> to improve model accuracy.</li>
+<li><strong>Missed typosquat:</strong> Ensure the variant falls within configured Levenshtein distance. Add custom regex rules for brand-specific misspellings not caught by default algorithms.</li>
+<li><strong>Takedown rejected:</strong> Review registrar’s rejection reason in <strong>Takedowns → Case Details</strong>. Some registrars require additional evidence (e.g., trademark certificate, court order). Use <strong>Generate Legal Letter</strong> for escalated cases.</li>
+<li><strong>Webhook not receiving events:</strong> Verify endpoint returns HTTP 2xx within 10 seconds. Check <strong>Settings → Alert Channels → Webhook Logs</strong> for delivery failures and response bodies. Whitelist egress IPs listed in <strong>Settings → Network</strong>.</li>
+<li><strong>API authentication errors:</strong> Regenerate API key if compromised. Ensure token is passed in <code>Authorization: Bearer &lt;token&gt;</code> header. Keys expire after 1 year; rotate proactively.</li>
+<li><strong>Billing discrepancy:</strong> Invoice reflects active domain count at billing cycle start. Mid-cycle additions prorate automatically. Contact <a href="mailto:billing@edgeiqlabs.com">billing@edgeiqlabs.com</a> with invoice ID for adjustments.</li>
+</ul>
+
+<h2 id="pricing">Pricing</h2>
+<table>
+<thead><tr><th>Plan</th><th>Price</th><th>Included</th></tr></thead>
+<tbody>
+<tr><td>BrandGuard</td><td>$14/mo per domain</td><td>Unlimited detections, all alert channels, takedown workflow, API access, 90-day retention</td></tr>
+</tbody>
+</table>
+<ul>
+<li><strong>No setup fees or contracts.</strong> Cancel anytime from <strong>Settings → Billing</strong>.</li>
+<li><strong>Volume discounts:</strong> 10% off for 10+ domains, 20% off for 50+ domains. Contact sales@edgeiqlabs.com for enterprise pricing.</li>
+<li><strong>Annual prepay:</strong> Pay for 12 months upfront and receive 2 months free (equivalent to ~17% discount).</li>
+<li><strong>Data export:</strong> Full detection history exportable as CSV/JSON at any time, even after cancellation.</li>
+</ul>
+
+<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a></div>
+<div class="footer">© 2026 EdgeIQ Labs Docs</div>
+</main></body></html>

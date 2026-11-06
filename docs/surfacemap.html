@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurfaceMap Documentation | EdgeIQ Labs</title>
+    <meta property="og:title" content="SurfaceMap Documentation | EdgeIQ Labs">
+    <meta property="og:description" content="API attack surface mapping, automated endpoint discovery, and continuous monitoring.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/surfacemap.html">
+    <meta property="og:type" content="article">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --code-bg: #020617;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { color: #fff; margin-top: 2rem; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        h2 { font-size: 1.75rem; color: var(--accent); }
+        h3 { font-size: 1.25rem; }
+        p { margin-bottom: 1rem; color: var(--muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code {
+            background: var(--code-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 0.9em;
+            color: #f472b6;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        pre code { background: none; padding: 0; color: var(--text); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--accent); }
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+        .note {
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>SurfaceMap <span class="badge">$19/mo</span></h1>
+<p>API attack surface mapping, automated endpoint discovery, and continuous monitoring for modern infrastructure.</p>
+
+<h2>Overview</h2>
+<p>SurfaceMap provides comprehensive visibility into your API attack surface. It automatically discovers endpoints across passive traffic analysis, active scanning, and log ingestion to identify shadow APIs, deprecated versions, and unauthenticated surfaces. Continuous monitoring ensures new exposures are detected and alerted in real-time.</p>
+
+<h2>Setup</h2>
+<h3>Prerequisites</h3>
+<ul>
+    <li>EdgeIQ Labs account with active SurfaceMap subscription</li>
+    <li>API key generated from the <a href="#">Dashboard &rarr; Settings &rarr; API Keys</a></li>
+    <li>Network access to target infrastructure (for active discovery)</li>
+</ul>
+
+<h3>Installation</h3>
+<pre><code>npm install @edgeiq/surfacemap-cli
+# or
+docker pull edgeiqlabs/surfacemap:latest</code></pre>
+
+<h3>Authentication</h3>
+<pre><code>export SURFACEMAP_API_KEY="sk_live_xxxxxxxxxxxxxxxxxxxx"
+surfacemap auth verify</code></pre>
+
+<h2>Configuration</h2>
+<p>Create a <code>surfacemap.config.yaml</code> in your project root:</p>
+<pre><code>project: "my-api-platform"
+targets:
+  - domain: "api.example.com"
+    methods: [passive, active]
+  - cidr: "10.0.0.0/24"
+    methods: [active]
+
+discovery:
+  passive:
+    sources: [cloudflare, aws-alb, nginx-access]
+  active:
+    rate_limit: 100req/s
+    ports: [80, 443, 8080, 8443]
+  traffic:
+    integrations: [datadog, splunk]
+
+monitoring:
+  interval: "1h"
+  alerts:
+    channels: [slack, email]
+    severity_threshold: "medium"</code></pre>
+
+<h2>Discovery Methods</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Description</th>
+            <th>Best For</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Passive</strong></td>
+            <td>Analyzes existing logs, DNS records, certificate transparency, and CDN configs without sending packets.</td>
+            <td>Shadow API detection, historical endpoint recovery</td>
+        </tr>
+        <tr>
+            <td><strong>Active</strong></td>
+            <td>Performs intelligent HTTP probing, port scanning, and fuzzing against defined targets.</td>
+            <td>Verifying live endpoints, finding hidden admin panels</td>
+        </tr>
+        <tr>
+            <td><strong>Traffic</strong></td>
+            <td>Ingests real-time telemetry from SIEM, observability platforms, and proxy logs.</td>
+            <td>Runtime validation, catching ephemeral endpoints</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Continuous Monitoring</h2>
+<p>SurfaceMap runs scheduled discovery cycles based on your configured <code>monitoring.interval</code>. Each cycle compares results against the previous baseline to detect:</p>
+<ul>
+    <li>New endpoints appearing in production</li>
+    <li>Removed or deprecated routes still responding</li>
+    <li>Changes in authentication requirements</li>
+    <li>Certificate expirations or domain hijacking risks</li>
+</ul>
+<div class="note">
+    <strong>Note:</strong> Monitoring state is persisted server-side. CLI interruptions do not reset baselines.
+</div>
+
+<h2>API Reference</h2>
+<h3>List Discovered Endpoints</h3>
+<pre><code>GET /v1/projects/{project_id}/endpoints?status=active&limit=100
+Authorization: Bearer sk_live_xxx</code></pre>
+
+<h3>Trigger On-Demand Scan</h3>
+<pre><code>POST /v1/projects/{project_id}/scans
+Content-Type: application/json
+
+{
+  "target": "api.example.com",
+  "methods": ["active", "passive"],
+  "config_override": { "rate_limit": "50req/s" }
+}</code></pre>
+
+<h3>Retrieve Scan Results</h3>
+<pre><code>GET /v1/scans/{scan_id}/results
+# Returns JSON with endpoints, metadata, and risk scores</code></pre>
+
+<h2>Alert Configuration</h2>
+<p>Configure alerts in <code>surfacemap.config.yaml</code> under <code>monitoring.alerts</code>:</p>
+<pre><code>alerts:
+  channels:
+    - type: slack
+      webhook: "https://hooks.slack.com/services/..."
+    - type: email
+      recipients: ["secops@example.com"]
+  rules:
+    - event: "new_endpoint_detected"
+      severity: "high"
+      notify: true
+    - event: "auth_removed"
+      severity: "critical"
+      notify: true</code></pre>
+
+<h2>Troubleshooting</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Symptom</th>
+            <th>Cause</th>
+            <th>Resolution</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>401 Unauthorized</code></td>
+            <td>Invalid or expired API key</td>
+            <td>Regenerate key in Dashboard; verify <code>SURFACEMAP_API_KEY</code> env var</td>
+        </tr>
+        <tr>
+            <td>No endpoints discovered</td>
+            <td>Target unreachable or WAF blocking scanner</td>
+            <td>Whitelist SurfaceMap IPs (<code>surfacemap ips list</code>); check firewall rules</td>
+        </tr>
+        <tr>
+            <td>High false positives</td>
+            <td>Overly broad CIDR or wildcard domains</td>
+            <td>Narrow target scope; add exclusions in config</td>
+        </tr>
+        <tr>
+            <td>Alerts not firing</td>
+            <td>Webhook misconfigured or severity threshold too high</td>
+            <td>Test channel with <code>surfacemap alert test --channel slack</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Pricing</h2>
+<p><strong>$19/month</strong> — includes unlimited projects, all three discovery methods, continuous monitoring, and up to 100k endpoint checks per month. Enterprise volume discounts and on-premise deployments available upon request.</p>
+
+<footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem;">
+    &copy; 2026 EdgeIQ Labs. All rights reserved. <a href="https://edgeiqlabs.com">edgeiqlabs.com</a>
+</footer>
+
+</body>
+</html>

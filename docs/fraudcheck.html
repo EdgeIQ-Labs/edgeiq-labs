@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudCheck Documentation — EdgeIQ Labs</title>
+  <meta name="description" content="Reference documentation for FraudCheck checkout page fraud detection, brand impersonation verification, and payment URL validation." />
+  <meta property="og:title" content="FraudCheck Documentation — EdgeIQ Labs" />
+  <meta property="og:description" content="Checkout page fraud detection, brand impersonation verification, and payment URL validation for $9/mo." />
+  <meta property="og:url" content="https://edgeiqlabs.com/docs/fraudcheck.html" />
+  <meta property="og:type" content="article" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  <script defer src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/products/">Products</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <main class="container container--narrow prose">
+    <h1>FraudCheck Documentation</h1>
+
+    <h2 id="overview">Overview</h2>
+    <p>FraudCheck is a lightweight, $9/month fraud detection service designed specifically for checkout pages, payment flows, and brand-sensitive transactional surfaces. It combines real-time behavioral analysis, brand impersonation heuristics, and payment URL validation to flag suspicious activity before revenue loss occurs.</p>
+    <p>Unlike general-purpose fraud platforms that require extensive integration and tuning, FraudCheck ships with sensible defaults for e-commerce and SaaS checkout environments. It monitors DOM integrity, validates payment processor URLs against known-good patterns, detects credential harvesting overlays, and alerts on brand impersonation attempts in real time.</p>
+
+    <h2 id="setup">Setup</h2>
+    <p>To enable FraudCheck:</p>
+    <ol>
+      <li>Navigate to <strong>Dashboard → FraudCheck → Enable</strong>.</li>
+      <li>Add your protected domains under <strong>Protected Origins</strong>. Only HTTPS origins are accepted.</li>
+      <li>Install the snippet: copy the generated <code>&lt;script&gt;</code> tag from <strong>Dashboard → FraudCheck → Install Snippet</strong> and paste it immediately before <code>&lt;/body&gt;</code> on every checkout or payment page.</li>
+      <li>(Optional) Configure webhook endpoints at <strong>Integrations → Webhooks</strong> for real-time alert delivery.</li>
+      <li>Verify installation using the built-in test harness at <strong>FraudCheck → Verify Installation</strong>. The harness simulates three common attack vectors and confirms detection.</li>
+    </ol>
+    <p>The snippet is under 4 KB gzipped and adds no perceptible latency. It loads asynchronously and fails open — if the script cannot reach EdgeIQ servers, the checkout proceeds normally without blocking.</p>
+
+    <h2 id="detection-indicators">Detection Indicators</h2>
+    <p>FraudCheck evaluates signals across four categories:</p>
+    <ul>
+      <li><strong>DOM Integrity:</strong> Detects injected iframes, shadow DOM overlays, form action rewriting, and unexpected mutation observer activity on payment fields.</li>
+      <li><strong>Brand Impersonation:</strong> Flags visual mimicry of known payment processors (Stripe, PayPal, Square), including logo similarity, color palette matching, and font fingerprinting against a maintained brand registry.</li>
+      <li><strong>Behavioral Anomalies:</strong> Identifies non-human input patterns, clipboard hijacking attempts, autofill abuse, and rapid field-focus cycling consistent with bot-driven checkout.</li>
+      <li><strong>Network Context:</strong> Correlates client IP reputation, TLS fingerprint consistency, and geographic velocity checks against historical session baselines.</li>
+    </ul>
+    <p>Each indicator produces a confidence score (0–100). Alerts fire when the composite risk score exceeds the configured threshold (default: 75).</p>
+
+    <h2 id="url-verification-api">URL Verification API</h2>
+    <p>The URL Verification API allows server-side validation of payment redirect URLs before they are presented to users. This prevents open-redirect exploitation and ensures post-checkout destinations match declared merchant intent.</p>
+    <pre><code># Verify a payment URL
+POST /api/v1/fraudcheck/verify-url
+Authorization: Bearer «redac...e_…»
+Content-Type: application/json
+
+{
+  "url": "https://checkout.stripe.com/pay/cs_test_...",
+  "expected_merchant": "acme_corp",
+  "context": "post_checkout_redirect"
+}
+
+# Response
+{
+  "valid": true,
+  "processor": "stripe",
+  "merchant_match": true,
+  "risk_score": 12,
+  "warnings": []
+}</code></pre>
+    <p>Supported processors: Stripe, PayPal, Square, Adyen, Braintree, Shopify Payments, and Paddle. Custom processor patterns can be registered via <strong>Dashboard → FraudCheck → Custom Processors</strong>.</p>
+    <p>Rate limit: 300 requests/minute per API key. Responses are cached for 60 seconds per unique URL hash to prevent redundant lookups during retry storms.</p>
+
+    <h2 id="integration-guide">Integration Guide</h2>
+    <h3>Client-Side Snippet</h3>
+    <p>The snippet automatically instruments all <code>&lt;form&gt;</code> elements containing inputs with <code>name</code>, <code>id</code>, or <code>autocomplete</code> attributes matching common payment field patterns (<code>cc-number</code>, <code>cardnumber</code>, <code>exp-month</code>, etc.). No manual tagging is required.</p>
+    <p>To exclude specific forms from monitoring, add <code>data-fraudcheck-ignore</code> to the form element.</p>
+
+    <h3>Server-Side Webhook Payload</h3>
+    <pre><code>{
+  "event": "fraudcheck.alert",
+  "timestamp": "2026-11-06T14:22:18Z",
+  "origin": "https://shop.example.com",
+  "risk_score": 88,
+  "indicators": [
+    {"type": "dom_integrity", "detail": "iframe_injection", "confidence": 92},
+    {"type": "brand_impersonation", "detail": "paypal_logo_mismatch", "confidence": 84}
+  ],
+  "session_id": "fc_sess_8f3a...",
+  "client_ip_hash": "sha256:a1b2c3..."
+}</code></pre>
+    <p>All payloads are signed with HMAC-SHA256 using your webhook secret. Validate signatures before processing. See <strong>Dashboard → Integrations → Webhooks → Signing Keys</strong>.</p>
+
+    <h2 id="alert-configuration">Alert Configuration</h2>
+    <p>Configure alert routing and thresholds at <strong>Dashboard → FraudCheck → Alerts</strong>:</p>
+    <ul>
+      <li><strong>Risk Threshold:</strong> Adjust the composite score trigger point (0–100). Lower values increase sensitivity but may raise false positives on legitimate edge cases (e.g., corporate proxies, accessibility tools).</li>
+      <li><strong>Channels:</strong> Email, Slack, Discord, PagerDuty, or custom webhook. Multiple channels can be active simultaneously.</li>
+      <li><strong>Suppression Rules:</strong> Suppress alerts for known-safe IPs, user agents, or geographic regions. Suppressions are logged for audit.</li>
+      <li><strong>Digest Mode:</strong> Batch low-severity alerts into hourly digests instead of firing individually. High-severity alerts (score ≥ 90) always fire immediately regardless of digest settings.</li>
+    </ul>
+    <p>Alert metadata includes full indicator breakdown, session replay link (if enabled), and one-click false-positive reporting.</p>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+    <ul>
+      <li><strong>Snippet not detecting forms:</strong> Confirm the script loads after the DOM is ready. If using SPA frameworks, call <code>window.FraudCheck.rescan()</code> after route transitions. Verify no CSP policies block inline script execution.</li>
+      <li><strong>False positives on legitimate checkouts:</strong> Review the indicator breakdown in the alert. Common benign triggers include browser extensions modifying payment fields and corporate security overlays. Add suppression rules or adjust threshold accordingly.</li>
+      <li><strong>Webhook deliveries failing:</strong> Ensure your endpoint returns 2xx within 10 seconds. Use <strong>Integrations → Webhooks → Test Delivery</strong> to validate connectivity and signature verification. Failed deliveries retry up to 5 times with exponential backoff.</li>
+      <li><strong>URL Verification API returning <code>valid: false</code> for known-good URLs:</strong> Check that the <code>expected_merchant</code> parameter matches the registered merchant slug exactly (case-sensitive). Newly added processors may take up to 1 hour to propagate to all edge nodes.</li>
+      <li><strong>High latency on checkout pages:</strong> The snippet is async and should not block rendering. If performance degradation is observed, verify no synchronous scripts are chained after the FraudCheck snippet and confirm CDN cache hit ratios for the script asset.</li>
+    </ul>
+
+    <h2 id="pricing">Pricing</h2>
+    <table>
+      <thead><tr><th>Plan</th><th>Price</th><th>Included</th></tr></thead>
+      <tbody>
+        <tr><td>FraudCheck</td><td>$9/month</td><td>Unlimited pageviews, 3 protected origins, URL Verification API (10k calls/mo), email + webhook alerts</td></tr>
+      </tbody>
+    </table>
+    <p>All plans include automatic updates to brand impersonation signatures and payment processor URL patterns. No overage charges; API calls beyond included quota return 429 with retry headers rather than billing surprises.</p>
+    <p>Enterprise volume pricing and SLA-backed tiers available upon request via <a href="/pricing/">Get Started</a>.</p>
+  </main>
+
+  <footer class="container container--narrow">
+    <p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p>
+  </footer>
+</body>
+</html>

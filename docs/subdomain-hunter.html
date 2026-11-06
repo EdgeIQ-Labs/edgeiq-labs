@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subdomain Hunter Pro Documentation | EdgeIQ Labs</title>
+    <meta property="og:title" content="Subdomain Hunter Pro Documentation">
+    <meta property="og:description" content="Complete guide to CT log scanning, takeover detection, and DNS zone transfer checks.">
+    <meta property="og:url" content="https://edgeiqlabs.com/docs/subdomain-hunter.html">
+    <meta property="og:type" content="article">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --code-bg: #020617;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { color: #fff; margin-top: 2.5rem; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-top: 0; }
+        h2 { font-size: 1.75rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--muted); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code {
+            background: var(--code-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 0.9em;
+            color: #f472b6;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        pre code { background: none; padding: 0; color: var(--text); }
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 12px;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .tier {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+        .price { font-size: 2rem; font-weight: bold; color: #fff; }
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<h1>Subdomain Hunter Pro</h1>
+<p>Enterprise-grade subdomain enumeration and attack surface monitoring for security professionals.</p>
+
+<div class="pricing-card">
+    <div class="tier">
+        <span class="badge">LIFETIME</span>
+        <div class="price">$39</div>
+        <p>One-time payment<br>Unlimited scans forever</p>
+    </div>
+    <div class="tier">
+        <span class="badge">MONTHLY</span>
+        <div class="price">$19</div>
+        <p>Billed monthly<br>Cancel anytime</p>
+    </div>
+</div>
+
+<h2>Overview</h2>
+<p>Subdomain Hunter Pro combines passive certificate transparency (CT) log analysis, active DNS brute-forcing, and intelligent takeover detection into a single unified workflow. Designed for bug bounty hunters and pentesters who need comprehensive asset discovery without the noise.</p>
+
+<h2>Quick Start</h2>
+<pre><code># Install via pip
+pip install subdomain-hunter-pro
+
+# Run a basic scan
+shp scan example.com --output results.json
+
+# Enable all discovery modules
+shp scan example.com --all-modules --takeover-check</code></pre>
+
+<h2>Discovery Methods</h2>
+<h3>Certificate Transparency Logs</h3>
+<p>Passively queries crt.sh, Certstream, and Google CT logs to find historically issued certificates. This method is silent and often reveals forgotten staging environments or dev subdomains.</p>
+
+<h3>DNS Brute-Force</h3>
+<p>Uses an optimized wordlist of 250k+ permutations with wildcard filtering. Supports custom resolvers and rate-limiting to avoid blocking.</p>
+
+<h3>Zone Transfer Checks</h3>
+<p>Automatically attempts AXFR/IXFR requests against discovered nameservers. Reports misconfigured BIND/PowerDNS instances immediately.</p>
+
+<h2>Takeover Detection</h2>
+<p>Identifies dangling CNAME records pointing to unclaimed cloud resources:</p>
+<ul>
+    <li>AWS S3 buckets / CloudFront distributions</li>
+    <li>GitHub Pages / Heroku apps</li>
+    <li>Azure / GCP storage endpoints</li>
+    <li>Shopify / WordPress / Ghost CMS</li>
+</ul>
+<p>Each finding includes proof-of-concept validation to reduce false positives.</p>
+
+<h2>API Reference</h2>
+<table>
+    <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+    <tr><td><code>/v1/scan</code></td><td>POST</td><td>Start async enumeration job</td></tr>
+    <tr><td><code>/v1/results/{job_id}</code></td><td>GET</td><td>Retrieve findings (paginated)</td></tr>
+    <tr><td><code>/v1/takeovers</code></td><td>GET</td><td>List verified takeover candidates</td></tr>
+    <tr><td><code>/v1/export</code></td><td>GET</td><td>Download in JSON/CSV/Nuclei format</td></tr>
+</table>
+
+<h2>Export Formats</h2>
+<ul>
+    <li><strong>JSON:</strong> Full structured output with metadata</li>
+    <li><strong>CSV:</strong> Spreadsheet-compatible for reporting</li>
+    <li><strong>Nuclei:</strong> Direct integration with nuclei templates</li>
+    <li><strong>Plain Text:</strong> One subdomain per line for piping</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+<p><strong>Rate limited by CT logs?</strong> Use the <code>--proxy</code> flag or enable residential rotation in config.</p>
+<p><strong>Missing subdomains?</strong> Combine CT + brute-force with <code>--all-modules</code>. Some internal assets never receive public certs.</p>
+<p><strong>False positive takeovers?</strong> Run <code>shp validate --strict</code> to perform HTTP-level confirmation before reporting.</p>
+
+<footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;">
+    &copy; 2026 EdgeIQ Labs. All rights reserved.<br>
+    <a href="https://edgeiqlabs.com">Home</a> • <a href="mailto:support@edgeiqlabs.com">Support</a>
+</footer>
+
+</body>
+</html>
