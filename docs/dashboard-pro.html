@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard Pro Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Dashboard Pro. Custom dashboards, trend analysis, executive reporting, and Slack/Teams integrations for scanner analytics."/>
+<meta property="og:url" content="https://edgeiqlabs.com/docs/dashboard-pro.html"/>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Dashboard Pro</h1>
+        <p>Premium analytics and visualization layer for EdgeIQ scanners with custom dashboards, trend analysis, and executive reporting.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Dashboard Pro transforms raw scanner data into actionable security intelligence. Connect your EdgeIQ Port Scanner, Vulnerability Scanner, or any compatible API source to build real-time dashboards, track security posture trends over time, generate executive-ready reports, and push alerts directly to Slack, Teams, or email.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Drag-and-drop custom dashboard builder with 20+ widget types</li>
+            <li>Trend analysis with configurable time windows (24h to 12mo)</li>
+            <li>Automated executive reports scheduled daily/weekly/monthly</li>
+            <li>Native Slack, Microsoft Teams, and SMTP integrations</li>
+            <li>REST API for programmatic access and CI/CD embedding</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Connecting Scanner APIs</h3>
+        <p>Dashboard Pro ingests data from any EdgeIQ scanner running in API mode or via direct database connection.</p>
+        <pre><code># Start your scanner in API mode
+port-scanner serve --port 8400 --api-key YOUR_API_KEY
+
+# In Dashboard Pro UI: Settings → Data Sources → Add Source
+#   Type: EdgeIQ Port Scanner
+#   URL: http://scanner-host:8400
+#   API Key: YOUR_API_KEY
+#   Poll Interval: 300s
+
+# Or connect via CLI
+dashboard-pro source add \
+  --name "prod-scanner" \
+  --type edgeiq-port-scanner \
+  --url http://scanner-host:8400 \
+  --api-key YOUR_API_KEY \
+  --interval 300</code></pre>
+        <div class="note">API keys are stored encrypted at rest. Use read-only keys when possible. Dashboard Pro never writes back to scanner APIs.</div>
+
+        <h2>Custom Dashboards</h2>
+        <p>Build dashboards by dragging widgets onto a grid canvas. Each widget binds to a data source query and supports filtering, aggregation, and threshold-based coloring.</p>
+        <table>
+            <tr><th>Widget Type</th><th>Description</th><th>Best For</th></tr>
+            <tr><td>Stat Card</td><td>Single metric with delta indicator</td><td>Total open ports, critical count</td></tr>
+            <tr><td>Time Series</td><td>Line/area chart over time</td><td>Port exposure trends</td></tr>
+            <tr><td>Bar Chart</td><td>Categorical comparison</td><td>Top hosts by risk score</td></tr>
+            <tr><td>Heatmap</td><td>Grid intensity map</td><td>Port/service density by subnet</td></tr>
+            <tr><td>Table</td><td>Sortable paginated rows</td><td>Live high-risk port list</td></tr>
+            <tr><td>Gauge</td><td>Radial progress indicator</td><td>Compliance percentage</td></tr>
+            <tr><td>Alert Feed</td><td>Real-time event stream</td><td>New critical findings</td></tr>
+        </table>
+        <pre><code># Create dashboard via CLI
+dashboard-pro dashboard create "Network Posture" \
+  --layout 3x4 \
+  --source prod-scanner
+
+# Add widget
+dashboard-pro widget add "Network Posture" \
+  --type time-series \
+  --query "open_ports_count" \
+  --range 30d \
+  --position 0,0,2,1</code></pre>
+
+        <h2>Trend Analysis</h2>
+        <p>Track security metrics over time to identify regression, measure remediation velocity, and forecast risk exposure.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Configurable granularity: hourly, daily, weekly, monthly</li>
+            <li>Baseline comparison against historical averages</li>
+            <li>Anomaly detection with configurable sensitivity</li>
+            <li>Exportable CSV/JSON for external BI tools</li>
+        </ul>
+        <pre><code># Query trend data via API
+curl -H "Authorization: Bearer $DASH_API_KEY" \
+  "https://app.edgeiqlabs.com/api/v1/trends/open_ports?range=90d&granularity=daily"
+
+# Response
+{
+  "metric": "open_ports",
+  "range": "90d",
+  "points": [
+    {"ts": "2026-08-01T00:00:00Z", "value": 142},
+    {"ts": "2026-08-02T00:00:00Z", "value": 138}
+  ],
+  "baseline_avg": 145,
+  "anomalies": []
+}</code></pre>
+
+        <h2>Executive Reports</h2>
+        <p>Generate polished PDF/HTML reports for stakeholders without dashboard access. Schedule automatic delivery or trigger on-demand.</p>
+        <pre><code># Create report template
+dashboard-pro report create "Weekly Security Summary" \
+  --dashboard "Network Posture" \
+  --include-trends \
+  --include-high-risk-table \
+  --format pdf
+
+# Schedule weekly delivery
+dashboard-pro report schedule "Weekly Security Summary" \
+  --cron "0 8 * * 1" \
+  --recipients ciso@example.com,secops@example.com
+
+# Generate immediately
+dashboard-pro report run "Weekly Security Summary" --download ./report.pdf</code></pre>
+        <div class="note">Reports render server-side. Large dashboards may take 30-60 seconds. Use <code>--async</code> for non-blocking generation with webhook callback.</div>
+
+        <h2>Integrations</h2>
+        <h3>Slack</h3>
+        <pre><code>dashboard-pro integration add slack \
+  --webhook https://hooks.slack.com/services/T.../B.../xxx \
+  --channel #security-alerts \
+  --events critical_finding,new_high_risk_port</code></pre>
+        <h3>Microsoft Teams</h3>
+        <pre><code>dashboard-pro integration add teams \
+  --webhook https://outlook.office.com/webhook/... \
+  --events report_ready,anomaly_detected</code></pre>
+        <h3>Email (SMTP)</h3>
+        <pre><code>dashboard-pro integration add email \
+  --smtp-host smtp.example.com \
+  --smtp-port 587 \
+  --from dashboard@example.com \
+  --recipients team@example.com \
+  --events daily_summary</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All Dashboard Pro functionality is accessible via REST API. Authenticate with bearer tokens generated in Settings → API Keys.</p>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/dashboards</code></td><td>List all dashboards</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/dashboards</code></td><td>Create a new dashboard</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/dashboards/{id}/widgets</code></td><td>List widgets in a dashboard</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/dashboards/{id}/widgets</code></td><td>Add widget to dashboard</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/trends/{metric}</code></td><td>Query trend data</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/reports/{id}/run</code></td><td>Trigger report generation</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/sources</code></td><td>List connected data sources</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/integrations</code></td><td>Configure notification channel</td></tr>
+        </table>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Data source shows "unreachable":</strong> Verify the scanner API is running (<code>curl http://scanner-host:8400/health</code>). Check firewall rules and API key validity.</p>
+        <p><strong>Widgets display stale data:</strong> Confirm poll interval isn't too long. Check <code>dashboard-pro source status &lt;name&gt;</code> for last successful fetch timestamp.</p>
+        <p><strong>Slack/Teams notifications not arriving:</strong> Test with <code>dashboard-pro integration test &lt;name&gt;</code>. Verify webhook URL hasn't expired. Check rate limits on the platform side.</p>
+        <p><strong>Report generation times out:</strong> Reduce dashboard complexity or use <code>--async</code> flag. Server-side rendering has a 120s default timeout; contact support to increase for Agency plans.</p>
+        <p><strong>Trend charts show gaps:</strong> Missing data points indicate scanner downtime or API errors during that window. Check scanner logs and Dashboard Pro ingestion logs at <code>~/.edgeiq/logs/dashboard.log</code>.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; 5 dashboards, 3 sources, weekly reports</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$79 <span>/ month</span></div>
+                <p style="margin:0;">Agency &mdash; Unlimited dashboards, 20 sources, daily reports, priority support</p>
+            </div>
+        </div>
+        <p>Both plans include all integrations, API access, and trend analysis. Annual billing saves 20%. Team and enterprise licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Dashboard Pro</h3><p>Custom dashboards, trend analysis, and executive reporting for EdgeIQ scanners</p><a href="/products/#subscriptions" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

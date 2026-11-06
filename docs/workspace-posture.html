@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Workspace Posture Pro Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Workspace Posture Pro. Cloud infrastructure posture management, misconfiguration detection, compliance monitoring across AWS, GCP, and Azure."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/workspace-posture.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Workspace Posture Pro</h1>
+        <p>Continuous cloud infrastructure security posture management with intelligent misconfiguration detection and compliance monitoring.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; scales to Enterprise</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Workspace Posture Pro continuously monitors your cloud infrastructure across AWS, GCP, and Azure for misconfigurations, exposed secrets, and compliance violations. It automatically checks S3 bucket permissions, IAM policies, security groups, storage ACLs, network configurations, and more. Designed for DevSecOps teams, cloud architects, and compliance officers who need real-time visibility into their cloud security posture without manual auditing.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Multi-cloud support: AWS, GCP, and Azure in a single dashboard</li>
+            <li>Continuous monitoring for misconfigurations and exposed secrets</li>
+            <li>Deep inspection of S3 buckets, IAM policies, security groups, and network ACLs</li>
+            <li>Automated compliance mapping against CIS Benchmarks, NIST, and SOC 2</li>
+            <li>Optional auto-remediation for low-risk findings</li>
+            <li>REST API for integration into CI/CD pipelines and SOAR workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <p>Connect your cloud providers using read-only roles. Workspace Posture Pro never modifies your infrastructure during scans unless auto-remediation is explicitly enabled.</p>
+        <h3>AWS Integration</h3>
+        <p>Create a cross-account IAM role with the <code>SecurityAudit</code> managed policy or a custom least-privilege policy. Provide the Role ARN and External ID in the Workspace Posture Pro dashboard.</p>
+        <pre><code># Example AWS CLI command to create the audit role
+aws iam create-role \
+  --role-name EdgeIQPostureAudit \
+  --assume-role-policy-document file://trust-policy.json
+
+aws iam attach-role-policy \
+  --role-name EdgeIQPostureAudit \
+  --policy-arn arn:aws:iam::aws:policy/SecurityAudit</code></pre>
+
+        <h3>GCP Integration</h3>
+        <p>Create a Service Account with the <code>Viewer</code> and <code>Security Reviewer</code> roles. Download the JSON key file and upload it securely via the Workspace Posture Pro onboarding wizard.</p>
+        <pre><code># Example gcloud command
+gcloud iam service-accounts create edgeiq-posture \
+  --display-name="EdgeIQ Posture Scanner"
+
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:edgeiq-posture@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/viewer"</code></pre>
+
+        <h3>Azure Integration</h3>
+        <p>Register an application in Microsoft Entra ID (formerly Azure AD) and create a Service Principal Name (SPN). Assign the built-in <code>Reader</code> and <code>Security Reader</code> roles at the subscription level.</p>
+        <pre><code># Example Azure CLI command
+az ad sp create-for-rbac \
+  --name "EdgeIQPosturePro" \
+  --role "Reader" \
+  --scopes /subscriptions/YOUR_SUBSCRIPTION_ID</code></pre>
+        <div class="note">All credentials are encrypted at rest using AES-256. We recommend rotating access keys every 90 days.</div>
+
+        <h2>Scan Configuration</h2>
+        <h3>Resource Selection</h3>
+        <p>Choose which resources to monitor within each connected cloud provider:</p>
+        <table>
+            <tr><th>Resource Type</th><th>Examples</th><th>Description</th></tr>
+            <tr><td>Storage</td><td><code>S3 Buckets, GCS Buckets, Blob Storage</code></td><td>Public access settings, encryption status, logging</td></tr>
+            <tr><td>Identity & Access</td><td><code>IAM Roles, Policies, SPNs</code></td><td>Overprivileged accounts, unused roles, MFA gaps</td></tr>
+            <tr><td>Networking</td><td><code>Security Groups, NACLs, VPCs</code></td><td>Open ports, unrestricted ingress, missing flow logs</td></tr>
+            <tr><td>Compute</td><td><code>EC2, VMs, Cloud Functions</code></td><td>Public IPs, outdated AMIs, missing agents</td></tr>
+            <tr><td>Databases</td><td><code>RDS, Cloud SQL, SQL Database</code></td><td>Public accessibility, backup retention, encryption</td></tr>
+        </table>
+
+        <h3>Scan Frequency</h3>
+        <p>Configure how often Workspace Posture Pro evaluates your environment:</p>
+        <table>
+            <tr><th>Frequency</th><th>Use Case</th></tr>
+            <tr><td>Continuous (Event-driven)</td><td>Real-time alerts via CloudTrail/Audit Logs event hooks</td></tr>
+            <tr><td>Hourly</td><td>High-security environments requiring rapid detection</td></tr>
+            <tr><td>Daily</td><td>Standard production workloads (default)</td></tr>
+            <tr><td>Weekly</td><td>Development or staging environments</td></tr>
+        </table>
+        <pre><code># Trigger an on-demand scan via CLI
+workspace-posture scan start --provider aws --resources s3,iam --wait</code></pre>
+
+        <h2>Findings Dashboard</h2>
+        <p>All detected issues are centralized in the Findings Dashboard, prioritized by severity and blast radius.</p>
+        <h3>Severity Levels</h3>
+        <table>
+            <tr><th>Severity</th><th>Badge</th><th>Description</th></tr>
+            <tr><td>Critical</td><td><span class="badge badge-danger">Critical</span></td><td>Active exposure (e.g., public S3 bucket with PII, root account without MFA)</td></tr>
+            <tr><td>High</td><td><span class="badge badge-warning">High</span></td><td>Significant risk (e.g., overly permissive IAM policy, open RDP port)</td></tr>
+            <tr><td>Medium</td><td><span class="badge badge-info">Medium</span></td><td>Moderate risk (e.g., unencrypted EBS volume, missing VPC flow logs)</td></tr>
+            <tr><td>Low</td><td><span class="badge badge-success">Low</span></td><td>Best practice deviations (e.g., missing resource tags)</td></tr>
+        </table>
+
+        <h3>Remediation Steps</h3>
+        <p>Every finding includes plain-English remediation steps, exact CLI commands, and Infrastructure-as-Code (Terraform/CloudFormation) snippets to fix the issue. For example:</p>
+        <pre><code># Remediation for: Public S3 Bucket (Critical)
+# 1. Block public access
+aws s3api put-public-access-block \
+  --bucket my-sensitive-bucket \
+  --public-access-block-configuration \
+    BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+
+# 2. Verify configuration
+aws s3api get-public-access-block --bucket my-sensitive-bucket</code></pre>
+
+        <h2>Compliance Frameworks</h2>
+        <p>Workspace Posture Pro automatically maps findings to industry-standard compliance frameworks, providing continuous audit readiness.</p>
+        <table>
+            <tr><th>Framework</th><th>Supported Standards</th><th>Description</th></tr>
+            <tr><td>CIS Benchmarks</td><td>AWS v2.0, GCP v2.0, Azure v2.1</td><td>Center for Internet Security cloud configuration baselines</td></tr>
+            <tr><td>NIST</td><td>800-53 Rev 5, CSF 2.0</td><td>National Institute of Standards and Technology controls</td></tr>
+            <tr><td>SOC 2</td><td>Type II (CC & SC criteria)</td><td>Service Organization Control mappings for Trust Services Criteria</td></tr>
+            <tr><td>PCI DSS</td><td>v4.0</td><td>Payment Card Industry Data Security Standard requirements</td></tr>
+            <tr><td>HIPAA</td><td>Security Rule</td><td>Health Insurance Portability and Accountability Act safeguards</td></tr>
+        </table>
+        <div class="note">Compliance reports can be exported as PDF or CSV directly from the dashboard for auditor review.</div>
+
+        <h2>API Reference</h2>
+        <p>All platform functionality is available via REST API. Authenticate using your API key passed in the <code>Authorization: Bearer &lt;token&gt;</code> header.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/workspace-posture/findings</code></td><td>Retrieve current findings with filtering options</td></tr>
+            <tr><td>POST</td><td><code>/api/workspace-posture/scan</code></td><td>Initiate a new posture scan</td></tr>
+            <tr><td>GET</td><td><code>/api/workspace-posture/scan/{id}</code></td><td>Check scan status and retrieve results</td></tr>
+            <tr><td>GET</td><td><code>/api/workspace-posture/compliance</code></td><td>Export compliance framework mappings</td></tr>
+            <tr><td>POST</td><td><code>/api/workspace-posture/remediate</code></td><td>Trigger auto-remediation for specific findings</td></tr>
+        </table>
+
+        <h3>Example: Retrieve Findings</h3>
+        <pre><code>curl -X GET "https://api.edgeiqlabs.com/api/workspace-posture/findings?severity=critical,high&provider=aws" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+
+        <h3>Example: Trigger Scan via API</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/api/workspace-posture/scan \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "aws",
+    "resources": ["s3", "iam", "security_groups"],
+    "frameworks": ["cis", "soc2"]
+  }'</code></pre>
+
+        <h2>Auto-Remediation</h2>
+        <p>Workspace Posture Pro can optionally apply fixes automatically for low-risk, reversible misconfigurations. Auto-remediation is disabled by default and must be explicitly opted into per rule.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>Scope:</strong> Limited to Low and Medium severity findings (e.g., enabling default encryption, adding missing tags, blocking public ACLs on newly created buckets).</li>
+            <li><strong>Safety:</strong> High and Critical findings always require manual approval to prevent unintended service disruption.</li>
+            <li><strong>Audit Trail:</strong> Every automated change is logged with a timestamp, the rule that triggered it, and a one-click rollback option.</li>
+            <li><strong>Permissions:</strong> Requires elevated write permissions beyond the standard read-only audit role. Configure a separate remediation role scoped only to allowed actions.</li>
+        </ul>
+        <pre><code># Enable auto-remediation for a specific rule via CLI
+workspace-posture rules update s3-block-public-access \
+  --auto-remediate true \
+  --max-severity medium</code></pre>
+        <div class="note">Test auto-remediation rules in a staging environment before applying them to production accounts.</div>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Permission denied errors during scan:</strong> Verify that the IAM role, Service Account, or SPN has the required read-only policies attached. Check for SCPs (Service Control Policies) or Azure Policy restrictions blocking the audit account. Run <code>workspace-posture diagnose auth --provider aws</code> to validate permissions.</p>
+        <p><strong>Scan timeouts on large environments:</strong> Accounts with thousands of resources may exceed default API rate limits. Increase the timeout threshold in your scan configuration or partition scans by organizational unit (OU) or resource group.</p>
+        <pre><code># Increase scan timeout to 30 minutes
+workspace-posture config set scan_timeout 1800</code></pre>
+        <p><strong>Missing findings for known misconfigurations:</strong> Ensure the specific resource type is included in your Scan Configuration. If using event-driven continuous scanning, verify that CloudTrail or Audit Log integrations are active and forwarding events to Workspace Posture Pro.</p>
+        <p><strong>False positives:</strong> Suppress expected configurations by adding exceptions. Use <code>workspace-posture exceptions add --finding-id XYZ --reason "Approved exception"</code>. Exceptions are tracked in the compliance report.</p>
+        <p><strong>Auto-remediation failed:</strong> Check the remediation role's permissions. The remediation role requires explicit write access to the target resource. Review the audit log under <code>/api/workspace-posture/remediation/logs</code> for the exact API error returned by the cloud provider.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Starter:</strong> 1 cloud provider, up to 500 resources, daily scans.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$149 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Team:</strong> Up to 3 providers, 5,000 resources, hourly scans, Slack/webhook alerts.</p>
+            </div>
+        </div>
+        <div class="pricing-card" style="margin-top:1rem;">
+            <div>
+                <div class="price">$399 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Enterprise:</strong> Unlimited providers &amp; resources, continuous event-driven scans, auto-remediation, custom compliance frameworks, dedicated support, SSO/SAML.</p>
+            </div>
+        </div>
+        <p>All plans include full API access, compliance reporting, and encrypted credential storage. No long-term contracts required. Volume discounts available for MSPs — contact <a href="mailto:sales@edgeiqlabs.com">sales@edgeiqlabs.com</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Workspace Posture Pro</h3><p>Cloud posture management, misconfiguration detection, and compliance monitoring across AWS, GCP, and Azure.</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">View Plans →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

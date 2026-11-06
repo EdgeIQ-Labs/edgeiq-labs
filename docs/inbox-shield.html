@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Inbox Shield Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Inbox Shield. AI-powered email triage, phishing detection, attachment scanning, and OAuth integration for Gmail and Outlook."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/inbox-shield.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Inbox Shield</h1>
+        <p>AI-powered email triage and phishing detection for Gmail and Outlook.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Individual plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Inbox Shield is an AI-powered email triage and phishing detection tool that connects directly to your Gmail or Outlook inbox via OAuth. It analyzes incoming emails in real time for phishing attempts, suspicious attachments, and social engineering tactics, then auto-categorizes every message into Safe, Suspicious, or Dangerous tiers. Designed for individuals, teams, and enterprises who need proactive email defense without manual filtering rules.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Real-time AI analysis of inbound email headers, body, and links</li>
+            <li>Three-tier auto-categorization: Safe, Suspicious, Dangerous</li>
+            <li>Social engineering and impersonation detection</li>
+            <li>Sandboxed attachment scanning with malware detonation</li>
+            <li>Automated triage actions: archive, flag, quarantine, forward</li>
+            <li>REST API for SIEM/SOAR integration</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>OAuth Connection</h3>
+        <p>Inbox Shield uses OAuth 2.0 to connect to your mailbox. No passwords are stored or transmitted. The connection flow takes under 60 seconds:</p>
+        <pre><code># 1. Navigate to the Inbox Shield dashboard
+# https://edgeiqlabs.com/inbox-shield/
+
+# 2. Click "Connect Gmail" or "Connect Outlook"
+
+# 3. Authenticate through your provider's native OAuth consent screen
+
+# 4. Grant the requested permission scopes
+
+# 5. Inbox Shield begins monitoring new inbound emails immediately</code></pre>
+
+        <h3>Permission Scopes</h3>
+        <p>Inbox Shield requests only the minimum scopes required for email analysis and triage. No send permissions are ever requested.</p>
+        <table>
+            <tr><th>Provider</th><th>Scope</th><th>Purpose</th></tr>
+            <tr><td>Gmail</td><td><code>gmail.readonly</code></td><td>Read email metadata, headers, and body for analysis</td></tr>
+            <tr><td>Gmail</td><td><code>gmail.modify</code></td><td>Apply labels, archive, or move messages based on triage rules</td></tr>
+            <tr><td>Outlook</td><td><code>Mail.Read</code></td><td>Read mail content and attachments for scanning</td></tr>
+            <tr><td>Outlook</td><td><code>Mail.ReadWrite</code></td><td>Move, flag, or categorize messages per triage rules</td></tr>
+        </table>
+        <div class="note">Inbox Shield never requests <code>Mail.Send</code> or any compose/draft scopes. The tool is read-and-organize only — it cannot send email on your behalf.</div>
+
+        <h2>Detection Engine</h2>
+        <p>The detection engine combines multiple analysis layers to evaluate every inbound email before it reaches your primary view.</p>
+        <h3>Analysis Pipeline</h3>
+        <table>
+            <tr><th>Layer</th><th>What It Checks</th></tr>
+            <tr><td>Header Forensics</td><td>SPF/DKIM/DMARC alignment, Return-Path mismatches, Received chain anomalies</td></tr>
+            <tr><td>NLP Body Analysis</td><td>Urgency language, credential harvesting patterns, brand impersonation, tone inconsistency</td></tr>
+            <tr><td>Link Inspection</td><td>URL reputation scoring, redirect chain following, typosquatting detection, newly registered domains</td></tr>
+            <tr><td>Sender Reputation</td><td>Historical sender behavior, domain age, IP blocklist cross-referencing</td></tr>
+            <tr><td>Social Engineering ML</td><td>Trained on known BEC (Business Email Compromise) and spear-phishing datasets to detect impersonation tactics</td></tr>
+        </table>
+
+        <h3>Tier Classification</h3>
+        <p>Each email receives a composite threat score from 0–100, mapped to three tiers:</p>
+        <table>
+            <tr><th>Tier</th><th>Score Range</th><th>Action</th></tr>
+            <tr><td><span class="badge badge-success">Safe</span></td><td>0–29</td><td>Delivered normally, no intervention</td></tr>
+            <tr><td><span class="badge badge-warning">Suspicious</span></td><td>30–69</td><td>Flagged with warning banner, optional quarantine</td></tr>
+            <tr><td><span class="badge badge-danger">Dangerous</span></td><td>70–100</td><td>Auto-quarantined, admin alert triggered</td></tr>
+        </table>
+
+        <h3>False Positive Handling</h3>
+        <p>No detection system is perfect. Inbox Shield provides multiple mechanisms to reduce and correct false positives:</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>User feedback loop:</strong> Mark any email as "Not Phishing" to retrain the model for your specific inbox patterns.</li>
+            <li><strong>Allowlists:</strong> Add trusted senders, domains, or IP ranges to bypass analysis entirely.</li>
+            <li><strong>Sensitivity slider:</strong> Adjust the threshold between tiers. Lower sensitivity reduces false positives at the cost of potentially missing novel attacks.</li>
+            <li><strong>Weekly digest:</strong> Review all flagged emails in a summary report to catch misclassifications early.</li>
+        </ul>
+
+        <h2>Triage Rules</h2>
+        <p>Beyond classification, Inbox Shield can take automated actions on emails based on their tier or custom conditions you define.</p>
+        <h3>Built-in Actions</h3>
+        <table>
+            <tr><th>Action</th><th>Description</th><th>Default Tier</th></tr>
+            <tr><td>Auto-archive</td><td>Move low-risk newsletters/promotions out of inbox automatically</td><td>Safe (optional)</td></tr>
+            <tr><td>Flag / Label</td><td>Apply visual indicators (Gmail labels, Outlook categories) for Suspicious mail</td><td>Suspicious</td></tr>
+            <tr><td>Quarantine</td><td>Move Dangerous emails to a held folder, preventing accidental clicks</td><td>Dangerous</td></tr>
+            <tr><td>Forward to security</td><td>Route copies of Suspicious/Dangerous emails to a designated security mailbox or webhook</td><td>Suspicious + Dangerous</td></tr>
+            <tr><td>Delete</td><td>Permanently remove confirmed phishing (disabled by default, opt-in only)</td><td>Dangerous (opt-in)</td></tr>
+        </table>
+
+        <h3>Custom Rule Builder</h3>
+        <pre><code># Example: Forward all emails with attachments from external domains
+# to the security team if scored Suspicious or above
+
+Rule:
+  condition:
+    - has_attachment: true
+    - sender_domain: not_in(allowed_domains)
+    - threat_score: >= 30
+  action:
+    - forward: security@company.com
+    - label: "Needs Review"
+    - quarantine: true</code></pre>
+        <div class="note">Custom rules are evaluated after the AI classification pass. They can escalate but never downgrade the AI-assigned tier.</div>
+
+        <h2>Attachment Scanning</h2>
+        <p>Email attachments are one of the most common malware delivery vectors. Inbox Shield intercepts and scans attachments before they reach your device.</p>
+        <h3>Scanning Pipeline</h3>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>Static analysis:</strong> File type validation (detects extension spoofing), hash lookup against known malware databases, YARA rule matching</li>
+            <li><strong>Sandbox detonation:</strong> Suspicious files are opened in an isolated cloud sandbox to observe runtime behavior — registry changes, network callbacks, file drops</li>
+            <li><strong>Macro inspection:</strong> Office documents (.docx, .xlsx, .pptm) are scanned for embedded VBA macros, obfuscated scripts, and DDEAUTO payloads</li>
+            <li><strong>Archive unpacking:</strong> Nested archives (.zip inside .rar inside .7z) are recursively extracted up to 5 levels deep</li>
+        </ul>
+
+        <h3>Supported File Types</h3>
+        <table>
+            <tr><th>Category</th><th>Extensions</th></tr>
+            <tr><td>Documents</td><td>.pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .rtf, .odt</td></tr>
+            <tr><td>Archives</td><td>.zip, .rar, .7z, .tar, .gz, .iso</td></tr>
+            <tr><td>Executables</td><td>.exe, .msi, .bat, .cmd, .ps1, .scr, .com</td></tr>
+            <tr><td>Scripts</td><td>.js, .vbs, .wsf, .py, .sh</td></tr>
+            <tr><td>Images</td><td>.jpg, .png, .gif, .svg (scanned for steganography/polyglot payloads)</td></tr>
+        </table>
+        <div class="note">Attachments exceeding 25 MB are hashed and checked against threat intel feeds but are not detonated in the sandbox due to resource constraints. Enterprise plans support up to 100 MB sandbox analysis.</div>
+
+        <h2>API Reference</h2>
+        <p>All Inbox Shield functionality is available via REST API when authenticated with your API key (found in Dashboard → Settings → API Keys).</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/inbox-shield/stats</code></td><td>Retrieve aggregate scan statistics and tier breakdowns</td></tr>
+            <tr><td>POST</td><td><code>/api/inbox-shield/scan</code></td><td>Submit a raw email (EML format) or email JSON for on-demand analysis</td></tr>
+            <tr><td>GET</td><td><code>/api/inbox-shield/rules</code></td><td>List active triage rules</td></tr>
+            <tr><td>POST</td><td><code>/api/inbox-shield/rules</code></td><td>Create a new custom triage rule</td></tr>
+            <tr><td>DELETE</td><td><code>/api/inbox-shield/rules/{id}</code></td><td>Remove a triage rule</td></tr>
+            <tr><td>GET</td><td><code>/api/inbox-shield/quarantine</code></td><td>List quarantined emails</td></tr>
+            <tr><td>POST</td><td><code>/api/inbox-shield/quarantine/{id}/release</code></td><td>Release a quarantined email back to inbox</td></tr>
+        </table>
+
+        <h3>Example: Get Stats</h3>
+        <pre><code>curl -X GET https://api.edgeiqlabs.com/api/inbox-shield/stats \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+        <p>Response:</p>
+        <pre><code>{
+  "period": "last_30_days",
+  "total_scanned": 4821,
+  "tiers": {
+    "safe": 4510,
+    "suspicious": 267,
+    "dangerous": 44
+  },
+  "attachments_scanned": 1203,
+  "malware_detected": 3,
+  "false_positives_reported": 12
+}</code></pre>
+
+        <h3>Example: Scan an Email</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/api/inbox-shield/scan \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "attacker@spoofed-domain.com",
+    "to": "user@company.com",
+    "subject": "Urgent: Verify your account",
+    "body": "Click here to verify your credentials immediately...",
+    "headers": { "Received": "from mx.spoofed-domain.com..." }
+  }'</code></pre>
+        <p>Response:</p>
+        <pre><code>{
+  "scan_id": "isc_8f3a2b1c",
+  "tier": "dangerous",
+  "threat_score": 87,
+  "findings": [
+    { "type": "sender_mismatch", "severity": "critical", "detail": "From header domain does not match SPF-authenticated domain" },
+    { "type": "urgency_language", "severity": "high", "detail": "Body contains credential-harvesting urgency patterns" },
+    { "type": "newly_registered_domain", "severity": "medium", "detail": "Sender domain registered 3 days ago" }
+  ],
+  "scanned_at": "2026-11-07T14:22:01Z"
+}</code></pre>
+
+        <h2>Compliance</h2>
+        <h3>GDPR Data Handling</h3>
+        <p>Inbox Shield processes personal data (email content) under strict GDPR compliance:</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>Lawful basis:</strong> Processing is performed under Legitimate Interest (security protection) and explicit user consent via OAuth grant.</li>
+            <li><strong>Data minimization:</strong> Only email fields necessary for threat analysis are processed. Marketing emails are classified by header/metadata alone when possible.</li>
+            <li><strong>Encryption:</strong> All email data is encrypted in transit (TLS 1.3) and at rest (AES-256).</li>
+            <li><strong>Processing location:</strong> EU customers' data is processed exclusively in EU-based data centers (Frankfurt, Amsterdam). US customers use US-East infrastructure.</li>
+            <li><strong>Right to erasure:</strong> Disconnecting your OAuth token triggers automatic deletion of all cached email data within 24 hours.</li>
+            <li><strong>DPA available:</strong> Data Processing Agreements are provided for Team and Enterprise plans upon request.</li>
+        </ul>
+
+        <h3>Email Retention Policies</h3>
+        <table>
+            <tr><th>Data Type</th><th>Retention Period</th><th>Notes</th></tr>
+            <tr><td>Full email content</td><td>Not stored</td><td>Analyzed in-memory, discarded after classification</td></tr>
+            <tr><td>Threat metadata (scores, findings)</td><td>90 days</td><td>Retained for trend analysis and weekly digests</td></tr>
+            <tr><td>Quarantined emails</td><td>30 days</td><td>Auto-deleted after 30 days unless manually released or extended by admin</td></tr>
+            <tr><td>Attachment hashes</td><td>1 year</td><td>SHA-256 hashes retained for threat intel correlation; file contents are not</td></tr>
+            <tr><td>Audit logs</td><td>1 year</td><td>Actions taken (quarantine, release, rule changes) for compliance reporting</td></tr>
+        </table>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>OAuth connection fails or shows "Access Denied":</strong> Ensure your organization's admin hasn't blocked third-party app access. For Google Workspace, an admin must allowlist Inbox Shield's OAuth client ID in Admin Console → Security → API Controls. For Microsoft 365, check Azure AD Conditional Access policies that may block consent flows.</p>
+        <p><strong>OAuth token expired / stopped scanning:</strong> Tokens can expire if unused for 6 months or if you changed your password. Reconnect from the Inbox Shield dashboard — click "Reconnect" next to your mailbox. No historical data is lost.</p>
+        <p><strong>Legitimate emails marked as Dangerous:</strong> This usually happens with internal tools that send automated emails with link-heavy content. Add the sending address or domain to your Allowlist under Settings → Trusted Senders. You can also lower the sensitivity slider by one notch.</p>
+        <p><strong>Phishing emails reaching inbox unflagged:</strong> Novel zero-day phishing campaigns may briefly evade detection. Use the "Report Miss" button on any undetected email — this immediately feeds the sample back into our ML pipeline. Enterprise customers can enable Enhanced Mode for deeper NLP analysis (adds ~200ms latency per email).</p>
+        <p><strong>Attachments not scanning:</strong> Verify the file size is under the plan limit (25 MB Individual/Team, 100 MB Enterprise). Password-protected archives cannot be scanned — these are automatically classified as Suspicious with a note recommending manual review.</p>
+        <p><strong>API returns 401 Unauthorized:</strong> Confirm your API key is active and hasn't been rotated. Keys expire after 1 year by default. Generate a new key from Dashboard → Settings → API Keys.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card" style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;align-items:center;">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Individual</strong> — 1 mailbox, standard scanning</p>
+            </div>
+            <div>
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Team</strong> — Up to 10 mailboxes, shared rules, admin dashboard</p>
+            </div>
+            <div>
+                <div class="price">$149 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Enterprise</strong> — Unlimited mailboxes, SSO, DPA, dedicated support</p>
+            </div>
+        </div>
+        <table>
+            <tr><th>Feature</th><th>Individual ($19/mo)</th><th>Team ($49/mo)</th><th>Enterprise ($149/mo)</th></tr>
+            <tr><td>Connected mailboxes</td><td>1</td><td>Up to 10</td><td>Unlimited</td></tr>
+            <tr><td>AI phishing detection</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Attachment sandbox scanning</td><td>25 MB limit</td><td>25 MB limit</td><td>100 MB limit</td></tr>
+            <tr><td>Custom triage rules</td><td>5 rules</td><td>Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Shared team allowlists</td><td>—</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Admin dashboard</td><td>—</td><td>✓</td><td>✓</td></tr>
+            <tr><td>API access</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>SSO (SAML/OIDC)</td><td>—</td><td>—</td><td>✓</td></tr>
+            <tr><td>DPA &amp; compliance reports</td><td>—</td><td>—</td><td>✓</td></tr>
+            <tr><td>Support</td><td>Email</td><td>Email + Chat</td><td>Dedicated CSM + SLA</td></tr>
+        </table>
+        <p>All plans include unlimited email scanning, automatic updates to detection models, and GDPR-compliant data handling. Cancel anytime — no contracts. Volume discounts available for 50+ seats at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Inbox Shield</h3><p>AI email triage, phishing detection, and attachment scanning for Gmail &amp; Outlook</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

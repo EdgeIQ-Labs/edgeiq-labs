@@ -1,0 +1,165 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cert Alert Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Workspace Posture Pro — Cert Alert. SSL/TLS certificate expiry monitoring, misconfiguration detection, and automated alerts."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/cert-alert.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Workspace Posture Pro &mdash; Cert Alert</h1>
+        <p>Automated SSL/TLS certificate expiry monitoring and misconfiguration detection across all your domains.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$1 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 10 certificates</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Cert Alert is the certificate-monitoring variant of EdgeIQ Labs Workspace Posture Pro. It continuously checks SSL/TLS certificates across your domains for upcoming expiry and common misconfigurations, sending timely alerts so you never face an unexpected outage due to a lapsed cert. Designed for DevOps teams, sysadmins, and anyone managing multiple domains who needs reliable, hands-off certificate visibility.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Monitor SSL/TLS certificate expiry across unlimited domains</li>
+            <li>Automated alerts at 30, 14, 7, and 1 day(s) before expiry</li>
+            <li>Detect misconfigurations: weak ciphers, incomplete chains, mismatched hostnames, expired intermediates</li>
+            <li>Support for public CAs, private CAs, and custom certificate sources</li>
+            <li>REST API for integration into CI/CD pipelines and SOAR workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Domains</h3>
+        <p>Add domains individually or in bulk via the CLI or dashboard. Cert Alert resolves each domain, connects over TLS, and extracts the presented certificate chain automatically.</p>
+        <pre><code># Add a single domain
+cert-alert add example.com
+
+# Add multiple domains from a file
+cert-alert add --file domains.txt
+
+# Add with explicit port (non-standard HTTPS)
+cert-alert add mail.example.com:465
+
+# List all monitored domains
+cert-alert list</code></pre>
+
+        <h3>Certificate Sources</h3>
+        <p>Cert Alert supports multiple certificate sources beyond live TLS handshakes:</p>
+        <table>
+            <tr><th>Source</th><th>Flag / Config</th><th>Description</th></tr>
+            <tr><td>Live TLS</td><td><code>--source tls</code></td><td>Default. Connects to the domain and reads the served certificate chain.</td></tr>
+            <tr><td>Local PEM file</td><td><code>--source file --path /etc/ssl/cert.pem</code></td><td>Monitor a certificate file on disk directly.</td></tr>
+            <tr><td>Kubernetes Secret</td><td><code>--source k8s-secret --namespace default --secret tls-cert</code></td><td>Pull and monitor certs stored as K8s TLS secrets.</td></tr>
+            <tr><td>AWS ACM</td><td><code>--source acm --region us-east-1</code></td><td>Monitor certificates managed in AWS Certificate Manager.</td></tr>
+            <tr><td>Custom CA Bundle</td><td><code>--ca-bundle /path/to/ca.pem</code></td><td>Validate against a private or custom CA bundle.</td></tr>
+        </table>
+        <div class="note">When using non-TLS sources, Cert Alert still applies all misconfiguration checks against the provided certificate data.</div>
+
+        <h2>Alert Configuration</h2>
+        <p>Cert Alert ships with sensible defaults: notifications fire at <strong>30, 14, 7, and 1 day(s)</strong> before a certificate expires. You can customize thresholds and delivery channels per domain or globally.</p>
+        <pre><code># Set custom alert thresholds (days before expiry)
+cert-alert config set --thresholds 60,30,14,7,1
+
+# Configure webhook alerts (Slack, Discord, generic)
+cert-alert config set --alert-webhook https://hooks.slack.com/services/xxx
+
+# Configure email alerts
+cert-alert config set --alert-email ops@example.com
+
+# Test alert delivery
+cert-alert alert test
+
+# View current alert configuration
+cert-alert config show</code></pre>
+        <h3>Alert Payload</h3>
+        <p>Webhook payloads are JSON and include the domain, expiry date, days remaining, issuer, and any detected misconfigurations:</p>
+        <pre><code>{
+  "event": "cert_expiry_warning",
+  "domain": "example.com",
+  "expires_at": "2026-12-07T00:00:00Z",
+  "days_remaining": 30,
+  "issuer": "Let's Encrypt Authority X3",
+  "misconfigurations": [],
+  "severity": "warning"
+}</code></pre>
+
+        <h2>Misconfiguration Detection</h2>
+        <p>Beyond expiry, Cert Alert inspects every monitored certificate for common TLS misconfigurations that degrade security or cause client trust failures.</p>
+        <table>
+            <tr><th>Check</th><th>Severity</th><th>Description</th></tr>
+            <tr><td>Incomplete chain</td><td><span class="badge badge-danger">Critical</span></td><td>Intermediate certificates missing; clients may fail to build a trust path.</td></tr>
+            <tr><td>Hostname mismatch</td><td><span class="badge badge-danger">Critical</span></td><td>Certificate CN/SAN does not match the monitored domain.</td></tr>
+            <tr><td>Expired intermediate</td><td><span class="badge badge-danger">Critical</span></td><td>An intermediate CA in the chain has expired even if the leaf is valid.</td></tr>
+            <tr><td>Weak signature algorithm</td><td><span class="badge badge-warning">High</span></td><td>SHA-1 or other deprecated signature algorithms detected.</td></tr>
+            <tr><td>Short key length</td><td><span class="badge badge-warning">High</span></td><td>RSA keys under 2048 bits or ECDSA keys under 256 bits.</td></tr>
+            <tr><td>Self-signed</td><td><span class="badge badge-warning">High</span></td><td>Certificate is self-signed and not trusted by public roots.</td></tr>
+            <tr><td>TLS 1.0/1.1 support</td><td><span class="badge badge-info">Medium</span></td><td>Server negotiates deprecated TLS versions alongside the cert.</td></tr>
+            <tr><td>No OCSP stapling</td><td><span class="badge badge-info">Low</span></td><td>OCSP stapling not enabled; revocation checks rely on client fetching.</td></tr>
+        </table>
+        <pre><code># Run a one-time misconfiguration audit
+cert-alert audit example.com
+
+# Audit all monitored domains
+cert-alert audit --all
+
+# Export audit results as JSON
+cert-alert audit --all --format json > audit-report.json</code></pre>
+        <div class="note">Misconfiguration checks run alongside every scheduled monitoring cycle. Alerts include both expiry warnings and new misconfiguration findings.</div>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>cert-alert serve --port 8401</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/certs</code></td><td>List all monitored certificates and their status</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/certs</code></td><td>Add a new domain or certificate source to monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/certs/{id}</code></td><td>Retrieve details for a specific certificate</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/certs/{id}</code></td><td>Remove a certificate from monitoring</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/certs/{id}/audit</code></td><td>Trigger an on-demand misconfiguration audit</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/alerts</code></td><td>List recent alert history</td></tr>
+            <tr><td>PUT</td><td><code>/api/v1/config</code></td><td>Update alert thresholds and delivery channels</td></tr>
+        </table>
+        <h3>Example: Add a Domain via API</h3>
+        <pre><code>curl -X POST http://localhost:8401/api/v1/certs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "domain": "example.com",
+    "source": "tls",
+    "port": 443,
+    "alert_thresholds": [30, 14, 7, 1]
+  }'</code></pre>
+        <h3>Example: Retrieve Certificate Status</h3>
+        <pre><code>curl http://localhost:8401/api/v1/certs/abc123</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Certificate shows as expired but site works fine:</strong> The server may be serving a different certificate than expected (e.g., SNI mismatch). Use <code>cert-alert audit example.com --verbose</code> to inspect the full chain and verify SNI behavior.</p>
+        <p><strong>Connection refused or timeout during check:</strong> Ensure the target port is open and reachable from the Cert Alert host. If behind a firewall, whitelist the monitoring IP or use a local agent deployment.</p>
+        <p><strong>Alerts not firing at expected thresholds:</strong> Verify your configuration with <code>cert-alert config show</code>. Check <code>~/.edgeiq/logs/cert-alert.log</code> for delivery errors. Test manually with <code>cert-alert alert test</code>.</p>
+        <p><strong>False positive on incomplete chain:</strong> Some servers intentionally omit cross-signed roots. If the chain validates correctly in browsers, suppress the finding with <code>cert-alert config set --ignore-check incomplete-chain --domain example.com</code>.</p>
+        <p><strong>Private CA certificates flagged as untrusted:</strong> Provide your internal CA bundle with <code>--ca-bundle /path/to/internal-ca.pem</code> so Cert Alert can validate against your private root.</p>
+        <p><strong>Kubernetes secret access denied:</strong> Ensure the service account running Cert Alert has <code>get</code> permissions on <code>secrets</code> in the target namespace.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$1 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; up to 10 certificates</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; up to 100 certificates</p>
+            </div>
+        </div>
+        <p>Both plans include automated expiry alerts at 30, 14, 7, and 1 day intervals, full misconfiguration detection, API access, and webhook/email delivery. Need more than 100 certificates? Contact us at <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> for enterprise pricing.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Cert Alert</h3><p>SSL/TLS certificate monitoring, expiry alerts, and misconfiguration detection starting at $1/mo</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Webhook Integrations Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Webhook Integrations. Push findings to Jira, ServiceNow, Slack, and custom endpoints with signature verification and retry logic."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/webhook-integrations.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Webhook Integrations</h1>
+        <p>Push EdgeIQ findings directly to your ticketing systems, chat platforms, and custom endpoints with verified, reliable delivery.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$7 <span>/ month</span></div>
+                <p style="margin:0;">Add-on to any EdgeIQ plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Enable Webhooks</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Webhook Integrations allow EdgeIQ findings to be pushed automatically to external systems when new vulnerabilities are detected, severity changes occur, or monitoring thresholds are breached. Includes HMAC-SHA256 signature verification, exponential backoff retry logic, and customizable payload templates for seamless integration with existing workflows.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Native integrations for Jira, ServiceNow, and Slack</li>
+            <li>Generic webhook support for custom endpoints</li>
+            <li>HMAC-SHA256 signature verification on every payload</li>
+            <li>Automatic retry with exponential backoff (up to 8 attempts)</li>
+            <li>Customizable payload schemas per destination</li>
+            <li>Delivery logs and failure alerts via dashboard</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Configuring a Webhook Endpoint</h3>
+        <pre><code># Via CLI
+edgeiq webhooks add \
+  --name "Production Jira" \
+  --url https://your-org.atlassian.net/rest/api/3/issue \
+  --secret whsec_your_signing_secret \
+  --template jira
+
+# Via API
+curl -X POST https://api.edgeiqlabs.com/v1/webhooks \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Security Slack Channel",
+    "url": "https://hooks.slack.com/services/T00/B00/xxx",
+    "template": "slack",
+    "events": ["finding.created", "severity.changed"]
+  }'</code></pre>
+        <div class="note">Store your signing secret securely. EdgeIQ never displays the full secret after creation. Use <code>edgeiq webhooks rotate-secret &lt;id&gt;</code> to regenerate if compromised.</div>
+
+        <h2>Payload Schema</h2>
+        <p>All webhook payloads follow a consistent envelope format. Fields vary slightly by template but maintain this core structure:</p>
+        <pre><code>{
+  "event": "finding.created",
+  "timestamp": "2026-11-06T14:32:00Z",
+  "webhook_id": "wh_abc123",
+  "data": {
+    "finding_id": "find_xyz789",
+    "asset": "192.168.1.10",
+    "port": 443,
+    "service": "nginx/1.24.0",
+    "severity": "high",
+    "title": "TLS 1.0 Enabled",
+    "description": "Server supports deprecated TLS 1.0 protocol...",
+    "recommendation": "Disable TLS 1.0 and 1.1 in nginx config",
+    "cve_ids": ["CVE-2011-3389"],
+    "scan_id": "scan_def456"
+  }
+}</code></pre>
+        <table>
+            <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            <tr><td><code>event</code></td><td>string</td><td>Trigger type: <code>finding.created</code>, <code>severity.changed</code>, <code>monitor.alert</code></td></tr>
+            <tr><td><code>timestamp</code></td><td>ISO 8601</td><td>UTC timestamp of the event</td></tr>
+            <tr><td><code>webhook_id</code></td><td>string</td><td>Unique identifier for this webhook configuration</td></tr>
+            <tr><td><code>data</code></td><td>object</td><td>Finding details (schema varies by template)</td></tr>
+        </table>
+
+        <h2>Signature Verification</h2>
+        <p>Every webhook request includes an <code>X-EdgeIQ-Signature</code> header containing an HMAC-SHA256 signature of the raw request body. Always verify this signature before processing payloads to prevent spoofing.</p>
+        <pre><code># Python verification example
+import hmac, hashlib
+
+def verify_signature(payload_body, signature_header, secret):
+    expected = hmac.new(
+        secret.encode(),
+        payload_body,
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(expected, signature_header)
+
+# Usage
+if not verify_signature(request.body, request.headers['X-EdgeIQ-Signature'], WEBHOOK_SECRET):
+    raise ValueError("Invalid signature")</code></pre>
+        <div class="note">Use constant-time comparison (<code>hmac.compare_digest</code>) to prevent timing attacks. Never use <code>==</code> for signature validation.</div>
+
+        <h2>Retry Logic</h2>
+        <p>Failed deliveries are retried automatically with exponential backoff:</p>
+        <table>
+            <tr><th>Attempt</th><th>Delay</th><th>Cumulative Time</th></tr>
+            <tr><td>1</td><td>Immediate</td><td>0s</td></tr>
+            <tr><td>2</td><td>30 seconds</td><td>30s</td></tr>
+            <tr><td>3</td><td>2 minutes</td><td>~2.5 min</td></tr>
+            <tr><td>4</td><td>15 minutes</td><td>~17.5 min</td></tr>
+            <tr><td>5</td><td>1 hour</td><td>~1.3 hr</td></tr>
+            <tr><td>6</td><td>4 hours</td><td>~5.3 hr</td></tr>
+            <tr><td>7</td><td>12 hours</td><td>~17.3 hr</td></tr>
+            <tr><td>8</td><td>24 hours</td><td>~41.3 hr</td></tr>
+        </table>
+        <p>After 8 failed attempts, the webhook is marked as failing and an alert is sent to your account email. Retries trigger on HTTP 5xx errors, timeouts (>10s), and connection failures. HTTP 4xx responses are treated as permanent failures and not retried.</p>
+
+        <h2>Supported Destinations</h2>
+        <h3>Jira</h3>
+        <p>Automatically creates issues in specified projects with severity-based priority mapping. Supports Jira Cloud and Data Center.</p>
+        <pre><code>edgeiq webhooks add \
+  --name "Jira Security Queue" \
+  --url https://your-org.atlassian.net/rest/api/3/issue \
+  --secret whsec_jira_secret \
+  --template jira \
+  --config '{"project_key":"SEC","issue_type":"Bug","priority_map":{"critical":"Highest","high":"High"}}'</code></pre>
+
+        <h3>ServiceNow</h3>
+        <p>Creates incidents or security tickets via ServiceNow REST API. Maps severity to urgency/impact fields.</p>
+        <pre><code>edgeiq webhooks add \
+  --name "ServiceNow SecOps" \
+  --url https://instance.service-now.com/api/now/table/incident \
+  --secret whsec_snow_secret \
+  --template servicenow \
+  --config '{"assignment_group":"security-ops","urgency_field":"severity"}'</code></pre>
+
+        <h3>Slack</h3>
+        <p>Posts formatted messages to channels with color-coded severity indicators and action buttons.</p>
+        <pre><code>edgeiq webhooks add \
+  --name "#security-alerts" \
+  --url https://hooks.slack.com/services/T00/B00/xxx \
+  --template slack \
+  --config '{"channel":"#security-alerts","mention_on_critical":"@security-team"}'</code></pre>
+
+        <h3>Generic HTTP</h3>
+        <p>Send raw JSON payloads to any HTTPS endpoint. Useful for custom SOAR playbooks, internal dashboards, or SIEM ingestion.</p>
+        <pre><code>edgeiq webhooks add \
+  --name "Internal SIEM" \
+  --url https://siem.internal.corp/api/v1/events \
+  --secret whsec_custom_secret \
+  --template generic \
+  --headers '{"X-API-Key":"${env:SIEM_KEY}"}'</code></pre>
+
+        <h2>API Reference</h2>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/v1/webhooks</code></td><td>List all configured webhooks</td></tr>
+            <tr><td>POST</td><td><code>/v1/webhooks</code></td><td>Create a new webhook</td></tr>
+            <tr><td>GET</td><td><code>/v1/webhooks/{id}</code></td><td>Get webhook details</td></tr>
+            <tr><td>PATCH</td><td><code>/v1/webhooks/{id}</code></td><td>Update webhook configuration</td></tr>
+            <tr><td>DELETE</td><td><code>/v1/webhooks/{id}</code></td><td>Delete a webhook</td></tr>
+            <tr><td>POST</td><td><code>/v1/webhooks/{id}/test</code></td><td>Send test payload</td></tr>
+            <tr><td>GET</td><td><code>/v1/webhooks/{id}/deliveries</code></td><td>View delivery history</td></tr>
+            <tr><td>POST</td><td><code>/v1/webhooks/{id}/rotate-secret</code></td><td>Regenerate signing secret</td></tr>
+        </table>
+
+        <h3>Example: Test Webhook Delivery</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/webhooks/wh_abc123/test \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"event": "finding.created"}'
+
+# Response
+{
+  "delivery_id": "del_test789",
+  "status": "success",
+  "http_status": 200,
+  "latency_ms": 142
+}</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Signature verification fails:</strong> Ensure you're hashing the raw request body exactly as received (no re-encoding). Verify the secret matches what's stored in EdgeIQ dashboard. Check for trailing whitespace in copied secrets.</p>
+        <p><strong>Webhook returns 401/403:</strong> For Jira/ServiceNow, verify API tokens have write permissions. For Slack, ensure the app has <code>chat:write</code> scope and is added to the target channel.</p>
+        <p><strong>Delays in notification:</strong> Check delivery logs at <code>/v1/webhooks/{id}/deliveries</code>. High latency may indicate endpoint throttling. Consider increasing timeout threshold via support request.</p>
+        <p><strong>Duplicate tickets created:</strong> Implement idempotency using <code>finding_id</code> from payload. Most destinations support deduplication keys in their APIs.</p>
+        <p><strong>Payload missing fields:</strong> Verify template matches destination. Generic template sends full schema; platform-specific templates may omit redundant fields. Use <code>--template generic</code> to debug field availability.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$7 <span>/ month</span></div>
+                <p style="margin:0;">Add-on to any EdgeIQ plan. Unlimited webhooks &amp; deliveries.</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Enable Now</a>
+        </div>
+        <p>Includes unlimited webhook configurations, all destination templates, signature verification, retry logic, delivery analytics, and priority support. Enterprise volume discounts available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Enable Webhook Integrations</h3><p>Push findings to Jira, ServiceNow, Slack, and custom endpoints</p><a href="/products/#add-ons" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VPS Hosting Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs VPS Hosting. Hardened Linux virtual private servers with DDoS protection, daily backups, and Wazuh SIEM integration."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/vps-hosting.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>VPS Hosting</h1>
+        <p>Hardened Linux virtual private servers with built-in DDoS protection, daily backups, and Wazuh SIEM integration.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$4 <span>/ month</span></div>
+                <p style="margin:0;">Starting price &mdash; scale as you grow</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>EdgeIQ Labs VPS Hosting provides security-hardened Linux virtual private servers designed for developers, startups, and enterprises that need reliable infrastructure without managing physical hardware. Every server ships with network-level DDoS mitigation, automated daily backups, and optional Wazuh SIEM integration for real-time threat monitoring.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>KVM-based virtualization with dedicated resources</li>
+            <li>Choice of hardened Linux distributions (Ubuntu, Debian, AlmaLinux)</li>
+            <li>Network-level DDoS protection included on all plans</li>
+            <li>Automated daily backups with one-click restore</li>
+            <li>Wazuh SIEM agent pre-installed or available via one-click deploy</li>
+            <li>REST API for full lifecycle management</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>OS Selection</h3>
+        <p>Choose your operating system during provisioning. All images are minimal, hardened builds with unnecessary services disabled by default.</p>
+        <table>
+            <tr><th>OS</th><th>Version</th><th>Description</th></tr>
+            <tr><td>Ubuntu</td><td><code>22.04 LTS / 24.04 LTS</code></td><td>General-purpose, broad package support</td></tr>
+            <tr><td>Debian</td><td><code>12 (Bookworm)</code></td><td>Lightweight, stability-focused</td></tr>
+            <tr><td>AlmaLinux</td><td><code>9</code></td><td>RHEL-compatible, enterprise workloads</td></tr>
+        </table>
+
+        <h3>SSH Key Setup</h3>
+        <p>Password authentication is disabled by default. Add your SSH public key during provisioning or via the dashboard after deployment.</p>
+        <pre><code># Generate an Ed25519 key pair (recommended)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Copy your public key
+cat ~/.ssh/id_ed25519.pub
+
+# Paste into the EdgeIQ dashboard under Server > SSH Keys
+# Or add via API at provisioning time</code></pre>
+        <div class="note">RSA keys are supported but Ed25519 is recommended for performance and security. Password auth can be re-enabled in <code>/etc/ssh/sshd_config</code> but is strongly discouraged.</div>
+
+        <h2>Server Hardening</h2>
+        <p>All EdgeIQ VPS instances ship with a CIS Benchmark-aligned hardening profile applied automatically. This reduces attack surface without requiring manual configuration.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Firewall enabled (UFW/nftables) with only SSH (22) open by default</li>
+            <li>Root login disabled; sudo user created at provisioning</li>
+            <li>Fail2ban configured for SSH brute-force protection</li>
+            <li>Automatic security updates enabled (unattended-upgrades)</li>
+            <li>Kernel hardening via sysctl (ASLR, SYN cookies, ICMP rate limiting)</li>
+            <li>Auditd logging enabled for privilege escalation events</li>
+        </ul>
+        <pre><code># View current hardening status
+edgeiq-hardening status
+
+# Re-apply hardening profile after custom changes
+sudo edgeiq-hardening apply --profile cis-l1</code></pre>
+
+        <h2>DDoS Protection</h2>
+        <p>Every VPS plan includes always-on network-layer DDoS protection. Traffic is scrubbed at the edge before reaching your server, mitigating volumetric attacks (SYN floods, UDP amplification, DNS reflection) without manual intervention.</p>
+        <table>
+            <tr><th>Feature</th><th>Details</th></tr>
+            <tr><td>Mitigation capacity</td><td>Up to 1 Tbps network-level filtering</td></tr>
+            <tr><td>Detection</td><td>Automated anomaly detection, zero manual trigger required</td></tr>
+            <tr><td>Latency impact</td><td>&lt;1ms added latency during normal operation</td></tr>
+            <tr><td>Layer 7 protection</td><td>Available via optional reverse proxy add-on</td></tr>
+            <tr><td>Alerts</td><td>Email and webhook notifications on mitigation events</td></tr>
+        </table>
+        <div class="note">DDoS protection covers inbound traffic to your server's IP. Outbound abuse is monitored separately and may result in temporary suspension per our AUP.</div>
+
+        <h2>Daily Backups</h2>
+        <p>Automated snapshots run daily at a configurable window. Backups are stored in a geographically separate region and retained for 7 days on all plans.</p>
+        <pre><code># List available backups
+edgeiq-backup list
+
+# Restore from a specific snapshot
+edgeiq-backup restore --snapshot 2026-11-06T03:00:00Z
+
+# Configure backup window
+edgeiq-backup config --window 02:00-04:00 --timezone America/New_York</code></pre>
+        <table>
+            <tr><th>Plan</th><th>Retention</th><th>Storage</th></tr>
+            <tr><td>Nano ($4/mo)</td><td>7 days</td><td>10 GB backup storage</td></tr>
+            <tr><td>Micro ($9/mo)</td><td>14 days</td><td>25 GB backup storage</td></tr>
+            <tr><td>Small ($19/mo)</td><td>30 days</td><td>50 GB backup storage</td></tr>
+        </table>
+
+        <h2>Wazuh Integration</h2>
+        <p>Wazuh SIEM provides real-time intrusion detection, log analysis, file integrity monitoring, and compliance reporting. The Wazuh agent can be deployed during provisioning or installed post-deployment.</p>
+        <pre><code># One-click install during provisioning (dashboard or API)
+# Or install manually post-deployment:
+curl -s https://packages.wazuh.com/4.x/wazuh-agent-install.sh | sudo bash -s -- \
+  --manager-ip wazuh-mgr.edgeiqlabs.com \
+  --agent-name $(hostname)
+
+# Verify agent connection
+sudo /var/ossec/bin/agent_control -l</code></pre>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Pre-configured rulesets for CIS, NIST 800-53, and PCI DSS</li>
+            <li>File integrity monitoring on <code>/etc</code>, <code>/usr/bin</code>, <code>/usr/sbin</code></li>
+            <li>Log collection for auth, syslog, auditd, and application logs</li>
+            <li>Active response: automatic IP blocking on repeated failed auth</li>
+            <li>Dashboard access via EdgeIQ portal or self-hosted Wazuh manager</li>
+        </ul>
+        <div class="note">Wazuh integration is included free on Micro and Small plans. Nano plan users can add it for $2/month.</div>
+
+        <h2>API Reference</h2>
+        <p>Manage your VPS lifecycle programmatically via the EdgeIQ REST API. Authenticate using your API key from the dashboard.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/servers</code></td><td>List all VPS instances</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/servers</code></td><td>Provision a new VPS</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/servers/{id}</code></td><td>Get server details</td></tr>
+            <tr><td>PATCH</td><td><code>/api/v1/servers/{id}</code></td><td>Update server (resize, rename)</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/servers/{id}</code></td><td>Destroy a server</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/servers/{id}/reboot</code></td><td>Reboot instance</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/servers/{id}/power-off</code></td><td>Graceful shutdown</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/servers/{id}/backups</code></td><td>List backups for a server</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/servers/{id}/restore</code></td><td>Restore from a backup</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/servers/{id}/ddos-events</code></td><td>View DDoS mitigation history</td></tr>
+        </table>
+        <h3>Example: Provision a Server via API</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/api/v1/servers \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "plan": "nano",
+    "os": "ubuntu-24.04",
+    "region": "us-east-1",
+    "ssh_keys": ["ssh-ed25519 AAAA..."],
+    "wazuh": true,
+    "hostname": "web-prod-01"
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Cannot SSH into server:</strong> Verify your SSH key was added during provisioning. Check that port 22 isn't blocked by your local firewall. Use the web console in the EdgeIQ dashboard as a fallback.</p>
+        <p><strong>Backup restore fails:</strong> Ensure the target snapshot exists with <code>edgeiq-backup list</code>. Restores require the server to be powered off first. Check available backup storage quota for your plan tier.</p>
+        <p><strong>Wazuh agent shows disconnected:</strong> Verify outbound connectivity to <code>wazuh-mgr.edgeiqlabs.com:1514</code>. Check <code>/var/ossec/logs/ossec.log</code> for registration errors. Re-register with <code>sudo /var/ossec/bin/agent-auth -m wazuh-mgr.edgeiqlabs.com</code>.</p>
+        <p><strong>High latency during DDoS event:</strong> Mitigation activates within seconds. If latency persists beyond 5 minutes, check the DDoS events dashboard for ongoing attack patterns. Contact support if mitigation appears ineffective.</p>
+        <p><strong>Server won't boot after hardening:</strong> Boot into rescue mode from the dashboard, mount the filesystem, and revert <code>/etc/ssh/sshd_config</code> or sysctl changes. Run <code>edgeiq-hardening rollback</code> from rescue shell.</p>
+
+        <h2>Pricing</h2>
+        <table>
+            <tr><th>Plan</th><th>Price</th><th>vCPU</th><th>RAM</th><th>Storage</th><th>Bandwidth</th></tr>
+            <tr><td>Nano</td><td><strong>$4/mo</strong></td><td>1</td><td>1 GB</td><td>25 GB SSD</td><td>1 TB</td></tr>
+            <tr><td>Micro</td><td><strong>$9/mo</strong></td><td>1</td><td>2 GB</td><td>50 GB SSD</td><td>2 TB</td></tr>
+            <tr><td>Small</td><td><strong>$19/mo</strong></td><td>2</td><td>4 GB</td><td>100 GB SSD</td><td>4 TB</td></tr>
+        </table>
+        <p>All plans include DDoS protection, daily backups, SSH key authentication, and server hardening. Wazuh SIEM is included on Micro and Small plans. Upgrade or downgrade at any time — billing adjusts prorated.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Deploy Your VPS</h3><p>Hardened Linux servers with DDoS protection, backups, and SIEM — starting at $4/month.</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

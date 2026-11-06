@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Subdomain Takeover Scanner Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Subdomain Takeover Scanner. Detect dangling DNS records pointing to deleted cloud services (S3, Heroku, etc.) before attackers hijack them.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/subdomain-takeover.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Subdomain Takeover Scanner</h1>
+        <p>Identify and remediate dangling DNS records pointing to decommissioned cloud services before attackers exploit them.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 5 root domains</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Subdomain Takeover Scanner continuously monitors your DNS infrastructure for dangling CNAME, A, AAAA, NS, and MX records that point to deleted or unclaimed cloud resources. When a service like an S3 bucket, Heroku app, GitHub Pages site, or Azure endpoint is removed but its DNS record remains, attackers can register the same resource name and hijack the subdomain to serve malicious content, steal credentials, or bypass email security controls.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Detects takeovers across 40+ cloud providers (AWS, GCP, Azure, Heroku, Shopify, GitHub, etc.)</li>
+            <li>Supports CNAME, A, AAAA, NS, and MX record types</li>
+            <li>Automatic risk scoring based on record type, provider, and exploitability</li>
+            <li>Step-by-step remediation guidance per finding</li>
+            <li>REST API for integration into vulnerability management and SOAR workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Root Domains</h3>
+        <p>Add each root domain you want to monitor. The scanner enumerates all subdomains via certificate transparency logs, DNS brute-force, and passive reconnaissance before checking each one for takeover conditions.</p>
+        <pre><code># Add a root domain via CLI
+subtakeover domain add example.com
+
+# Add multiple domains from a file
+subtakeover domain add --file domains.txt
+
+# List monitored domains
+subtakeover domain list</code></pre>
+
+        <h3>DNS Provider Integration</h3>
+        <p>Connect your DNS provider to enable automatic remediation and real-time monitoring of DNS changes. Supported providers:</p>
+        <table>
+            <tr><th>Provider</th><th>Auth Method</th><th>Auto-Remediation</th></tr>
+            <tr><td>Cloudflare</td><td>API Token</td><td>Yes</td></tr>
+            <tr><td>AWS Route53</td><td>IAM Credentials / IRSA</td><td>Yes</td></tr>
+            <tr><td>Google Cloud DNS</td><td>Service Account JSON</td><td>Yes</td></tr>
+            <tr><td>Azure DNS</td><td>Service Principal</td><td>Yes</td></tr>
+            <tr><td>DigitalOcean</td><td>API Token</td><td>Yes</td></tr>
+            <tr><td>Namecheap</td><td>API Key + Whitelisted IP</td><td>No (read-only)</td></tr>
+            <tr><td>GoDaddy</td><td>API Key + Secret</td><td>No (read-only)</td></tr>
+        </table>
+        <pre><code># Configure DNS provider credentials
+subtakeover provider add cloudflare --token $CF_API_TOKEN
+
+# Verify connectivity
+subtakeover provider test cloudflare</code></pre>
+        <div class="note">Credentials are encrypted at rest using AES-256-GCM with a machine-bound key. No plaintext secrets are stored on disk.</div>
+
+        <h2>Detection Logic</h2>
+        <p>The scanner evaluates each DNS record against a fingerprint database of known vulnerable cloud service endpoints. Detection follows a three-stage pipeline:</p>
+        <ol>
+            <li><strong>Enumeration:</strong> Discover all subdomains via CT logs, DNS zone transfers (when permitted), wordlist brute-force, and passive data sources.</li>
+            <li><strong>Resolution:</strong> Resolve each subdomain and classify the record type (CNAME, A, AAAA, NS, MX).</li>
+            <li><strong>Fingerprint Matching:</strong> Compare resolved targets against provider-specific signatures indicating a deleted or unclaimed resource.</li>
+        </ol>
+
+        <h3>Supported Providers &amp; Signatures</h3>
+        <table>
+            <tr><th>Provider</th><th>Record Type</th><th>Dangling Indicator</th></tr>
+            <tr><td>AWS S3</td><td>CNAME</td><td><code>s3.amazonaws.com</code> + NoSuchBucket response</td></tr>
+            <tr><td>AWS Elastic Beanstalk</td><td>CNAME</td><td><code>*.elasticbeanstalk.com</code> + NXDOMAIN</td></tr>
+            <tr><td>Heroku</td><td>CNAME</td><td><code>*.herokuapp.com</code> + no-such-app response</td></tr>
+            <tr><td>GitHub Pages</td><td>CNAME</td><td><code>*.github.io</code> + 404 page</td></tr>
+            <tr><td>Shopify</td><td>CNAME</td><td><code>*.myshopify.com</code> + shop-not-found</td></tr>
+            <tr><td>Azure CDN / Front Door</td><td>CNAME</td><td><code>*.azureedge.net</code> + endpoint disabled</td></tr>
+            <tr><td>Google Cloud Storage</td><td>CNAME</td><td><code>*.storage.googleapis.com</code> + NoSuchBucket</td></tr>
+            <tr><td>Firebase Hosting</td><td>CNAME</td><td><code>*.web.app</code> / <code>*.firebaseapp.com</code> + default landing</td></tr>
+            <tr><td>Fastly</td><td>CNAME</td><td><code>*.fastly.net</code> + service not configured</td></tr>
+            <tr><td>Pantheon</td><td>CNAME</td><td><code>*.pantheonsite.io</code> + site-not-found</td></tr>
+        </table>
+        <div class="note">The fingerprint database is updated weekly. Submit new provider patterns via <code>subtakeover fingerprint submit</code> or the API.</div>
+
+        <h2>Risk Assessment</h2>
+        <p>Each finding is assigned a risk level based on exploitability, impact, and record type:</p>
+        <table>
+            <tr><th>Risk Level</th><th>Criteria</th><th>Recommended SLA</th></tr>
+            <tr><td><span class="badge badge-danger">Critical</span></td><td>CNAME to deletable resource on apex or wildcard; MX/NS takeover possible</td><td>24 hours</td></tr>
+            <tr><td><span class="badge badge-warning">High</span></td><td>CNAME to unclaimed S3/Blob storage; subdomain serves user-facing traffic</td><td>72 hours</td></tr>
+            <tr><td><span class="badge badge-info">Medium</span></td><td>CNAME to non-exploitable service; internal/dev subdomain only</td><td>7 days</td></tr>
+            <tr><td><span class="badge badge-success">Low</span></td><td>A/AAAA pointing to unallocated IP range; no active service history</td><td>30 days</td></tr>
+        </table>
+        <p>Risk scores factor in whether the subdomain has historical web traffic (via Common Crawl), appears in certificate transparency logs, or is referenced in public repositories.</p>
+
+        <h2>Remediation Steps</h2>
+        <p>For each finding, the scanner provides provider-specific remediation instructions:</p>
+
+        <h3>Delete the Dangling Record</h3>
+        <p>The safest fix is to remove the DNS record entirely if the service is no longer needed.</p>
+        <pre><code># Auto-delete via integrated DNS provider
+subtakeover remediate delete example.com old-app.example.com
+
+# Manual deletion (Cloudflare example)
+curl -X DELETE "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
+  -H "Authorization: Bearer $CF_API_TOKEN"</code></pre>
+
+        <h3>Reclaim the Resource</h3>
+        <p>If the subdomain should remain active, re-register the cloud resource with the exact name shown in the finding.</p>
+        <pre><code># Re-create an S3 bucket matching the dangling CNAME
+aws s3 mb s3://old-app-assets --region us-east-1
+
+# Re-deploy a Heroku app with the original name
+heroku apps:create old-app-name</code></pre>
+        <div class="note">Reclaiming only works if the provider allows re-registration of deleted resource names. Some providers (e.g., Heroku) permanently block reuse after deletion.</div>
+
+        <h3>Verify Remediation</h3>
+        <pre><code># Re-scan a single subdomain after fix
+subtakeover scan example.com --target old-app.example.com
+
+# Verify via API
+curl http://localhost:8401/api/v1/findings/old-app.example.com/verify</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All functionality is available via REST API when running <code>subtakeover serve --port 8401</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/domains</code></td><td>Add a root domain to monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/domains</code></td><td>List monitored domains</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/scan</code></td><td>Trigger an immediate scan</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/findings</code></td><td>List all active findings</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/findings/{subdomain}</code></td><td>Get details for a specific finding</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/remediate</code></td><td>Apply automated remediation</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/providers</code></td><td>List configured DNS providers</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/fingerprints</code></td><td>List detection signatures</td></tr>
+        </table>
+        <h3>Example: Trigger Scan via API</h3>
+        <pre><code>curl -X POST http://localhost:8401/api/v1/scan \
+  -H "Content-Type: application/json" \
+  -d '{
+    "domain": "example.com",
+    "include_wildcards": true,
+    "risk_threshold": "medium"
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>No subdomains enumerated:</strong> Ensure CT log access isn't blocked by your network. Try <code>--enum-method dns-brute</code> to fall back to wordlist-based discovery.</p>
+        <p><strong>False positive on active service:</strong> The cloud service may return a generic error that matches a dangling signature. Suppress with <code>subtakeover finding suppress old-app.example.com --reason "Active service"</code>.</p>
+        <p><strong>DNS provider auth fails:</strong> Verify token permissions include read/write for DNS zones. Test with <code>subtakeover provider test &lt;provider&gt;</code>. Check <code>~/.edgeiq/logs/subtakeover.log</code> for detailed errors.</p>
+        <p><strong>Scan hangs on resolution:</strong> Increase resolver timeout with <code>--dns-timeout 10</code>. Some authoritative nameservers rate-limit queries; use <code>--resolvers 1.1.1.1,8.8.8.8</code> to distribute load.</p>
+        <p><strong>Missed takeover on known-vulnerable subdomain:</strong> Run <code>subtakeover fingerprint update</code> to refresh signatures. If the provider isn't covered, submit a pattern via <code>subtakeover fingerprint submit</code>.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; up to 5 root domains</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited domains + auto-remediation</p>
+            </div>
+        </div>
+        <p>Both plans include continuous monitoring, full API access, weekly fingerprint updates, and email/webhook alerts. Pro adds DNS provider integrations with auto-remediation, priority support, and team collaboration features. Enterprise pricing available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Subdomain Takeover Scanner</h3><p>Detect dangling DNS records before attackers hijack your subdomains</p><a href="/products/#starter-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

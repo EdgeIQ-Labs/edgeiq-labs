@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MSP Essentials Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs MSP Essentials. Multi-tenant dashboard, white-label reporting, client onboarding, and bulk scanner licensing for IT service providers."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/msp-essentials.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>MSP Essentials</h1>
+        <p>Managed security service package with multi-tenant dashboard, white-label reporting, and bulk licensing for IT service providers.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$99 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 10 clients</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>MSP Essentials provides IT service providers with a complete managed security platform. Deliver branded vulnerability assessments, manage multiple client environments from a single dashboard, and scale your security services without building infrastructure.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Multi-tenant dashboard with isolated client environments</li>
+            <li>White-label PDF reports with custom branding and domain</li>
+            <li>Streamlined client onboarding workflows and templates</li>
+            <li>Bulk scanner licensing with volume discounts</li>
+            <li>REST API for integration with PSA/RMM platforms</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>MSP Account Creation</h3>
+        <pre><code># Register as MSP partner
+curl -X POST https://api.edgeiqlabs.com/v1/msp/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "company": "Acme IT Services",
+    "domain": "acme-it.com",
+    "admin_email": "admin@acme-it.com",
+    "plan": "starter"
+  }'
+
+# Verify email and activate account
+# Check inbox for activation link (expires 24h)</code></pre>
+        <div class="note">MSP accounts require business email verification. Free trials include 14 days of Growth-tier features.</div>
+
+        <h3>Client Provisioning</h3>
+        <pre><code># Create new client tenant
+curl -X POST https://api.edgeiqlabs.com/v1/msp/clients \
+  -H "Authorization: Bearer msp_token_xxx" \
+  -d '{
+    "name": "Widget Corp",
+    "contact_email": "it@widgetcorp.com",
+    "scan_targets": ["192.168.1.0/24", "10.0.0.0/16"],
+    "report_schedule": "weekly"
+  }'
+
+# Bulk import via CSV
+curl -X POST https://api.edgeiqlabs.com/v1/msp/clients/import \
+  -H "Authorization: Bearer msp_token_xxx" \
+  -F "file=@clients.csv"</code></pre>
+        <table>
+            <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+            <tr><td><code>name</code></td><td>Yes</td><td>Client company name (appears in reports)</td></tr>
+            <tr><td><code>contact_email</code></td><td>Yes</td><td>Primary contact for alerts and reports</td></tr>
+            <tr><td><code>scan_targets</code></td><td>No</td><td>CIDR ranges or hostnames to monitor</td></tr>
+            <tr><td><code>report_schedule</code></td><td>No</td><td><code>daily</code>, <code>weekly</code>, <code>monthly</code>, or <code>manual</code></td></tr>
+            <tr><td><code>branding_id</code></td><td>No</td><td>Custom branding template ID</td></tr>
+        </table>
+
+        <h2>Multi-Tenant Dashboard</h2>
+        <p>The MSP dashboard provides centralized visibility across all client environments while maintaining strict data isolation between tenants.</p>
+        <h3>Dashboard Features</h3>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>Aggregate Risk Score:</strong> Weighted risk across all clients with drill-down</li>
+            <li><strong>Client Health Map:</strong> Real-time status indicators per tenant</li>
+            <li><strong>Vulnerability Trends:</strong> Cross-client analytics with filtering</li>
+            <li><strong>Alert Consolidation:</strong> Unified notification center with priority routing</li>
+            <li><strong>Audit Log:</strong> Complete activity trail per client for compliance</li>
+        </ul>
+        <pre><code># List all clients with current risk scores
+curl https://api.edgeiqlabs.com/v1/msp/clients/summary \
+  -H "Authorization: Bearer msp_token_xxx"
+
+# Response:
+{
+  "total_clients": 24,
+  "aggregate_risk_score": 67,
+  "clients": [
+    {"id": "cli_xxx", "name": "Widget Corp", "risk_score": 82, "last_scan": "2026-11-06T14:30:00Z"},
+    {"id": "cli_yyy", "name": "Gadget Inc", "risk_score": 45, "last_scan": "2026-11-06T12:00:00Z"}
+  ]
+}</code></pre>
+        <div class="note">Tenant data is cryptographically isolated. MSP admins cannot access raw scan data without explicit client delegation tokens.</div>
+
+        <h2>White-Label Reports</h2>
+        <p>Generate fully branded PDF reports that appear as if produced by your own security team. Customize logos, colors, domains, and executive summary language.</p>
+        <h3>Branding Configuration</h3>
+        <pre><code># Upload branding assets
+curl -X POST https://api.edgeiqlabs.com/v1/msp/branding \
+  -H "Authorization: Bearer msp_token_xxx" \
+  -F "logo=@logo.png" \
+  -F "primary_color=#1a73e8" \
+  -F "company_name=Acme IT Services" \
+  -F "support_email=security@acme-it.com" \
+  -F "footer_text=Confidential - Acme IT Services"
+
+# Apply branding to client
+curl -X PATCH https://api.edgeiqlabs.com/v1/msp/clients/cli_xxx \
+  -H "Authorization: Bearer msp_token_xxx" \
+  -d '{"branding_id": "brd_abc123"}'</code></pre>
+        <h3>Report Generation</h3>
+        <pre><code># Generate on-demand report
+curl -X POST https://api.edgeiqlabs.com/v1/msp/reports/generate \
+  -H "Authorization: Bearer msp_token_xxx" \
+  -d '{
+    "client_id": "cli_xxx",
+    "template": "executive_summary",
+    "include_raw_findings": false,
+    "format": "pdf"
+  }'
+
+# Download completed report
+curl -O https://api.edgeiqlabs.com/v1/msp/reports/rpt_xyz/download \
+  -H "Authorization: Bearer msp_token_xxx"</code></pre>
+        <table>
+            <tr><th>Template</th><th>Audience</th><th>Sections Included</th></tr>
+            <tr><td><code>executive_summary</code></td><td>C-suite / Board</td><td>Risk score, trends, recommendations</td></tr>
+            <tr><td><code>technical_detail</code></td><td>IT Staff</td><td>CVEs, remediation steps, evidence</td></tr>
+            <tr><td><code>compliance_audit</code></td><td>Auditors</td><td>Control mappings, evidence, gaps</td></tr>
+            <tr><td><code>client_portal</code></td><td>End Client</td><td>Summary + action items only</td></tr>
+        </table>
+
+        <h2>Bulk Licensing</h2>
+        <p>Manage scanner licenses across your client base with volume pricing and automatic allocation.</p>
+        <h3>License Management</h3>
+        <pre><code># View license pool
+curl https://api.edgeiqlabs.com/v1/msp/licenses \
+  -H "Authorization: Bearer msp_token_xxx"
+
+# Allocate licenses to client
+curl -X POST https://api.edgeiqlabs.com/v1/msp/licenses/allocate \
+  -H "Authorization: Bearer msp_token_xxx" \
+  -d '{
+    "client_id": "cli_xxx",
+    "scanner_type": "port_scanner_pro",
+    "quantity": 5
+  }'
+
+# Revoke unused licenses
+curl -X DELETE https://api.edgeiqlabs.com/v1/msp/licenses/lic_abc \
+  -H "Authorization: Bearer msp_token_xxx"</code></pre>
+        <div class="note">Unused licenses auto-return to pool after 30 days of inactivity. Over-allocation triggers upgrade prompt at next billing cycle.</div>
+
+        <h2>API Reference</h2>
+        <p>All MSP functionality is available via REST API. Authenticate with MSP bearer tokens obtained during account setup.</p>
+        <h3>Core Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/v1/msp/register</code></td><td>Create MSP partner account</td></tr>
+            <tr><td>GET</td><td><code>/v1/msp/clients</code></td><td>List all client tenants</td></tr>
+            <tr><td>POST</td><td><code>/v1/msp/clients</code></td><td>Provision new client</td></tr>
+            <tr><td>PATCH</td><td><code>/v1/msp/clients/{id}</code></td><td>Update client configuration</td></tr>
+            <tr><td>DELETE</td><td><code>/v1/msp/clients/{id}</code></td><td>Deprovision client</td></tr>
+            <tr><td>GET</td><td><code>/v1/msp/clients/summary</code></td><td>Aggregate risk dashboard data</td></tr>
+            <tr><td>POST</td><td><code>/v1/msp/reports/generate</code></td><td>Trigger report generation</td></tr>
+            <tr><td>GET</td><td><code>/v1/msp/reports/{id}/download</code></td><td>Download generated report</td></tr>
+            <tr><td>GET</td><td><code>/v1/msp/licenses</code></td><td>View license pool status</td></tr>
+            <tr><td>POST</td><td><code>/v1/msp/licenses/allocate</code></td><td>Assign licenses to client</td></tr>
+        </table>
+        <h3>Authentication</h3>
+        <pre><code># All requests require Authorization header
+Authorization: Bearer msp_live_xxxxxxxxxxxx
+
+# Token scopes:
+# msp:read      - Read-only access to clients and reports
+# msp:write     - Create/update clients and generate reports
+# msp:admin     - License management and branding config
+# msp:billing   - Plan changes and invoice access</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Client provisioning fails with 403:</strong> Verify MSP token has <code>msp:write</code> scope. Regenerate token in dashboard under Settings → API Keys.</p>
+        <p><strong>White-label report shows EdgeIQ branding:</strong> Confirm <code>branding_id</code> is correctly assigned to client. Re-upload logo if PNG exceeds 2MB or uses CMYK color space.</p>
+        <p><strong>License allocation returns insufficient_quota:</strong> Check current usage vs. plan limits at <code>/v1/msp/licenses</code>. Upgrade plan or revoke unused licenses first.</p>
+        <p><strong>Dashboard shows stale risk scores:</strong> Trigger manual rescan via <code>POST /v1/msp/clients/{id}/rescan</code>. Scores update within 5 minutes of scan completion.</p>
+        <p><strong>Webhook alerts not delivering:</strong> Test endpoint with <code>POST /v1/msp/webhooks/test</code>. Ensure target accepts POST with <code>application/json</code> content type and responds 2xx within 10s.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$99 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Starter</strong> &mdash; Up to 10 clients</p>
+            </div>
+            <div style="text-align:center;">
+                <div class="price">$249 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Growth</strong> &mdash; Up to 50 clients</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$499 <span>/ month</span></div>
+                <p style="margin:0;"><strong>Scale</strong> &mdash; Unlimited clients</p>
+            </div>
+        </div>
+        <table>
+            <tr><th>Feature</th><th>Starter ($99)</th><th>Growth ($249)</th><th>Scale ($499)</th></tr>
+            <tr><td>Client Limit</td><td>10</td><td>50</td><td>Unlimited</td></tr>
+            <tr><td>White-Label Reports</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Bulk Scanner Licenses</td><td>5 included</td><td>25 included</td><td>100 included</td></tr>
+            <tr><td>API Access</td><td>Read-only</td><td>Full</td><td>Full + Priority</td></tr>
+            <tr><td>Dedicated Support</td><td>Email</td><td>Email + Chat</td><td>Slack Channel</td></tr>
+            <tr><td>Custom Branding Templates</td><td>1</td><td>5</td><td>Unlimited</td></tr>
+            <tr><td>SLA Guarantee</td><td>&mdash;</td><td>99.5%</td><td>99.9%</td></tr>
+        </table>
+        <p>All plans include multi-tenant dashboard, automated scheduling, and quarterly business reviews. Annual billing saves 20%. Volume discounts available for 100+ clients at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Start Your MSP Practice</h3><p>Multi-tenant dashboard, white-label reports, and bulk licensing</p><a href="/products/#msp-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

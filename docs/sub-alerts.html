@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sub Alerts Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Sub Alerts. Monitor subdomains for changes, new deployments, and security exposures with instant email/webhook alerts.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/sub-alerts.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Sub Alerts</h1>
+        <p>Continuous subdomain monitoring with instant change detection and security exposure alerting.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 10 subdomains</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Sub Alerts monitors specific subdomains for DNS changes, new deployments, certificate rotations, and potential security exposures. Designed for security teams, DevOps engineers, and asset managers who need real-time visibility into their attack surface without manual enumeration.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Track unlimited subdomains across multiple root domains</li>
+            <li>Detect DNS record changes (A, AAAA, CNAME, MX, TXT)</li>
+            <li>Identify new subdomains via passive and active discovery</li>
+            <li>Monitor SSL/TLS certificate changes and expiration</li>
+            <li>Instant alerts via email, webhook, Slack, or Discord</li>
+            <li>REST API for integration into SOAR and asset management workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Subdomains</h3>
+        <pre><code># Add a single subdomain to monitor
+sub-alerts add api.example.com
+
+# Add multiple subdomains from a file
+sub-alerts add --file subdomains.txt
+
+# Auto-discover and add all known subdomains
+sub-alerts discover example.com --add-all
+
+# List monitored subdomains
+sub-alerts list</code></pre>
+
+        <h3>Configuring Alert Channels</h3>
+        <pre><code># Email alerts
+sub-alerts config --alert-email security@example.com
+
+# Webhook (generic)
+sub-alerts config --alert-webhook https://hooks.example.com/sub-alerts
+
+# Slack integration
+sub-alerts config --slack-webhook https://hooks.slack.com/services/xxx
+
+# Discord integration
+sub-alerts config --discord-webhook https://discord.com/api/webhooks/xxx
+
+# Test alert delivery
+sub-alerts test-alert</code></pre>
+        <div class="note">Multiple alert channels can be configured simultaneously. All channels receive identical payloads for redundancy.</div>
+
+        <h2>Monitoring Configuration</h2>
+        <table>
+            <tr><th>Setting</th><th>Flag</th><th>Default</th><th>Description</th></tr>
+            <tr><td>Check interval</td><td><code>--interval</code></td><td>3600</td><td>Seconds between checks (min 300)</td></tr>
+            <tr><td>DNS records</td><td><code>--records</code></td><td>A,AAAA,CNAME</td><td>Record types to monitor</td></tr>
+            <tr><td>Certificate check</td><td><code>--cert-check</code></td><td>true</td><td>Monitor TLS cert changes</td></tr>
+            <tr><td>HTTP probe</td><td><code>--http-probe</code></td><td>false</td><td>Verify HTTP(S) reachability</td></tr>
+            <tr><td>Discovery depth</td><td><code>--discovery-depth</code></td><td>2</td><td>Subdomain enumeration levels</td></tr>
+            <tr><td>Quiet hours</td><td><code>--quiet-hours</code></td><td>none</td><td>Suppress alerts during window (e.g., 22:00-06:00)</td></tr>
+        </table>
+
+        <pre><code># Custom monitoring profile
+sub-alerts monitor config api.example.com \
+  --interval 1800 \
+  --records A,AAAA,CNAME,MX,TXT \
+  --cert-check \
+  --http-probe
+
+# Apply settings globally
+sub-alerts config --global --interval 900 --cert-check</code></pre>
+
+        <h2>Alert Types</h2>
+        <table>
+            <tr><th>Alert Type</th><th>Severity</th><th>Trigger</th></tr>
+            <tr><td>New Subdomain</td><td><span class="badge badge-info">Info</span></td><td>Previously unseen subdomain discovered</td></tr>
+            <tr><td>DNS Change</td><td><span class="badge badge-warning">Warning</span></td><td>A, AAAA, CNAME, MX, or TXT record modified</td></tr>
+            <tr><td>Certificate Rotation</td><td><span class="badge badge-info">Info</span></td><td>TLS certificate changed or renewed</td></tr>
+            <tr><td>Certificate Expiry</td><td><span class="badge badge-danger">Critical</span></td><td>Certificate expiring within 14 days</td></tr>
+            <tr><td>Service Down</td><td><span class="badge badge-danger">Critical</span></td><td>HTTP probe fails 3 consecutive times</td></tr>
+            <tr><td>New Open Port</td><td><span class="badge badge-warning">Warning</span></td><td>Previously closed port detected on subdomain</td></tr>
+            <tr><td>CNAME Takeover Risk</td><td><span class="badge badge-danger">Critical</span></td><td>Dangling CNAME pointing to unclaimed resource</td></tr>
+        </table>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>sub-alerts serve --port 8401</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/subdomains</code></td><td>List all monitored subdomains</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/subdomains</code></td><td>Add a new subdomain to monitor</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/subdomains/{id}</code></td><td>Remove a subdomain from monitoring</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/alerts</code></td><td>Retrieve alert history (paginated)</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/discover</code></td><td>Trigger on-demand subdomain discovery</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/status/{subdomain}</code></td><td>Current monitoring state for a subdomain</td></tr>
+        </table>
+        <h3>Example: Add Subdomain via API</h3>
+        <pre><code>curl -X POST http://localhost:8401/api/v1/subdomains \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subdomain": "staging.example.com",
+    "records": ["A", "AAAA", "CNAME"],
+    "cert_check": true,
+    "interval": 1800
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Subdomain not resolving:</strong> Verify the subdomain exists in DNS. Use <code>sub-alerts check staging.example.com</code> to run a one-off diagnostic including DNS lookup, certificate validation, and HTTP probe.</p>
+        <p><strong>Alerts not delivering:</strong> Test with <code>sub-alerts test-alert</code>. Check <code>~/.edgeiq/logs/sub-alerts.log</code> for SMTP errors, webhook HTTP status codes, or rate-limit responses.</p>
+        <p><strong>Too many false positives:</strong> Narrow monitored record types with <code>--records A,CNAME</code>. Enable <code>--quiet-hours</code> to suppress non-critical alerts during maintenance windows.</p>
+        <p><strong>Discovery missing subdomains:</strong> Increase <code>--discovery-depth</code> or supplement with external wordlists via <code>--wordlist custom.txt</code>. Passive sources may lag behind active infrastructure changes.</p>
+        <p><strong>Rate limited by DNS provider:</strong> Reduce check frequency with <code>--interval 7200</code> or configure a local DNS cache to reduce upstream queries.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 10 subdomains, email alerts</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$15 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited subdomains, all channels + API</p>
+            </div>
+        </div>
+        <p>Both plans include continuous monitoring, certificate tracking, and discovery scans. Pro adds webhook integrations, API access, CNAME takeover detection, and priority support. Team and enterprise licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Sub Alerts</h3><p>Subdomain monitoring, change detection, and security exposure alerts starting at $5/mo</p><a href="/products/#subscription-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

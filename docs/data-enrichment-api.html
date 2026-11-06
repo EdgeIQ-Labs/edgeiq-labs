@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Data Enrichment API Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Data Enrichment API. B2B lead enrichment via company domain lookup including firmographics, tech stack, and contact data."/>
+<meta property="og:url" content="https://edgeiqlabs.com/docs/data-enrichment-api.html"/>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Data Enrichment API</h1>
+        <p>B2B lead enrichment via company domain lookup. Instantly retrieve firmographics, technographics, and verified contact data.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 1,000 lookups/mo</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>The Data Enrichment API provides real-time B2B intelligence by accepting a company domain and returning structured business data. Ideal for sales teams, marketing automation, CRM enrichment, and lead qualification workflows.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Company size, revenue range, and founding year</li>
+            <li>Industry classification (NAICS/SIC) and sub-vertical tags</li>
+            <li>Technology stack detection (CMS, analytics, cloud providers)</li>
+            <li>Verified decision-maker contacts with role/title</li>
+            <li>Social profiles, funding history, and headquarters location</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>API Key Authentication</h3>
+        <p>All requests require an API key passed in the <code>X-API-Key</code> header. Generate your key from the <a href="https://edgeiqlabs.com/dashboard">EdgeIQ Dashboard</a>.</p>
+        <pre><code>curl -H "X-API-Key: ei_live_abc123..." \
+  https://api.edgeiqlabs.com/api/enrich?domain=example.com</code></pre>
+        <div class="note">Never expose your API key in client-side code or public repositories. Use environment variables or secret managers in production.</div>
+
+        <h3>Rate Limits</h3>
+        <table>
+            <tr><th>Plan</th><th>Requests/min</th><th>Monthly Quota</th><th>Burst</th></tr>
+            <tr><td>Starter ($9/mo)</td><td>60</td><td>1,000</td><td>10 req/sec</td></tr>
+            <tr><td>Pro ($29/mo)</td><td>300</td><td>10,000</td><td>50 req/sec</td></tr>
+        </table>
+        <p>Rate limit headers are included in every response:</p>
+        <pre><code>X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 58
+X-RateLimit-Reset: 1699315200</code></pre>
+
+        <h2>Endpoint Reference</h2>
+        <h3>GET /api/enrich</h3>
+        <p>Retrieve enriched company data for a given domain.</p>
+        <table>
+            <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+            <tr><td><code>domain</code></td><td>string</td><td>Yes</td><td>Company domain (e.g., <code>stripe.com</code>)</td></tr>
+            <tr><td><code>fields</code></td><td>string</td><td>No</td><td>Comma-separated field filter (e.g., <code>company,contacts,tech</code>)</td></tr>
+        </table>
+        <pre><code>GET https://api.edgeiqlabs.com/api/enrich?domain=stripe.com&fields=company,tech</code></pre>
+
+        <h2>Response Schema</h2>
+        <pre><code>{
+  "domain": "stripe.com",
+  "company": {
+    "name": "Stripe, Inc.",
+    "size": "5001-10000",
+    "industry": "Financial Services",
+    "sub_industry": "Payment Processing",
+    "founded": 2010,
+    "hq_city": "San Francisco",
+    "hq_country": "US",
+    "linkedin_url": "https://linkedin.com/company/stripe"
+  },
+  "tech_stack": [
+    {"category": "Analytics", "name": "Amplitude"},
+    {"category": "CDN", "name": "Cloudflare"},
+    {"category": "Hosting", "name": "AWS"}
+  ],
+  "contacts": [
+    {
+      "full_name": "Jane Doe",
+      "title": "VP of Engineering",
+      "email_verified": true,
+      "linkedin_url": "https://linkedin.com/in/janedoe"
+    }
+  ],
+  "meta": {
+    "last_updated": "2026-11-01T12:00:00Z",
+    "confidence_score": 0.94
+  }
+}</code></pre>
+
+        <h2>Error Codes</h2>
+        <table>
+            <tr><th>Status</th><th>Code</th><th>Description</th></tr>
+            <tr><td>400</td><td><code>invalid_domain</code></td><td>Domain format invalid or missing TLD</td></tr>
+            <tr><td>401</td><td><code>unauthorized</code></td><td>Missing or invalid API key</td></tr>
+            <tr><td>403</td><td><code>quota_exceeded</code></td><td>Monthly lookup limit reached</td></tr>
+            <tr><td>404</td><td><code>not_found</code></td><td>No data available for this domain</td></tr>
+            <tr><td>429</td><td><code>rate_limited</code></td><td>Too many requests; retry after <code>Retry-After</code> header value</td></tr>
+            <tr><td>500</td><td><code>internal_error</code></td><td>Transient server error; retry with exponential backoff</td></tr>
+        </table>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>401 on valid key:</strong> Ensure you're using the live key prefix <code>ei_live_</code> for production. Test keys (<code>ei_test_</code>) only work against the sandbox endpoint.</p>
+        <p><strong>Empty contacts array:</strong> Some domains have no publicly verifiable decision-makers. Try broadening <code>fields</code> or checking <code>meta.confidence_score</code>.</p>
+        <p><strong>Stale tech stack:</strong> Tech detection refreshes every 30 days. Use <code>?force_refresh=true</code> (Pro only) to trigger an immediate re-scan.</p>
+        <p><strong>Timeouts on large enterprises:</strong> Domains with 50k+ employees may take 2-3 seconds. Set client timeout to ≥5s.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 1,000 lookups/mo</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; 10,000 lookups/mo + priority support</p>
+            </div>
+        </div>
+        <p>Both plans include full schema access, webhook notifications, and CSV export. Enterprise volume discounts available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Start Enriching Leads Today</h3><p>B2B company data, tech stacks, and verified contacts via simple REST API</p><a href="/products/#data-enrichment" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get API Key →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

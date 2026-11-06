@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EdgeIQ Pulse Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Pulse. Continuous security monitoring, real-time alerting, compliance reporting, and multi-project dashboard aggregation.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/pulse.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>EdgeIQ Pulse</h1>
+        <p>Continuous security monitoring platform that aggregates findings from all EdgeIQ scanners into a single dashboard with real-time alerting and compliance reporting.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan for small teams &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>EdgeIQ Pulse is a continuous security monitoring platform designed for DevOps teams, security engineers, and IT administrators who need centralized visibility across their entire infrastructure. Pulse aggregates findings from all EdgeIQ scanners—including Repo Scanner, Port Scanner, XSS Scanner, CertWatch Pro, and more—into a unified dashboard with trend analysis, real-time alerting, and automated compliance reporting.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Multi-project support with role-based access control</li>
+            <li>Real-time alerting via email, webhook, Slack, and PagerDuty</li>
+            <li>Trend analysis with historical finding comparison</li>
+            <li>Automated HIPAA, SOC 2, and PCI DSS compliance reports</li>
+            <li>REST API for CI/CD integration and custom workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Prerequisites</h3>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Active EdgeIQ Labs account with at least one scanner license</li>
+            <li>API key generated from <a href="/account/">Account Settings → API Keys</a></li>
+            <li>At least one project created in the Pulse dashboard</li>
+        </ul>
+
+        <h3>Connecting Scanners</h3>
+        <pre><code># Link Port Scanner to Pulse
+pulse connect --scanner port-scanner --api-key YOUR_API_KEY
+
+# Link Repo Scanner
+pulse connect --scanner repo-scanner --api-key YOUR_API_KEY
+
+# Link CertWatch Pro
+pulse connect --scanner certwatch-pro --api-key YOUR_API_KEY
+
+# Verify connected scanners
+pulse status</code></pre>
+
+        <h3>API Key Configuration</h3>
+        <p>All Pulse API requests require authentication via Bearer token. Store your API key securely and never commit it to version control.</p>
+        <pre><code># Set API key as environment variable
+export EDGEIQ_API_KEY="ei_live_xxxxxxxxxxxxxxxxxxxx"
+
+# Or configure in ~/.edgeiq/config.yaml
+pulse config set api_key ei_live_xxxxxxxxxxxxxxxxxxxx</code></pre>
+        <div class="note">API keys are scoped per project. Use separate keys for staging and production environments to maintain isolation.</div>
+
+        <h2>Dashboard Tour</h2>
+        <h3>Key Widgets</h3>
+        <table>
+            <tr><th>Widget</th><th>Description</th><th>Update Frequency</th></tr>
+            <tr><td>Finding Summary</td><td>Total open, resolved, and new findings across all scanners</td><td>Real-time</td></tr>
+            <tr><td>Severity Breakdown</td><td>Pie chart showing Critical/High/Medium/Low distribution</td><td>Hourly</td></tr>
+            <tr><td>Trend Graph</td><td>30-day line chart of finding counts by severity</td><td>Daily</td></tr>
+            <tr><td>Scanner Health</td><td>Last run timestamp and status for each connected scanner</td><td>Per scan</td></tr>
+            <tr><td>Compliance Score</td><td>Percentage of controls passing for selected framework</td><td>Daily</td></tr>
+        </table>
+
+        <h3>Interpreting Metrics</h3>
+        <p>The <strong>Finding Summary</strong> widget uses color coding: red for Critical, orange for High, yellow for Medium, blue for Low. A rising trend line indicates new exposures or regressions; a declining line shows successful remediation. The <strong>Compliance Score</strong> is calculated as (passing controls / total applicable controls) × 100.</p>
+
+        <h3>Filtering Findings</h3>
+        <pre><code># Filter by severity
+pulse findings list --severity critical
+
+# Filter by scanner
+pulse findings list --scanner port-scanner
+
+# Filter by date range
+pulse findings list --since 2026-10-01 --until 2026-11-01
+
+# Combine filters
+pulse findings list --severity high --scanner xss-scanner --status open</code></pre>
+
+        <h2>Alert Configuration</h2>
+        <h3>Notification Channels</h3>
+        <table>
+            <tr><th>Channel</th><th>Configuration</th><th>Use Case</th></tr>
+            <tr><td>Email</td><td><code>pulse alert add --type email --to admin@example.com</code></td><td>Daily digests, compliance reports</td></tr>
+            <tr><td>Webhook</td><td><code>pulse alert add --type webhook --url https://hooks.example.com/pulse</code></td><td>Custom integrations, SOAR playbooks</td></tr>
+            <tr><td>Slack</td><td><code>pulse alert add --type slack --channel #security-alerts</code></td><td>Team notifications, incident response</td></tr>
+            <tr><td>PagerDuty</td><td><code>pulse alert add --type pagerduty --service-key xxx</code></td><td>Critical-only escalation</td></tr>
+        </table>
+
+        <h3>Severity Thresholds</h3>
+        <p>Configure minimum severity levels per channel to reduce alert fatigue:</p>
+        <pre><code># Email gets everything
+pulse alert config --channel email --min-severity low
+
+# Slack gets Medium and above
+pulse alert config --channel slack --min-severity medium
+
+# PagerDuty gets Critical only
+pulse alert config --channel pagerduty --min-severity critical
+
+# Webhook with custom payload template
+pulse alert config --channel webhook --template /etc/pulse/webhook-payload.json</code></pre>
+        <div class="note">Test alerts before going live: <code>pulse alert test --channel slack</code>. Check delivery logs with <code>pulse alert logs --last 24h</code>.</div>
+
+        <h2>Compliance Reports</h2>
+        <h3>Supported Frameworks</h3>
+        <table>
+            <tr><th>Framework</th><th>Controls Mapped</th><th>Export Formats</th></tr>
+            <tr><td>HIPAA</td><td>Technical Safeguards, Access Controls, Audit Logs</td><td>PDF, CSV, JSON</td></tr>
+            <tr><td>SOC 2 Type II</td><td>CC6.1, CC6.6, CC7.2, CC8.1</td><td>PDF, CSV, JSON</td></tr>
+            <tr><td>PCI DSS v4.0</td><td>Req 1, 2, 6, 10, 11</td><td>PDF, CSV, JSON</td></tr>
+            <tr><td>NIST CSF</td><td>ID.RA, PR.DS, DE.CM, RS.MI</td><td>PDF, JSON</td></tr>
+        </table>
+
+        <h3>Generating Reports</h3>
+        <pre><code># Generate HIPAA compliance report
+pulse compliance generate --framework hipaa --format pdf --output hipaa-report.pdf
+
+# Generate SOC 2 report for specific date range
+pulse compliance generate --framework soc2 --since 2026-08-01 --until 2026-11-01 --format json
+
+# Schedule weekly PCI report
+pulse compliance schedule --framework pci --frequency weekly --day monday --email compliance@example.com
+
+# List available frameworks
+pulse compliance list-frameworks</code></pre>
+        <div class="note">Compliance reports include evidence artifacts (scan timestamps, finding IDs, remediation proof). Retain exports for auditor review. Reports are regenerated on-demand; scheduled reports auto-deliver to configured email.</div>
+
+        <h2>API Reference</h2>
+        <p>All Pulse functionality is available via REST API. Base URL: <code>https://api.edgeiqlabs.com/v1/pulse</code></p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/projects</code></td><td>List all projects accessible to the authenticated user</td></tr>
+            <tr><td>POST</td><td><code>/projects</code></td><td>Create a new project</td></tr>
+            <tr><td>GET</td><td><code>/projects/{id}/findings</code></td><td>List findings with filtering and pagination</td></tr>
+            <tr><td>GET</td><td><code>/projects/{id}/trends</code></td><td>Retrieve trend data for dashboard graphs</td></tr>
+            <tr><td>POST</td><td><code>/alerts</code></td><td>Create a new alert rule</td></tr>
+            <tr><td>GET</td><td><code>/alerts</code></td><td>List configured alert rules</td></tr>
+            <tr><td>DELETE</td><td><code>/alerts/{id}</code></td><td>Delete an alert rule</td></tr>
+            <tr><td>POST</td><td><code>/compliance/generate</code></td><td>Generate a compliance report</td></tr>
+            <tr><td>GET</td><td><code>/compliance/reports/{id}</code></td><td>Download a generated report</td></tr>
+        </table>
+        <h3>Example: List Project Findings</h3>
+        <pre><code>curl -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  "https://api.edgeiqlabs.com/v1/pulse/projects/proj_abc123/findings?severity=critical&status=open&limit=50"</code></pre>
+        <h3>Example: Create Alert Rule</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/pulse/alerts \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "proj_abc123",
+    "channel": "slack",
+    "min_severity": "high",
+    "target": "#security-alerts"
+  }'</code></pre>
+
+        <h2>Integrations</h2>
+        <h3>Connected Scanners</h3>
+        <table>
+            <tr><th>Scanner</th><th>Data Ingested</th><th>Sync Interval</th></tr>
+            <tr><td>Port Scanner Pro</td><td>Open ports, service banners, high-risk flags</td><td>Per scan schedule</td></tr>
+            <tr><td>Repo Scanner</td><td>Secret leaks, dependency CVEs, misconfigurations</td><td>Per push / scheduled</td></tr>
+            <tr><td>XSS Scanner</td><td>Reflected/stored XSS vectors, DOM sinks</td><td>Per scan schedule</td></tr>
+            <tr><td>CertWatch Pro</td><td>Certificate expiry, chain issues, CT log entries</td><td>Hourly</td></tr>
+            <tr><td>Header Inspector</td><td>Missing/misconfigured security headers</td><td>Per scan schedule</td></tr>
+        </table>
+
+        <h3>External Integrations</h3>
+        <pre><code># Connect Slack workspace
+pulse integrate slack --workspace your-workspace --channel #security
+
+# Connect PagerDuty service
+pulse integrate pagerduty --service-key pd_xxxxx --escalation-policy P12345
+
+# Connect Jira project for ticket creation
+pulse integrate jira --project SEC --auto-create critical
+
+# List active integrations
+pulse integrate list</code></pre>
+        <div class="note">Integrations use OAuth where supported. Revoke access anytime from <a href="/account/integrations">Account → Integrations</a>. Webhook payloads follow the <a href="/docs/webhook-schema.html">standard EdgeIQ schema</a>.</div>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>No data showing in dashboard:</strong> Verify scanners are connected with <code>pulse status</code>. Ensure API key has read permissions for the target project. Check scanner schedules—data appears after the first completed scan cycle.</p>
+        <p><strong>Alerts not firing:</strong> Confirm alert rule severity threshold isn't higher than current findings. Test delivery with <code>pulse alert test --channel &lt;name&gt;</code>. Review <code>pulse alert logs</code> for HTTP errors or rate limits. For Slack, verify bot is invited to the target channel.</p>
+        <p><strong>Compliance report missing controls:</strong> Some frameworks require specific scanners. HIPAA needs Port Scanner + Header Inspector; PCI requires XSS Scanner + CertWatch. Run <code>pulse compliance gaps --framework hipaa</code> to see missing data sources.</p>
+        <p><strong>API returns 401 Unauthorized:</strong> Regenerate API key if expired. Ensure key scope includes the target project ID. Keys prefixed <code>ei_test_</code> only work against sandbox endpoints.</p>
+        <p><strong>Trend graph shows flatline:</strong> Trends require ≥7 days of historical data. New projects show empty trends until sufficient scans accumulate. Force a backfill with <code>pulse trends backfill --days 30</code> (Pro/Enterprise only).</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 3 projects, 5 scanners, email alerts</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$79 <span>/ month</span></div>
+                <p style="margin:0;">Team &mdash; 10 projects, all scanners, Slack + webhooks</p>
+            </div>
+        </div>
+        <div class="pricing-card" style="margin-top:1rem;">
+            <div>
+                <div class="price">$199 <span>/ month</span></div>
+                <p style="margin:0;">Enterprise &mdash; Unlimited projects, SSO, dedicated support, SLA</p>
+            </div>
+        </div>
+        <p>All plans include unlimited findings, 90-day retention, and compliance report generation. Annual billing saves 20%. Volume discounts available for MSPs at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get EdgeIQ Pulse</h3><p>Continuous security monitoring, real-time alerting, and compliance reporting</p><a href="/products/#pulse-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

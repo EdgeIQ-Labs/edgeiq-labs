@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>White-Label Report Builder Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs White-Label Report Builder. Generate branded PDF security reports with custom templates, automated scheduling, and client portals.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/white-label-reports.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>White-Label Report Builder</h1>
+        <p>Generate fully branded PDF security reports with your own logo, colors, and contact info. Built for MSPs and consultants.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 5 clients included</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>White-Label Report Builder allows MSPs and consultants to generate professional, branded PDF security reports without exposing the underlying tooling. Customize every visual element — logo, color scheme, fonts, cover page, and contact details — then schedule recurring delivery or share via a secure client portal.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Fully white-labeled PDF output with custom branding</li>
+            <li>Drag-and-drop template editor with live preview</li>
+            <li>Automated scheduling with email delivery</li>
+            <li>Secure client portal for report access and history</li>
+            <li>REST API for integration with RMM, PSA, and CI/CD platforms</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Branding Configuration</h3>
+        <p>Configure your brand identity once; all generated reports inherit these settings automatically.</p>
+        <pre><code># Set primary brand color (hex)
+report-builder config set brand.primary_color "#0A84FF"
+
+# Set secondary/accent color
+report-builder config set brand.secondary_color "#1E1E2E"
+
+# Set company name and tagline
+report-builder config set brand.company_name "Acme Security Partners"
+report-builder config set brand.tagline "Trusted Cybersecurity Services"
+
+# Set contact information
+report-builder config set brand.email "reports@acmesecurity.com"
+report-builder config set brand.phone "+1 (555) 012-3456"
+report-builder config set brand.website "https://acmesecurity.com"</code></pre>
+
+        <h3>Logo Upload</h3>
+        <p>Upload your logo in PNG or SVG format. Recommended dimensions: 400×120px for header, 200×200px for cover page.</p>
+        <pre><code># Upload header logo
+report-builder branding upload-logo ./logo-header.png --position header
+
+# Upload cover page logo
+report-builder branding upload-logo ./logo-cover.svg --position cover
+
+# Preview current branding
+report-builder branding preview</code></pre>
+        <div class="note">Logos are automatically resized to fit template constraints. SVG logos render crisply at any resolution. Maximum file size: 2MB.</div>
+
+        <h2>Template Editor</h2>
+        <p>The template editor provides a visual interface for customizing report structure, sections, and styling without editing raw configuration files.</p>
+        <pre><code># Open interactive template editor
+report-builder template edit default
+
+# List available templates
+report-builder template list
+
+# Create a new template from existing
+report-builder template clone default pentest-report
+
+# Export template as JSON for version control
+report-builder template export pentest-report > pentest-template.json
+
+# Import template from JSON
+report-builder template import pentest-template.json</code></pre>
+
+        <h3>Template Structure</h3>
+        <table>
+            <tr><th>Section</th><th>Description</th><th>Required</th></tr>
+            <tr><td>Cover Page</td><td>Title, client name, date, logo</td><td>Yes</td></tr>
+            <tr><td>Executive Summary</td><td>High-level findings and risk score</td><td>Yes</td></tr>
+            <tr><td>Findings Detail</td><td>Vulnerability descriptions with severity</td><td>Yes</td></tr>
+            <tr><td>Methodology</td><td>Tools and techniques used</td><td>No</td></tr>
+            <tr><td>Recommendations</td><td>Prioritized remediation steps</td><td>Yes</td></tr>
+            <tr><td>Appendix</td><td>Raw data, scan logs, evidence</td><td>No</td></tr>
+        </table>
+
+        <h2>Automated Scheduling</h2>
+        <p>Schedule recurring report generation and delivery to clients or internal stakeholders.</p>
+        <pre><code># Schedule monthly report for a client
+report-builder schedule add \
+  --client "Acme Corp" \
+  --template pentest-report \
+  --cron "0 9 1 * *" \
+  --deliver-email admin@acmecorp.com
+
+# Schedule weekly internal summary
+report-builder schedule add \
+  --client "Internal" \
+  --template executive-summary \
+  --cron "0 8 * * 1" \
+  --deliver-webhook https://hooks.slack.com/services/xxx
+
+# List active schedules
+report-builder schedule list
+
+# Pause a schedule
+report-builder schedule pause schedule-id-abc123
+
+# Test delivery without generating full report
+report-builder schedule test-delivery schedule-id-abc123</code></pre>
+        <div class="note">Schedules use server-local timezone. Use ISO 8601 cron expressions. Failed deliveries retry up to 3 times with exponential backoff.</div>
+
+        <h2>Client Portal</h2>
+        <p>Provide clients with secure, self-service access to their reports without requiring direct email delivery.</p>
+        <pre><code># Enable portal for a client
+report-builder portal enable --client "Acme Corp"
+
+# Generate portal invite link
+report-builder portal invite --client "Acme Corp" --email admin@acmecorp.com
+
+# List portal users
+report-builder portal users list
+
+# Revoke portal access
+report-builder portal revoke --user user-id-xyz789
+
+# Configure portal branding
+report-builder portal config set custom_domain reports.acmesecurity.com
+report-builder portal config set login_logo ./portal-logo.png</code></pre>
+
+        <h3>Portal Features</h3>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Secure login with magic link or SSO (SAML/OIDC)</li>
+            <li>Report download in PDF or interactive HTML</li>
+            <li>Historical report archive with search</li>
+            <li>Comment threads on individual findings</li>
+            <li>Custom domain and branding support</li>
+        </ul>
+
+        <h2>API Reference</h2>
+        <p>All functionality is available via REST API for integration with RMM, PSA, ticketing systems, and automation workflows.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/reports</code></td><td>Generate a new report</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/reports/{id}</code></td><td>Retrieve report metadata</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/reports/{id}/download</code></td><td>Download PDF binary</td></tr>
+            <tr><td>PUT</td><td><code>/api/v1/templates/{id}</code></td><td>Update template configuration</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/schedules</code></td><td>Create scheduled report</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/clients</code></td><td>List configured clients</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/portal/users</code></td><td>Create portal user</td></tr>
+        </table>
+        <h3>Example: Generate Report via API</h3>
+        <pre><code>curl -X POST http://localhost:8500/api/v1/reports \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client": "Acme Corp",
+    "template": "pentest-report",
+    "data": {
+      "findings": [...],
+      "risk_score": 72,
+      "assessment_date": "2026-11-06"
+    },
+    "deliver": ["email", "portal"]
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Logo not appearing in generated PDF:</strong> Verify upload succeeded with <code>report-builder branding preview</code>. Check file format (PNG/SVG only) and ensure dimensions don't exceed 2000px on any side.</p>
+        <p><strong>Scheduled reports not delivering:</strong> Test delivery with <code>report-builder schedule test-delivery &lt;id&gt;</code>. Check SMTP/webhook credentials and review <code>~/.edgeiq/logs/scheduler.log</code> for errors.</p>
+        <p><strong>Portal login fails:</strong> Confirm user was created with valid email. Check spam folder for magic link. For SSO, verify IdP metadata URL and attribute mapping.</p>
+        <p><strong>Template changes not reflected:</strong> Templates are cached. Run <code>report-builder template reload</code> or restart the service after manual edits.</p>
+        <p><strong>PDF generation timeout:</strong> Large reports with many findings may exceed default 60s timeout. Increase with <code>report-builder config set pdf.timeout 120</code>.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 5 clients, 50 reports/mo</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$149 <span>/ month</span></div>
+                <p style="margin:0;">Agency &mdash; Unlimited clients &amp; reports</p>
+            </div>
+        </div>
+        <p>Both plans include full white-labeling, template editor, scheduling, client portal, and API access. Agency plan adds custom domains, SSO, priority support, and dedicated onboarding. Annual billing saves 20%. See <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a> for details.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get White-Label Report Builder</h3><p>Branded PDF reports, automated scheduling, and client portals for MSPs</p><a href="/products/#subscriptions" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

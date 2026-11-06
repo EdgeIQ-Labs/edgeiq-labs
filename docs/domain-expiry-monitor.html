@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Domain Expiry Monitor Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Domain Expiry Monitor. Track domain registration dates, configure expiration alerts, and prevent accidental domain loss."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/domain-expiry-monitor.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Domain Expiry Monitor</h1>
+        <p>Track domain registration dates and receive timely alerts before expiration to prevent accidental domain loss.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$3 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 10 domains</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Domain Expiry Monitor continuously tracks your domain registration dates and sends configurable alerts well before expiration. Designed for developers, agencies, and businesses that manage multiple domains and cannot afford accidental lapses. The monitor queries WHOIS data on a scheduled basis, normalizes expiry dates across registrars, and delivers notifications through email, webhooks, or integrations so you always have time to renew.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Monitor unlimited TLDs with automatic WHOIS server detection</li>
+            <li>Configurable alert thresholds (e.g., 90, 60, 30, 7 days before expiry)</li>
+            <li>Bulk import via CSV or API for large domain portfolios</li>
+            <li>REST API for integration into dashboards, ticketing systems, and CI/CD pipelines</li>
+            <li>Detailed historical tracking of registration changes and renewal events</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Domains</h3>
+        <p>Add domains individually via the CLI or dashboard. The monitor automatically resolves the correct WHOIS endpoint for each TLD.</p>
+        <pre><code># Add a single domain
+domain-monitor add example.com
+
+# Add multiple domains at once
+domain-monitor add example.com example.org example.net
+
+# List all monitored domains
+domain-monitor list
+
+# Check current status of a domain
+domain-monitor status example.com</code></pre>
+
+        <h3>WHOIS Configuration</h3>
+        <p>Domain Expiry Monitor uses intelligent WHOIS resolution out of the box, but custom configurations are available for private registries, rate-limited endpoints, or proxy requirements.</p>
+        <table>
+            <tr><th>Setting</th><th>Flag / Config Key</th><th>Description</th></tr>
+            <tr><td>Custom WHOIS Server</td><td><code>--whois-server</code></td><td>Override the default WHOIS endpoint for a specific domain</td></tr>
+            <tr><td>WHOIS Proxy</td><td><code>--proxy</code></td><td>Route WHOIS queries through an HTTP/SOCKS proxy</td></tr>
+            <tr><td>Query Interval</td><td><code>--interval</code></td><td>How often to poll WHOIS data (default: daily)</td></tr>
+            <tr><td>Rate Limit Delay</td><td><code>--rate-delay</code></td><td>Seconds to wait between bulk WHOIS queries to avoid throttling</td></tr>
+            <tr><td>Auth Token</td><td><code>--auth-token</code></td><td>API key for RDAP or premium WHOIS services requiring authentication</td></tr>
+        </table>
+        <pre><code># Configure a custom WHOIS server for a specific domain
+domain-monitor config example.com --whois-server whois.custom-registry.com
+
+# Set global query interval to every 12 hours
+domain-monitor config --global --interval 12h
+
+# Route queries through a proxy
+domain-monitor config --global --proxy socks5://127.0.0.1:9050</code></pre>
+        <div class="note">WHOIS servers enforce strict rate limits. When monitoring more than 50 domains, use <code>--rate-delay 2</code> or switch to RDAP where supported to prevent temporary IP bans.</div>
+
+        <h2>Alert Configuration</h2>
+        <p>Configure when and how you receive expiration warnings. Multiple channels and thresholds can be combined per domain or applied globally.</p>
+        <pre><code># Set alert thresholds (days before expiry)
+domain-monitor alerts set example.com --thresholds 90,60,30,7
+
+# Configure email alerts
+domain-monitor alerts config --email admin@example.com
+
+# Configure webhook alerts (Slack, Discord, generic)
+domain-monitor alerts config --webhook https://hooks.slack.com/services/xxx
+
+# Test alert delivery
+domain-monitor alerts test example.com
+
+# Disable alerts for a specific domain
+domain-monitor alerts disable example.com</code></pre>
+        <table>
+            <tr><th>Channel</th><th>Configuration</th><th>Notes</th></tr>
+            <tr><td>Email</td><td><code>--email &lt;address&gt;</code></td><td>Supports multiple comma-separated addresses</td></tr>
+            <tr><td>Webhook</td><td><code>--webhook &lt;url&gt;</code></td><td>Sends JSON payload; compatible with Slack/Discord/custom endpoints</td></tr>
+            <tr><td>SMS</td><td><code>--sms &lt;number&gt;</code></td><td>Requires Twilio or compatible provider credentials in config</td></tr>
+        </table>
+        <h3>Webhook Payload Example</h3>
+        <pre><code>{
+  "event": "domain_expiry_warning",
+  "domain": "example.com",
+  "expiry_date": "2026-12-15T00:00:00Z",
+  "days_remaining": 30,
+  "registrar": "NameCheap, Inc.",
+  "severity": "warning",
+  "timestamp": "2026-11-15T08:00:00Z"
+}</code></pre>
+
+        <h2>Bulk Import</h2>
+        <p>Import large domain portfolios quickly using CSV files or the REST API. The bulk importer validates domains, deduplicates entries, and applies default alert configurations automatically.</p>
+        <pre><code># Import from a CSV file (one domain per line, optional columns for tags/thresholds)
+domain-monitor import --file domains.csv
+
+# Import from a plain text list
+domain-monitor import --file domains.txt
+
+# Export currently monitored domains to CSV
+domain-monitor export --file backup.csv</code></pre>
+        <h3>CSV Format</h3>
+        <table>
+            <tr><th>Column</th><th>Required</th><th>Description</th></tr>
+            <tr><td><code>domain</code></td><td>Yes</td><td>The fully qualified domain name</td></tr>
+            <tr><td><code>tags</code></td><td>No</td><td>Comma-separated labels for grouping (e.g., <code>production,client-a</code>)</td></tr>
+            <tr><td><code>alert_thresholds</code></td><td>No</td><td>Custom thresholds overriding defaults (e.g., <code>90,30,7</code>)</td></tr>
+            <tr><td><code>notes</code></td><td>No</td><td>Internal notes or registrar reference numbers</td></tr>
+        </table>
+        <div class="note">Imports process asynchronously. Use <code>domain-monitor import status &lt;job_id&gt;</code> to track progress. Failed rows are written to a separate error log for review.</div>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>domain-monitor serve --port 8400</code>. Authenticate requests using the <code>X-API-Key</code> header.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/domains</code></td><td>List all monitored domains with status</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/domains</code></td><td>Add a new domain to monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/domains/{domain}</code></td><td>Retrieve details and WHOIS data for a specific domain</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/domains/{domain}</code></td><td>Remove a domain from monitoring</td></tr>
+            <tr><td>PUT</td><td><code>/api/v1/domains/{domain}/alerts</code></td><td>Update alert configuration for a domain</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/import</code></td><td>Trigger a bulk import job (multipart CSV upload)</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/import/{job_id}</code></td><td>Check bulk import job status</td></tr>
+        </table>
+        <h3>Example: Add Domain via API</h3>
+        <pre><code>curl -X POST http://localhost:8400/api/v1/domains \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key_here" \
+  -d '{
+    "domain": "example.com",
+    "tags": ["production", "primary"],
+    "alert_thresholds": [90, 60, 30, 7]
+  }'</code></pre>
+        <h3>Example: Retrieve Domain Status</h3>
+        <pre><code>curl -X GET http://localhost:8400/api/v1/domains/example.com \
+  -H "X-API-Key: your_api_key_here"</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>WHOIS query returns no expiry date:</strong> Some ccTLDs and privacy-focused registrars redact expiry data. Try switching to RDAP (<code>--use-rdap</code>) or configure a custom WHOIS parser for that registry.</p>
+        <p><strong>Rate limited by WHOIS server:</strong> Increase the delay between queries with <code>--rate-delay 5</code>. For large portfolios, distribute queries across multiple IPs or use a premium WHOIS/RDAP API provider.</p>
+        <p><strong>Alerts not firing at expected times:</strong> Verify thresholds with <code>domain-monitor alerts list &lt;domain&gt;</code>. Ensure the background polling service is running (<code>domain-monitor service status</code>) and check logs at <code>~/.edgeiq/logs/domain-monitor.log</code>.</p>
+        <p><strong>Import fails silently:</strong> Validate your CSV format against the schema above. Ensure domains do not include protocols (<code>http://</code>) or paths. Check the generated error log in the working directory for row-specific failures.</p>
+        <p><strong>False expiry dates after transfer:</strong> Domain transfers sometimes reset or alter registration dates. Trigger a manual refresh with <code>domain-monitor refresh example.com</code> to force a fresh WHOIS lookup and update the stored record.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$3 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; Up to 10 domains.<br/>Email alerts included.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; Up to 100 domains.<br/>Webhooks, API access, bulk import.</p>
+            </div>
+        </div>
+        <p>All plans include continuous monitoring, automatic WHOIS resolution, and priority support. Cancel anytime with no commitment. Team and enterprise licenses for larger portfolios are available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Domain Expiry Monitor</h3><p>Never lose a domain to accidental expiration again. Start monitoring for $3/mo.</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

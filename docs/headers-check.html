@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Headers Check Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Headers Check. HTTP security header analysis, grading, continuous monitoring, and API reference."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/headers-check.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Headers Check</h1>
+        <p>Analyze HTTP security headers and grade your website's security posture automatically.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$3 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 10 sites</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Headers Check analyzes HTTP response headers for security best practices, misconfigurations, and missing protections. It inspects every header your server sends, compares it against current OWASP and Mozilla guidelines, and produces a letter grade reflecting your overall security posture. Designed for developers, security teams, and site owners who need continuous assurance that their HTTP headers haven't drifted or regressed.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Scan any public URL for HTTP security headers in seconds</li>
+            <li>Detailed per-header analysis with pass/fail/warning status</li>
+            <li>Letter-grade scoring (A+ through F) based on weighted header checks</li>
+            <li>Scheduled recurring scans with change detection and alerts</li>
+            <li>REST API for integration into CI/CD pipelines and dashboards</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Domains</h3>
+        <p>Add domains through the dashboard or CLI. Each domain is scanned at its root path by default; you can specify additional paths per domain.</p>
+        <pre><code># Add a single domain via CLI
+headers-check add example.com
+
+# Add multiple domains from a file
+headers-check add --file domains.txt
+
+# Add a domain with specific paths to check
+headers-check add example.com --paths /,/login,/api/v1</code></pre>
+
+        <h3>Scan Frequency</h3>
+        <p>Configure how often each domain is re-scanned. Changes to scan frequency take effect on the next scheduled run.</p>
+        <table>
+            <tr><th>Interval</th><th>Flag</th><th>Use Case</th></tr>
+            <tr><td>Hourly</td><td><code>--interval 1h</code></td><td>High-security production sites</td></tr>
+            <tr><td>Daily</td><td><code>--interval 24h</code></td><td>Default for most websites</td></tr>
+            <tr><td>Weekly</td><td><code>--interval 7d</code></td><td>Low-change static sites</td></tr>
+            <tr><td>On-demand</td><td><code>--interval manual</code></td><td>CI/CD-triggered scans only</td></tr>
+        </table>
+        <pre><code># Set daily scanning for a domain
+headers-check config example.com --interval 24h
+
+# Trigger an immediate scan outside schedule
+headers-check scan example.com --now</code></pre>
+        <div class="note">Scan results are retained for 90 days on Starter plans and 1 year on Pro plans. Historical grade trends are available in the dashboard.</div>
+
+        <h2>Header Checks</h2>
+        <p>Headers Check evaluates the following HTTP security headers. Each header is checked for presence, correct syntax, and secure configuration values.</p>
+
+        <h3>HSTS (Strict-Transport-Security)</h3>
+        <p>Enforces HTTPS connections and prevents protocol downgrade attacks. Headers Check validates <code>max-age</code> (minimum recommended: 31536000), presence of <code>includeSubDomains</code>, and optional <code>preload</code> directive.</p>
+        <pre><code># Passing example
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+# Failing: max-age too short, no subdomain coverage
+Strict-Transport-Security: max-age=3600</code></pre>
+
+        <h3>CSP (Content-Security-Policy)</h3>
+        <p>Controls which resources the browser is allowed to load. Headers Check flags unsafe directives like <code>unsafe-inline</code>, <code>unsafe-eval</code>, wildcard sources (<code>*</code>), and missing <code>default-src</code>. Report-only mode (<code>Content-Security-Policy-Report-Only</code>) is detected and scored lower than enforced policies.</p>
+
+        <h3>X-Frame-Options</h3>
+        <p>Prevents clickjacking by controlling whether the page can be embedded in frames. Valid values: <code>DENY</code> or <code>SAMEORIGIN</code>. Deprecated in favor of CSP <code>frame-ancestors</code>, but still checked for backward compatibility.</p>
+
+        <h3>CORS (Access-Control-Allow-Origin)</h3>
+        <p>Evaluates Cross-Origin Resource Sharing configuration. Wildcard origins (<code>*</code>) on authenticated endpoints are flagged as critical. Missing <code>Access-Control-Allow-Credentials</code> handling and overly permissive <code>Allow-Methods</code> generate warnings.</p>
+
+        <h3>X-Content-Type-Options</h3>
+        <p>Must be set to <code>nosniff</code> to prevent MIME-type sniffing. Any other value or absence is a failure.</p>
+
+        <h3>Referrer-Policy</h3>
+        <p>Controls how much referrer information is sent with requests. Recommended values: <code>strict-origin-when-cross-origin</code>, <code>no-referrer</code>, or <code>same-origin</code>. The legacy <code>unsafe-url</code> value is flagged.</p>
+
+        <h3>Permissions-Policy</h3>
+        <p>Replaces the deprecated Feature-Policy header. Controls access to browser features (camera, microphone, geolocation). Headers Check verifies the header is present and not set to allow-all (<code>*</code>).</p>
+
+        <h3>Additional Checks</h3>
+        <table>
+            <tr><th>Header</th><th>Expected Value</th><th>Severity if Missing</th></tr>
+            <tr><td><code>X-XSS-Protection</code></td><td><code>0</code> (modern browsers) or <code>1; mode=block</code></td><td>Info</td></tr>
+            <tr><td><code>Cache-Control</code></td><td>No-store for sensitive pages</td><td>Warning</td></tr>
+            <tr><td><code>Server</code></td><td>Absent or generic (no version disclosure)</td><td>Warning</td></tr>
+            <tr><td><code>X-Powered-By</code></td><td>Should be removed entirely</td><td>Warning</td></tr>
+            <tr><td><code>Cross-Origin-Opener-Policy</code></td><td><code>same-origin</code></td><td>Info</td></tr>
+            <tr><td><code>Cross-Origin-Resource-Policy</code></td><td><code>same-origin</code> or <code>same-site</code></td><td>Info</td></tr>
+        </table>
+
+        <h2>Grading System</h2>
+        <p>Each scan produces a letter grade from A+ to F based on a weighted scoring model. Critical headers (HSTS, CSP, X-Content-Type-Options) carry more weight than informational ones (Server disclosure, X-XSS-Protection).</p>
+        <table>
+            <tr><th>Grade</th><th>Score Range</th><th>Description</th></tr>
+            <tr><td><span class="badge" style="background:#22c55e;color:#000;">A+</span></td><td>95&ndash;100</td><td>All critical headers present with optimal configuration</td></tr>
+            <tr><td><span class="badge" style="background:#22c55e;color:#000;">A</span></td><td>85&ndash;94</td><td>All critical headers present, minor improvements possible</td></tr>
+            <tr><td><span class="badge" style="background:#84cc16;color:#000;">B</span></td><td>70&ndash;84</td><td>Most headers configured, one or two non-critical gaps</td></tr>
+            <tr><td><span class="badge" style="background:#eab308;color:#000;">C</span></td><td>55&ndash;69</td><td>Missing important headers or weak configurations</td></tr>
+            <tr><td><span class="badge badge-warning">D</span></td><td>40&ndash;54</td><td>Multiple critical headers missing or misconfigured</td></tr>
+            <tr><td><span class="badge badge-danger">F</span></td><td>0&ndash;39</td><td>Severe security gaps; immediate remediation required</td></tr>
+        </table>
+        <div class="note">Grades are recalculated whenever scan results change. Grade history is plotted on the dashboard so you can track improvement over time.</div>
+
+        <h2>API Reference</h2>
+        <p>All functionality is available via REST API. Authenticate using your API key from the dashboard settings.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/scan</code></td><td>Trigger an on-demand header scan</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/scan/{id}</code></td><td>Retrieve scan results and grade</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/domains</code></td><td>List monitored domains</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/domains</code></td><td>Add a new domain for monitoring</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/domains/{id}</code></td><td>Remove a domain from monitoring</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/domains/{id}/history</code></td><td>Retrieve historical grades for a domain</td></tr>
+        </table>
+        <h3>Example: Trigger Scan via API</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/scan \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com",
+    "follow_redirects": true,
+    "paths": ["/", "/login"]
+  }'</code></pre>
+        <h3>Example Response</h3>
+        <pre><code>{
+  "id": "scan_abc123",
+  "url": "https://example.com",
+  "grade": "A",
+  "score": 88,
+  "headers": {
+    "strict-transport-security": {"status": "pass", "value": "max-age=63072000; includeSubDomains"},
+    "content-security-policy": {"status": "warning", "value": "default-src 'self'; script-src 'unsafe-inline'", "issue": "unsafe-inline in script-src"},
+    "x-content-type-options": {"status": "pass", "value": "nosniff"},
+    "x-frame-options": {"status": "pass", "value": "DENY"}
+  },
+  "scanned_at": "2026-11-07T14:32:00Z"
+}</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Grade dropped unexpectedly:</strong> Check if a recent deployment changed server configuration, CDN settings, or reverse proxy rules. Use <code>headers-check diff example.com --last 2</code> to compare the two most recent scans side by side.</p>
+        <p><strong>Headers present in browser but not in scan results:</strong> Some CDNs or WAFs inject headers only for browser user-agents. Headers Check uses a standard HTTP client; configure <code>--user-agent</code> to match if needed, or verify headers are applied at the origin level.</p>
+        <p><strong>CSP warnings despite working application:</strong> Headers Check flags <code>unsafe-inline</code> and <code>unsafe-eval</code> because they weaken XSS protection. If your framework requires them, consider migrating to nonce-based or hash-based CSP directives. The warning won't prevent a passing grade if all other headers are strong, but it caps your score below A+.</p>
+        <p><strong>Scan timeout or connection refused:</strong> Ensure the target URL is publicly accessible. Firewalls blocking non-browser requests will cause failures. Use <code>--timeout 30</code> to increase the wait time for slow servers.</p>
+        <p><strong>Redirect chains losing headers:</strong> By default, Headers Check follows redirects and reports headers from the final destination. Use <code>--no-follow</code> to inspect intermediate redirect responses if headers are stripped during the chain.</p>
+        <p><strong>API rate limit exceeded:</strong> Starter plans allow 100 API calls/hour; Pro allows 1000. Space out batch requests or upgrade your plan. Rate limit headers (<code>X-RateLimit-Remaining</code>) are included in every API response.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$3 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; up to 10 sites</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; up to 100 sites</p>
+            </div>
+        </div>
+        <table>
+            <tr><th>Feature</th><th>Starter ($3/mo)</th><th>Pro ($9/mo)</th></tr>
+            <tr><td>Monitored sites</td><td>10</td><td>100</td></tr>
+            <tr><td>Scan frequency</td><td>Daily minimum</td><td>Hourly available</td></tr>
+            <tr><td>History retention</td><td>90 days</td><td>1 year</td></tr>
+            <tr><td>API access</td><td>100 calls/hr</td><td>1,000 calls/hr</td></tr>
+            <tr><td>Webhook/email alerts</td><td>&#10003;</td><td>&#10003;</td></tr>
+            <tr><td>Priority support</td><td>&mdash;</td><td>&#10003;</td></tr>
+        </table>
+        <p>Both plans include full header analysis, grading, and API access. Cancel anytime. Team and enterprise plans available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Headers Check</h3><p>HTTP security header analysis, grading, and continuous monitoring starting at $3/mo</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

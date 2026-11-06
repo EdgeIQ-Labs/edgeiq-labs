@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Compliance Posture Tracker Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Compliance Posture Tracker. Lightweight SOC2, HIPAA, and PCI-DSS compliance monitoring, gap analysis, evidence collection, and auditor-ready reports.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/compliance-tracker.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Compliance Posture Tracker</h1>
+        <p>Lightweight SOC 2, HIPAA, and PCI-DSS compliance monitoring with automated gap analysis and auditor-ready reporting.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Flat rate &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Compliance Posture Tracker is a lightweight compliance monitoring tool designed for small businesses and startups. It scans your infrastructure against common compliance frameworks (SOC 2, HIPAA, PCI-DSS) and generates actionable gap analysis reports. Distinct from the enterprise-grade Compliance Shield ($299/mo), this tool focuses on affordability and simplicity for teams that need continuous compliance visibility without enterprise overhead.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Automated scanning against SOC 2, HIPAA, and PCI-DSS controls</li>
+            <li>Control-by-control pass/fail/warning status with priority ranking</li>
+            <li>Auto-gathered evidence: logs, configs, DNS records, TLS certificates</li>
+            <li>Trend tracking with score history and regression alerts</li>
+            <li>PDF and CSV export for auditors and stakeholders</li>
+            <li>REST API for CI/CD integration and custom workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Connecting Cloud Accounts</h3>
+        <p>Connect your cloud providers to enable automated evidence collection and infrastructure scanning:</p>
+        <pre><code># Connect AWS account
+compliance-tracker connect aws --role-arn arn:aws:iam::123456789012:role/ComplianceScanner
+
+# Connect GCP project
+compliance-tracker connect gcp --project my-project-id --service-account sa@my-project.iam.gserviceaccount.com
+
+# Connect Azure subscription
+compliance-tracker connect azure --subscription-id xxxxx-xxxxx-xxxxx
+
+# List connected accounts
+compliance-tracker connections list</code></pre>
+        <div class="note">Cloud connections use read-only IAM roles. No write permissions are required or requested.</div>
+
+        <h3>Defining Scope</h3>
+        <p>Define which domains, IPs, and cloud resources are in scope for compliance scanning:</p>
+        <pre><code># Add domain to scope
+compliance-tracker scope add domain example.com
+
+# Add CIDR range
+compliance-tracker scope add network 10.0.0.0/24
+
+# Add specific cloud resource
+compliance-tracker scope add resource aws:s3:my-compliance-bucket
+
+# View current scope
+compliance-tracker scope list</code></pre>
+
+        <h2>Framework Selection</h2>
+        <p>Select one or more compliance frameworks to scan against. Each framework includes a curated checklist of technical controls mapped to regulatory requirements.</p>
+        <table>
+            <tr><th>Framework</th><th>Controls</th><th>Best For</th></tr>
+            <tr><td>SOC 2</td><td>CC6.1, CC6.2, CC6.6, CC7.2, CC8.1, A1, A3, A5</td><td>SaaS companies, service providers</td></tr>
+            <tr><td>HIPAA</td><td>164.312(a)(1), 164.312(c)(1), 164.308(a)(5)</td><td>Healthcare, health tech, PHI handlers</td></tr>
+            <tr><td>PCI-DSS</td><td>Req 1, Req 6, Req 11</td><td>E-commerce, payment processors, cardholder data</td></tr>
+        </table>
+        <pre><code># Scan against SOC 2
+compliance-tracker scan example.com --framework soc2
+
+# Scan against multiple frameworks
+compliance-tracker scan example.com --framework soc2,hipaa
+
+# Set default framework
+compliance-tracker config set default_framework soc2</code></pre>
+
+        <h2>Gap Analysis</h2>
+        <p>After each scan, Compliance Posture Tracker identifies missing or misconfigured controls and ranks them by priority based on risk severity and regulatory impact.</p>
+        <h3>Priority Levels</h3>
+        <table>
+            <tr><th>Level</th><th>Color</th><th>Description</th><th>Action Window</th></tr>
+            <tr><td>Critical</td><td><span class="badge badge-danger">Red</span></td><td>Control failure exposes sensitive data or violates core requirement</td><td>Fix within 48 hours</td></tr>
+            <tr><td>High</td><td><span class="badge badge-warning">Orange</span></td><td>Significant gap that increases audit risk</td><td>Fix within 2 weeks</td></tr>
+            <tr><td>Medium</td><td><span class="badge badge-info">Yellow</span></td><td>Partial implementation or weak configuration</td><td>Fix within 30 days</td></tr>
+            <tr><td>Low</td><td><span class="badge badge-success">Green</span></td><td>Minor improvement opportunity</td><td>Next review cycle</td></tr>
+        </table>
+        <pre><code># View gap analysis report
+compliance-tracker gaps example.com --framework soc2
+
+# Filter by priority
+compliance-tracker gaps example.com --priority critical,high
+
+# Export gap list
+compliance-tracker gaps example.com --export gaps.csv</code></pre>
+
+        <h2>Evidence Collection</h2>
+        <p>Compliance Posture Tracker automatically gathers evidence required for audits, including configuration snapshots, log excerpts, DNS records, and TLS certificate details.</p>
+        <h3>Evidence Types</h3>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>DNS Records:</strong> SPF, DMARC, MX, CNAME configurations</li>
+            <li><strong>TLS Certificates:</strong> Validity dates, cipher suites, HSTS headers</li>
+            <li><strong>HTTP Headers:</strong> CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy</li>
+            <li><strong>Server Configs:</strong> Exposed version strings, X-Powered-By headers</li>
+            <li><strong>Cloud Configs:</strong> S3 bucket policies, security group rules, IAM policies</li>
+            <li><strong>Log Samples:</strong> Access logs, audit trails, error patterns</li>
+        </ul>
+        <pre><code># Collect evidence for a domain
+compliance-tracker evidence collect example.com --framework soc2
+
+# View collected evidence
+compliance-tracker evidence list example.com
+
+# Download evidence bundle
+compliance-tracker evidence download example.com --output ./evidence-bundle.zip</code></pre>
+        <div class="note">Evidence is stored encrypted at rest. Retention defaults to 90 days; configure with <code>compliance-tracker config set evidence_retention_days 365</code>.</div>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>compliance-tracker serve --port 8401</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/compliance/status</code></td><td>Get current compliance posture for a domain</td></tr>
+            <tr><td>POST</td><td><code>/api/compliance/scan</code></td><td>Initiate a new compliance scan</td></tr>
+            <tr><td>GET</td><td><code>/api/compliance/gaps/{domain}</code></td><td>Retrieve gap analysis results</td></tr>
+            <tr><td>GET</td><td><code>/api/compliance/evidence/{domain}</code></td><td>List collected evidence artifacts</td></tr>
+            <tr><td>POST</td><td><code>/api/compliance/export</code></td><td>Generate PDF/CSV report</td></tr>
+            <tr><td>GET</td><td><code>/api/compliance/history/{domain}</code></td><td>Retrieve scan history and trend data</td></tr>
+        </table>
+        <h3>Example: Get Compliance Status</h3>
+        <pre><code>curl -X GET "http://localhost:8401/api/compliance/status?domain=example.com&framework=soc2" \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+        <h3>Example: Trigger Scan via API</h3>
+        <pre><code>curl -X POST http://localhost:8401/api/compliance/scan \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "domain": "example.com",
+    "framework": "soc2",
+    "collect_evidence": true
+  }'</code></pre>
+
+        <h2>Report Export</h2>
+        <p>Generate auditor-ready reports in PDF or CSV format. Reports include executive summary, control breakdown, gap analysis, evidence references, and trend charts.</p>
+        <pre><code># Export PDF report
+compliance-tracker report export example.com --format pdf --output compliance-report.pdf
+
+# Export CSV for spreadsheet analysis
+compliance-tracker report export example.com --format csv --output compliance-data.csv
+
+# Include evidence links in report
+compliance-tracker report export example.com --format pdf --include-evidence
+
+# Schedule weekly report generation
+compliance-tracker report schedule example.com --weekly --email admin@example.com</code></pre>
+        <div class="note">PDF reports include embedded evidence screenshots and timestamped scan metadata for audit trail verification.</div>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Scan fails with "connection timeout":</strong> Verify DNS resolution and network connectivity. Check if firewall rules block outbound HTTPS (port 443). Use <code>--timeout 30</code> to increase wait time.</p>
+        <p><strong>Missing evidence for cloud resources:</strong> Verify IAM role has read permissions for the target service. Run <code>compliance-tracker connections verify aws</code> to test access.</p>
+        <p><strong>False positive on control check:</strong> Some controls require manual verification. Mark as accepted risk with <code>compliance-tracker gaps accept CONTROL_ID --reason "Compensating control in place"</code>.</p>
+        <p><strong>Score not updating after fix:</strong> Evidence cache may be stale. Force refresh with <code>compliance-tracker evidence refresh example.com</code> before re-scanning.</p>
+        <p><strong>API returns 401 Unauthorized:</strong> Verify API key is valid and not expired. Regenerate with <code>compliance-tracker api-key rotate</code>.</p>
+        <p><strong>PDF export fails:</strong> Ensure sufficient disk space in temp directory. Large evidence bundles may require <code>--max-evidence-size 50MB</code> flag.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Flat rate for all features. No per-scan fees.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">Free <span>/ forever</span></div>
+                <p style="margin:0;">On-demand scans, 8 SOC 2 controls, no trend tracking.</p>
+            </div>
+        </div>
+        <p>The $9/mo plan includes unlimited scans across all frameworks, weekly automated monitoring, email digests with score diffs, trend tracking with regression alerts, full evidence collection, PDF/CSV exports, and API access. Distinct from Compliance Shield ($299/mo) which adds enterprise SSO, custom policy mapping, and dedicated support. Team licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Start Compliance Monitoring</h3><p>SOC 2, HIPAA, and PCI-DSS scanning with automated gap analysis</p><a href="/products/#compliance-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

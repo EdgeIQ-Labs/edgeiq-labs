@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Uptime Check Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Uptime Check. Multi-location website monitoring, instant downtime alerts, status pages, and API integration starting at $1/mo."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/uptime-check.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Uptime Check</h1>
+        <p>Global website availability monitoring with instant downtime alerts and public status pages.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$1 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 5 sites monitored</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Uptime Check monitors your websites and APIs from multiple global locations, detecting downtime before your users do. Configure check intervals, select monitoring regions, receive instant alerts via your preferred channels, and share real-time status with customers through hosted status pages.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>HTTP/HTTPS, TCP, DNS, and ICMP monitoring protocols</li>
+            <li>Check intervals from 30 seconds to 24 hours</li>
+            <li>Multi-region verification to eliminate false positives</li>
+            <li>Alerts via email, SMS, Slack, Discord, PagerDuty, and webhooks</li>
+            <li>Public and private status pages with custom branding</li>
+            <li>REST API for programmatic monitor management</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding URLs</h3>
+        <p>Add monitors via the dashboard or API. Each monitor requires a target URL or host and a check interval.</p>
+        <pre><code># Add an HTTPS monitor (check every 60 seconds)
+curl -X POST https://api.edgeiqlabs.com/v1/monitors \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Production Website",
+    "type": "https",
+    "target": "https://example.com",
+    "interval": 60,
+    "locations": ["us-east", "eu-west", "ap-southeast"]
+  }'</code></pre>
+
+        <h3>Check Intervals</h3>
+        <table>
+            <tr><th>Interval</th><th>Value</th><th>Use Case</th></tr>
+            <tr><td>30 seconds</td><td><code>30</code></td><td>Critical services, SLA-bound endpoints</td></tr>
+            <tr><td>1 minute</td><td><code>60</code></td><td>Production websites and APIs</td></tr>
+            <tr><td>5 minutes</td><td><code>300</code></td><td>Internal tools, staging environments</td></tr>
+            <tr><td>15 minutes</td><td><code>900</code></td><td>Low-priority services, batch endpoints</td></tr>
+            <tr><td>1 hour</td><td><code>3600</code></td><td>Archival systems, compliance checks</td></tr>
+            <tr><td>24 hours</td><td><code>86400</code></td><td>Certificate expiry, annual health checks</td></tr>
+        </table>
+        <div class="note">Shorter intervals consume more check credits. A 30-second interval uses 2x the credits of a 60-second interval. See <a href="#pricing">Pricing</a> for plan limits.</div>
+
+        <h2>Location Selection</h2>
+        <p>Monitors run from geographically distributed points of presence. Selecting multiple locations reduces false positives caused by regional outages or network issues.</p>
+        <table>
+            <tr><th>Region</th><th>Code</th><th>Cities</th></tr>
+            <tr><td>North America</td><td><code>us-east</code>, <code>us-west</code>, <code>ca-central</code></td><td>Virginia, Oregon, Montreal</td></tr>
+            <tr><td>Europe</td><td><code>eu-west</code>, <code>eu-central</code>, <code>eu-north</code></td><td>London, Frankfurt, Stockholm</td></tr>
+            <tr><td>Asia Pacific</td><td><code>ap-southeast</code>, <code>ap-northeast</code>, <code>ap-south</code></td><td>Singapore, Tokyo, Mumbai</td></tr>
+            <tr><td>South America</td><td><code>sa-east</code></td><td>São Paulo</td></tr>
+            <tr><td>Oceania</td><td><code>oc-east</code></td><td>Sydney</td></tr>
+        </table>
+        <p>When multiple locations are configured, a site is marked <strong>DOWN</strong> only when a majority of locations fail consecutive checks. Single-location failures trigger a warning but not an alert.</p>
+
+        <h2>Alert Channels</h2>
+        <p>Configure one or more notification channels per monitor. Alerts fire on state transitions (UP → DOWN and DOWN → UP).</p>
+        <table>
+            <tr><th>Channel</th><th>Configuration</th><th>Notes</th></tr>
+            <tr><td>Email</td><td>Comma-separated addresses</td><td>HTML and plain-text templates</td></tr>
+            <tr><td>SMS</td><td>E.164 phone number</td><td>Via Twilio; carrier fees may apply</td></tr>
+            <tr><td>Slack</td><td>Webhook URL</td><td>Block Kit formatted messages</td></tr>
+            <tr><td>Discord</td><td>Webhook URL</td><td>Embed-formatted notifications</td></tr>
+            <tr><td>PagerDuty</td><td>Service integration key</td><td>Severity mapping supported</td></tr>
+            <tr><td>Webhook</td><td>Custom URL + headers</td><td>JSON payload with full check context</td></tr>
+        </table>
+        <pre><code># Configure Slack alerts for a monitor
+curl -X PATCH https://api.edgeiqlabs.com/v1/monitors/mon_abc123 \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "alert_channels": [
+      {"type": "slack", "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"}
+    ]
+  }'</code></pre>
+
+        <h2>Status Pages</h2>
+        <p>Publish real-time uptime data to a branded status page. Status pages can be public or password-protected.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Custom subdomain (<code>status.yourcompany.com</code>) or EdgeIQ-hosted URL</li>
+            <li>Per-monitor uptime percentages and response time graphs</li>
+            <li>Incident history with post-mortem fields</li>
+            <li>Subscriber notifications for status changes</li>
+            <li>Embeddable widget for your own website</li>
+        </ul>
+        <pre><code># Create a public status page
+curl -X POST https://api.edgeiqlabs.com/v1/status-pages \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Acme Corp Status",
+    "slug": "acme-corp",
+    "public": true,
+    "monitors": ["mon_abc123", "mon_def456"]
+  }'</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All functionality is available via REST API. Authenticate with a Bearer token from your dashboard.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/v1/monitors</code></td><td>List all monitors</td></tr>
+            <tr><td>POST</td><td><code>/v1/monitors</code></td><td>Create a new monitor</td></tr>
+            <tr><td>GET</td><td><code>/v1/monitors/{id}</code></td><td>Get monitor details and recent checks</td></tr>
+            <tr><td>PATCH</td><td><code>/v1/monitors/{id}</code></td><td>Update monitor configuration</td></tr>
+            <tr><td>DELETE</td><td><code>/v1/monitors/{id}</code></td><td>Delete a monitor</td></tr>
+            <tr><td>GET</td><td><code>/v1/monitors/{id}/checks</code></td><td>Retrieve check history (paginated)</td></tr>
+            <tr><td>GET</td><td><code>/v1/status-pages</code></td><td>List status pages</td></tr>
+            <tr><td>POST</td><td><code>/v1/status-pages</code></td><td>Create a status page</td></tr>
+            <tr><td>GET</td><td><code>/v1/alerts</code></td><td>List recent alert events</td></tr>
+        </table>
+        <h3>Example: List Monitors</h3>
+        <pre><code>curl -s https://api.edgeiqlabs.com/v1/monitors \
+  -H "Authorization: Bearer $EDGEIQ_API_KEY" | jq '.data[] | {name, target, status}'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>False positive downtime alerts:</strong> Add additional monitoring locations. Single-location checks are susceptible to regional network issues. Use at least 3 locations for production services.</p>
+        <p><strong>Checks failing with timeout:</strong> Increase the timeout value (default 10s). Some CDNs and WAFs throttle automated requests. Add <code>User-Agent: EdgeIQ-UptimeCheck/1.0</code> to allowlist headers if needed.</p>
+        <p><strong>SSL certificate errors:</strong> Ensure intermediate certificates are served correctly. Test with <code>openssl s_client -connect example.com:443</code>. Enable <code>ignore_ssl_errors: true</code> only for self-signed internal services.</p>
+        <p><strong>Alerts not arriving:</strong> Verify channel configuration with the test endpoint: <code>POST /v1/alert-channels/{id}/test</code>. Check spam folders for email. Review rate limits for webhook-based channels.</p>
+        <p><strong>Status page not updating:</strong> Confirm monitors are assigned to the status page. Cached responses may take up to 60 seconds to refresh. Purge CDN cache if using a custom domain.</p>
+
+        <h2 id="pricing">Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$1 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 5 sites, 1-min checks, 3 locations</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; 50 sites, 30-sec checks, all locations</p>
+            </div>
+        </div>
+        <table>
+            <tr><th>Feature</th><th>Starter ($1/mo)</th><th>Pro ($5/mo)</th></tr>
+            <tr><td>Monitors</td><td>5</td><td>50</td></tr>
+            <tr><td>Min check interval</td><td>60 seconds</td><td>30 seconds</td></tr>
+            <tr><td>Monitoring locations</td><td>3 regions</td><td>All regions</td></tr>
+            <tr><td>Status pages</td><td>1 public</td><td>Unlimited + custom domain</td></tr>
+            <tr><td>Alert channels</td><td>Email + 1 integration</td><td>Unlimited integrations</td></tr>
+            <tr><td>Data retention</td><td>30 days</td><td>1 year</td></tr>
+            <tr><td>API access</td><td>✓</td><td>✓</td></tr>
+        </table>
+        <p>All plans include SSL monitoring, webhook support, and community support. Enterprise plans with SLA guarantees and dedicated infrastructure available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Start Monitoring in Minutes</h3><p>Website uptime monitoring from $1/month. No credit card required for trial.</p><a href="/products/#uptime-check" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

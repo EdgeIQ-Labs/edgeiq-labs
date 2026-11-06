@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Relay Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Relay. Secure tunnel service for exposing local development servers to the internet with custom subdomains, HTTPS termination, and request logging."
+<meta property="og:url" content="https://edgeiqlabs.com/docs/relay.html"
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Relay</h1>
+        <p>Secure tunnel service for exposing local development servers to the internet for testing and demos.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Relay provides secure, instant tunnels from your local machine to the public internet. Designed for developers who need to share work-in-progress, test webhooks, or demo applications without deploying to a staging server. Includes custom subdomains, automatic HTTPS termination, and detailed request logging out of the box.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Expose any local TCP port to the internet in seconds</li>
+            <li>Custom subdomains on edgeiqlabs.dev or your own domain</li>
+            <li>Automatic HTTPS/TLS termination with valid certificates</li>
+            <li>Real-time request and response logging with replay</li>
+            <li>REST API for programmatic tunnel management</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>CLI Installation</h3>
+        <pre><code># Install via npm
+npm install -g @edgeiq/relay
+
+# Or via pip
+pip install edgeiq-relay
+
+# Verify installation
+relay --version</code></pre>
+
+        <h3>Authentication</h3>
+        <p>Authenticate once to link your CLI to your EdgeIQ Labs account. Tokens are stored locally at <code>~/.edgeiq/relay.toml</code>.</p>
+        <pre><code># Interactive browser login
+relay auth login
+
+# Or use an API token directly
+relay auth login --token ei_live_abc123def456
+
+# Verify auth status
+relay auth status
+
+# Revoke current session
+relay auth logout</code></pre>
+        <div class="note">API tokens can be generated from the dashboard at <a href="https://edgeiqlabs.com/dashboard/tokens">edgeiqlabs.com/dashboard/tokens</a>. Use <code>ei_test_</code> prefixed tokens for non-production work.</div>
+
+        <h2>Tunnel Creation</h2>
+        <p>Create a tunnel by pointing Relay at a local port. The CLI provisions a public URL instantly.</p>
+        <pre><code># Expose local port 3000
+relay forward 3000
+
+# Output:
+# Tunnel active: https://random-slug.edgeiqlabs.dev → localhost:3000
+# Press Ctrl+C to stop.
+
+# Specify protocol (HTTP is default)
+relay forward 8080 --proto tcp
+
+# Run in background (daemonized)
+relay forward 3000 --daemon
+
+# List active tunnels
+relay list
+
+# Stop a specific tunnel
+relay stop &lt;tunnel-id&gt;</code></pre>
+        <table>
+            <tr><th>Flag</th><th>Description</th></tr>
+            <tr><td><code>--proto</code></td><td>Protocol: <code>http</code> (default), <code>https</code>, <code>tcp</code></td></tr>
+            <tr><td><code>--daemon</code></td><td>Run tunnel in background</td></tr>
+            <tr><td><code>--region</code></td><td>Edge region: <code>us</code>, <code>eu</code>, <code>ap</code> (default: closest)</td></tr>
+            <tr><td><code>--inspect</code></td><td>Enable local inspection UI on port 4040</td></tr>
+        </table>
+
+        <h2>Custom Subdomains</h2>
+        <p>Replace random slugs with predictable, branded URLs. Available on all paid plans.</p>
+        <pre><code># Use a custom subdomain
+relay forward 3000 --subdomain my-app
+# → https://my-app.edgeiqlabs.dev
+
+# Use a fully custom domain (requires DNS CNAME setup)
+relay forward 3000 --domain dev.mycompany.com</code></pre>
+        <p>To use a custom domain, add a CNAME record pointing <code>dev.mycompany.com</code> to <code>relay.edgeiqlabs.dev</code>, then verify ownership in the dashboard under <strong>Domains</strong>.</p>
+        <div class="note">Subdomain names must be 3–63 characters, alphanumeric plus hyphens. Reserved words and premium short names require the Pro plan.</div>
+
+        <h2>HTTPS Termination</h2>
+        <p>Relay handles TLS at the edge. Traffic between the client and Relay's edge nodes is encrypted with automatically provisioned certificates. The connection from the edge to your local machine uses a persistent, authenticated WebSocket tunnel.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Auto-provisioned Let's Encrypt certificates for <code>*.edgeiqlabs.dev</code></li>
+            <li>Custom domain certificates issued within 60 seconds of DNS verification</li>
+            <li>TLS 1.2+ enforced; legacy ciphers disabled</li>
+            <li>Optional mTLS for Pro plan users requiring mutual authentication</li>
+        </ul>
+        <pre><code># Force HTTPS redirect (HTTP requests get 301'd)
+relay forward 3000 --https-only
+
+# Enable mTLS with a client CA bundle (Pro only)
+relay forward 3000 --mtls-ca ./client-ca.pem</code></pre>
+
+        <h2>Request Logging</h2>
+        <p>All traffic through your tunnel is logged and inspectable. Use the CLI or the web dashboard to view, filter, and replay requests.</p>
+        <pre><code># Stream logs in real time
+relay logs &lt;tunnel-id&gt;
+
+# Filter by status code
+relay logs &lt;tunnel-id&gt; --status 5xx
+
+# Filter by method
+relay logs &lt;tunnel-id&gt; --method POST
+
+# Export logs to JSON
+relay logs &lt;tunnel-id&gt; --export logs.json --last 24h</code></pre>
+        <table>
+            <tr><th>Logged Field</th><th>Description</th></tr>
+            <tr><td>Timestamp</td><td>ISO 8601 request start time</td></tr>
+            <tr><td>Method / Path</td><td>HTTP verb and URI</td></tr>
+            <tr><td>Status</td><td>Response status code</td></tr>
+            <tr><td>Latency</td><td>Round-trip time in milliseconds</td></tr>
+            <tr><td>Headers</td><td>Request and response headers (redacted auth by default)</td></tr>
+            <tr><td>Body</td><td>Payload up to 1 MB (configurable)</td></tr>
+            <tr><td>Client IP</td><td>Originating IP with geolocation</td></tr>
+        </table>
+        <div class="note">Logs are retained for 7 days on Starter and 90 days on Pro. Use <code>--no-log-body</code> to disable payload capture for sensitive endpoints.</div>
+
+        <h2>API Reference</h2>
+        <p>All tunnel operations are available via REST API. Base URL: <code>https://api.edgeiqlabs.com/v1</code>. Authenticate with Bearer token.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/tunnels</code></td><td>Create a new tunnel</td></tr>
+            <tr><td>GET</td><td><code>/tunnels</code></td><td>List active tunnels</td></tr>
+            <tr><td>GET</td><td><code>/tunnels/{id}</code></td><td>Get tunnel details</td></tr>
+            <tr><td>DELETE</td><td><code>/tunnels/{id}</code></td><td>Stop and delete a tunnel</td></tr>
+            <tr><td>GET</td><td><code>/tunnels/{id}/logs</code></td><td>Retrieve request logs</td></tr>
+            <tr><td>POST</td><td><code>/tunnels/{id}/replay/{log_id}</code></td><td>Replay a captured request</td></tr>
+            <tr><td>PUT</td><td><code>/domains/{domain}/verify</code></td><td>Trigger DNS verification for custom domain</td></tr>
+        </table>
+        <h3>Example: Create Tunnel via API</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/tunnels \
+  -H "Authorization: Bearer ei_live_abc123def456" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "local_port": 3000,
+    "subdomain": "my-demo",
+    "https_only": true,
+    "region": "us"
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Tunnel connects but returns 502 Bad Gateway:</strong> Your local server isn't responding on the specified port. Verify the app is running and bound to <code>127.0.0.1</code> or <code>0.0.0.0</code>, not a Docker network alias.</p>
+        <p><strong>Custom subdomain returns 404:</strong> The subdomain may already be claimed by another user. Try a different name or check <code>relay list</code> to confirm your tunnel is active.</p>
+        <p><strong>Custom domain not resolving:</strong> Ensure the CNAME record points exactly to <code>relay.edgeiqlabs.dev</code> (no trailing path). DNS propagation can take up to 5 minutes after verification.</p>
+        <p><strong>WebSocket connections dropping:</strong> Relay supports WebSockets natively, but idle connections timeout after 60s on Starter. Pro plan extends this to 10 minutes. Send ping frames to keep connections alive.</p>
+        <p><strong>Auth errors (401) on API calls:</strong> Confirm your token hasn't expired. Regenerate via <code>relay auth login</code> or the dashboard. Ensure you're using <code>ei_live_</code> tokens for production API calls.</p>
+        <p><strong>High latency:</strong> Use <code>--region</code> to select an edge node closer to your target audience. Check <code>relay status</code> for current routing path.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 3 tunnels, 7-day logs, shared subdomains</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited tunnels, 90-day logs, custom domains, mTLS</p>
+            </div>
+        </div>
+        <table>
+            <tr><th>Feature</th><th>Starter ($9/mo)</th><th>Pro ($29/mo)</th></tr>
+            <tr><td>Active tunnels</td><td>3</td><td>Unlimited</td></tr>
+            <tr><td>Custom subdomains</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Custom domains</td><td>—</td><td>✓</td></tr>
+            <tr><td>HTTPS termination</td><td>✓</td><td>✓</td></tr>
+            <tr><td>mTLS</td><td>—</td><td>✓</td></tr>
+            <tr><td>Request logging retention</td><td>7 days</td><td>90 days</td></tr>
+            <tr><td>WebSocket idle timeout</td><td>60s</td><td>10 min</td></tr>
+            <tr><td>API access</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Priority support</td><td>—</td><td>✓</td></tr>
+        </table>
+        <p>All plans include automatic HTTPS, CLI and API access, and request inspection. Team and enterprise licensing available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Relay</h3><p>Secure tunnels, custom subdomains, HTTPS termination, and request logging for local dev servers</p><a href="/pricing/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Start at $9/mo →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

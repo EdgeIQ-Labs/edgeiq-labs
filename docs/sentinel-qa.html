@@ -1,0 +1,173 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sentinel QA Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Sentinel QA. Autonomous bug crawling, regression testing, broken link detection, and continuous UI monitoring.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/sentinel-qa.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Sentinel QA</h1>
+        <p>Autonomous bug crawling and regression testing service for modern web applications.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Sentinel QA continuously tests web applications for broken links, UI regressions, and functional bugs without manual intervention. Designed for development teams, QA engineers, and product owners who need reliable automated testing without maintaining complex test infrastructure.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Autonomous crawling with intelligent path discovery</li>
+            <li>Broken link and 404 detection across entire sites</li>
+            <li>Visual regression testing with pixel-level diffing</li>
+            <li>Functional bug detection via DOM state validation</li>
+            <li>Continuous regression tracking with historical baselines</li>
+            <li>REST API for CI/CD integration and custom workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Application URL Configuration</h3>
+        <pre><code># Initialize Sentinel QA for your application
+sentinel-qa init --url https://app.example.com
+
+# Configure authentication (if required)
+sentinel-qa auth set --type bearer --token "$APP_TOKEN"
+
+# Verify connectivity and baseline capture
+sentinel-qa verify</code></pre>
+        <div class="note">Sentinel QA requires read access to your application. For authenticated routes, configure credentials via <code>sentinel-qa auth</code> or environment variables. Never commit tokens to version control.</div>
+
+        <h3>Test Scenario Definition</h3>
+        <p>Define test scenarios in YAML to guide autonomous crawling:</p>
+        <pre><code># .sentinel/scenarios.yaml
+scenarios:
+  - name: "User Login Flow"
+    entry_point: "/login"
+    assertions:
+      - type: element_visible
+        selector: "#dashboard"
+        timeout: 5000
+      - type: no_console_errors
+
+  - name: "Checkout Process"
+    entry_point: "/cart"
+    max_depth: 3
+    assertions:
+      - type: status_code
+        expected: 200
+      - type: element_text
+        selector: ".total-price"
+        pattern: "^\\$[0-9]+\\.[0-9]{2}$"</code></pre>
+
+        <h2>Test Configuration</h2>
+        <h3>Crawl Parameters</h3>
+        <table>
+            <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+            <tr><td><code>--max-depth</code></td><td>5</td><td>Maximum navigation depth from entry points</td></tr>
+            <tr><td><code>--concurrency</code></td><td>3</td><td>Parallel browser instances for crawling</td></tr>
+            <tr><td><code>--timeout</code></td><td>30s</td><td>Page load timeout before marking as failed</td></tr>
+            <tr><td><code>--exclude-pattern</code></td><td>none</td><td>Regex patterns for URLs to skip (e.g., <code>/admin/.*</code>)</td></tr>
+            <tr><td><code>--viewport</code></td><td>1920x1080</td><td>Browser viewport dimensions for visual tests</td></tr>
+        </table>
+
+        <h3>Test Modes</h3>
+        <table>
+            <tr><th>Mode</th><th>Flag</th><th>Use Case</th></tr>
+            <tr><td>Smoke Test</td><td><code>--mode smoke</code></td><td>Quick health check on critical paths only</td></tr>
+            <tr><td>Full Crawl</td><td><code>--mode full</code></td><td>Comprehensive site-wide testing (default)</td></tr>
+            <tr><td>Regression</td><td><code>--mode regression</code></td><td>Compare against stored baseline snapshots</td></tr>
+            <tr><td>Visual Only</td><td><code>--mode visual</code></td><td>Skip functional checks, focus on UI diffs</td></tr>
+        </table>
+
+        <h2>Bug Detection</h2>
+        <p>Sentinel QA identifies multiple categories of defects automatically during crawls:</p>
+        <table>
+            <tr><th>Bug Type</th><th>Detection Method</th><th>Severity</th></tr>
+            <tr><td>Broken Links</td><td>HTTP 4xx/5xx responses on navigation</td><td><span class="badge badge-danger">High</span></td></tr>
+            <tr><td>Console Errors</td><td>JavaScript exceptions in browser console</td><td><span class="badge badge-warning">Medium</span></td></tr>
+            <tr><td>Visual Regressions</td><td>Pixel diff > threshold vs. baseline</td><td><span class="badge badge-warning">Medium</span></td></tr>
+            <tr><td>Form Failures</td><td>Submission errors or missing success states</td><td><span class="badge badge-danger">High</span></td></tr>
+            <tr><td>Performance Issues</td><td>Page load > configured threshold</td><td><span class="badge badge-info">Low</span></td></tr>
+            <tr><td>Accessibility Violations</td><td>WCAG 2.1 AA compliance checks</td><td><span class="badge badge-warning">Medium</span></td></tr>
+        </table>
+        <pre><code>$ sentinel-qa run --mode full
+CRAWL COMPLETE: 142 pages tested in 4m 32s
+BUGS FOUND: 7
+  [HIGH]   Broken link: /docs/api/v2/users → 404
+  [HIGH]   Form failure: /contact submit returned 500
+  [MEDIUM] Visual regression: /pricing (12.4% pixel diff)
+  [MEDIUM] Console error: TypeError on /dashboard line 247
+  [LOW]    Performance: /reports exceeded 3s threshold (4.2s)</code></pre>
+
+        <h2>Regression Tracking</h2>
+        <p>Sentinel QA maintains historical baselines to detect regressions over time. Baselines are stored per-branch and automatically updated on successful test runs.</p>
+        <pre><code># Capture new baseline
+sentinel-qa baseline capture --branch main
+
+# Compare current state against baseline
+sentinel-qa compare --baseline main --threshold 5%
+
+# View regression history
+sentinel-qa history --last 30d --severity high
+
+# Approve visual changes (update baseline)
+sentinel-qa baseline approve --run-id abc123 --reason "Redesigned pricing page"</code></pre>
+        <div class="note">Baselines are stored in <code>.sentinel/baselines/</code>. Add this directory to <code>.gitignore</code> if using local storage, or configure S3/GCS backend for team sharing via <code>sentinel-qa config storage</code>.</div>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>sentinel-qa serve --port 8401</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/runs</code></td><td>Initiate a new test run</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/runs/{id}</code></td><td>Retrieve run results and bug report</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/baselines</code></td><td>List available baselines</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/baselines</code></td><td>Create or update a baseline</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/bugs</code></td><td>List detected bugs with filters</td></tr>
+            <tr><td>PATCH</td><td><code>/api/v1/bugs/{id}</code></td><td>Update bug status (open/fixed/ignored)</td></tr>
+        </table>
+        <h3>Example: Trigger Test Run via API</h3>
+        <pre><code>curl -X POST http://localhost:8401/api/v1/runs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://app.example.com",
+    "mode": "regression",
+    "branch": "feature/new-checkout",
+    "scenarios": ["User Login Flow", "Checkout Process"]
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Crawl fails immediately:</strong> Verify the application URL is reachable from the Sentinel QA host. Check <code>sentinel-qa verify</code> output for DNS or TLS errors. For self-signed certs, use <code>--insecure</code> flag.</p>
+        <p><strong>False positive visual regressions:</strong> Dynamic content (timestamps, ads) causes diffs. Add <code>--ignore-selector ".timestamp, .ad-banner"</code> to exclude volatile regions from comparison.</p>
+        <p><strong>Authentication not persisting:</strong> Ensure auth tokens are set correctly with <code>sentinel-qa auth list</code>. For OAuth flows, use <code>--auth-type cookie</code> and provide session cookies directly.</p>
+        <p><strong>Tests timing out on SPA routes:</strong> Increase timeout with <code>--timeout 60</code> or add explicit wait assertions in scenarios. Sentinel QA waits for network idle by default; override with <code>--wait-until domcontentloaded</code> for faster but less reliable checks.</p>
+        <p><strong>Baseline storage errors:</strong> Verify write permissions on <code>.sentinel/baselines/</code>. For cloud backends, check credentials with <code>sentinel-qa config test-storage</code>.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Starter: 1 app, 500 pages/mo, email alerts</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$79 <span>/ month</span></div>
+                <p style="margin:0;">Team: 5 apps, unlimited pages, Slack/webhook + API</p>
+            </div>
+        </div>
+        <p>Both plans include autonomous crawling, visual regression tracking, bug reporting, and priority support. Enterprise licenses with SSO, audit logs, and dedicated infrastructure available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Sentinel QA</h3><p>Autonomous bug crawling, regression testing, and continuous UI monitoring</p><a href="/products/#sentinel-qa" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

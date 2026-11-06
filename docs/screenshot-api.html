@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Screenshot API Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Screenshot API. Full-page screenshots with customizable viewport, device emulation, delay control, and PNG/JPEG output.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/screenshot-api.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Screenshot API</h1>
+        <p>Capture full-page screenshots of any URL with customizable viewport, device emulation, and rendering delays. Returns high-quality PNG or JPEG images via REST API.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 500 screenshots/mo</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>The Screenshot API provides reliable, headless browser-based screenshot capture for web pages, dashboards, reports, and visual regression testing. Built on Chromium with full JavaScript rendering support, it handles SPAs, lazy-loaded content, and complex layouts without configuration.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Full-page capture including below-the-fold content</li>
+            <li>Custom viewport dimensions and device presets (mobile, tablet, desktop)</li>
+            <li>Configurable wait times for JS-heavy pages and animations</li>
+            <li>PNG and JPEG output with quality control</li>
+            <li>REST API with simple authentication and predictable rate limits</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>API Key</h3>
+        <p>All requests require an API key passed in the <code>X-API-Key</code> header. Generate your key from the <a href="https://edgeiqlabs.com/dashboard">EdgeIQ Dashboard</a>.</p>
+        <pre><code># Store your key securely
+export EDGEIQ_API_KEY="ei_live_xxxxxxxxxxxxxxxxxxxx"</code></pre>
+
+        <h3>Endpoint</h3>
+        <p>Base URL for all Screenshot API requests:</p>
+        <pre><code>POST https://api.edgeiqlabs.com/v1/screenshot</code></pre>
+
+        <h2>Parameters</h2>
+        <table>
+            <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Default</th><th>Description</th></tr>
+            <tr><td><code>url</code></td><td>string</td><td>Yes</td><td>&mdash;</td><td>Target URL to capture (must include http/https scheme)</td></tr>
+            <tr><td><code>viewport_width</code></td><td>integer</td><td>No</td><td>1920</td><td>Browser viewport width in pixels (320&ndash;3840)</td></tr>
+            <tr><td><code>viewport_height</code></td><td>integer</td><td>No</td><td>1080</td><td>Browser viewport height in pixels (320&ndash;2160)</td></tr>
+            <tr><td><code>device</code></td><td>string</td><td>No</td><td><code>desktop</code></td><td>Device preset: <code>desktop</code>, <code>tablet</code>, <code>mobile</code>, or <code>custom</code>. Overrides viewport when not <code>custom</code>.</td></tr>
+            <tr><td><code>delay_ms</code></td><td>integer</td><td>No</td><td>1000</td><td>Wait time after page load before capture (0&ndash;30000 ms). Use for JS rendering, animations, or lazy-loaded assets.</td></tr>
+            <tr><td><code>format</code></td><td>string</td><td>No</td><td><code>png</code></td><td>Output format: <code>png</code> or <code>jpeg</code></td></tr>
+            <tr><td><code>quality</code></td><td>integer</td><td>No</td><td>90</td><td>JPEG quality (1&ndash;100). Ignored for PNG.</td></tr>
+            <tr><td><code>full_page</code></td><td>boolean</td><td>No</td><td>true</td><td>Capture entire scrollable page. Set false for viewport-only crop.</td></tr>
+        </table>
+
+        <h3>Example Request</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/screenshot \
+  -H "X-API-Key: $EDGEIQ_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/dashboard",
+    "device": "desktop",
+    "delay_ms": 2000,
+    "format": "png",
+    "full_page": true
+  }' \
+  --output screenshot.png</code></pre>
+
+        <h2>Response Format</h2>
+        <p>Successful requests return the image binary directly in the response body with appropriate headers:</p>
+        <pre><code>HTTP/1.1 200 OK
+Content-Type: image/png
+Content-Length: 245891
+X-Request-ID: req_abc123def456
+X-RateLimit-Remaining: 498
+
+[binary image data]</code></pre>
+        <p>For programmatic handling, you can request JSON metadata instead by adding <code>Accept: application/json</code>:</p>
+        <pre><code>{
+  "request_id": "req_abc123def456",
+  "url": "https://example.com/dashboard",
+  "format": "png",
+  "size_bytes": 245891,
+  "dimensions": {"width": 1920, "height": 4832},
+  "captured_at": "2026-11-06T14:22:18Z",
+  "download_url": "https://cdn.edgeiqlabs.com/screenshots/req_abc123def456.png?expires=1730992938"
+}</code></pre>
+        <div class="note">JSON responses include a signed <code>download_url</code> valid for 1 hour. Binary responses stream directly and are more efficient for automated pipelines.</div>
+
+        <h2>Rate Limiting</h2>
+        <p>Requests are rate-limited per API key based on your plan tier:</p>
+        <table>
+            <tr><th>Plan</th><th>Monthly Quota</th><th>Burst Limit</th><th>Sustained Rate</th></tr>
+            <tr><td>Starter ($5/mo)</td><td>500 screenshots</td><td>10 req/min</td><td>2 req/min avg</td></tr>
+            <tr><td>Pro ($19/mo)</td><td>5,000 screenshots</td><td>60 req/min</td><td>20 req/min avg</td></tr>
+        </table>
+        <p>Rate limit status is returned in response headers:</p>
+        <pre><code>X-RateLimit-Limit: 500
+X-RateLimit-Remaining: 498
+X-RateLimit-Reset: 1730995200</code></pre>
+        <p>When exceeded, the API returns <code>429 Too Many Requests</code> with a <code>Retry-After</code> header indicating seconds until reset.</p>
+
+        <h2>Error Codes</h2>
+        <table>
+            <tr><th>Code</th><th>Meaning</th><th>Resolution</th></tr>
+            <tr><td><code>400</code></td><td>Invalid parameters</td><td>Check URL format, viewport bounds, and parameter types</td></tr>
+            <tr><td><code>401</code></td><td>Missing or invalid API key</td><td>Verify <code>X-API-Key</code> header and key validity</td></tr>
+            <tr><td><code>403</code></td><td>Quota exhausted or restricted URL</td><td>Upgrade plan or check if target domain is blocked</td></tr>
+            <tr><td><code>408</code></td><td>Page load timeout</td><td>Increase <code>delay_ms</code> or verify target URL accessibility</td></tr>
+            <tr><td><code>422</code></td><td>Unprocessable content</td><td>Page returned non-HTML content type or empty response</td></tr>
+            <tr><td><code>429</code></td><td>Rate limit exceeded</td><td>Respect <code>Retry-After</code> header; implement exponential backoff</td></tr>
+            <tr><td><code>500</code></td><td>Internal rendering failure</td><td>Retry once; contact support if persistent</td></tr>
+            <tr><td><code>502</code></td><td>Target unreachable</td><td>Verify DNS, SSL cert, and network access to target URL</td></tr>
+        </table>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Screenshot appears blank or incomplete:</strong> Increase <code>delay_ms</code> to allow JavaScript frameworks (React, Vue, Angular) to hydrate. Try 3000&ndash;5000ms for heavy SPAs.</p>
+        <p><strong>Mobile layout not rendering correctly:</strong> Use <code>device: "mobile"</code> instead of manual viewport. Device presets include correct user-agent strings and DPR scaling.</p>
+        <p><strong>Fonts or images missing:</strong> Ensure target site allows hotlinking. Some CDNs block headless browsers; try adding <code>User-Agent</code> override via support ticket for enterprise plans.</p>
+        <p><strong>Timeouts on internal/private URLs:</strong> Screenshot API cannot access localhost, private IPs, or VPN-only resources. Use our self-hosted renderer for intranet targets.</p>
+        <p><strong>JPEG artifacts or low quality:</strong> Increase <code>quality</code> parameter (default 90). For pixel-perfect output, use PNG format.</p>
+        <p><strong>Rate limit errors during batch processing:</strong> Implement queue with backpressure. Pro plan supports 60 req/min burst; space requests evenly using token bucket algorithm.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 500 screenshots/mo</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; 5,000 screenshots/mo</p>
+            </div>
+        </div>
+        <p>Both plans include full-page capture, device presets, API access, and email support. Unused quota does not roll over. Enterprise volume pricing and self-hosted options available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Screenshot API Access</h3><p>Full-page captures, device emulation, and reliable rendering</p><a href="/products/#api-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

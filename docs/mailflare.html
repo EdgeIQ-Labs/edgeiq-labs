@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mailflare Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Mailflare. Self-hosted email server and API for developers with SMTP/IMAP, webhooks, and MCP access.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/mailflare.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Mailflare</h1>
+        <p>Self-hosted email server and developer API with SMTP/IMAP services, webhook integrations, and MCP access for AI agents.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Mailflare is a self-hosted email platform designed for developers who need full control over their email infrastructure. It provides production-ready SMTP/IMAP services, programmable webhook integrations, and native MCP (Model Context Protocol) access for AI agent workflows. Deploy on your own domain with Docker-based setup and manage everything via REST API or CLI.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Full SMTP/IMAP server with TLS and authentication</li>
+            <li>Custom domain support with automated DNS validation</li>
+            <li>Webhook integrations for inbound/outbound email events</li>
+            <li>MCP server for AI agent email access and automation</li>
+            <li>REST API for programmatic email management</li>
+            <li>Docker Compose deployment with one-command setup</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>DNS Configuration</h3>
+        <p>Before deploying Mailflare, configure the following DNS records for your domain:</p>
+        <table>
+            <tr><th>Type</th><th>Name</th><th>Value</th><th>Purpose</th></tr>
+            <tr><td>A</td><td><code>mail</code></td><td><code>&lt;your-server-ip&gt;</code></td><td>Mail server hostname</td></tr>
+            <tr><td>MX</td><td><code>@</code></td><td><code>mail.yourdomain.com</code></td><td>Inbound mail routing</td></tr>
+            <tr><td>TXT</td><td><code>@</code></td><td><code>v=spf1 mx a:mail.yourdomain.com ~all</code></td><td>SPF sender policy</td></tr>
+            <tr><td>TXT</td><td><code>_dmarc</code></td><td><code>v=DMARC1; p=quarantine; rua=mailto:dmarc@yourdomain.com</code></td><td>DMARC policy</td></tr>
+            <tr><td>TXT</td><td><code>mail._domainkey</code></td><td><code>v=DKIM1; k=rsa; p=&lt;public-key&gt;</code></td><td>DKIM signing key</td></tr>
+        </table>
+        <div class="note">Use <code>mailflare dns check yourdomain.com</code> to validate all required records before deployment. Missing or misconfigured records will cause delivery failures.</div>
+
+        <h3>Docker Deployment</h3>
+        <pre><code># Clone the Mailflare repository
+git clone https://github.com/edgeiq-labs/mailflare.git
+cd mailflare
+
+# Configure environment
+cp .env.example .env
+nano .env  # Set DOMAIN, ADMIN_EMAIL, DKIM keys
+
+# Start services
+docker compose up -d
+
+# Verify status
+docker compose ps
+mailflare health</code></pre>
+        <p>Mailflare runs three containers: <code>smtp</code> (port 25/587), <code>imap</code> (port 993), and <code>api</code> (port 8400). All data persists in named Docker volumes.</p>
+
+        <h2>SMTP/IMAP Configuration</h2>
+        <h3>Client Settings</h3>
+        <table>
+            <tr><th>Protocol</th><th>Host</th><th>Port</th><th>Encryption</th><th>Auth</th></tr>
+            <tr><td>SMTP (submission)</td><td><code>mail.yourdomain.com</code></td><td>587</td><td>STARTTLS</td><td>PLAIN / LOGIN</td></tr>
+            <tr><td>SMTP (implicit TLS)</td><td><code>mail.yourdomain.com</code></td><td>465</td><td>TLS</td><td>PLAIN / LOGIN</td></tr>
+            <tr><td>IMAP</td><td><code>mail.yourdomain.com</code></td><td>993</td><td>TLS</td><td>PLAIN / LOGIN</td></tr>
+        </table>
+        <h3>Creating Mailboxes</h3>
+        <pre><code># Create a new mailbox via CLI
+mailflare mailbox create user@yourdomain.com --password 'securepass'
+
+# Or via API
+curl -X POST http://localhost:8400/api/v1/mailboxes \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"address": "user@yourdomain.com", "password": "securepass"}'</code></pre>
+
+        <h2>Webhook Integrations</h2>
+        <p>Mailflare sends HTTP POST requests to configured endpoints when email events occur. Use webhooks to trigger workflows, update databases, or notify external systems.</p>
+        <h3>Supported Events</h3>
+        <table>
+            <tr><th>Event</th><th>Trigger</th><th>Payload Fields</th></tr>
+            <tr><td><code>email.received</code></td><td>Inbound message accepted</td><td><code>from</code>, <code>to</code>, <code>subject</code>, <code>message_id</code></td></tr>
+            <tr><td><code>email.sent</code></td><td>Outbound message delivered</td><td><code>to</code>, <code>message_id</code>, <code>status</code></td></tr>
+            <tr><td><code>email.bounced</code></td><td>Delivery failure</td><td><code>to</code>, <code>message_id</code>, <code>bounce_reason</code></td></tr>
+            <tr><td><code>mailbox.created</code></td><td>New mailbox provisioned</td><td><code>address</code>, <code>created_at</code></td></tr>
+        </table>
+        <h3>Configuring Webhooks</h3>
+        <pre><code># Add a webhook endpoint
+mailflare webhook add https://hooks.example.com/mailflare \
+  --events email.received,email.bounced \
+  --secret whsec_your_signing_secret
+
+# Test delivery
+mailflare webhook test https://hooks.example.com/mailflare
+
+# List active webhooks
+mailflare webhook list</code></pre>
+        <div class="note">All webhook payloads include an <code>X-Mailflare-Signature</code> header. Verify signatures using HMAC-SHA256 with your configured secret to prevent spoofing.</div>
+
+        <h2>MCP Access</h2>
+        <p>Mailflare includes a native MCP (Model Context Protocol) server that allows AI agents to read, send, and manage email without custom API integration code.</p>
+        <h3>Available Tools</h3>
+        <table>
+            <tr><th>Tool</th><th>Description</th></tr>
+            <tr><td><code>list_emails</code></td><td>List messages in a mailbox with pagination and filters</td></tr>
+            <tr><td><code>get_email</code></td><td>Retrieve full message content and metadata by ID</td></tr>
+            <tr><td><code>send_email</code></td><td>Send an outbound message from a managed mailbox</td></tr>
+            <tr><td><code>search_emails</code></td><td>Full-text search across subject, body, and headers</td></tr>
+            <tr><td><code>create_mailbox</code></td><td>Provision a new email address programmatically</td></tr>
+        </table>
+        <h3>MCP Server Configuration</h3>
+        <pre><code>{
+  "mcpServers": {
+    "mailflare": {
+      "command": "docker",
+      "args": ["exec", "-i", "mailflare-api", "mailflare", "mcp", "serve"],
+      "env": {
+        "MAILFLARE_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}</code></pre>
+        <p>Add this configuration to your Claude Desktop, Cursor, or other MCP-compatible client. The server exposes read/write tools scoped to the authenticated API key.</p>
+
+        <h2>API Reference</h2>
+        <p>All functionality is available via REST API at <code>http://localhost:8400</code> (or your configured host). Authenticate with <code>Authorization: Bearer &lt;API_KEY&gt;</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/mailboxes</code></td><td>List all mailboxes</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/mailboxes</code></td><td>Create a new mailbox</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/mailboxes/{address}</code></td><td>Delete a mailbox</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/messages</code></td><td>List messages (query params: <code>mailbox</code>, <code>limit</code>, <code>offset</code>)</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/messages/{id}</code></td><td>Retrieve message content and headers</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/messages/send</code></td><td>Send an outbound email</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/webhooks</code></td><td>List configured webhooks</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/webhooks</code></td><td>Register a new webhook endpoint</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/dns/check</code></td><td>Validate domain DNS configuration</td></tr>
+        </table>
+        <h3>Example: Send Email via API</h3>
+        <pre><code>curl -X POST http://localhost:8400/api/v1/messages/send \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "noreply@yourdomain.com",
+    "to": "recipient@example.com",
+    "subject": "Welcome to Mailflare",
+    "body": "Your email server is ready."
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Emails not being received:</strong> Run <code>mailflare dns check yourdomain.com</code> to verify MX, SPF, and DKIM records. Check <code>docker compose logs smtp</code> for rejection reasons.</p>
+        <p><strong>SMTP authentication fails:</strong> Ensure the mailbox exists (<code>mailflare mailbox list</code>) and the password was set correctly. Reset with <code>mailflare mailbox reset-password user@yourdomain.com</code>.</p>
+        <p><strong>Webhooks not firing:</strong> Test with <code>mailflare webhook test &lt;url&gt;</code>. Verify the endpoint returns HTTP 2xx within 10 seconds. Check <code>docker compose logs api</code> for delivery errors.</p>
+        <p><strong>MCP tools unavailable:</strong> Confirm the <code>MAILFLARE_API_KEY</code> environment variable is set and valid. Regenerate with <code>mailflare api-key regenerate</code>.</p>
+        <p><strong>Docker containers failing to start:</strong> Check port conflicts on 25, 587, 993, and 8400. Ensure no other MTA (Postfix, Exim) is bound to these ports. Run <code>docker compose logs</code> for specific errors.</p>
+        <p><strong>DKIM signing not working:</strong> Verify the DKIM public key in DNS matches the private key in <code>.env</code>. Regenerate keys with <code>mailflare dkim generate</code> and update your TXT record.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 5 mailboxes, 10k emails/mo</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; Unlimited mailboxes, 100k emails/mo</p>
+            </div>
+        </div>
+        <p>Both plans include SMTP/IMAP access, webhook integrations, MCP server, REST API, and priority support. Self-hosted deployments include all features regardless of plan tier. Managed hosting available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Mailflare</h3><p>Self-hosted email server with SMTP/IMAP, webhooks, and MCP access for AI agents</p><a href="/products/#lifetime-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

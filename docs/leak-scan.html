@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Leak Scan Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Leak Scan. Monitor public repositories, paste sites, and cloud storage for exposed credentials, API keys, and sensitive data.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/leak-scan.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Leak Scan</h1>
+        <p>Automated credential leak detection across public code repositories, paste sites, and cloud storage buckets.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 5 monitored keywords</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Leak Scan continuously monitors public-facing sources for exposed secrets, API keys, database credentials, and sensitive configuration files. It scans GitHub, GitLab, Bitbucket, Pastebin, Ghostbin, S3 buckets, Azure Blobs, and GCP Storage to detect leaks before attackers exploit them.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Monitor custom keywords, regex patterns, and entropy-based secret detection</li>
+            <li>Coverage across 6+ source types with unified alerting</li>
+            <li>Severity scoring based on credential type and exposure scope</li>
+            <li>Remediation guidance with rotation checklists per finding type</li>
+            <li>REST API for integration into SIEM, SOAR, and DevSecOps pipelines</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Monitored Keywords</h3>
+        <p>Configure what Leak Scan searches for using exact strings, regex, or built-in detectors:</p>
+        <pre><code># Add a keyword monitor
+leak-scan keyword add "AKIA[0-9A-Z]{16}" --type regex --label "AWS Access Key"
+
+# Add an exact string (e.g., internal project codename)
+leak-scan keyword add "XJ9-INTERNAL-API" --type exact --label "Internal API Token"
+
+# Enable built-in detectors
+leak-scan detector enable github-token slack-webhook stripe-key gcp-service-account
+
+# List active monitors
+leak-scan keyword list</code></pre>
+
+        <h3>Exclusion Lists</h3>
+        <p>Reduce false positives by excluding known-safe patterns, test repos, or documented examples:</p>
+        <pre><code># Exclude a specific repository
+leak-scan exclude add repo:myorg/documentation-examples
+
+# Exclude a file path pattern
+leak-scan exclude add path:**/test/fixtures/**
+
+# Exclude a known safe hash/token
+leak-scan exclude add token:EXAMPLE_KEY_DO_NOT_USE
+
+# View exclusions
+leak-scan exclude list</code></pre>
+        <div class="note">Exclusions are applied at scan time. Existing findings matching a new exclusion are not auto-closed — review and dismiss them manually.</div>
+
+        <h2>Scan Frequency</h2>
+        <p>Configure how often Leak Scan checks each source:</p>
+        <table>
+            <tr><th>Plan</th><th>Default Interval</th><th>Minimum Interval</th><th>Sources</th></tr>
+            <tr><td>Starter ($9/mo)</td><td>Every 6 hours</td><td>6 hours</td><td>GitHub, Pastebin</td></tr>
+            <tr><td>Pro ($29/mo)</td><td>Every 1 hour</td><td>15 minutes</td><td>All 6+ sources</td></tr>
+        </table>
+        <pre><code># Override default frequency for a specific source
+leak-scan config set github.interval 30m
+
+# Trigger an immediate scan
+leak-scan scan now --source github
+
+# View next scheduled scan times
+leak-scan schedule status</code></pre>
+
+        <h2>Finding Details</h2>
+        <p>Each finding includes structured metadata for triage and response:</p>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td><code>finding_id</code></td><td>Unique identifier for the leak record</td></tr>
+            <tr><td><code>source</code></td><td>Platform where the leak was found (github, pastebin, s3, etc.)</td></tr>
+            <tr><td><code>url</code></td><td>Direct link to the exposed content</td></tr>
+            <tr><td><code>matched_keyword</code></td><td>The keyword or detector that triggered the match</td></tr>
+            <tr><td><code>severity</code></td><td>critical / high / medium / low based on credential type</td></tr>
+            <tr><td><code>first_seen</code></td><td>Timestamp of initial detection</td></tr>
+            <tr><td><code>snippet</code></td><td>Redacted context around the match (max 500 chars)</td></tr>
+            <tr><td><code>author</code></td><td>Uploader/commit author when available</td></tr>
+            <tr><td><code>repo_or_bucket</code></td><td>Repository name or storage bucket identifier</td></tr>
+        </table>
+        <div class="note">Snippets are redacted by default. Full content is never stored — only the matched portion with surrounding context for verification.</div>
+
+        <h2>Remediation Steps</h2>
+        <p>Leak Scan provides actionable remediation guidance per finding type:</p>
+        <table>
+            <tr><th>Finding Type</th><th>Immediate Action</th><th>Follow-Up</th></tr>
+            <tr><td>AWS Access Key</td><td>Deactivate key in IAM, rotate secret</td><td>Audit CloudTrail for unauthorized usage</td></tr>
+            <tr><td>GitHub PAT</td><td>Revoke token in GitHub settings</td><td>Check audit log for repo access</td></tr>
+            <tr><td>Slack Webhook</td><td>Delete webhook in Slack app config</td><td>Review channel message history</td></tr>
+            <tr><td>Database URI</td><td>Rotate password, restrict network ACL</td><td>Check query logs for anomalous reads</td></tr>
+            <tr><td>Stripe Secret Key</td><td>Roll key in Stripe Dashboard</td><td>Review recent charges and payouts</td></tr>
+            <tr><td>GCP Service Account</td><td>Delete key version, create new</td><td>Audit Admin Activity logs</td></tr>
+        </table>
+        <pre><code># Mark a finding as remediated
+leak-scan finding resolve FND-20261107-001 --action rotated
+
+# Export remediation checklist as markdown
+leak-scan finding export FND-20261107-001 --format md &gt; remediation.md</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All functionality is available via REST API. Authenticate with your API key in the <code>X-API-Key</code> header.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/v1/findings</code></td><td>List findings with filtering</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/findings/{id}</code></td><td>Get finding details</td></tr>
+            <tr><td>PATCH</td><td><code>/api/v1/findings/{id}</code></td><td>Update status or add notes</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/keywords</code></td><td>Add a monitored keyword</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/keywords/{id}</code></td><td>Remove a keyword</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/sources</code></td><td>List configured sources and status</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/scan</code></td><td>Trigger an immediate scan</td></tr>
+        </table>
+        <h3>Example: List Critical Findings</h3>
+        <pre><code>curl -H "X-API-Key: YOUR_API_KEY" \
+  "https://api.edgeiqlabs.com/v1/findings?severity=critical&amp;status=open"</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>No findings despite known leaks:</strong> Verify keywords are correctly configured with <code>leak-scan keyword list</code>. Test with a known-public test repo containing a dummy secret.</p>
+        <p><strong>High false positive rate:</strong> Add exclusions for example configs, test fixtures, and documentation repos. Use <code>--type regex</code> instead of exact matches for variable-format secrets.</p>
+        <p><strong>Source authentication failing:</strong> Re-authorize with <code>leak-scan source auth github</code>. Tokens expire after 90 days for some platforms.</p>
+        <p><strong>Webhook alerts not arriving:</strong> Test delivery with <code>leak-scan alert test</code>. Check that your endpoint accepts POST with JSON body and returns 2xx within 5 seconds.</p>
+        <p><strong>Scan stuck or slow:</strong> Check rate limits on source platforms. Pro plans include higher rate limits and parallel scanning across sources.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter: 5 keywords, 2 sources, 6h scans</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro: Unlimited keywords, all sources, 15m scans</p>
+            </div>
+        </div>
+        <p>Both plans include API access, webhook/email alerts, and remediation guidance. Annual billing saves 20%. Team and enterprise plans available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Leak Scan</h3><p>Credential leak detection across repos, paste sites, and cloud storage</p><a href="/products/#leak-scan" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bot Hosting Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete reference documentation for EdgeIQ Labs Bot Hosting. Deploy Discord, Telegram, and Slack bots with 24/7 uptime, auto-restart, log streaming, and environment variable management.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/bot-hosting.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Bot Hosting</h1>
+        <p>Specialized hosting infrastructure for Discord, Telegram, and Slack bots with built-in reliability and observability.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; perfect for single bots</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>EdgeIQ Labs Bot Hosting provides purpose-built infrastructure for chat platform bots. Unlike generic VPS hosting, our bot hosting includes automatic process supervision, real-time log streaming, secure environment variable injection, and instant Git-based deployments. Designed for developers who need their bots online 24/7 without managing systemd services or Docker containers manually.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Native support for Discord.py, discord.js, Telegraf, python-telegram-bot, and Slack Bolt</li>
+            <li>Automatic crash recovery with configurable restart policies</li>
+            <li>Real-time WebSocket log streaming to dashboard or CLI</li>
+            <li>Encrypted environment variable storage with hot-reload</li>
+            <li>Git push-to-deploy with zero-downtime rolling restarts</li>
+            <li>REST API for CI/CD integration and automated deployments</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Git Deploy</h3>
+        <p>Connect your repository to deploy via Git push. The build system automatically detects your bot framework and installs dependencies.</p>
+        <pre><code># Add EdgeIQ as a remote
+git remote add edgeiq https://git.edgeiqlabs.com/bots/my-discord-bot.git
+
+# Push to deploy
+git push edgeiq main
+
+# Deploy a specific branch
+git push edgeiq feature/auto-mod:main</code></pre>
+        <div class="note">Supported languages: Node.js (18/20), Python (3.10/3.11/3.12), Go, Rust. Include a <code>package.json</code>, <code>requirements.txt</code>, or <code>Cargo.toml</code> in your repo root for auto-detection.</div>
+
+        <h3>Environment Variables</h3>
+        <p>Store secrets securely without committing them to source control. Variables are encrypted at rest and injected into the runtime environment.</p>
+        <pre><code># Set variables via CLI
+edgeiq bot env set DISCORD_TOKEN=MTE... --bot my-discord-bot
+edgeiq bot env set DATABASE_URL=postgres://... --bot my-discord-bot
+
+# List current variables (values masked)
+edgeiq bot env list --bot my-discord-bot
+
+# Remove a variable
+edgeiq bot env unset DEBUG_MODE --bot my-discord-bot</code></pre>
+        <p>Variables can also be managed through the web dashboard under <strong>Bots → Settings → Environment</strong>. Changes trigger an automatic graceful restart unless <code>--no-restart</code> is specified.</p>
+
+        <h2>Bot Configuration</h2>
+        <p>Create an <code>edgeiq.yaml</code> file in your repository root to customize runtime behavior:</p>
+        <pre><code># edgeiq.yaml
+runtime:
+  language: node
+  version: "20"
+  command: "node dist/index.js"
+  
+restart:
+  policy: always          # always | on-failure | never
+  max_restarts: 10        # within window below
+  restart_window: 3600    # seconds
+  backoff_multiplier: 2   # exponential backoff on repeated crashes
+
+resources:
+  memory: 512             # MB (Starter: 512, Pro: 2048)
+  cpu: 0.5                # vCPU cores
+
+logs:
+  retention_days: 7       # Starter: 7, Pro: 30
+  max_size_mb: 100        # per-session cap
+  stream: true            # enable real-time streaming</code></pre>
+        <table>
+            <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+            <tr><td><code>restart.policy</code></td><td><code>always</code></td><td>When to restart after exit</td></tr>
+            <tr><td><code>restart.max_restarts</code></td><td><code>10</code></td><td>Max restarts within window before giving up</td></tr>
+            <tr><td><code>resources.memory</code></td><td><code>512</code></td><td>RAM allocation in MB</td></tr>
+            <tr><td><code>logs.retention_days</code></td><td><code>7</code></td><td>How long logs are stored</td></tr>
+        </table>
+
+        <h2>Log Streaming</h2>
+        <p>View bot output in real time through the dashboard, CLI, or WebSocket API.</p>
+        <pre><code># Stream logs via CLI
+edgeiq bot logs tail my-discord-bot --follow
+
+# Filter by level
+edgeiq bot logs tail my-discord-bot --level error
+
+# Download historical logs
+edgeiq bot logs download my-discord-bot --from 2026-11-01 --format json</code></pre>
+        <p>WebSocket endpoint for programmatic access:</p>
+        <pre><code>wss://api.edgeiqlabs.com/v1/bots/{bot_id}/logs/stream
+Authorization: Bearer &lt;API_KEY&gt;</code></pre>
+        <div class="note">Logs are buffered and flushed every 200ms. Stdout and stderr are merged with source tags (<code>[OUT]</code> / <code>[ERR]</code>). Use structured JSON logging for parseable output.</div>
+
+        <h2>Auto-Restart</h2>
+        <p>The supervisor monitors your bot process continuously. Restart behavior is configurable per bot:</p>
+        <table>
+            <tr><th>Policy</th><th>Behavior</th><th>Use Case</th></tr>
+            <tr><td><code>always</code></td><td>Restart on any exit code</td><td>Production bots that must stay online</td></tr>
+            <tr><td><code>on-failure</code></td><td>Restart only on non-zero exit</td><td>Development/testing environments</td></tr>
+            <tr><td><code>never</code></td><td>Never auto-restart</td><td>One-shot scripts, maintenance tasks</td></tr>
+        </table>
+        <p>Exponential backoff prevents restart loops: if a bot crashes repeatedly within the configured window, wait times double (1s → 2s → 4s → ...) up to 60 seconds. After <code>max_restarts</code> failures, the bot enters a <strong>crashed</strong> state and requires manual intervention.</p>
+        <pre><code># Check restart history
+edgeiq bot status my-discord-bot
+
+# Manual restart
+edgeiq bot restart my-discord-bot
+
+# Clear crash counter
+edgeiq bot reset-restarts my-discord-bot</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All bot management features are available via REST API. Authenticate with your API key from the dashboard.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/v1/bots</code></td><td>List all hosted bots</td></tr>
+            <tr><td>POST</td><td><code>/v1/bots</code></td><td>Create new bot instance</td></tr>
+            <tr><td>GET</td><td><code>/v1/bots/{id}</code></td><td>Get bot details and status</td></tr>
+            <tr><td>PATCH</td><td><code>/v1/bots/{id}</code></td><td>Update configuration</td></tr>
+            <tr><td>DELETE</td><td><code>/v1/bots/{id}</code></td><td>Delete bot and associated data</td></tr>
+            <tr><td>POST</td><td><code>/v1/bots/{id}/deploy</code></td><td>Trigger deployment from Git</td></tr>
+            <tr><td>POST</td><td><code>/v1/bots/{id}/restart</code></td><td>Graceful restart</td></tr>
+            <tr><td>GET</td><td><code>/v1/bots/{id}/env</code></td><td>List environment variables (masked)</td></tr>
+            <tr><td>PUT</td><td><code>/v1/bots/{id}/env</code></td><td>Bulk update environment variables</td></tr>
+            <tr><td>GET</td><td><code>/v1/bots/{id}/logs</code></td><td>Fetch historical logs (paginated)</td></tr>
+        </table>
+        <h3>Example: Deploy via API</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/bots/bot_abc123/deploy \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "branch": "main",
+    "force_rebuild": false
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Bot stuck in restart loop:</strong> Check logs for unhandled exceptions or missing environment variables. Run <code>edgeiq bot logs tail {id} --level error</code> to isolate the failure. Verify <code>edgeiq.yaml</code> restart policy isn't masking a fatal configuration error.</p>
+        <p><strong>Deploy fails silently:</strong> Ensure your repo has a valid dependency manifest (<code>package.json</code>, <code>requirements.txt</code>, etc.). Check build logs via <code>edgeiq bot logs {id} --session latest-build</code>. Unsupported language versions return exit code 127.</p>
+        <p><strong>Environment variables not updating:</strong> Variables require a restart to take effect. Use <code>edgeiq bot env set KEY=val --bot {id}</code> (auto-restarts) or manually restart after bulk updates via API.</p>
+        <p><strong>Memory limit exceeded:</strong> Bots exceeding allocated RAM are OOM-killed and restarted. Upgrade to Pro ($15/mo) for 2GB RAM, or optimize your bot's memory footprint. Monitor usage via <code>edgeiq bot metrics {id}</code>.</p>
+        <p><strong>Git push rejected:</strong> Verify your SSH key or HTTPS credentials are linked to your EdgeIQ account. Run <code>edgeiq auth status</code> to check. Force-push is disabled on production branches by default.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$5 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 512MB RAM, 7-day logs</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$15 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; 2GB RAM, 30-day logs, priority support</p>
+            </div>
+        </div>
+        <p>Both plans include unlimited deploys, auto-restart, real-time log streaming, environment variable management, and API access. Annual billing saves 20%. Team and enterprise plans available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Host Your Bot Today</h3><p>24/7 uptime, auto-restart, and real-time logs starting at $5/mo</p><a href="/products/#hosting" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>

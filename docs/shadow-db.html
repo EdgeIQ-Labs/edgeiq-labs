@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shadow DB Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Shadow DB. Database vulnerability scanner for MySQL, PostgreSQL, MongoDB, and Redis. Detects exposed databases, weak credentials, and SQL injection vectors.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/shadow-db.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Shadow DB</h1>
+        <p>Database vulnerability scanner that detects exposed databases, weak credentials, and unpatched SQL injection vectors across MySQL, PostgreSQL, MongoDB, and Redis.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Shadow DB provides comprehensive database security scanning for modern infrastructure. It identifies misconfigurations, default credentials, missing patches, and SQL injection vulnerabilities before attackers exploit them. Designed for DevOps teams, DBAs, and security engineers managing multi-database environments.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Supports MySQL, PostgreSQL, MongoDB, and Redis</li>
+            <li>Detects weak/default credentials via safe authentication testing</li>
+            <li>Identifies unpatched CVEs with version fingerprinting</li>
+            <li>Finds SQL injection vectors in stored procedures and views</li>
+            <li>Generates prioritized remediation reports with fix commands</li>
+            <li>REST API for CI/CD integration and automated compliance checks</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Database Connection Strings</h3>
+        <p>Shadow DB accepts standard connection URIs for each supported database:</p>
+        <table>
+            <tr><th>Database</th><th>Format</th><th>Example</th></tr>
+            <tr><td>MySQL</td><td><code>mysql://user:pass@host:port/db</code></td><td><code>mysql://reader:secret@db.example.com:3306/app</code></td></tr>
+            <tr><td>PostgreSQL</td><td><code>postgresql://user:pass@host:port/db</code></td><td><code>postgresql://scanner:pwd@pg.internal:5432/prod</code></td></tr>
+            <tr><td>MongoDB</td><td><code>mongodb://user:pass@host:port/db?authSource=admin</code></td><td><code>mongodb://audit:token@mongo.cluster:27017/logs?authSource=admin</code></td></tr>
+            <tr><td>Redis</td><td><code>redis://:pass@host:port/db</code></td><td><code>redis://:redispass@cache.local:6379/0</code></td></tr>
+        </table>
+
+        <h3>Read-Only User Creation</h3>
+        <p>For safety, create a dedicated read-only user for scanning. Never use admin/root credentials.</p>
+        <pre><code>-- MySQL
+CREATE USER 'shadow_scanner'@'%' IDENTIFIED BY 'strong_password';
+GRANT SELECT, SHOW VIEW ON *.* TO 'shadow_scanner'@'%';
+FLUSH PRIVILEGES;
+
+-- PostgreSQL
+CREATE ROLE shadow_scanner WITH LOGIN PASSWORD 'strong_password';
+GRANT CONNECT ON DATABASE prod TO shadow_scanner;
+\c prod
+GRANT USAGE ON SCHEMA public TO shadow_scanner;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO shadow_scanner;
+
+-- MongoDB (mongosh)
+use admin
+db.createUser({
+  user: "shadow_scanner",
+  pwd: "strong_password",
+  roles: [{ role: "readAnyDatabase", db: "admin" }]
+});
+
+-- Redis (redis.conf or ACL)
+ACL SETUSER shadow_scanner on >strong_password ~* +@read +@connection</code></pre>
+        <div class="note">Shadow DB never writes to your database. All scans are read-only. The scanner uses metadata queries and safe authentication probes only.</div>
+
+        <h2>Scan Configuration</h2>
+        <h3>CLI Usage</h3>
+        <pre><code># Install via pip
+pip install edgeiq-shadow-db
+
+# Scan a single database
+shadow-db scan mysql://reader:pass@db.example.com:3306/app
+
+# Scan multiple targets from file
+shadow-db scan --targets-file databases.txt --output report.json
+
+# Run specific check categories
+shadow-db scan postgresql://u:p@host/db --checks credentials,cve,sqli
+
+# Schedule continuous monitoring
+shadow-db monitor add mysql://reader:pass@db.example.com:3306/app --interval 86400</code></pre>
+
+        <h3>Configuration File</h3>
+        <p>Create <code>~/.shadow-db/config.yaml</code> for persistent settings:</p>
+        <pre><code>scanning:
+  timeout: 30
+  max_connections: 5
+  retry_attempts: 3
+
+checks:
+  credentials: true
+  cve: true
+  sqli: true
+  config_misconfigs: true
+
+alerting:
+  webhook_url: https://hooks.slack.com/services/xxx
+  email: security@example.com
+  severity_threshold: high</code></pre>
+
+        <h2>Vulnerability Types</h2>
+        <table>
+            <tr><th>Category</th><th>Description</th><th>Severity</th><th>Example</th></tr>
+            <tr><td>Weak Credentials</td><td>Default, empty, or commonly-used passwords</td><td><span class="badge badge-danger">Critical</span></td><td>MySQL root with no password</td></tr>
+            <tr><td>Exposed Database</td><td>Database listening on 0.0.0.0 without firewall</td><td><span class="badge badge-danger">Critical</span></td><td>MongoDB on public IP without auth</td></tr>
+            <tr><td>Unpatched CVE</td><td>Known vulnerability in running version</td><td><span class="badge badge-warning">High</span></td><td>PostgreSQL 13.3 CVE-2021-23214</td></tr>
+            <tr><td>SQL Injection</td><td>Unsafe dynamic SQL in stored procedures/views</td><td><span class="badge badge-warning">High</span></td><td>EXEC(@user_input) in T-SQL proc</td></tr>
+            <tr><td>Missing Encryption</td><td>TLS/SSL disabled for client connections</td><td><span class="badge badge-warning">Medium</span></td><td>MySQL require_secure_transport=OFF</td></tr>
+            <tr><td>Excessive Privileges</td><td>Users with unnecessary admin rights</td><td><span class="badge badge-warning">Medium</span></td><td>App user with SUPER privilege</td></tr>
+            <tr><td>Audit Logging Disabled</td><td>No query logging for forensic analysis</td><td><span class="badge badge-info">Low</span></td><td>PostgreSQL log_statement=none</td></tr>
+        </table>
+
+        <h2>Remediation Steps</h2>
+        <p>Each finding includes actionable fix commands tailored to your database version:</p>
+        <pre><code># Finding: WEAK_CREDENTIAL_001 - MySQL root has empty password
+# Severity: CRITICAL
+# Fix:
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_strong_password';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+FLUSH PRIVILEGES;
+
+# Finding: EXPOSED_DB_003 - MongoDB bound to 0.0.0.0
+# Severity: CRITICAL
+# Fix: Edit /etc/mongod.conf
+net:
+  bindIp: 127.0.0.1
+security:
+  authorization: enabled
+# Then restart: sudo systemctl restart mongod
+
+# Finding: UNPATCHED_CVE_2021_23214
+# Severity: HIGH
+# Fix: Upgrade PostgreSQL to 13.5+
+sudo apt update && sudo apt install postgresql-13</code></pre>
+        <div class="note">Always test remediation commands in staging first. Shadow DB provides rollback scripts for every fix.</div>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>shadow-db serve --port 8410</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>POST</td><td><code>/api/v1/scan</code></td><td>Initiate a new database scan</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/scan/{id}</code></td><td>Retrieve scan results</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/findings</code></td><td>List all findings with filters</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/monitors</code></td><td>Create continuous monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/monitors</code></td><td>List active monitors</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/monitors/{id}</code></td><td>Remove a monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/cve-database</code></td><td>Query known DB CVEs</td></tr>
+        </table>
+        <h3>Example: Trigger Scan via API</h3>
+        <pre><code>curl -X POST http://localhost:8410/api/v1/scan \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk_live_xxx" \
+  -d '{
+    "connection_uri": "mysql://reader:pass@db.example.com:3306/app",
+    "checks": ["credentials", "cve", "sqli"],
+    "timeout": 30
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Authentication failed:</strong> Verify connection string credentials. Ensure the scanner user has been granted CONNECT and SELECT permissions. Test with native client first (<code>mysql -u shadow_scanner -p</code>).</p>
+        <p><strong>Connection timeout:</strong> Check firewall rules allow inbound traffic on the database port. Verify the database isn't bound to localhost only if scanning remotely. Increase <code>--timeout 60</code> for slow networks.</p>
+        <p><strong>Permission denied errors:</strong> The scanner user lacks required privileges. Re-run the GRANT statements from Setup. For PostgreSQL, ensure <code>GRANT USAGE ON SCHEMA</code> was executed per-schema.</p>
+        <p><strong>CVE detection inaccurate:</strong> Version fingerprinting may fail on custom builds. Manually verify with <code>SELECT VERSION();</code> and cross-reference NVD. Submit false positives via <code>shadow-db report-false-positive</code>.</p>
+        <p><strong>Monitor not alerting:</strong> Test webhook with <code>shadow-db monitor test-alert</code>. Check <code>~/.shadow-db/logs/monitor.log</code> for delivery errors. Verify severity threshold isn't filtering out findings.</p>
+        <p><strong>Scan hangs on large schema:</strong> Reduce scope with <code>--max-tables 100</code> or exclude schemas with <code>--exclude information_schema,performance_schema</code>.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 5 databases, daily scans</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;">Team &mdash; unlimited databases, hourly scans, SSO</p>
+            </div>
+        </div>
+        <p>Both plans include all vulnerability checks, API access, remediation guidance, and priority support. Annual billing saves 20%. Enterprise licenses with SLA available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
+            <p>&copy; 2026 EdgeIQ Labs. All rights reserved. | <a href="https://edgeiqlabs.com">edgeiqlabs.com</a> | <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a></p>
+        </footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Shadow DB</h3><p>Database vulnerability scanning for MySQL, PostgreSQL, MongoDB, and Redis</p><a href="/products/#monthly-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<div class="footer">© 2026 EdgeIQ Labs</div>
+</main>
+</body></html>
