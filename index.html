@@ -502,7 +502,7 @@
     .anim-card.catalog-card:hover { border-color: var(--accent); transform: translateY(-3px); }
 
     /* Compact product cards — reference-matched design */
-    .compact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .compact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
     .compact-card {
       background: #1A1A1E;
       border: 1px solid transparent;
@@ -513,6 +513,7 @@
       gap: 8px;
       position: relative;
       overflow: hidden;
+      max-height: 160px;
       transition: box-shadow 0.25s ease, transform 0.2s ease;
     }
     .compact-card:hover {
@@ -536,10 +537,11 @@
     .compact-card .card-desc {
       font-size: 0.82rem; color: #A0A0B0; line-height: 1.5;
       margin: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .compact-card .card-tiers {
-      display: flex; flex-wrap: wrap; gap: 6px;
-      margin-top: 2px;
+      display: flex; flex-wrap: nowrap; gap: 6px;
+      margin-top: 2px; overflow: hidden;
     }
     .compact-card .card-tiers span {
       font-size: 0.7rem; font-weight: 600; padding: 2px 7px;
