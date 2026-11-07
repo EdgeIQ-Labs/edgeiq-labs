@@ -513,7 +513,6 @@
       gap: 8px;
       position: relative;
       overflow: hidden;
-      max-height: 160px;
       transition: box-shadow 0.25s ease, transform 0.2s ease;
     }
     .compact-card:hover {
@@ -537,11 +536,11 @@
     .compact-card .card-desc {
       font-size: 0.82rem; color: #A0A0B0; line-height: 1.5;
       margin: 0;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
     .compact-card .card-tiers {
-      display: flex; flex-wrap: nowrap; gap: 6px;
-      margin-top: 2px; overflow: hidden;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 2px;
     }
     .compact-card .card-tiers span {
       font-size: 0.7rem; font-weight: 600; padding: 2px 7px;
@@ -2161,7 +2160,6 @@
           <div class="card-header">
             <div class="card-icon" style="color:#3de19e;">🟢</div>
             <div class="card-title-group"><div class="card-title">EdgeIQ Pulse</div><div class="badge-new" style="background:rgba(61,225,158,0.15);border:1px solid rgba(61,225,158,0.35);color:#3de19e;">NEW</div></div>
-            <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Always-on security monitoring — weekly domain scans with email alerts when something changes.</p>
           <div class="card-tiers"><span>Free: 1 domain</span><span>Pro: $19/mo</span><span>Biz: $39/mo</span></div>
@@ -2172,7 +2170,6 @@
           <div class="card-header">
             <div class="card-icon" style="color:#b47aff;">✉</div>
             <div class="card-title-group"><div class="card-title">Inbox Shield</div><div class="badge-new" style="background:rgba(180,122,255,0.15);border:1px solid rgba(180,122,255,0.35);color:#b47aff;">NEW</div></div>
-            <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Grade your email security: SPF, DMARC, DKIM, BIMI. A–F letter grade with actionable fixes.</p>
           <div class="card-tiers"><span>Free: instant scan</span><span>Pro: $15/mo</span></div>
@@ -2183,7 +2180,6 @@
           <div class="card-header">
             <div class="card-icon" style="color:#6366f1;">🐙</div>
             <div class="card-title-group"><div class="card-title">Repo Security Scanner</div><div class="badge-new" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);color:#6366f1;">NEW</div></div>
-            <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Scan GitHub repos for leaked secrets, .env files, gitignore gaps, and CI/CD risks.</p>
           <div class="card-tiers"><span>Free: public repos</span><span>Pro: $9/mo</span></div>
@@ -2194,7 +2190,6 @@
           <div class="card-header">
             <div class="card-icon" style="color:#3dd9ff;">🚀</div>
             <div class="card-title-group"><div class="card-title">CDN Cache Warmer</div><div class="badge-new" style="background:rgba(61,217,255,0.15);border:1px solid rgba(61,217,255,0.35);color:#3dd9ff;">NEW</div></div>
-            <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Pre-warm CDN edge cache after deploys. Auto-detect Cloudflare, Fastly, Akamai.</p>
           <div class="card-tiers"><span>Free: browser-based</span><span>Pro: $9/mo</span></div>
