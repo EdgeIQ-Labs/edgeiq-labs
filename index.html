@@ -3906,11 +3906,28 @@
       lbl.classList.toggle('active', (isAnnual ? which === 'annual' : which === 'monthly'));
     });
 
-    // Update note text
+    // Update note text dynamically based on visible pricing
     if (note) {
-      note.textContent = isAnnual
-        ? 'Annual billing — your card is charged \'182 for 12 months. Save \'46 vs monthly.'
-        : 'Switch to annual and save on any tool — billed once, owned 12 months';
+      if (isAnnual) {
+        // Sum annual savings across all pricing cards
+        var totalMonthly = 0, totalAnnual = 0;
+        priceFlips.forEach(function(span) {
+          var m = span.getAttribute('data-monthly-text');
+          var a = span.getAttribute('data-annual-text');
+          if (m && a) {
+            var mVal = parseFloat(m.replace(/[^0-9.]/g, ''));
+            var aVal = parseFloat(a.replace(/[^0-9.]/g, ''));
+            if (!isNaN(mVal) && !isNaN(aVal)) {
+              totalMonthly += mVal * 12;
+              totalAnnual += aVal;
+            }
+          }
+        });
+        var saved = Math.round(totalMonthly - totalAnnual);
+        note.textContent = 'Billed annually \u2014 save $' + saved + ' vs monthly across both plans';
+      } else {
+        note.textContent = 'Switch to annual and save on any tool \u2014 billed once, owned 12 months';
+      }
     }
 
     // Update each monthly/annual button
