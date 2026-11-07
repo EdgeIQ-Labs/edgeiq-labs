@@ -1122,19 +1122,7 @@
       </div>
     </section>
 
-    <!-- Integrated Security visual break -->
-    <section style="padding:24px 0 32px;">
-      <div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;">
-        <div style="flex:0 1 380px;">
-          <img src="/assets/img/services-hero.png" alt="Integrated security — Domains, Email, Security" style="width:100%;max-width:380px;height:auto;border-radius:16px;opacity:0.92;filter:drop-shadow(0 0 24px rgba(61,217,255,0.15));" />
-        </div>
-        <div style="flex:1 1 400px;">
-          <h2 style="font-size:1.3rem;margin:0 0 12px;color:var(--text);">Everything connected, everything protected</h2>
-          <p style="color:var(--muted);margin:0 0 16px;line-height:1.6;">Your domains, email, and infrastructure shouldn't be siloed. EdgeIQ monitors all three as one system — catching threats that slip through when tools don't talk to each other.</p>
-          <a href="#smb-essentials" class="btn btn-primary" style="font-size:0.9rem;">See how it works →</a>
-        </div>
-      </div>
-    </section>
+
 
     <!-- New Services Grid — compact product shelf -->
     <section id="new-services" style="padding:32px 0 24px;">
@@ -1411,23 +1399,32 @@
 
     <!-- ═══ HERO SECURITY SCANNER ═══ -->
     <section id="scanner" style="padding:60px 0 50px;">
-      <div class="container" style="max-width:700px;text-align:center;">
+      <div class="container" style="max-width:960px;">
+        <div style="display:flex;align-items:center;gap:40px;flex-wrap:wrap;">
 
-        <!-- Idle state -->
-        <div id="hero-idle">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:22px;">🛡 Free Security Check</div>
-          <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:12px;">How secure is your domain?</h2>
-          <p style="color:var(--muted);font-size:1rem;margin-bottom:30px;">Get an A–F grade across email authentication, SSL, and DNS in under 10 seconds.</p>
-          <form id="hero-form" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-            <input type="text" id="hero-domain-input" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false"
-              style="flex:1;min-width:200px;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:14px 18px;font-size:1rem;" />
-            <button type="submit" id="hero-btn" class="btn btn-primary" style="padding:14px 24px;font-size:1rem;font-weight:700;white-space:nowrap;">
-              <span id="hero-btn-label">Get My Score →</span>
-              <span id="hero-btn-loading" style="display:none;">Scanning…</span>
-            </button>
-          </form>
-          <p style="color:var(--muted);font-size:0.78rem;margin-top:10px;">Free · No account · No credit card</p>
-        </div>
+          <!-- Left: hero image -->
+          <div style="flex:1 1 340px;min-width:280px;">
+            <img src="/assets/img/services-hero.png" alt="EdgeIQ security dashboard — domains, email, infrastructure monitoring" style="width:100%;max-width:380px;height:auto;border-radius:16px;opacity:0.92;filter:drop-shadow(0 0 24px rgba(61,217,255,0.15));" />
+          </div>
+
+          <!-- Right: scanner form -->
+          <div style="flex:1 1 400px;text-align:center;">
+
+            <!-- Idle state -->
+            <div id="hero-idle">
+              <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:22px;">🛡 Free Security Check</div>
+              <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:12px;">How secure is your domain?</h2>
+              <p style="color:var(--muted);font-size:1rem;margin-bottom:30px;">Get an A–F grade across email authentication, SSL, and DNS in under 10 seconds.</p>
+              <form id="hero-form" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+                <input type="text" id="hero-domain-input" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false"
+                  style="flex:1;min-width:200px;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:14px 18px;font-size:1rem;" />
+                <button type="submit" id="hero-btn" class="btn btn-primary" style="padding:14px 24px;font-size:1rem;font-weight:700;white-space:nowrap;">
+                  <span id="hero-btn-label">Get My Score →</span>
+                  <span id="hero-btn-loading" style="display:none;">Scanning…</span>
+                </button>
+              </form>
+              <p style="color:var(--muted);font-size:0.78rem;margin-top:10px;">Free · No account · No credit card</p>
+            </div>
 
         <!-- Scanning state -->
         <div id="hero-scanning" style="display:none;padding:20px 0;">
@@ -1446,9 +1443,11 @@
           </div>
         </div>
 
-        <!-- Results state -->
-        <div id="hero-results" style="display:none;text-align:left;"></div>
+            <!-- Results state -->
+            <div id="hero-results" style="display:none;text-align:left;"></div>
 
+          </div><!-- /right: scanner form -->
+        </div><!-- /flex wrapper -->
       </div>
     </section>
 
