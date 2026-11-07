@@ -507,10 +507,10 @@
       background: #1A1A1E;
       border: 1px solid transparent;
       border-radius: 16px;
-      padding: 16px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
       position: relative;
       overflow: hidden;
       transition: box-shadow 0.25s ease, transform 0.2s ease;
@@ -534,12 +534,12 @@
       white-space: nowrap; flex-shrink: 0; margin-left: auto;
     }
     .compact-card .card-desc {
-      font-size: 0.82rem; color: #A0A0B0; line-height: 1.45;
-      margin: 4px 0 0 0; padding-left: 60px;
+      font-size: 0.82rem; color: #A0A0B0; line-height: 1.5;
+      margin: 0;
     }
     .compact-card .card-tiers {
-      display: flex; flex-wrap: wrap; gap: 5px;
-      padding-left: 60px; margin-top: 2px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 2px;
     }
     .compact-card .card-tiers span {
       font-size: 0.7rem; font-weight: 600; padding: 2px 7px;
@@ -548,7 +548,7 @@
     }
     .compact-card .card-actions {
       display: flex; justify-content: flex-end; align-items: center;
-      gap: 12px; margin-top: 6px; padding-left: 60px;
+      gap: 12px; margin-top: auto; padding-top: 4px;
     }
     .compact-card .cta-link {
       font-size: 0.82rem; font-weight: 500; color: #C0C0D0;
@@ -556,9 +556,10 @@
     }
     .compact-card .cta-link:hover { color: #FFFFFF; text-decoration: underline; }
     @media (max-width: 480px) {
-      .compact-card .card-desc,
-      .compact-card .card-tiers,
-      .compact-card .card-actions { padding-left: 0; }
+      .compact-card { padding: 16px; }
+      .compact-card .card-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+      .compact-card .card-title { font-size: 0.92rem; }
+      .compact-card .card-price { font-size: 1rem; }
     }
     .compact-card .badge-new {
       position: absolute; top: 12px; right: 14px;
