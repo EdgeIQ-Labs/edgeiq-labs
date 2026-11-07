@@ -561,15 +561,14 @@
       .compact-card .card-title { font-size: 0.92rem; }
       .compact-card .card-price { font-size: 1rem; }
     }
-    .compact-card .badge-new {
-      position: absolute; top: 12px; right: 14px;
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em;
-      text-transform: uppercase; padding: 2px 8px; border-radius: 8px;
+    .compact-card .badge-new,
+    .compact-card .badge-live {
+      display: inline-block;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; padding: 2px 8px; border-radius: 6px;
+      margin-left: 8px; vertical-align: middle; line-height: 1;
     }
     .compact-card .badge-live {
-      position: absolute; top: 12px; right: 14px;
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em;
-      text-transform: uppercase; padding: 2px 8px; border-radius: 8px;
       background: rgba(112,240,168,0.12); border: 1px solid rgba(112,240,168,0.3); color: #70f0a8;
     }
     .skill-tag {
@@ -2147,10 +2146,9 @@
       <div class="compact-grid">
 
         <article class="compact-card anim-card" style="--card-glow:rgba(255,26,26,0.35);--card-accent:#ff1a1a;">
-          <div class="badge-live">LIVE</div>
           <div class="card-header">
             <div class="card-icon" style="color:#ff1a1a;">🎯</div>
-            <div class="card-title-group"><div class="card-title">PhishSim Training</div></div>
+            <div class="card-title-group"><div class="card-title">PhishSim Training</div><div class="badge-live">LIVE</div></div>
             <div class="card-price">$49/mo</div>
           </div>
           <p class="card-desc">Phishing simulation + automated security awareness training. GoPhish-powered engine.</p>
@@ -2158,10 +2156,9 @@
         </article>
 
         <article class="compact-card anim-card" style="--card-glow:rgba(61,225,158,0.35);--card-accent:#3de19e;">
-          <div class="badge-new" style="background:rgba(61,225,158,0.15);border:1px solid rgba(61,225,158,0.35);color:#3de19e;">NEW</div>
           <div class="card-header">
             <div class="card-icon" style="color:#3de19e;">🟢</div>
-            <div class="card-title-group"><div class="card-title">EdgeIQ Pulse</div></div>
+            <div class="card-title-group"><div class="card-title">EdgeIQ Pulse</div><div class="badge-new" style="background:rgba(61,225,158,0.15);border:1px solid rgba(61,225,158,0.35);color:#3de19e;">NEW</div></div>
             <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Always-on security monitoring — weekly domain scans with email alerts when something changes.</p>
@@ -2170,10 +2167,9 @@
         </article>
 
         <article class="compact-card anim-card" style="--card-glow:rgba(180,122,255,0.35);--card-accent:#b47aff;">
-          <div class="badge-new" style="background:rgba(180,122,255,0.15);border:1px solid rgba(180,122,255,0.35);color:#b47aff;">NEW</div>
           <div class="card-header">
             <div class="card-icon" style="color:#b47aff;">✉</div>
-            <div class="card-title-group"><div class="card-title">Inbox Shield</div></div>
+            <div class="card-title-group"><div class="card-title">Inbox Shield</div><div class="badge-new" style="background:rgba(180,122,255,0.15);border:1px solid rgba(180,122,255,0.35);color:#b47aff;">NEW</div></div>
             <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Grade your email security: SPF, DMARC, DKIM, BIMI. A–F letter grade with actionable fixes.</p>
@@ -2182,10 +2178,9 @@
         </article>
 
         <article class="compact-card anim-card" style="--card-glow:rgba(99,102,241,0.35);--card-accent:#6366f1;">
-          <div class="badge-new" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);color:#6366f1;">NEW</div>
           <div class="card-header">
             <div class="card-icon" style="color:#6366f1;">🐙</div>
-            <div class="card-title-group"><div class="card-title">Repo Security Scanner</div></div>
+            <div class="card-title-group"><div class="card-title">Repo Security Scanner</div><div class="badge-new" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);color:#6366f1;">NEW</div></div>
             <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Scan GitHub repos for leaked secrets, .env files, gitignore gaps, and CI/CD risks.</p>
@@ -2194,10 +2189,9 @@
         </article>
 
         <article class="compact-card anim-card" style="--card-glow:rgba(61,217,255,0.35);--card-accent:#3dd9ff;">
-          <div class="badge-new" style="background:rgba(61,217,255,0.15);border:1px solid rgba(61,217,255,0.35);color:#3dd9ff;">NEW</div>
           <div class="card-header">
             <div class="card-icon" style="color:#3dd9ff;">🚀</div>
-            <div class="card-title-group"><div class="card-title">CDN Cache Warmer</div></div>
+            <div class="card-title-group"><div class="card-title">CDN Cache Warmer</div><div class="badge-new" style="background:rgba(61,217,255,0.15);border:1px solid rgba(61,217,255,0.35);color:#3dd9ff;">NEW</div></div>
             <div class="card-price">From Free</div>
           </div>
           <p class="card-desc">Pre-warm CDN edge cache after deploys. Auto-detect Cloudflare, Fastly, Akamai.</p>
@@ -2215,10 +2209,9 @@
       <div class="compact-grid">
 
         <article class="compact-card anim-card" style="--card-glow:rgba(255,26,26,0.35);--card-accent:#ff1a1a;">
-          <div class="badge-live">LIVE</div>
           <div class="card-header">
             <div class="card-icon" style="color:#ff1a1a;">⚡</div>
-            <div class="card-title-group"><div class="card-title">Relay</div></div>
+            <div class="card-title-group"><div class="card-title">Relay</div><div class="badge-live">LIVE</div></div>
             <div class="card-price">Free / $299</div>
           </div>
           <p class="card-desc">Affiliate tracking for Stripe checkout links. Webhook-only, no API keys shared. Docker Compose deploy.</p>
@@ -2226,10 +2219,9 @@
         </article>
 
         <article class="compact-card anim-card" style="--card-glow:rgba(192,132,252,0.35);--card-accent:#c084fc;">
-          <div class="badge-live">LIVE</div>
           <div class="card-header">
             <div class="card-icon" style="color:#c084fc;">🔍</div>
-            <div class="card-title-group"><div class="card-title">Sentinel — Agentic QA</div></div>
+            <div class="card-title-group"><div class="card-title">Sentinel — Agentic QA</div><div class="badge-live">LIVE</div></div>
             <div class="card-price">Free / $399</div>
           </div>
           <p class="card-desc">AI agents that crawl your web app, click every flow, and report bugs. Visual regression + axe-core.</p>
@@ -2238,10 +2230,9 @@
         </article>
 
         <article class="compact-card anim-card" style="--card-glow:rgba(255,107,107,0.35);--card-accent:#ff6b6b;">
-          <div class="badge-new" style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:#ff6b6b;">NEW</div>
           <div class="card-header">
             <div class="card-icon" style="color:#ff6b6b;">◉</div>
-            <div class="card-title-group"><div class="card-title">Shadow DB</div></div>
+            <div class="card-title-group"><div class="card-title">Shadow DB</div><div class="badge-new" style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:#ff6b6b;">NEW</div></div>
             <div class="card-price">Free / $299</div>
           </div>
           <p class="card-desc">Real-time shadow mirror of your SaaS data into your own Postgres. AES-256 encrypted, tamper-evident.</p>
