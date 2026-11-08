@@ -950,13 +950,86 @@
     /* Advanced tools toggle button hover */
     #advanced-tools-btn:hover { color:var(--text); border-color:var(--accent); }
 
+    /* === Sticky Nav Compact Mode === */
+    nav {
+      transition: background 0.25s ease, box-shadow 0.25s ease;
+    }
+    nav.compact {
+      background: rgba(11,15,20,0.97);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+    nav.compact .nav-inner { padding: 6px 0; }
+    nav.compact .nav-logo-img { height: 40px; border-radius: 8px; }
+    nav.compact .nav-brand-tag { display: none; }
+    nav.compact .nav-brand-name { font-size: 0.95rem; }
+    /* Hide secondary links in compact mode (desktop) — keep CTA + search visible */
+    nav.compact .nav-links a:not(.nav-cta-btn):not(.nav-search-btn-wrap) {
+      display: none;
+    }
+    /* Ensure CTA button is always visible (not just compact) */
+    .nav-cta-btn { display: inline-flex; align-items: center; }
+    /* Social proof pill — only visible in compact */
+    .nav-social-proof {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--ok, #70f0a8);
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 4px 10px;
+      background: rgba(112,240,168,0.08);
+      border: 1px solid rgba(112,240,168,0.15);
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .nav-social-proof .proof-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ok, #70f0a8);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    nav.compact .nav-social-proof { display: inline-flex; }
+    /* CTA button in nav */
+    .nav-cta-btn {
+      background: var(--accent);
+      color: #071018 !important;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+    .nav-cta-btn:hover { opacity: 0.88; }
+    /* Search button wrapper for compact hiding logic */
+    .nav-search-btn-wrap { display: flex; align-items: center; margin-left: 16px; margin-right: 8px; }
+    nav.compact .nav-search-btn-wrap { display: none; }
+    /* Mobile compact: hide wordmark, keep logo+CTA+hamburger */
+    @media (max-width: 720px) {
+      nav.compact .nav-wordmark { display: none; }
+      nav.compact .nav-social-proof { display: none; }
+      nav.compact .nav-logo-img { height: 36px; }
+      nav.compact .nav-inner { padding: 5px 0; }
+    }
+    /* Sentinel for IntersectionObserver (invisible) */
+    .nav-scroll-sentinel {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1px; height: 1px;
+      pointer-events: none;
+      opacity: 0;
+    }
+
 </style>
   <!-- Cloudflare Web Analytics — privacy-first, no cookie consent needed -->
   <script defer src="https://static.cloudflareinsights.com/static/cf-uar.js"></script>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
 <body>
-  <nav>
+  <nav id="nav-bar">
     <div class="container nav-inner">
       <a class="nav-brand" href="/">
         <img class="nav-logo-img" src="logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
@@ -966,6 +1039,7 @@
         </div>
       </a>
       <div class="nav-links">
+        <span class="nav-social-proof"><span class="proof-dot"></span>142,847+ scans</span>
         <a href="/tools/" style="color:#3dd9ff;font-weight:600;">Tools</a>
         <a href="/blog/">Blog</a>
         <a href="/community/" style="color:#00ff66;font-weight:600;">Community</a>
@@ -983,9 +1057,12 @@
           <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
         </a>
         <a href="/affiliate/" style="color:#00ff66;font-weight:600;">🤝 Affiliates</a>
-        <button class="nav-search-btn" onclick="openSiteSearch()" aria-label="Search site" title="Search (/ or Ctrl+K)" style="margin-left:16px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </button>
+        <span class="nav-search-btn-wrap">
+          <button class="nav-search-btn" onclick="openSiteSearch()" aria-label="Search site" title="Search (/ or Ctrl+K)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </span>
+        <a class="nav-cta-btn" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v">Start Free Trial →</a>
       </div>
       <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -1062,6 +1139,7 @@
 
   <main class="container">
     <section class="hero">
+      <div id="nav-sentinel" class="nav-scroll-sentinel"></div>
       <div class="hero-badge-row">
         <span class="badge" style="background:#0f2535;border-color:#1e4060;color:#7ab8d0;">🛡 Cybersecurity Monitoring</span>
         <span class="badge" style="background:#10261b;border-color:#24523a;color:#8ce1b5;">📊 Monthly Reports</span>
@@ -2336,6 +2414,23 @@
         </p>
       </div>
     </section>
+<!-- Newsletter Signup — High-intent placement after free tools -->
+<section id="newsletter">
+  <div class="container">
+    <div class="newsletter-card">
+      <h2>📬 Get the HIPAA Compliance Checklist + Weekly Intel</h2>
+      <p class="newsletter-sub">Join 400+ security professionals. Get our free HIPAA compliance checklist instantly, plus weekly attack breakdowns and tool guides. No fluff, unsubscribe anytime.</p>
+      <form class="newsletter-form" id="nlf1">
+        <input type="email" placeholder="your@email.com" required>
+        <button type="submit">Get Free Checklist →</button>
+      </form>
+      <p id="nlok1" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Check your inbox — the HIPAA checklist is on its way!</p>
+      <script>(function(){var f=document.getElementById('nlf1');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'newsletter'})}).then(function(r){return r.json();}).then(function(data){if(data&&data.ok){f.style.display='none';var ok=document.getElementById('nlok1');ok.style.display='block';ok.innerHTML='\u2713 Check your inbox \u2014 the HIPAA checklist is on its way!';}else{b.disabled=false;b.textContent='Get Free Checklist \u2192';alert('Something went wrong. Please try again.');}}).catch(function(){b.disabled=false;b.textContent='Get Free Checklist \u2192';alert('Network error. Please try again.');});});})();</script>
+      <p class="newsletter-note">Free forever. No spam. Unsubscribe anytime.</p>
+    </div>
+  </div>
+</section>
+
 <section id="compare" class="compare-section" aria-label="EdgeIQ Labs vs other security platforms">
       <div class="container">
         <h2>How EdgeIQ compares</h2>
@@ -2409,23 +2504,6 @@
           <span id="compare-fn-2">² Intruder doesn't publish list pricing; historical reports indicate Cloud plans starting around $99/mo with a 5-license minimum.</span><br>
           Pricing from public sources as of May 2026 and subject to change. Tenable, Detectify, and Intruder are trademarks of their respective owners; this comparison is editorial and not endorsed by them.
         </p>
-      </div>
-    </section>
-
-    <!-- Newsletter Signup -->
-    <section id="newsletter">
-      <div class="container">
-        <div class="newsletter-card">
-          <h2>📬 Security Intelligence, In Your Inbox</h2>
-          <p class="newsletter-sub">Get attack technique breakdowns, tool releases, and practical guides. No fluff, unsubscribe anytime.</p>
-          <form class="newsletter-form" id="nlf1">
-            <input type="email" placeholder="your@email.com" required>
-            <button type="submit">Subscribe →</button>
-          </form>
-          <p id="nlok1" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
-          <script>(function(){var f=document.getElementById('nlf1');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'newsletter'})}).then(function(r){return r.json();}).then(function(data){if(data&&data.ok){f.style.display='none';var ok=document.getElementById('nlok1');ok.style.display='block';ok.innerHTML='\u2713 Subscribed \u2014 check your inbox for the welcome email!';}else{b.disabled=false;b.textContent='Subscribe \u2192';alert('Something went wrong. Please try again.');}}).catch(function(){b.disabled=false;b.textContent='Subscribe \u2192';alert('Network error. Please try again.');});});})();</script>
-          <p class="newsletter-note">Free forever. No spam. Unsubscribe anytime.</p>
-        </div>
       </div>
     </section>
 
@@ -4564,5 +4642,27 @@ function toggleAdvancedTools() {
 <script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
 <script>if (typeof RelayIntegration !== 'undefined') { RelayIntegration.init({ relayBaseUrl: 'https://relay.edgeiqlabs.com' }); }</script>
 <script src="/js/site-search.js"></script>
+  <script>
+    // Sticky Nav Compact Mode — shrink nav after scrolling past hero
+    (function() {
+      const nav = document.getElementById('nav-bar');
+      if (!nav) return;
+      const THRESHOLD = 400; // px from top before compact kicks in
+      let ticking = false;
+      function update() {
+        if (window.scrollY > THRESHOLD) {
+          nav.classList.add('compact');
+        } else {
+          nav.classList.remove('compact');
+        }
+        ticking = false;
+      }
+      window.addEventListener('scroll', function() {
+        if (!ticking) { requestAnimationFrame(update); ticking = true; }
+      }, { passive: true });
+      // Set initial state
+      update();
+    })();
+  </script>
 </body>
 </html>

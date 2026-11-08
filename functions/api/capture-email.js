@@ -644,7 +644,11 @@ export async function onRequestPost(context) {
   if (source === 'newsletter' || source === 'security-intel') {
     if (env.RESEND_API_KEY) {
       const nl = buildNewsletterEmail();
-      await sendEmail(env, email, nl);
+      const cl = buildChecklistEmail();
+      await Promise.allSettled([
+        sendEmail(env, email, nl),
+        sendEmail(env, email, cl, COMPLIANCE_FROM),
+      ]);
       // Add to Resend Audience for weekly sends
       try {
         await fetch('https://api.resend.com/audiences/e0b2c71a-0a3d-4a06-baa7-deabc88b1158/contacts', {
@@ -659,14 +663,7 @@ export async function onRequestPost(context) {
 
   // ── Generic newsletter path ───────────────────────────────────────────────
 
-  // 1. Add to Substack (fire-and-forget)
-  fetch(SUBSTACK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, first_url: source }),
-  }).catch(() => {});
-
-  // 2. Generic 3-email drip via Resend
+  // Generic 3-email drip via Resend (Substack removed — Resend Audience is primary)
   if (env.RESEND_API_KEY) {
     const now  = Date.now();
     const day3 = new Date(now + 3 * 24 * 60 * 60 * 1000).toISOString();
