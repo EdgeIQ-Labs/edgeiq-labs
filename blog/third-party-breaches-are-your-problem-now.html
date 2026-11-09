@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Your Vendor Got Breached. Now It's Your Problem. — EdgeIQ Labs</title>
+  <meta name="description" content="Three of September's biggest breaches came through third-party vendors. ShinyHunters hit 200+ companies via a single SaaS integration. Here's how to check your vendor exposure before it becomes your incident."/>
+  <meta property="og:title" content="Your Vendor Got Breached. Now It's Your Problem."/>
+  <meta property="og:description" content="Third-party breaches dominated September 2026. A single compromised SaaS integration exposed 200+ companies. Your vendor risk checklist probably needs an update."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/third-party-breaches-are-your-problem-now.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/third-party-breaches-are-your-problem-now.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Your Vendor Got Breached. Now It's Your Problem.","datePublished":"2026-11-09","dateModified":"2026-11-09","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018 !important;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.red{color:#ff6b6b;background:#1f1010;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag red">Supply Chain</span>
+      <span class="tag">Vendor Risk</span>
+      <span class="tag">Data Breach</span>
+    </div>
+    <h1>Your Vendor Got Breached. Now It's Your Problem.</h1>
+    <div class="meta">
+      <span>November 9, 2026</span>
+      <span>·</span>
+      <span>9 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>Three of the five major breaches in September 2026 had the same root cause: a third-party vendor. Not a direct attack on the company itself. Not an employee clicking a phishing link. A supplier, a service provider, a SaaS platform that already had access to sensitive data and got compromised.</p>
+
+    <p>The most visible example came from Salesforce's disclosure in November. Hackers linked to ShinyHunters exploited Gainsight OAuth integrations to access over 200 companies' data. They didn't breach each company individually. They breached one integration point and inherited access to everyone connected to it. Sensitive records from major firms, stolen through a shared dependency nobody was actively monitoring.</p>
+
+    <p>This is what supply chain attacks look like in practice for small businesses. You don't get targeted directly. You get caught in the blast radius because you trusted someone who trusted someone else.</p>
+
+    <h2>What September's Breaches Actually Exposed</h2>
+
+    <p>PKWARE's monthly breach report laid out the pattern clearly. Three incidents stood out:</p>
+
+    <ul>
+      <li><strong>A cancer care provider operating 100+ clinics across five states</strong> confirmed patient data was compromised through a third-party software vendor. The vendor's investigation took months. Patient impact wasn't confirmed until Kroll, acting as administrator, notified the provider in May 2026. The breach affected 1.8 million people, making it one of the largest healthcare breaches of the year.</li>
+      <li><strong>Archived patient records at a migration vendor</strong> were exposed during a system transition. Data that had no business being readable in its stored format sat unprotected. The original owner assumed the migration partner handled security. The migration partner assumed the data was already secured upstream. Nobody owned it.</li>
+      <li><strong>Unencrypted personnel files covering 3 million people</strong>, including 294,000 deceased individuals, were found exposed through a third-party HR platform. Medicaid records were hidden beneath a published summary document, accessible to anyone who knew where to look.</li>
+    </ul>
+
+    <p>The common thread isn't sophisticated hacking. It's assumption gaps. Company A assumes Company B is handling security for shared data. Company B assumes the same thing about Company A. Or Company B assumes their own security is adequate when it isn't. The data falls through the gap.</p>
+
+    <div class="callout warn">
+      <strong>If you use any SaaS tool with access to customer or employee data:</strong> You are part of someone else's supply chain. If they get breached, your data goes with theirs. The question isn't whether your vendors are secure today. It's whether you'd know if they stopped being secure tomorrow.
+    </div>
+
+    <h2>Why Small Businesses Are Especially Exposed</h2>
+
+    <p>Enterprises have vendor risk management programs. They send security questionnaires, require SOC 2 reports, conduct periodic assessments, and maintain inventories of every third-party integration with data access. It's bureaucratic and imperfect, but it exists.</p>
+
+    <p>Small businesses typically don't have this. You sign up for a tool, grant it OAuth permissions or API keys, and move on. There's no formal review. No ongoing monitoring. No process for revoking access when you stop using something. The average small business has dozens of connected SaaS applications, and most were never explicitly approved or audited after initial setup.</p>
+
+    <p>Attackers know this. Targeting a small SaaS provider with weak security gives them access to hundreds of downstream customers who never vetted the vendor thoroughly. It's more efficient than attacking each target individually. The Gainsight breach demonstrated exactly this: one compromised OAuth integration, 200+ companies exposed.</p>
+
+    <p>Healthcare is particularly vulnerable because of the Business Associate Agreement (BAA) requirement under HIPAA. Many small practices assume signing a BAA means the vendor is compliant. It doesn't. A BAA is a legal document, not a security audit. Vendors sign them routinely without implementing the controls the agreement describes. When the breach happens, the covered entity still bears responsibility for choosing and overseeing that vendor.</p>
+
+    <h2>What to Check Right Now</h2>
+
+    <p>You can't audit every vendor deeply. But you can identify the highest-risk connections and verify basic controls.</p>
+
+    <ul>
+      <li><strong>List every SaaS tool with access to sensitive data.</strong> Customer records, employee files, financial data, health information. Check OAuth app lists in Google Workspace and Microsoft 365 admin consoles. Review API key inventories. Include tools employees signed up for individually that might have access to company data through browser extensions or personal accounts.</li>
+      <li><strong>Verify BAAs exist for healthcare vendors.</strong> If you're HIPAA-regulated, confirm every vendor handling PHI has a signed BAA on file. Ask for it directly. Vendors who hesitate or claim "we're covered under our terms of service" are telling you something important.</li>
+      <li><strong>Check security certifications critically.</strong> SOC 2 Type II is meaningful. SOC 2 Type I is a point-in-time snapshot that expires quickly. Self-assessments and "security pages" on vendor websites are marketing, not verification. Ask for the actual audit report summary. If they won't share it, note that.</li>
+      <li><strong>Review OAuth scopes.</strong> Many apps request broader permissions than they need. An email marketing tool doesn't need full Gmail read/write access. A project management app shouldn't have admin-level directory permissions. Revoke excessive scopes. Use the principle of least privilege even for third-party integrations.</li>
+      <li><strong>Monitor vendor breach disclosures.</strong> Subscribe to breach notification services or set up alerts for your critical vendors' names. CISA, Have I Been Pwned, and industry-specific ISACs publish notices. When a vendor you use appears in a breach report, treat it as an incident affecting your organization, not just news.</li>
+      <li><strong>Test your own exposure.</strong> Run a dark web credential check against your domain. Search for your company name in breach databases. If your data appears in a dump attributed to a vendor breach, you now know the gap existed whether the vendor notified you or not.</li>
+    </ul>
+
+    <h2>The Uncomfortable Truth About Vendor Trust</h2>
+
+    <p>Trust is necessary. You can't run a business without relying on other companies. But trust without verification is just hope, and hope isn't a security control.</p>
+
+    <p>The breaches from September weren't caused by advanced persistent threats or nation-state actors. They were caused by plaintext credentials, unencrypted archives, and integration points that nobody was watching. Mundane failures. Preventable ones. The kind that happen when security is assumed rather than confirmed.</p>
+
+    <p>For small businesses, the practical standard isn't perfection. It's awareness. Know what data leaves your environment. Know who touches it. Verify, periodically, that the protections you expect actually exist. And when a vendor gets breached, respond as if it happened to you directly, because functionally, it did.</p>
+
+    <div class="cta-box">
+      <h3>Find What's Exposed Before Your Vendors Do</h3>
+      <p>EdgeIQ Vendor Watch monitors third-party breach disclosures and alerts you when a supplier you use is involved in an incident. Our free scanners check DNS, DMARC, and subdomain exposure so you can see what attackers see. VPS hosting starts at $4/mo if you want dedicated infrastructure for running your own security monitoring stack like Wazuh SIEM.</p>
+      <a href="/vendor-watch/" class="btn btn-primary">Monitor Vendors →</a>
+    </div>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:48px auto;max-width:580px;">
+    <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">CVE alerts, attack breakdowns, and practical guides. No fluff, unsubscribe anytime.</p>
+    <form id="nlf3" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+      <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+      <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+    </form>
+    <p id="nlok3" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+    <script>(function(){var f=document.getElementById('nlf3');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok3').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+    <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;color:var(--muted);font-size:0.82rem;">
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;">← Back to Blog</a>
+  </div>
+</div>
+
+<script>
+document.querySelector('.nav__hamburger').addEventListener('click', function() {
+  document.querySelector('.nav__links').classList.toggle('open');
+});
+</script>
+</body>
+</html>
