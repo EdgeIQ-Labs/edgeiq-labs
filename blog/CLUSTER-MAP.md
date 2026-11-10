@@ -150,7 +150,7 @@ Updated: 2026-11-10 | 95 posts total
 
 | # | Post | Status | Pillar |
 |---|------|--------|--------|
-| 1 | Managed vs Unmanaged VPS | ❌ Not written | VPS & Infra |
+| 1 | Managed vs Unmanaged VPS | ✅ [Live](managed-vs-unmanaged-vps-guide.html) | VPS & Infra |
 | 2 | HIPAA Compliance Checklist for Small Practices | ❌ Not written | Compliance |
 | 3 | Free Security Scanner Guide | ❌ Not written | Attack Surface |
 | 4 | What to Do If Your VPS Is Hacked | ❌ Not written | Threat Intel |
