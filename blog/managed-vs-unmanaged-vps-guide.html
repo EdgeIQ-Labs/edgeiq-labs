@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Managed vs Unmanaged VPS: Which Is Right for Your Small Business? — EdgeIQ Labs</title>
+  <meta name="description" content="Managed VPS hosting handles security patches, monitoring, and backups so you can focus on your business. Unmanaged saves money but costs time. Here's how to choose." />
+  <meta property="og:title" content="Managed vs Unmanaged VPS: Which Is Right for Your Small Business?" />
+  <meta property="og:description" content="Security patches, monitoring, backups, root access, pricing. The complete comparison for SMBs choosing between managed and unmanaged VPS hosting." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/managed-vs-unmanaged-vps-guide.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Managed vs Unmanaged VPS: Which Is Right for Your Small Business?" />
+  <meta name="twitter:description" content="Security patches, monitoring, backups, root access, pricing. The complete comparison for SMBs." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0C0C14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/managed-vs-unmanaged-vps-guide.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Managed vs Unmanaged VPS: Which Is Right for Your Small Business?",
+    "description": "Managed VPS hosting handles security patches, monitoring, and backups so you can focus on your business. Unmanaged saves money but costs time. Here's how to choose.",
+    "url": "https://edgeiqlabs.com/blog/managed-vs-unmanaged-vps-guide.html",
+    "datePublished": "2026-11-10",
+    "dateModified": "2026-11-10",
+    "author": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://edgeiqlabs.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://edgeiqlabs.com/blog/managed-vs-unmanaged-vps-guide.html"
+    },
+    "image": "https://edgeiqlabs.com/og-preview.png"
+  }
+  </script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+  </nav>
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <div class="mob-section">Tools</div>
+    <a href="/free-tools/">Free Security Scanners</a>
+    <a href="/tools/">Developer Tools</a>
+    <div class="mob-section">Services</div>
+    <a href="/compliance/">Compliance Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="mob-cta">Get Protected →</a>
+  </div>
+
+  <div class="container">
+    <header class="article-header">
+      <div class="article-meta">November 10, 2026 · VPS & Infrastructure · 12 min read</div>
+      <h1>Managed vs Unmanaged VPS: Which Is Right for Your Small Business?</h1>
+      <span class="tag">VPS Hosting</span>
+      <span class="tag">Small Business</span>
+      <span class="tag">Infrastructure</span>
+      <p class="lead">You need a server. You've narrowed it down to a VPS. Now you're staring at two price tags that look nothing alike and wondering if the extra $40/month is worth it or if you're just paying someone to do what you could learn in an afternoon.</p>
+    </header>
+
+    <p>The honest answer depends on three things: how much your time is worth, how comfortable you are with Linux security, and what happens when something breaks at 2am on a Saturday. This guide walks through every difference that actually matters, not the marketing fluff both sides push.</p>
+
+    <h2>What Unmanaged VPS Actually Means</h2>
+    <p>Unmanaged VPS gives you root SSH access to a fresh Linux install. That's it. The provider guarantees the hardware works and the network is up. Everything else is yours:</p>
+    <ul>
+      <li><strong>OS updates and security patches</strong> — you run them, you test them, you fix what breaks</li>
+      <li><strong>Firewall configuration</strong> — iptables/nftables rules, fail2ban, port hardening</li>
+      <li><strong>Monitoring and alerting</strong> — if nobody's watching, nobody knows it's down</li>
+      <li><strong>Backups</strong> — snapshots, offsite copies, restore testing</li>
+      <li><strong>Troubleshooting</strong> — kernel panics, OOM kills, disk failures, certificate expiry</li>
+      <li><strong>Application deployment</strong> — Docker, nginx, databases, CI/CD pipelines</li>
+    </ul>
+    <p>The upside is cost. Unmanaged plans start around $4-6/month for usable specs. The downside is that every hour you spend on server maintenance is an hour not spent on your actual business. And if you skip any of those bullets, you're running an unpatched, unmonitored server on the public internet.</p>
+
+    <h2>What Managed VPS Actually Includes</h2>
+    <p>Managed VPS means the provider handles the infrastructure layer so you can focus on your application. At EdgeIQ, our <a href="/vps/">managed VPS hosting</a> includes:</p>
+    <ul>
+      <li><strong>Weekly security patching</strong> — tested and applied during low-traffic windows</li>
+      <li><strong>Wazuh SIEM monitoring</strong> — real-time intrusion detection, file integrity monitoring, vulnerability scanning (<a href="/blog/security-monitoring-routine-small-team.html">why this matters</a>)</li>
+      <li><strong>Automated backups</strong> — daily snapshots with 30-day retention and restore verification</li>
+      <li><strong>Uptime monitoring</strong> — <a href="/pulse/">EdgeIQ Pulse</a> checks SSL, headers, DNS, and CVEs weekly with plain-English email alerts</li>
+      <li><strong>Root SSH access</strong> — you still have full control, we just handle the boring stuff</li>
+      <li><strong>Incident response</strong> — if something breaks, we fix it before you notice</li>
+    </ul>
+    <p>Pricing starts at $4/month for the base container with monitoring included. The managed premium isn't about locking you out of your own server. It's about having someone competent watching it while you sleep.</p>
+
+    <h2>The Real Cost Comparison</h2>
+    <p>Sticker price lies. Here's the actual math:</p>
+
+    <div class="check">
+      <h3>Unmanaged VPS True Cost</h3>
+      <p>$5/month hosting + 4-8 hours/month maintenance × your hourly rate</p>
+      <p>If your time is worth $50/hr, that's $205-405/month total. If it's $100/hr, you're spending $405-805/month on a $5 server.</p>
+    </div>
+
+    <div class="check">
+      <h3>Managed VPS True Cost</h3>
+      <p>$4-49/month hosting + zero maintenance hours</p>
+      <p>You also get monitoring, backups, and incident response that would cost $200-500/month from a separate MSP.</p>
+    </div>
+
+    <p>The break-even point for most small business owners is around $25-30/hour. Below that, unmanaged might save money if you enjoy sysadmin work. Above that, managed pays for itself immediately.</p>
+
+    <h2>Security: Where Unmanaged Gets Dangerous</h2>
+    <p>This is where the choice stops being about money and starts being about risk. See our <a href="/blog/small-business-cybersecurity-checklist-2026.html">small business cybersecurity checklist</a> for the full picture, but here's what breaks first on unmanaged servers:</p>
+
+    <ul>
+      <li><strong>Missed CVE patches</strong> — critical vulnerabilities sit unpatched for weeks because you're busy. Our <a href="/blog/velocloud-cve-2026-114625-patch-now.html">CVE coverage</a> shows how fast exploits appear after disclosure.</li>
+      <li><strong>No intrusion detection</strong> — without Wazuh or equivalent, you won't know you're compromised until the ransomware note appears. Read <a href="/blog/ransomware-readiness-checklist-small-business.html">what readiness actually looks like</a>.</li>
+      <li><strong>Expired SSL certificates</strong> — automated renewal fails silently, customers see warnings, trust evaporates. Our <a href="/blog/ssl-certificate-expired-check.html">SSL expiry guide</a> covers prevention.</li>
+      <li><strong>Misconfigured firewalls</strong> — one open port to a debug service is all an attacker needs. <a href="/blog/how-to-scan-open-ports-on-server.html">Port scanning yourself</a> catches this before they do.</li>
+      <li><strong>No backup verification</strong> -- backups exist but restores fail when needed. Test quarterly or assume they don't work.</li>
+    </ul>
+
+    <p>Run our <a href="/free-domain-security-score/">free domain security scanner</a> against your current server. It checks SSL, headers, DNS, and known CVEs in under 30 seconds. Most unmanaged servers score C or below within six months of setup.</p>
+
+    <h2>When Unmanaged Makes Sense</h2>
+    <p>Fairness requires acknowledging legitimate use cases:</p>
+    <ul>
+      <li><strong>You're learning Linux professionally</strong> — there's no substitute for breaking and fixing your own server</li>
+      <li><strong>You have dedicated DevOps staff</strong> — if server management IS the job, outsourcing wastes expertise</li>
+      <li><strong>Ephemeral workloads</strong> — CI runners, test environments, disposable containers where uptime doesn't matter</li>
+      <li><strong>Budget is genuinely zero</strong> — hobby projects, student labs, non-commercial experiments</li>
+    </ul>
+    <p>If none of those describe you, managed is probably the right call.</p>
+
+    <h2>When Managed Is Non-Negotiable</h2>
+    <ul>
+      <li><strong>Customer data lives on the server</strong> — HIPAA, PCI, GDPR compliance requires documented monitoring and patching. Our <a href="/blog/hipaa-compliance-monitoring-small-practice.html">HIPAA compliance guide</a> covers healthcare specifically.</li>
+      <li><strong>Downtime costs revenue</strong> — e-commerce, SaaS, client portals where every minute offline loses money or trust</li>
+      <li><strong>You lack Linux security expertise</strong> — "I'll learn as I go" works until the breach happens</li>
+      <li><strong>Compliance audits are coming</strong> — auditors want proof of monitoring, patching cadence, and incident response procedures</li>
+      <li><strong>Your team is already maxed out</strong> — adding server maintenance to overloaded staff guarantees burnout or neglect</li>
+    </ul>
+
+    <h2>Migration: Switching Without Downtime</h2>
+    <p>If you're currently on unmanaged and considering managed, here's the migration path we use for clients moving to <a href="/vps/">EdgeIQ managed VPS</a>:</p>
+    <ol>
+      <li><strong>Audit current state</strong> — inventory services, configs, cron jobs, user accounts</li>
+      <li><strong>Stand up parallel environment</strong> — new managed VPS with identical stack</li>
+      <li><strong>Sync data</strong> — rsync databases, files, and configs during low-traffic window</li>
+      <li><strong>Test thoroughly</strong> — verify every endpoint, form, API, and integration</li>
+      <li><strong>Switch DNS</strong> — update A records with low TTL, monitor propagation</li>
+      <li><strong>Decommission old server</strong> — only after 48 hours of clean operation</li>
+    </ol>
+    <p>We've completed migrations in under 48 hours for clients with 12+ domains. See our <a href="/blog/incident-response-checklist-first-24-hours.html">incident response checklist</a> for the monitoring setup we apply post-migration.</p>
+
+    <h2>Questions to Ask Any Managed Provider</h2>
+    <p>Not all managed hosting is equal. Before signing up anywhere, ask:</p>
+    <ul>
+      <li>What's your patching cadence and testing process?</li>
+      <li>Do you provide SIEM monitoring or just basic uptime checks? (Read <a href="/blog/what-is-attack-surface-monitoring.html">why continuous monitoring matters</a>)</li>
+      <li>What's included in backups, and how often do you test restores?</li>
+      <li>Do I retain root SSH access?</li>
+      <li>What's your incident response SLA?</li>
+      <li>Can I see a sample security report?</li>
+    </ul>
+    <p>If they can't answer these clearly, keep looking. Our <a href="/blog/security-scans-how-often-small-business.html">scanning frequency guide</a> explains what reasonable monitoring looks like.</p>
+
+    <h2>The Bottom Line</h2>
+    <p>Unmanaged VPS is cheaper on paper. Managed VPS is cheaper in practice for anyone whose time has value and whose server downtime has consequences. The question isn't whether you can manage a server yourself. It's whether you should be spending your time doing that instead of growing your business.</p>
+
+    <div class="eq-cta-end" style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;">
+      <h3 style="margin-bottom:8px;">Managed VPS from $4/mo</h3>
+      <p style="color:var(--color-text-secondary);font-size:0.92rem;margin-bottom:14px;">Wazuh monitoring, weekly patching, automated backups, root SSH access. Dedicated Dell PowerEdge hardware, not oversold cloud VMs.</p>
+      <a href="/vps/" class="btn btn-primary">View VPS Plans →</a>
+      <a href="/free-domain-security-score/" class="btn btn-secondary">Scan Your Current Server →</a>
+    </div>
+
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px auto;text-align:center;max-width:520px;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam, unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;color:var(--color-text-primary);font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:var(--color-accent);color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+  </div>
+
+  <footer style="border-top:1px solid var(--color-border);padding:36px 0;margin-top:60px;text-align:center;color:var(--color-text-secondary);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--color-accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+
+<script>
+function toggleMobileMenu() {
+  var btn = document.querySelector('.nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelector('.nav-hamburger').addEventListener('click', toggleMobileMenu);
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.querySelector('.nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>
