@@ -151,10 +151,10 @@ Updated: 2026-11-10 | 95 posts total
 | # | Post | Status | Pillar |
 |---|------|--------|--------|
 | 1 | Managed vs Unmanaged VPS | ✅ [Live](managed-vs-unmanaged-vps-guide.html) | VPS & Infra |
-| 2 | HIPAA Compliance Checklist for Small Practices | ❌ Not written | Compliance |
-| 3 | Free Security Scanner Guide | ❌ Not written | Attack Surface |
-| 4 | What to Do If Your VPS Is Hacked | ❌ Not written | Threat Intel |
-| 5 | SMB Cybersecurity 80/20 Rule | ❌ Not written | VPS & Infra |
+| 2 | HIPAA Compliance Checklist for Small Practices | ✅ [Live](hipaa-compliance-checklist-small-practice.html) | Compliance |
+| 3 | Free Security Scanner Guide | ✅ [Live](free-security-scanner-guide.html) | Attack Surface |
+| 4 | What to Do If Your VPS Is Hacked | ✅ [Live](what-to-do-if-vps-hacked.html) | Threat Intel |
+| 5 | SMB Cybersecurity 80/20 Rule | ✅ [Live](smb-cybersecurity-80-20-rule.html) | VPS & Infra |
 
 All 5 cornerstone posts need to be written. They get:
 - Maximum internal links from child posts

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What to Do If Your VPS Is Hacked: Incident Response for SMBs — EdgeIQ Labs</title>
+  <meta name="description" content="Your VPS is compromised. Here's the step-by-step incident response playbook for small businesses: contain, investigate, remediate, recover, and prevent recurrence." />
+  <meta property="og:title" content="What to Do If Your VPS Is Hacked: Incident Response for SMBs" />
+  <meta property="og:description" content="Step-by-step incident response playbook for compromised VPS servers. Contain, investigate, remediate, recover." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/what-to-do-if-vps-hacked.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="What to Do If Your VPS Is Hacked: Incident Response for SMBs" />
+  <meta name="twitter:description" content="Step-by-step incident response playbook for compromised VPS servers." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0C0C14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/what-to-do-if-vps-hacked.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "What to Do If Your VPS Is Hacked: Incident Response for SMBs",
+    "description": "Your VPS is compromised. Here's the step-by-step incident response playbook for small businesses: contain, investigate, remediate, recover, and prevent recurrence.",
+    "url": "https://edgeiqlabs.com/blog/what-to-do-if-vps-hacked.html",
+    "datePublished": "2026-11-10",
+    "dateModified": "2026-11-10",
+    "author": {"@type": "Organization", "name": "EdgeIQ Labs", "url": "https://edgeiqlabs.com"},
+    "publisher": {"@type": "Organization", "name": "EdgeIQ Labs", "logo": {"@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png"}},
+    "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/what-to-do-if-vps-hacked.html"},
+    "image": "https://edgeiqlabs.com/og-preview.png"
+  }
+  </script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+  </nav>
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <div class="mob-section">Tools</div>
+    <a href="/free-tools/">Free Security Scanners</a>
+    <a href="/tools/">Developer Tools</a>
+    <div class="mob-section">Services</div>
+    <a href="/compliance/">Compliance Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="mob-cta">Get Protected →</a>
+  </div>
+
+  <div class="container">
+    <header class="article-header">
+      <div class="article-meta">November 10, 2026 · Threat Intel & Incident Response · 13 min read</div>
+      <h1>What to Do If Your VPS Is Hacked: Incident Response for SMBs</h1>
+      <span class="tag">Incident Response</span>
+      <span class="tag">VPS</span>
+      <span class="tag">Cornerstone</span>
+      <p class="lead">You found the signs. Weird processes, unknown SSH keys, outbound traffic to suspicious IPs, or maybe a ransom note. Your VPS is compromised. Here's exactly what to do in the next hour, day, and week.</p>
+    </header>
+
+    <p>This playbook assumes you're a small business without a dedicated IR team. It prioritizes containment over forensics because stopping active damage matters more than preserving perfect evidence when you're a team of five. For the full first-24-hours checklist applicable beyond VPS incidents, see our <a href="/blog/incident-response-checklist-first-24-hours.html">incident response checklist</a>.</p>
+
+    <h2>Hour 0: Confirm and Contain</h2>
+    <p>Before panicking, confirm the compromise is real. False positives waste time and cause unnecessary downtime.</p>
+
+    <div class="check">
+      <h3>Verify the Indicators</h3>
+      <ul>
+        <li>Check running processes: <code>ps aux | grep -E 'crypto|miner|xmrig|ncat|nc '</code></li>
+        <li>Check recent logins: <code>last -20</code> and <code>cat /var/log/auth.log | grep -i failed</code></li>
+        <li>Check open ports: <code>ss -tlnp</code> — anything unexpected?</li>
+        <li>Check crontabs: <code>crontab -l</code> and <code>ls -la /etc/cron.*</code></li>
+        <li>Check authorized_keys: <code>cat ~/.ssh/authorized_keys</code> — recognize every key?</li>
+      </ul>
+    </div>
+
+    <p>If confirmed, contain immediately. Don't investigate yet. Stop the bleeding first.</p>
+
+    <div class="check">
+      <h3>Containment Steps</h3>
+      <ul>
+        <li><strong>Snapshot the server</strong> — preserve current state for later forensics before making changes</li>
+        <li><strong>Block outbound traffic</strong> — <code>iptables -P OUTPUT DROP</code> except your IP and essential services</li>
+        <li><strong>Kill suspicious processes</strong> — <code>kill -9 PID</code> for confirmed malicious processes</li>
+        <li><strong>Disable compromised accounts</strong> — <code>passwd -l username</code> for any suspect users</li>
+        <li><strong>Rotate credentials</strong> — assume all passwords and keys on this server are burned</li>
+      </ul>
+    </div>
+
+    <p>If customer data may be involved, trigger your breach notification process now. Waiting makes it worse legally and reputationally. Our <a href="/blog/ransomware-readiness-checklist-small-business.html">ransomware readiness checklist</a> covers notification timelines.</p>
+
+    <h2>Day 1: Investigate the Entry Point</h2>
+    <p>With containment in place, figure out how they got in. Without this, rebuilding just gives them the same door back in.</p>
+
+    <h3>Common VPS Compromise Vectors</h3>
+    <ul>
+      <li><strong>Weak SSH credentials</strong> — password auth enabled, root login allowed, no fail2ban. Check <code>/var/log/auth.log</code> for brute force patterns.</li>
+      <li><strong>Unpatched services</strong> — outdated nginx, Apache, WordPress, Node.js with known CVEs. Cross-reference installed versions against our <a href="/blog/ai-weaponizing-vulnerabilities-faster-than-you-can-patch.html">vulnerability exploitation timeline analysis</a>.</li>
+      <li><strong>Exposed admin panels</strong> — phpMyAdmin, wp-admin, cPanel on default ports with weak passwords. Our <a href="/blog/exposed-admin-panels-how-attackers-find-them.html">exposed admin panel guide</a> shows how attackers discover these.</li>
+      <li><strong>Compromised dependencies</strong> — supply chain attacks via npm, pip, or Docker images. Run our <a href="/blog/how-to-scan-github-repo-for-secrets.html">repo scanner</a> to check for leaked credentials that may have enabled lateral movement.</li>
+      <li><strong>Misconfigured cloud storage</strong> — S3 buckets, database ports open to 0.0.0.0/0. See our <a href="/blog/cloud-storage-misconfig-checklist.html">cloud misconfiguration checklist</a>.</li>
+    </ul>
+
+    <h3>Log Analysis Priority</h3>
+    <ol>
+      <li><code>/var/log/auth.log</code> — successful logins from unknown IPs</li>
+      <li><code>/var/log/syslog</code> — service restarts, kernel messages, cron executions</li>
+      <li>Application logs — web access logs showing exploit attempts or data exfiltration</li>
+      <li>Bash history — <code>cat ~/.bash_history</code> for commands the attacker ran</li>
+    </ol>
+
+    <p>If you have Wazuh or another SIEM deployed, query it for alerts during the suspected timeframe. Our <a href="/blog/security-monitoring-routine-small-team.html">monitoring routine guide</a> covers setting up SIEM for small teams. If you don't have monitoring, this incident is your motivation to deploy it.</p>
+
+    <h2>Day 2-3: Remediate and Rebuild</h2>
+    <p>Don't try to clean a compromised server. Rebuild from known-good state.</p>
+
+    <div class="warning-box">
+      <strong>Why not clean?</strong> Rootkits persist across reboots. Backdoors hide in kernel modules, firmware, or legitimate-looking system files. You'll spend days hunting and still miss something. Rebuilding takes hours and gives you certainty.
+    </div>
+
+    <h3>Rebuild Process</h3>
+    <ol>
+      <li><strong>Provision fresh VPS</strong> — new instance, patched OS, hardened baseline</li>
+      <li><strong>Restore from verified backup</strong> — only application data and configs, NOT binaries or system files. Verify backup integrity before restoring.</li>
+      <li><strong>Apply all patches</strong> — OS, application, dependencies. Check our <a href="/blog/velocloud-cve-2026-114625-patch-now.html">recent CVE coverage</a> for critical patches.</li>
+      <li><strong>Harden SSH</strong> — disable password auth, disable root login, use key-only, install fail2ban</li>
+      <li><strong>Configure firewall</strong> — allow only necessary ports. Run our <a href="/blog/how-to-scan-open-ports-on-server.html">port scanning guide</a> to verify.</li>
+      <li><strong>Deploy monitoring</strong> — Wazuh agent, file integrity monitoring, log collection. This is non-negotiable post-incident.</li>
+      <li><strong>Test thoroughly</strong> — verify every endpoint, form, API, and integration works before switching traffic</li>
+      <li><strong>Switch DNS</strong> — update A records with low TTL, monitor for issues</li>
+      <li><strong>Decommission old server</strong> — only after 48 hours of clean operation on new instance</li>
+    </ol>
+
+    <p>If you're on <a href="/vps/">EdgeIQ managed VPS</a>, we handle steps 1, 3-6, and 9 as part of incident response. Unmanaged customers can follow this playbook directly.</p>
+
+    <h2>Week 1: Post-Incident Review</h2>
+    <p>After recovery, conduct a blameless post-mortem. The goal isn't punishment, it's preventing recurrence.</p>
+
+    <div class="check">
+      <h3>Post-Incident Questions</h3>
+      <ul>
+        <li>How did they get in? (Root cause)</li>
+        <li>How long were they present before detection? (Dwell time)</li>
+        <li>What data was accessed or exfiltrated? (Impact scope)</li>
+        <li>What monitoring would have caught this earlier? (Detection gap)</li>
+        <li>What hardening would have prevented entry? (Prevention gap)</li>
+        <li>What needs to change in our processes? (Process improvement)</li>
+      </ul>
+    </div>
+
+    <p>Document findings. Update your <a href="/blog/how-to-build-security-policy-framework.html">security policy framework</a> based on lessons learned. Schedule follow-up reviews at 30 and 90 days to verify improvements stuck.</p>
+
+    <h2>Preventing the Next Incident</h2>
+    <p>Every compromise is a learning opportunity. Here's what to implement based on common root causes:</p>
+
+    <ul>
+      <li><strong>If SSH brute force:</strong> Disable password auth, deploy fail2ban, use key-only authentication</li>
+      <li><strong>If unpatched CVE:</strong> Implement automated patching or switch to <a href="/vps/">managed VPS</a> with weekly patch cycles</li>
+      <li><strong>If exposed admin panel:</strong> Move to VPN-only access or IP whitelist. Run our <a href="/free-subdomain-scanner/">subdomain scanner</a> regularly to find forgotten panels.</li>
+      <li><strong>If no monitoring detected it:</strong> Deploy Wazuh SIEM. Our <a href="/compliance-shield/">Compliance Shield</a> includes managed monitoring from $299/mo.</li>
+      <li><strong>If backups failed:</strong> Implement automated backup verification. Test restores quarterly.</li>
+      <li><strong>If credentials were reused:</strong> Deploy password manager, enforce unique credentials per service</li>
+    </ul>
+
+    <p>Run our <a href="/free-domain-security-score/">free domain security scanner</a> monthly as an external posture check. Set up <a href="/pulse/">EdgeIQ Pulse</a> for automated weekly scans with email alerts. Continuous visibility prevents the next incident from being a surprise.</p>
+
+    <div class="eq-cta-end" style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;">
+      <h3 style="margin-bottom:8px;">Managed VPS with Incident Response Included</h3>
+      <p style="color:var(--color-text-secondary);font-size:0.92rem;margin-bottom:14px;">Wazuh SIEM monitoring, weekly patching, automated backups, and incident response. From $4/mo on dedicated Dell PowerEdge hardware.</p>
+      <a href="/vps/" class="btn btn-primary">View VPS Plans →</a>
+      <a href="/free-domain-security-score/" class="btn btn-secondary">Scan Your Server Now →</a>
+    </div>
+
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px auto;text-align:center;max-width:520px;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam, unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;color:var(--color-text-primary);font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:var(--color-accent);color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+  </div>
+
+  <footer style="border-top:1px solid var(--color-border);padding:36px 0;margin-top:60px;text-align:center;color:var(--color-text-secondary);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--color-accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+
+<script>
+function toggleMobileMenu() {
+  var btn = document.querySelector('.nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelector('.nav-hamburger').addEventListener('click', toggleMobileMenu);
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.querySelector('.nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>

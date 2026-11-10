@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Website Security Scanner Guide: 25+ Tools for SMBs — EdgeIQ Labs</title>
+  <meta name="description" content="Complete guide to free website security scanners for small businesses. SSL, DMARC, DNS, headers, subdomains, CVEs, and more. All client-side, zero data upload." />
+  <meta property="og:title" content="Free Website Security Scanner Guide: 25+ Tools for SMBs" />
+  <meta property="og:description" content="Every free security scanner you need, organized by category. Client-side tools that never touch your data." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/free-security-scanner-guide.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Website Security Scanner Guide: 25+ Tools for SMBs" />
+  <meta name="twitter:description" content="Every free security scanner you need, organized by category. Zero data upload." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0C0C14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/free-security-scanner-guide.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Free Website Security Scanner Guide: 25+ Tools for SMBs",
+    "description": "Complete guide to free website security scanners for small businesses. SSL, DMARC, DNS, headers, subdomains, CVEs, and more. All client-side, zero data upload.",
+    "url": "https://edgeiqlabs.com/blog/free-security-scanner-guide.html",
+    "datePublished": "2026-11-10",
+    "dateModified": "2026-11-10",
+    "author": {"@type": "Organization", "name": "EdgeIQ Labs", "url": "https://edgeiqlabs.com"},
+    "publisher": {"@type": "Organization", "name": "EdgeIQ Labs", "logo": {"@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png"}},
+    "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/free-security-scanner-guide.html"},
+    "image": "https://edgeiqlabs.com/og-preview.png"
+  }
+  </script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+  </nav>
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <div class="mob-section">Tools</div>
+    <a href="/free-tools/">Free Security Scanners</a>
+    <a href="/tools/">Developer Tools</a>
+    <div class="mob-section">Services</div>
+    <a href="/compliance/">Compliance Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="mob-cta">Get Protected →</a>
+  </div>
+
+  <div class="container">
+    <header class="article-header">
+      <div class="article-meta">November 10, 2026 · Attack Surface & Scanning · 11 min read</div>
+      <h1>Free Website Security Scanner Guide: 25+ Tools for SMBs</h1>
+      <span class="tag">Free Tools</span>
+      <span class="tag">Scanners</span>
+      <span class="tag">Cornerstone</span>
+      <p class="lead">You don't need a $10K/year vulnerability scanner to find the problems that actually get small businesses breached. These free tools catch the issues that matter most, and they all run client-side so your data never leaves your browser.</p>
+    </header>
+
+    <p>We built these scanners because pentesting engagements kept finding the same basic misconfigurations across SMB clients. Expired SSL certs, missing DMARC records, open admin panels, exposed API endpoints. The kind of stuff automated tooling catches in seconds but nobody was running. So we made the tooling free.</p>
+
+    <p>All tools live at <a href="/tools/">edgeiqlabs.com/tools/</a>. Here's what each one does and when to use it.</p>
+
+    <h2>Start Here: Domain Security Score</h2>
+    <p><strong>Tool:</strong> <a href="/free-domain-security-score/">Domain Security Score</a></p>
+    <p>This is the single best starting point. Enter any domain and get an A-F grade covering SSL, DNS, email security, HTTP headers, and known vulnerabilities. Takes about 30 seconds. If you only run one scanner today, run this one.</p>
+    <p>Use it for: quick health checks, vendor assessments, pre-purchase due diligence on domains, showing clients their current posture.</p>
+
+    <h2>Email Security Scanners</h2>
+    <p>Email is still the #1 attack vector. These three tools verify your email authentication stack is configured correctly.</p>
+
+    <div class="check">
+      <h3><a href="/free-dmarc-checker/">DMARC Checker</a></h3>
+      <p>Validates DMARC record syntax, policy enforcement (none/quarantine/reject), and reporting addresses. Explains what each field means and why reject policy matters. Read our <a href="/blog/dmarc-reject-vs-quarantine.html">DMARC policy comparison</a> for context on choosing between quarantine and reject.</p>
+    </div>
+
+    <div class="check">
+      <h3><a href="/free-spf-checker/">SPF Analyzer</a></h3>
+      <p>Parses SPF records, flags syntax errors, counts DNS lookups (over 10 causes permanent failure), and identifies authorized sending sources. Common issue: too many includes causing lookup limit violations.</p>
+    </div>
+
+    <div class="check">
+      <h3><a href="/free-blacklist-checker/">Blacklist Checker</a></h3>
+      <p>Checks your domain and IP against 50+ DNS blacklists. Being listed means your emails go to spam or bounce entirely. Our <a href="/blog/email-blacklist-check-domain-removal.html">blacklist removal guide</a> covers delisting procedures.</p>
+    </div>
+
+    <p>For deeper email header analysis, see our <a href="/blog/how-to-read-email-headers.html">email header reading guide</a> and <a href="/blog/email-header-analyzer-phishing-guide.html">phishing header analysis post</a>.</p>
+
+    <h2>SSL & Certificate Scanners</h2>
+    <p>Expired or misconfigured certificates are the most visible security failure. Customers see browser warnings and trust evaporates instantly.</p>
+
+    <div class="check">
+      <h3><a href="/free-ssl-checker/">SSL Checker</a></h3>
+      <p>Validates certificate chain, expiration dates, cipher suites, protocol versions, and HSTS configuration. Flags weak ciphers, SHA-1 signatures, and missing intermediate certificates. See our <a href="/blog/ssl-certificate-warnings-explained.html">SSL warning explanations</a> and <a href="/blog/what-happens-when-ssl-expires.html">expiry consequences guide</a>.</p>
+    </div>
+
+    <h2>Attack Surface Discovery</h2>
+    <p>You can't protect what you don't know exists. These tools find the assets attackers will discover during recon.</p>
+
+    <div class="check">
+      <h3><a href="/free-subdomain-scanner/">Subdomain Scanner</a></h3>
+      <p>Enumerates subdomains via DNS brute-force, certificate transparency logs, and search engine indexing. Finds forgotten staging environments, dev sites, and admin panels. Our <a href="/blog/how-to-find-hidden-subdomains.html">hidden subdomain guide</a> and <a href="/blog/top-10-subdomain-takeover-attacks.html">subdomain takeover post</a> explain why this matters.</p>
+    </div>
+
+    <div class="check">
+      <h3>Repo Security Scanner</h3>
+      <p>Scans public GitHub repositories for committed secrets (.env files, API keys, tokens), .gitignore gaps, unpinned CI/CD actions, and stale repos. Free tier covers 7 checks. See our <a href="/blog/how-to-scan-github-repo-for-secrets.html">repo secret scanning guide</a>.</p>
+    </div>
+
+    <h2>HTTP Security Headers</h2>
+    <p>Security headers tell browsers how to handle your content safely. Missing headers enable XSS, clickjacking, MIME sniffing, and other client-side attacks.</p>
+
+    <div class="check">
+      <h3>Header Scanner (via Domain Security Score)</h3>
+      <p>Included in the <a href="/free-domain-security-score/">Domain Security Score</a> tool. Checks CSP, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, Referrer-Policy, and Permissions-Policy. Our <a href="/blog/http-security-headers-what-sites-get-wrong.html">security headers deep dive</a> explains each header and common misconfigurations.</p>
+    </div>
+
+    <h2>Vulnerability & CVE Scanners</h2>
+    <p>Known vulnerabilities in your stack are low-hanging fruit for attackers. These tools check for publicly disclosed CVEs.</p>
+
+    <div class="check">
+      <h3>CVE Lookup (via Domain Security Score)</h3>
+      <p>Cross-references detected software versions against NVD and vendor advisories. Flags critical and high severity CVEs with patch links. Recent coverage: <a href="/blog/velocloud-cve-2026-114625-patch-now.html">VeloCloud CVE</a>, <a href="/blog/node-red-cve-2026-58115-exploited-in-the-wild.html">Node-RED CVE</a>, <a href="/blog/php-memory-corruption-rce-cve-2026-109618.html">PHP RCE CVE</a>.</p>
+    </div>
+
+    <h2>How Often Should You Scan?</h2>
+    <p>Frequency depends on your risk profile. See our <a href="/blog/security-scans-how-often-small-business.html">scanning frequency guide</a> for detailed recommendations, but the short version:</p>
+    <ul>
+      <li><strong>Weekly:</strong> Domain Security Score + SSL Checker (automate with <a href="/pulse/">EdgeIQ Pulse</a>)</li>
+      <li><strong>Monthly:</strong> Subdomain scan + DMARC/SPF verification</li>
+      <li><strong>Quarterly:</strong> Full attack surface assessment + repo scan</li>
+      <li><strong>After every change:</strong> Re-scan anything you modified (deployments, DNS changes, new subdomains)</li>
+    </ul>
+
+    <h2>What Free Scanners Can't Do</h2>
+    <p>Be honest about limitations. Free client-side scanners catch configuration issues and known vulnerabilities. They don't replace:</p>
+    <ul>
+      <li><strong>Authenticated vulnerability scanning</strong> — finding issues behind login screens</li>
+      <li><strong>Application-layer testing</strong> — SQL injection, XSS, business logic flaws in YOUR specific app</li>
+      <li><strong>Continuous monitoring</strong> — detecting active intrusions, not just static misconfigs</li>
+      <li><strong>Compliance evidence</strong> — auditors want documented scanning programs, not ad-hoc checks</li>
+    </ul>
+    <p>That's where paid services come in. Our <a href="/vps/">managed VPS hosting</a> includes Wazuh SIEM monitoring and weekly patching. <a href="/compliance-shield/">Compliance Shield</a> provides continuous compliance monitoring with audit-ready reports. And <a href="/pulse/">EdgeIQ Pulse</a> automates weekly scans with plain-English email digests.</p>
+
+    <h2>Building Your Own Scanning Routine</h2>
+    <p>Bookmark the <a href="/tools/">tools page</a>. Run the Domain Security Score monthly. Set up <a href="/pulse/">Pulse</a> for automated weekly checks. When something scores below B, dig into the specific category with the targeted scanner.</p>
+    <p>For teams managing multiple domains, our <a href="/blog/security-monitoring-routine-small-team.html">small team monitoring routine</a> provides a structured weekly cadence that fits in 30 minutes.</p>
+
+    <div class="eq-cta-end" style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;">
+      <h3 style="margin-bottom:8px;">Automate Your Security Scanning</h3>
+      <p style="color:var(--color-text-secondary);font-size:0.92rem;margin-bottom:14px;">EdgeIQ Pulse runs weekly SSL, header, DNS, and CVE scans with plain-English email alerts. Free for 1 domain.</p>
+      <a href="/pulse/" class="btn btn-primary">Try Pulse Free →</a>
+      <a href="/tools/" class="btn btn-secondary">Browse All Tools →</a>
+    </div>
+
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px auto;text-align:center;max-width:520px;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam, unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;color:var(--color-text-primary);font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:var(--color-accent);color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+  </div>
+
+  <footer style="border-top:1px solid var(--color-border);padding:36px 0;margin-top:60px;text-align:center;color:var(--color-text-secondary);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--color-accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+
+<script>
+function toggleMobileMenu() {
+  var btn = document.querySelector('.nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelector('.nav-hamburger').addEventListener('click', toggleMobileMenu);
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.querySelector('.nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>
