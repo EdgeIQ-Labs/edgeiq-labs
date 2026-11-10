@@ -77,7 +77,7 @@
         "name": "Is my data safe?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We run read-only scans against your own infrastructure — no credentials are stored, no data leaves your network. Scan results are yours. We don't sell, share, or publicize any findings from your scans. Full privacy policy available on request."
+          "text": "Our scans are read-only and run against your own infrastructure. We don't store credentials or move data off your network. Your results stay yours. We don't sell or share them. Ask us for the full privacy policy anytime."
         }
       },
       {
@@ -85,7 +85,7 @@
         "name": "Do I need technical knowledge to use this?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "No. Our tools are built to surface clear, prioritized findings — not raw log files. The SMB dashboard in particular is designed for business owners who are technically literate but don't have a security team. If you can read a spreadsheet, you can act on these reports."
+          "text": "No. Our tools give you clear findings sorted by priority, not raw log files. The SMB dashboard is built for business owners who don't have a security team. If you can read a spreadsheet, you can use these reports."
         }
       },
       {
@@ -93,7 +93,7 @@
         "name": "What happens after I buy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Lifetime purchases receive access credentials and a welcome walkthrough within 24–48 hours. For subscription plans, you get instant Stripe checkout and dashboard access. Managed service clients receive onboarding scheduling. All purchases include documentation and setup support — no extra charge."
+          "text": "Lifetime purchases get access credentials and a walkthrough within 24 to 48 hours. Subscriptions start instantly through Stripe checkout with immediate dashboard access. Managed service clients schedule onboarding after purchase. Everything includes documentation and setup support at no extra cost."
         }
       },
       {
@@ -101,7 +101,7 @@
         "name": "Can I cancel anytime?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Monthly subscriptions can be cancelled before the next billing cycle with no penalties. Lifetime purchases are one-time — no renewal, no hidden fees."
+          "text": "Yes. Cancel monthly subscriptions before the next billing cycle with no penalties. Lifetime purchases are one-time payments with no renewals or hidden fees."
         }
       },
       {
@@ -109,7 +109,7 @@
         "name": "Do you store my scan results?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Results are available in your dashboard for the duration of your active subscription. If you cancel a monthly plan, your data is retained for 30 days after cancellation then deleted. Lifetime plan data is retained for 12 months from purchase then archived. You can request deletion at any time."
+          "text": "Results stay in your dashboard while your subscription is active. If you cancel a monthly plan, we keep your data for 30 days then delete it. Lifetime plan data stays for 12 months before archiving. You can request deletion anytime."
         }
       },
       {
@@ -117,7 +117,7 @@
         "name": "How is this different from hiring a security firm?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "A security firm typically charges $5K-$30K/month for ongoing monitoring. EdgeIQ gives you the same toolset — scanners, dashboards, SSL monitoring, phishing simulations — at a fraction of that cost. The tradeoff is you manage it yourself."
+          "text": "A security firm charges $5K to $30K per month for ongoing monitoring. EdgeIQ gives you the same tools: scanners, dashboards, SSL checks, and phishing tests. You manage it yourself, which is why the price is lower."
         }
       },
       {
@@ -125,7 +125,7 @@
         "name": "Are these tools safe to run against my own infrastructure?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes — but only scan infrastructure you own or have explicit written permission to test. Unauthorized scanning is illegal and we don't support it. Our tools are designed for internal security assessment, third-party vendor monitoring, and your own public-facing assets."
+          "text": "Yes, as long as you only scan infrastructure you own or have written permission to test. Scanning systems you don't own is illegal and violates our terms. These tools are for your own assets, internal assessments, and vendor monitoring."
         }
       },
       {
@@ -133,7 +133,7 @@
         "name": "Is there a free trial?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We offer free scanner tools on the main site — SSL checker, headers analyzer, WHOIS lookup, DNS lookup, CVE lookup — no account required. These give you a real preview of what a paid scan looks like."
+          "text": "We offer free tools on the main site including an SSL checker, headers analyzer, WHOIS lookup, DNS lookup, and CVE search. No account needed. They show you what a paid scan looks like."
         }
       }
     ]
@@ -1550,7 +1550,7 @@
           <div id="hero-idle">
               <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.2);color:var(--accent);font-size:0.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:22px;">🛡 Free Security Check</div>
               <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:12px;">How secure is your domain?</h2>
-              <p style="color:var(--muted);font-size:1rem;margin-bottom:30px;">Get an A–F grade across email authentication, SSL, and DNS in under 10 seconds.</p>
+              <p style="color:var(--muted);font-size:1rem;margin-bottom:30px;">Get an A to F grade for your email security, SSL certificate, and DNS setup in under 10 seconds.</p>
               <form id="hero-form" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
                 <input type="text" id="hero-domain-input" placeholder="yourbusiness.com" autocomplete="off" spellcheck="false"
                   style="flex:1;min-width:200px;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:14px 18px;font-size:1rem;" />
@@ -2577,7 +2577,7 @@
               <span>Is my data safe?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">We run read-only scans against your own infrastructure — no credentials are stored, no data leaves your network. Scan results are yours. We don't sell, share, or publicize any findings from your scans. Full privacy policy available on request.</div>
+            <div class="faq-answer">Our scans are read-only and run against your own infrastructure. We don't store credentials or move data off your network. Your results stay yours. We don't sell or share them. Ask us for the full privacy policy anytime.</div>
           </div>
 
           <div class="faq-item">
@@ -2585,7 +2585,7 @@
               <span>Do I need technical knowledge to use this?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">No. Our tools are built to surface clear, prioritized findings — not raw log files. The SMB dashboard in particular is designed for business owners who are technically literate but don't have a security team. If you can read a spreadsheet, you can act on these reports.</div>
+            <div class="faq-answer">No. Our tools give you clear findings sorted by priority, not raw log files. The SMB dashboard is built for business owners who don't have a security team. If you can read a spreadsheet, you can use these reports.</div>
           </div>
 
           <div class="faq-item">
@@ -2593,7 +2593,7 @@
               <span>What happens after I buy?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">Lifetime purchases receive access credentials and a welcome walkthrough within 24–48 hours. For subscription plans, you get instant Stripe checkout and dashboard access. Managed service clients receive onboarding scheduling. All purchases include documentation and setup support — no extra charge.</div>
+            <div class="faq-answer">Lifetime purchases get access credentials and a walkthrough within 24 to 48 hours. Subscriptions start instantly through Stripe checkout with immediate dashboard access. Managed service clients schedule onboarding after purchase. Everything includes documentation and setup support at no extra cost.</div>
           </div>
 
           <div class="faq-item">
@@ -2601,7 +2601,7 @@
               <span>Can I cancel anytime?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">Yes. Monthly subscriptions can be cancelled before the next billing cycle with no penalties. Lifetime purchases are one-time — no renewal, no hidden fees. We're confident enough in the product to make this easy.</div>
+            <div class="faq-answer">Yes. Cancel monthly subscriptions before the next billing cycle with no penalties. Lifetime purchases are one-time payments with no renewals or hidden fees.</div>
           </div>
 
           <div class="faq-item">
@@ -2609,7 +2609,7 @@
               <span>Do you store my scan results?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">Results are available in your dashboard for the duration of your active subscription. If you cancel a monthly plan, your data is retained for 30 days after cancellation then deleted. Lifetime plan data is retained for 12 months from purchase then archived. You can request deletion at any time.</div>
+            <div class="faq-answer">Results stay in your dashboard while your subscription is active. If you cancel a monthly plan, we keep your data for 30 days then delete it. Lifetime plan data stays for 12 months before archiving. You can request deletion anytime.</div>
           </div>
 
           <div class="faq-item">
@@ -2617,7 +2617,7 @@
               <span>How is this different from hiring a security firm?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">A security firm typically charges $5K-$30K/month for ongoing monitoring. EdgeIQ gives you the same toolset — scanners, dashboards, SSL monitoring, phishing simulations — at a fraction of that cost. The tradeoff is you manage it yourself. For teams that want enterprise-grade findings without the enterprise price tag, that's where we win.</div>
+            <div class="faq-answer">A security firm charges $5K to $30K per month for ongoing monitoring. EdgeIQ gives you the same tools: scanners, dashboards, SSL checks, and phishing tests. You manage it yourself, which is why the price is lower.</div>
           </div>
 
           <div class="faq-item">
@@ -2625,7 +2625,7 @@
               <span>Are these tools safe to run against my own infrastructure?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">Yes — but only scan infrastructure you own or have explicit written permission to test. Unauthorized scanning is illegal and we don't support it. Our tools are designed for internal security assessment, third-party vendor monitoring, and your own public-facing assets. Running these against systems you don't own is a violation of the terms.</div>
+            <div class="faq-answer">Yes, as long as you only scan infrastructure you own or have written permission to test. Scanning systems you don't own is illegal and violates our terms. These tools are for your own assets, internal assessments, and vendor monitoring.</div>
           </div>
 
           <div class="faq-item">
@@ -2633,7 +2633,7 @@
               <span>Is there a free trial?</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="faq-answer">We offer free scanner tools on the main site — SSL checker, headers analyzer, WHOIS lookup, DNS lookup, CVE lookup — no account required. These give you a real preview of what a paid scan looks like. The free tools are intentionally limited so the paid tools remain worth the investment.</div>
+            <div class="faq-answer">We offer free tools on the main site including an SSL checker, headers analyzer, WHOIS lookup, DNS lookup, and CVE search. No account needed. They show you what a paid scan looks like. The free versions are limited so the paid tiers stay worth it.</div>
           </div>
 
         </div>
