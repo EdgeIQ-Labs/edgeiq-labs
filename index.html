@@ -1118,21 +1118,23 @@
         <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack, PHP RCE, GCP outage</div>
         <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS $4/mo, bots $5/mo</div>
         <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — new layout + pricing</div>
-        <!-- Duplicate for seamless loop -->
-        <div class="ticker-item"><span class="ticker-badge" style="background:#22d3ee;color:#0b0f14;">NEW</span> <strong>Inbox Triage</strong> — AI email prioritization & auto-drafting → /inbox-triage/</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#ff0000;color:#fff;">NEW</span> <strong>YouTube Channel</strong> — Tool demos & security walkthroughs → youtube.com/@EdgeIQLabs</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#70f0a8;">NEW</span> <strong>ShieldVerify</strong> — Backup verification & ransomware resilience scoring from $99/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#22d3ee;">NEW</span> <strong>ShieldInvoice</strong> — AI invoice processing & AP automation from $149/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#ff8c42;">NEW</span> <strong>ShieldBuild</strong> — OSHA compliance tracker for construction crews from $99/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">NEW</span> <strong>Vendor Risk</strong> — HIPAA-native vendor management + BAA tracking from $499/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">NEW</span> <strong>ShieldFill</strong> — AI auto-fills security questionnaires & RFPs from $499/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#f472b6;">NEW</span> <strong>Compliance Shield</strong> — HIPAA compliance for small healthcare practices from $299/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#3de19e;">NEW</span> <strong>CertWatch Pro</strong> — SSL expiry monitoring from $1/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#39d0ff;">NEW</span> <strong>UptimePing</strong> — Website uptime monitoring + alerts from $1/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">TOOLS</span> <strong>5 New Free Scanners</strong> — DNS, Port, Header, WHOIS, Breach</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack, PHP RCE, GCP outage</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS $4/mo, bots $5/mo</div>
-        <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — new layout + pricing</div>
+        <!-- Duplicate for seamless loop (hidden from crawlers & screen readers) -->
+        <div aria-hidden="true" style="display:contents;">
+          <div class="ticker-item"><span class="ticker-badge" style="background:#22d3ee;color:#0b0f14;">NEW</span> <strong>Inbox Triage</strong> — AI email prioritization & auto-drafting → /inbox-triage/</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#ff0000;color:#fff;">NEW</span> <strong>YouTube Channel</strong> — Tool demos & security walkthroughs → youtube.com/@EdgeIQLabs</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#70f0a8;">NEW</span> <strong>ShieldVerify</strong> — Backup verification & ransomware resilience scoring from $99/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#22d3ee;">NEW</span> <strong>ShieldInvoice</strong> — AI invoice processing & AP automation from $149/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#ff8c42;">NEW</span> <strong>ShieldBuild</strong> — OSHA compliance tracker for construction crews from $99/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">NEW</span> <strong>Vendor Risk</strong> — HIPAA-native vendor management + BAA tracking from $499/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">NEW</span> <strong>ShieldFill</strong> — AI auto-fills security questionnaires & RFPs from $499/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#f472b6;">NEW</span> <strong>Compliance Shield</strong> — HIPAA compliance for small healthcare practices from $299/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#3de19e;">NEW</span> <strong>CertWatch Pro</strong> — SSL expiry monitoring from $1/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#39d0ff;">NEW</span> <strong>UptimePing</strong> — Website uptime monitoring + alerts from $1/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#3dd9ff;">TOOLS</span> <strong>5 New Free Scanners</strong> — DNS, Port, Header, WHOIS, Breach</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#b47aff;">BLOG</span> <strong>Fresh Intel</strong> — Binance $6.3B hack, PHP RCE, GCP outage</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#ff6b7a;">BRAND</span> <strong>Cybersecurity · Hosting</strong> — VPS $4/mo, bots $5/mo</div>
+          <div class="ticker-item"><span class="ticker-badge" style="background:#6366f1;">SERVICES</span> <strong>Rebuilt Services Page</strong> — new layout + pricing</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1270,7 +1272,7 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;">
 
         <!-- ShieldInvoice -->
-        <a href="/shieldinvoice/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(99,102,241,0.04));border:1px solid rgba(34,211,238,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(34,211,238,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(34,211,238,0.25)';this.style.transform='none'">
+        <a href="/api/shieldinvoice-checkout?plan=starter" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(99,102,241,0.04));border:1px solid rgba(34,211,238,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(34,211,238,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(34,211,238,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(34,211,238,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🧾</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -1281,12 +1283,12 @@
           </div>
           <div style="flex:0 0 auto;text-align:right;">
             <div style="font-size:0.95rem;font-weight:800;color:#22d3ee;line-height:1;">$149<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Get Started →</div>
           </div>
         </a>
 
         <!-- Inbox Triage -->
-        <a href="/inbox-triage/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(99,102,241,0.04));border:1px solid rgba(34,211,238,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(34,211,238,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(34,211,238,0.25)';this.style.transform='none'">
+        <a href="https://inbox-triage.edgeiqlabs.com/api/inbox-triage/checkout?plan=starter" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(99,102,241,0.04));border:1px solid rgba(34,211,238,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(34,211,238,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(34,211,238,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(34,211,238,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📬</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -1297,12 +1299,12 @@
           </div>
           <div style="flex:0 0 auto;text-align:right;">
             <div style="font-size:0.95rem;font-weight:800;color:#22d3ee;line-height:1;">$19<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Get Started →</div>
           </div>
         </a>
 
         <!-- ShieldVerify -->
-        <a href="/shieldverify/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(112,240,168,0.06),rgba(99,102,241,0.04));border:1px solid rgba(112,240,168,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(112,240,168,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(112,240,168,0.25)';this.style.transform='none'">
+        <a href="/api/shieldverify-checkout?plan=starter" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(112,240,168,0.06),rgba(99,102,241,0.04));border:1px solid rgba(112,240,168,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(112,240,168,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(112,240,168,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(112,240,168,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔒</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -1313,12 +1315,12 @@
           </div>
           <div style="flex:0 0 auto;text-align:right;">
             <div style="font-size:0.95rem;font-weight:800;color:#70f0a8;line-height:1;">$99<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Get Started →</div>
           </div>
         </a>
 
         <!-- ShieldBuild -->
-        <a href="/shieldbuild/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(255,140,66,0.06),rgba(99,102,241,0.04));border:1px solid rgba(255,140,66,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(255,140,66,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(255,140,66,0.25)';this.style.transform='none'">
+        <a href="/api/shieldbuild-checkout?plan=starter" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(255,140,66,0.06),rgba(99,102,241,0.04));border:1px solid rgba(255,140,66,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(255,140,66,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(255,140,66,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(255,140,66,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🏗️</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -1329,12 +1331,12 @@
           </div>
           <div style="flex:0 0 auto;text-align:right;">
             <div style="font-size:0.95rem;font-weight:800;color:#ff8c42;line-height:1;">$99<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Get Started →</div>
           </div>
         </a>
 
         <!-- Compliance Shield -->
-        <a href="/compliance-shield/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(244,114,182,0.06),rgba(99,102,241,0.04));border:1px solid rgba(244,114,182,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(244,114,182,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(244,114,182,0.25)';this.style.transform='none'">
+        <a href="https://buy.stripe.com/cNi6oJ3XJ9pj3jS18c7wB1q" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(244,114,182,0.06),rgba(99,102,241,0.04));border:1px solid rgba(244,114,182,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(244,114,182,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(244,114,182,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(244,114,182,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🏥</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -1345,12 +1347,12 @@
           </div>
           <div style="flex:0 0 auto;text-align:right;">
             <div style="font-size:0.95rem;font-weight:800;color:#f472b6;line-height:1;">$299<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Get Started →</div>
           </div>
         </a>
 
         <!-- ShieldFill -->
-        <a href="/shieldfill/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(61,217,255,0.06),rgba(99,102,241,0.04));border:1px solid rgba(61,217,255,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(61,217,255,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(61,217,255,0.25)';this.style.transform='none'">
+        <a href="https://buy.stripe.com/9B64gB79VeJDcUs0487wB2C" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(61,217,255,0.06),rgba(99,102,241,0.04));border:1px solid rgba(61,217,255,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(61,217,255,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(61,217,255,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(61,217,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📋</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -1361,12 +1363,12 @@
           </div>
           <div style="flex:0 0 auto;text-align:right;">
             <div style="font-size:0.95rem;font-weight:800;color:#3dd9ff;line-height:1;">$499<span style="font-size:0.7rem;font-weight:400;color:var(--muted);">/mo</span></div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Learn more →</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:2px;">Get Started →</div>
           </div>
         </a>
 
         <!-- Vendor Risk -->
-        <a href="/vendor-risk/" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(180,122,255,0.06),rgba(99,102,241,0.04));border:1px solid rgba(180,122,255,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(180,122,255,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(180,122,255,0.25)';this.style.transform='none'">
+        <a href="/api/vendor-risk-checkout?plan=starter" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(180,122,255,0.06),rgba(99,102,241,0.04));border:1px solid rgba(180,122,255,0.25);border-radius:10px;padding:16px 20px;text-decoration:none;transition:border-color 0.2s,transform 0.15s;" onmouseover="this.style.borderColor='rgba(180,122,255,0.6)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(180,122,255,0.25)';this.style.transform='none'">
           <div style="flex:0 0 40px;width:40px;height:40px;background:rgba(180,122,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔍</div>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
