@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.png" />
+  <title>EdgeIQ StatusPage — Public Status Pages for SMBs | EdgeIQ Labs</title>
+  <meta name="description" content="Branded public status pages with incident history, uptime graphs, and subscriber notifications. From $9/mo. Auto-integrates with UptimePing monitoring." />
+  <link rel="canonical" href="https://edgeiqlabs.com/statuspage/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:url" content="https://edgeiqlabs.com/statuspage/" />
+  <meta property="og:title" content="EdgeIQ StatusPage — Public Status Pages for SMBs" />
+  <meta property="og:description" content="Branded public status pages with incident history, uptime graphs, and subscriber notifications. From $9/mo." />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EdgeIQ StatusPage — Public Status Pages for SMBs" />
+  <meta name="twitter:description" content="Branded public status pages from $9/mo. Auto-integrates with UptimePing." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <link rel="stylesheet" href="/css/design-system.css?v=13" />
+  <style>
+    .sp-hero { text-align: center; padding: 80px 20px 60px; }
+    .sp-hero h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin-bottom: 16px; }
+    .sp-hero h1 span { color: var(--accent); }
+    .sp-hero p { color: var(--muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 28px; line-height: 1.6; }
+    .sp-hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .sp-compare { max-width: 800px; margin: 0 auto 60px; padding: 0 20px; }
+    .sp-compare h2 { text-align: center; font-size: 1.4rem; margin-bottom: 24px; }
+    .sp-compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .sp-compare-table th, .sp-compare-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    .sp-compare-table th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .sp-compare-table td:first-child { font-weight: 600; }
+    .sp-compare-table .highlight { color: var(--accent); font-weight: 700; }
+    .sp-pricing { max-width: 900px; margin: 0 auto 60px; padding: 0 20px; }
+    .sp-pricing h2 { text-align: center; font-size: 1.4rem; margin-bottom: 24px; }
+    .sp-pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+    .sp-price-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px 24px; position: relative; }
+    .sp-price-card.featured { border-color: var(--accent); box-shadow: 0 0 20px rgba(61,217,255,0.08); }
+    .sp-price-card.featured::before { content: 'Most Popular'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #071018; font-size: 0.68rem; font-weight: 700; padding: 3px 12px; border-radius: 20px; text-transform: uppercase; }
+    .sp-price-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .sp-price-amount { font-size: 2.2rem; font-weight: 800; margin-bottom: 16px; }
+    .sp-price-amount span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .sp-price-features { list-style: none; margin-bottom: 24px; }
+    .sp-price-features li { padding: 6px 0; color: var(--muted); font-size: 0.88rem; display: flex; align-items: center; gap: 8px; }
+    .sp-price-features li::before { content: '✓'; color: #3de19e; font-weight: 700; }
+    .sp-price-btn { display: block; text-align: center; background: var(--accent); color: #071018; font-weight: 700; padding: 12px; border-radius: 10px; text-decoration: none; transition: opacity 0.2s; }
+    .sp-price-btn:hover { opacity: 0.88; }
+    .sp-price-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .sp-features { max-width: 800px; margin: 0 auto 60px; padding: 0 20px; }
+    .sp-features h2 { text-align: center; font-size: 1.4rem; margin-bottom: 24px; }
+    .sp-feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .sp-feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 20px; }
+    .sp-feature-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .sp-feature-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+    .sp-feature-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav style="border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:10;">
+    <div style="max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+      <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+        <img src="/favicon.png" alt="" style="height:36px;border-radius:8px;" />
+        <span style="font-weight:800;font-size:1.05rem;color:var(--text);">EdgeIQ<span style="color:var(--accent);">Labs</span></span>
+      </a>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <a href="/tools/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">Tools</a>
+        <a href="/blog/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">Blog</a>
+        <a href="/pricing/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">Pricing</a>
+        <a href="/account/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">My Account</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="sp-hero">
+    <h1>Tell your users<br><span>before they tell you</span></h1>
+    <p>Branded public status pages with real-time component status, incident timelines, and subscriber notifications. Auto-integrates with UptimePing monitoring.</p>
+    <div class="sp-hero-cta">
+      <a href="#pricing" class="btn btn-primary" style="padding:14px 28px;font-size:1rem;">Start at $9/mo</a>
+      <a href="/s/demo" class="btn btn-secondary" style="padding:14px 28px;font-size:1rem;">View Demo Page →</a>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:12px;">No credit card for demo · 14-day free trial on all plans</p>
+  </section>
+
+  <!-- Comparison -->
+  <section class="sp-compare">
+    <h2>Why not Atlassian?</h2>
+    <table class="sp-compare-table">
+      <thead>
+        <tr><th></th><th class="highlight">EdgeIQ StatusPage</th><th>Atlassian</th><th>Instatus</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Starting price</td><td class="highlight">$9/mo</td><td>$29/mo</td><td>$20/mo</td></tr>
+        <tr><td>Custom domain</td><td class="highlight">All plans</td><td>All plans</td><td>Paid only</td></tr>
+        <tr><td>UptimePing integration</td><td class="highlight">Native</td><td>Zapier required</td><td>No</td></tr>
+        <tr><td>Email subscribers</td><td class="highlight">100+</td><td>250</td><td>100</td></tr>
+        <tr><td>API access</td><td class="highlight">All plans</td><td>All plans</td><td>Paid only</td></tr>
+        <tr><td>No vendor lock-in</td><td class="highlight">✓</td><td>Atlassian account required</td><td>✓</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Features -->
+  <section class="sp-features">
+    <h2>Everything you need</h2>
+    <div class="sp-feature-grid">
+      <div class="sp-feature-card">
+        <div class="sp-feature-icon">🟢</div>
+        <h3>Real-time Component Status</h3>
+        <p>Show operational, degraded, or outage status for each service. Group components by category.</p>
+      </div>
+      <div class="sp-feature-card">
+        <div class="sp-feature-icon">📋</div>
+        <h3>Incident Timeline</h3>
+        <p>Post updates as you investigate, identify, monitor, and resolve. Full history visible to subscribers.</p>
+      </div>
+      <div class="sp-feature-card">
+        <div class="sp-feature-icon">🔔</div>
+        <h3>Subscriber Notifications</h3>
+        <p>Email alerts on new incidents and updates. Webhook support on Pro+ for Slack/Teams/Discord.</p>
+      </div>
+      <div class="sp-feature-card">
+        <div class="sp-feature-icon">🎨</div>
+        <h3>Custom Branding</h3>
+        <p>Your logo, your colors, your domain. No "Powered by" badge on Business tier.</p>
+      </div>
+      <div class="sp-feature-card">
+        <div class="sp-feature-icon">⚡</div>
+        <h3>UptimePing Auto-Post</h3>
+        <p>Connect your UptimePing monitors. Downtime automatically creates incidents. Resolution auto-closes them.</p>
+      </div>
+      <div class="sp-feature-card">
+        <div class="sp-feature-icon">🔒</div>
+        <h3>Password Protection</h3>
+        <p>Make status pages private for internal teams or specific clients. Share via link + password.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="sp-pricing" id="pricing">
+    <h2>Simple pricing</h2>
+    <div class="sp-pricing-grid">
+      <div class="sp-price-card">
+        <div class="sp-price-name">Starter</div>
+        <div class="sp-price-amount">$9<span>/mo</span></div>
+        <ul class="sp-price-features">
+          <li>1 status page</li>
+          <li>5 components</li>
+          <li>100 email subscribers</li>
+          <li>Incident history</li>
+          <li>API access</li>
+          <li>Custom branding</li>
+        </ul>
+        <a href="/api/statuspage-checkout?plan=starter" class="sp-price-btn secondary">Start Free Trial</a>
+      </div>
+      <div class="sp-price-card featured">
+        <div class="sp-price-name">Pro</div>
+        <div class="sp-price-amount">$19<span>/mo</span></div>
+        <ul class="sp-price-features">
+          <li>3 status pages</li>
+          <li>20 components</li>
+          <li>500 email subscribers</li>
+          <li>Webhook notifications</li>
+          <li>UptimePing auto-post</li>
+          <li>Password-protected pages</li>
+        </ul>
+        <a href="/api/statuspage-checkout?plan=pro" class="sp-price-btn">Start Free Trial</a>
+      </div>
+      <div class="sp-price-card">
+        <div class="sp-price-name">Business</div>
+        <div class="sp-price-amount">$49<span>/mo</span></div>
+        <ul class="sp-price-features">
+          <li>10 status pages</li>
+          <li>50 components</li>
+          <li>2,000 email subscribers</li>
+          <li>Custom domain</li>
+          <li>Remove "Powered by"</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="/api/statuspage-checkout?plan=business" class="sp-price-btn secondary">Start Free Trial</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer CTA -->
+  <section style="text-align:center;padding:40px 20px 80px;">
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:16px;">Already using UptimePing? Add a status page for $9/mo and close the loop.</p>
+    <a href="/uptimeping/" style="color:var(--accent);font-weight:600;text-decoration:none;">Go to UptimePing →</a>
+  </section>
+
+  <!-- Minimal footer -->
+  <footer style="border-top:1px solid var(--border);color:var(--muted);text-align:center;padding:28px 20px;font-size:0.82rem;">
+    <p>© 2026 EdgeIQ Labs · <a href="/privacy.html" style="color:var(--muted);">Privacy</a> · <a href="/terms.html" style="color:var(--muted);">Terms</a> · <a href="mailto:support@edgeiqlabs.com" style="color:var(--muted);">Support</a></p>
+  </footer>
+</body>
+</html>

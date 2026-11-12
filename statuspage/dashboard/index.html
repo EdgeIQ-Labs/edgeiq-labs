@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.png" />
+  <title>StatusPage Dashboard — EdgeIQ Labs</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=13" />
+  <style>
+    .spd-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    .spd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+    .spd-header h1 { font-size: 1.5rem; }
+    .spd-auth { text-align: center; padding: 80px 20px; }
+    .spd-auth input { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 0.95rem; outline: none; width: 300px; max-width: 100%; margin-bottom: 12px; }
+    .spd-auth button { background: var(--accent); color: #071018; border: none; border-radius: 10px; padding: 12px 24px; font-weight: 700; cursor: pointer; }
+    .spd-tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .spd-tab { padding: 10px 18px; font-size: 0.9rem; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .spd-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .spd-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .spd-card h3 { font-size: 1rem; margin-bottom: 12px; }
+    .spd-form-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .spd-form-row input, .spd-form-row select, .spd-form-row textarea { flex: 1; min-width: 150px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.9rem; outline: none; }
+    .spd-form-row textarea { min-height: 80px; resize: vertical; }
+    .spd-form-row input:focus, .spd-form-row select:focus, .spd-form-row textarea:focus { border-color: var(--accent); }
+    .spd-btn { background: var(--accent); color: #071018; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 700; cursor: pointer; font-size: 0.88rem; }
+    .spd-btn:hover { opacity: 0.88; }
+    .spd-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .spd-btn.danger { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
+    .spd-list { display: flex; flex-direction: column; gap: 8px; }
+    .spd-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+    .spd-item-name { font-weight: 600; font-size: 0.9rem; }
+    .spd-item-meta { font-size: 0.78rem; color: var(--muted); }
+    .spd-status-badge { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
+    .spd-status-badge.operational { background: rgba(61,225,158,0.15); color: #3de19e; }
+    .spd-status-badge.degraded { background: rgba(255,196,0,0.15); color: #ffc400; }
+    .spd-status-badge.major_outage { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+    .spd-empty { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; }
+    .spd-page-link { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); text-decoration: none; font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
+    .spd-msg { font-size: 0.82rem; margin-top: 8px; }
+    .spd-msg.success { color: #3de19e; }
+    .spd-msg.error { color: #ff6b6b; }
+  </style>
+</head>
+<body>
+  <div class="spd-wrap" id="app">
+    <div class="spd-auth" id="auth-gate">
+      <h2 style="margin-bottom:8px;">StatusPage Dashboard</h2>
+      <p style="color:var(--muted);margin-bottom:20px;font-size:0.9rem;">Enter your email to manage your status pages</p>
+      <input type="email" id="auth-email" placeholder="you@example.com" />
+      <br/>
+      <button onclick="authenticate()">Access Dashboard</button>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+      <div class="spd-header">
+        <h1>StatusPage Dashboard</h1>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="user-email" style="font-size:0.82rem;color:var(--muted);"></span>
+          <button class="spd-btn secondary" onclick="logout()" style="padding:6px 12px;font-size:0.78rem;">Logout</button>
+        </div>
+      </div>
+
+      <div class="spd-tabs">
+        <div class="spd-tab active" onclick="switchTab('pages')">Pages</div>
+        <div class="spd-tab" onclick="switchTab('incidents')">Incidents</div>
+        <div class="spd-tab" onclick="switchTab('settings')">Settings</div>
+      </div>
+
+      <!-- Pages Tab -->
+      <div id="tab-pages">
+        <div class="spd-card">
+          <h3>Create New Status Page</h3>
+          <div class="spd-form-row">
+            <input type="text" id="new-page-name" placeholder="Page name (e.g., Acme Corp Status)" />
+            <input type="text" id="new-page-slug" placeholder="URL slug (e.g., acme-corp)" />
+          </div>
+          <div class="spd-form-row">
+            <input type="text" id="new-page-desc" placeholder="Description (optional)" />
+            <button class="spd-btn" onclick="createPage()">Create Page</button>
+          </div>
+          <div id="create-page-msg" class="spd-msg"></div>
+        </div>
+
+        <div id="pages-list" class="spd-list"></div>
+      </div>
+
+      <!-- Incidents Tab -->
+      <div id="tab-incidents" style="display:none;">
+        <div class="spd-card">
+          <h3>Report Incident</h3>
+          <div class="spd-form-row">
+            <select id="incident-page"></select>
+            <input type="text" id="incident-title" placeholder="Incident title" />
+          </div>
+          <div class="spd-form-row">
+            <select id="incident-severity">
+              <option value="minor">Minor</option>
+              <option value="major">Major</option>
+              <option value="critical">Critical</option>
+            </select>
+            <select id="incident-status">
+              <option value="investigating">Investigating</option>
+              <option value="identified">Identified</option>
+              <option value="monitoring">Monitoring</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <div class="spd-form-row">
+            <textarea id="incident-body" placeholder="What happened? What are you doing about it?"></textarea>
+          </div>
+          <button class="spd-btn" onclick="createIncident()">Post Incident</button>
+          <div id="create-incident-msg" class="spd-msg"></div>
+        </div>
+
+        <div id="incidents-list" class="spd-list"></div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="tab-settings" style="display:none;">
+        <div class="spd-card">
+          <h3>Account</h3>
+          <p style="color:var(--muted);font-size:0.88rem;">Plan management and billing via Stripe portal.</p>
+          <a href="/account/" class="spd-btn secondary" style="display:inline-block;margin-top:12px;text-decoration:none;">Manage Billing →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let pages = [];
+
+    function authenticate() {
+      const email = document.getElementById('auth-email').value.trim();
+      if (!email) return;
+      currentUser = email;
+      sessionStorage.setItem('sp_email', email);
+      showDashboard();
+    }
+
+    function logout() {
+      currentUser = null;
+      sessionStorage.removeItem('sp_email');
+      document.getElementById('auth-gate').style.display = '';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+
+    async function showDashboard() {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = '';
+      document.getElementById('user-email').textContent = currentUser;
+      await loadPages();
+    }
+
+    async function loadPages() {
+      try {
+        const res = await fetch(`/api/statuspage/pages?email=${encodeURIComponent(currentUser)}`);
+        pages = await res.json();
+        renderPages();
+        populatePageSelect();
+      } catch (e) {
+        console.error('Load pages error:', e);
+      }
+    }
+
+    function renderPages() {
+      const list = document.getElementById('pages-list');
+      if (pages.length === 0) {
+        list.innerHTML = '<div class="spd-empty">No status pages yet. Create one above.</div>';
+        return;
+      }
+      list.innerHTML = pages.map(p => `
+        <div class="spd-item">
+          <div>
+            <div class="spd-item-name">${p.name}</div>
+            <div class="spd-item-meta">Tier: ${p.tier} · Created ${new Date(p.created_at).toLocaleDateString()}</div>
+            <a href="/s/${p.slug}" target="_blank" class="spd-page-link">View Public Page →</a>
+          </div>
+          <span class="spd-status-badge operational">Active</span>
+        </div>
+      `).join('');
+    }
+
+    function populatePageSelect() {
+      const sel = document.getElementById('incident-page');
+      sel.innerHTML = pages.length > 0
+        ? pages.map(p => `<option value="${p.slug}">${p.name}</option>`).join('')
+        : '<option value="">No pages available</option>';
+    }
+
+    async function createPage() {
+      const name = document.getElementById('new-page-name').value.trim();
+      const slug = document.getElementById('new-page-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+      const desc = document.getElementById('new-page-desc').value.trim();
+      const msg = document.getElementById('create-page-msg');
+
+      if (!name || !slug) {
+        msg.textContent = 'Name and slug are required.';
+        msg.className = 'spd-msg error';
+        return;
+      }
+
+      msg.textContent = 'Creating...';
+      msg.className = 'spd-msg';
+
+      try {
+        const res = await fetch('/api/statuspage/pages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, slug, description: desc, owner_email: currentUser }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = `Created! View at /s/${slug}`;
+          msg.className = 'spd-msg success';
+          document.getElementById('new-page-name').value = '';
+          document.getElementById('new-page-slug').value = '';
+          document.getElementById('new-page-desc').value = '';
+          await loadPages();
+        } else {
+          msg.textContent = data.error || 'Failed to create page.';
+          msg.className = 'spd-msg error';
+        }
+      } catch (e) {
+        msg.textContent = 'Network error.';
+        msg.className = 'spd-msg error';
+      }
+    }
+
+    async function createIncident() {
+      const pageSlug = document.getElementById('incident-page').value;
+      const title = document.getElementById('incident-title').value.trim();
+      const severity = document.getElementById('incident-severity').value;
+      const status = document.getElementById('incident-status').value;
+      const body = document.getElementById('incident-body').value.trim();
+      const msg = document.getElementById('create-incident-msg');
+
+      if (!pageSlug || !title) {
+        msg.textContent = 'Select a page and enter a title.';
+        msg.className = 'spd-msg error';
+        return;
+      }
+
+      msg.textContent = 'Posting...';
+      msg.className = 'spd-msg';
+
+      try {
+        const res = await fetch(`/api/statuspage/pages/${pageSlug}/incidents`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, severity, status, body }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = 'Incident posted!';
+          msg.className = 'spd-msg success';
+          document.getElementById('incident-title').value = '';
+          document.getElementById('incident-body').value = '';
+          await loadIncidents(pageSlug);
+        } else {
+          msg.textContent = data.error || 'Failed to post.';
+          msg.className = 'spd-msg error';
+        }
+      } catch (e) {
+        msg.textContent = 'Network error.';
+        msg.className = 'spd-msg error';
+      }
+    }
+
+    async function loadIncidents(slug) {
+      // Load incidents for the selected page
+      try {
+        const res = await fetch(`/api/statuspage/pages/${slug}/incidents?active=false`);
+        const incidents = await res.json();
+        const list = document.getElementById('incidents-list');
+        if (incidents.length === 0) {
+          list.innerHTML = '<div class="spd-empty">No incidents reported.</div>';
+        } else {
+          list.innerHTML = incidents.map(i => `
+            <div class="spd-item" style="flex-direction:column;align-items:flex-start;gap:6px;">
+              <div style="display:flex;justify-content:space-between;width:100%;">
+                <span class="spd-item-name">${i.title}</span>
+                <span class="spd-status-badge ${i.status}">${i.status}</span>
+              </div>
+              <div class="spd-item-meta">${i.severity} · ${new Date(i.created_at).toLocaleString()}</div>
+              ${i.body ? `<div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">${i.body}</div>` : ''}
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Load incidents error:', e);
+      }
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.spd-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tab}`).style.display = '';
+      
+      if (tab === 'incidents' && pages.length > 0) {
+        loadIncidents(pages[0].slug);
+      }
+    }
+
+    // Auto-login from session
+    const savedEmail = sessionStorage.getItem('sp_email');
+    if (savedEmail) {
+      currentUser = savedEmail;
+      showDashboard();
+    }
+
+    // Handle Stripe redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('session_id')) {
+      const email = sessionStorage.getItem('sp_email');
+      if (email) {
+        currentUser = email;
+        showDashboard();
+      }
+    }
+  </script>
+</body>
+</html>

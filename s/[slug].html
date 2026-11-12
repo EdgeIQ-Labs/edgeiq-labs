@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.png" />
+  <title>Status — EdgeIQ Labs</title>
+  <meta name="description" content="Service status and uptime information." />
+  <link rel="stylesheet" href="/css/design-system.css?v=13" />
+  <style>
+    .sp-container { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
+    .sp-header { text-align: center; margin-bottom: 40px; }
+    .sp-header h1 { font-size: 1.6rem; margin-bottom: 6px; }
+    .sp-header p { color: var(--muted); font-size: 0.9rem; }
+    .sp-overall { text-align: center; padding: 24px; border-radius: 12px; margin-bottom: 32px; font-weight: 700; font-size: 1.1rem; }
+    .sp-overall.operational { background: rgba(61,225,158,0.1); border: 1px solid rgba(61,225,158,0.3); color: #3de19e; }
+    .sp-overall.degraded { background: rgba(255,196,0,0.1); border: 1px solid rgba(255,196,0,0.3); color: #ffc400; }
+    .sp-overall.outage { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); color: #ff6b6b; }
+    .sp-components { display: flex; flex-direction: column; gap: 8px; margin-bottom: 40px; }
+    .sp-component { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+    .sp-component-name { font-weight: 600; font-size: 0.92rem; }
+    .sp-component-status { font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .sp-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .sp-dot.operational { background: #3de19e; }
+    .sp-dot.degraded { background: #ffc400; }
+    .sp-dot.partial_outage { background: #ff8c42; }
+    .sp-dot.major_outage { background: #ff6b6b; }
+    .sp-dot.maintenance { background: #3dd9ff; }
+    .sp-incidents { margin-top: 32px; }
+    .sp-incidents h2 { font-size: 1.1rem; margin-bottom: 16px; }
+    .sp-incident { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 12px; }
+    .sp-incident-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .sp-incident-title { font-weight: 700; font-size: 0.95rem; }
+    .sp-incident-badge { font-size: 0.68rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+    .sp-incident-badge.investigating { background: rgba(255,196,0,0.15); color: #ffc400; }
+    .sp-incident-badge.identified { background: rgba(255,140,66,0.15); color: #ff8c42; }
+    .sp-incident-badge.monitoring { background: rgba(61,217,255,0.15); color: #3dd9ff; }
+    .sp-incident-badge.resolved { background: rgba(61,225,158,0.15); color: #3de19e; }
+    .sp-incident-body { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+    .sp-incident-time { color: var(--muted); font-size: 0.75rem; margin-top: 8px; }
+    .sp-subscribe { text-align: center; margin-top: 40px; padding: 24px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+    .sp-subscribe h3 { font-size: 0.95rem; margin-bottom: 10px; }
+    .sp-subscribe-form { display: flex; gap: 8px; justify-content: center; max-width: 400px; margin: 0 auto; }
+    .sp-subscribe-form input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.9rem; outline: none; }
+    .sp-subscribe-form input:focus { border-color: var(--accent); }
+    .sp-subscribe-form button { background: var(--accent); color: #071018; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .sp-powered { text-align: center; margin-top: 40px; font-size: 0.75rem; color: var(--muted); }
+    .sp-powered a { color: var(--accent); text-decoration: none; }
+    .sp-loading { text-align: center; padding: 60px; color: var(--muted); }
+    .sp-error { text-align: center; padding: 60px; color: #ff6b6b; }
+    @media (max-width: 480px) { .sp-subscribe-form { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <div class="sp-container" id="app">
+    <div class="sp-loading">Loading status…</div>
+  </div>
+
+  <script>
+    const SLUG = window.location.pathname.split('/s/')[1] || '';
+    const app = document.getElementById('app');
+
+    async function loadStatus() {
+      if (!SLUG) {
+        app.innerHTML = '<div class="sp-error">No status page specified.</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/statuspage/public/${SLUG}`);
+        if (!res.ok) {
+          app.innerHTML = '<div class="sp-error">Status page not found.</div>';
+          return;
+        }
+        const data = await res.json();
+        render(data);
+      } catch (e) {
+        app.innerHTML = '<div class="sp-error">Failed to load status.</div>';
+      }
+    }
+
+    function overallStatus(components) {
+      if (components.some(c => c.status === 'major_outage')) return 'outage';
+      if (components.some(c => c.status === 'partial_outage' || c.status === 'degraded')) return 'degraded';
+      return 'operational';
+    }
+
+    function statusLabel(s) {
+      const map = { operational: 'Operational', degraded: 'Degraded Performance', partial_outage: 'Partial Outage', major_outage: 'Major Outage', maintenance: 'Maintenance' };
+      return map[s] || s;
+    }
+
+    function timeAgo(dateStr) {
+      const d = new Date(dateStr + 'Z');
+      const diff = (Date.now() - d.getTime()) / 1000;
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      return Math.floor(diff / 86400) + 'd ago';
+    }
+
+    function render(data) {
+      const { page, components, incidents } = data;
+      const overall = overallStatus(components);
+      const overallText = overall === 'operational' ? 'All Systems Operational' : overall === 'degraded' ? 'Some Systems Degraded' : 'Service Disruption Detected';
+
+      document.title = `${page.name} — Status`;
+
+      let html = `
+        <div class="sp-header">
+          ${page.logo_url ? `<img src="${page.logo_url}" alt="" style="height:40px;margin-bottom:12px;border-radius:8px;">` : ''}
+          <h1>${page.name}</h1>
+          <p>${page.description || ''}</p>
+        </div>
+        <div class="sp-overall ${overall}">${overallText}</div>
+        <div class="sp-components">
+          ${components.map(c => `
+            <div class="sp-component">
+              <span class="sp-component-name">${c.group_name ? `<span style="color:var(--muted);font-size:0.78rem;margin-right:6px;">${c.group_name}</span>` : ''}${c.name}</span>
+              <span class="sp-component-status"><span class="sp-dot ${c.status}"></span>${statusLabel(c.status)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      if (incidents.length > 0) {
+        html += `<div class="sp-incidents"><h2>Incidents</h2>`;
+        incidents.forEach(i => {
+          html += `
+            <div class="sp-incident">
+              <div class="sp-incident-header">
+                <span class="sp-incident-title">${i.title}</span>
+                <span class="sp-incident-badge ${i.status}">${i.status}</span>
+              </div>
+              <div class="sp-incident-body">${i.body || ''}</div>
+              <div class="sp-incident-time">${timeAgo(i.created_at)}${i.resolved_at ? ' · Resolved ' + timeAgo(i.resolved_at) : ''}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      html += `
+        <div class="sp-subscribe">
+          <h3>Get notified when something breaks</h3>
+          <form class="sp-subscribe-form" onsubmit="subscribe(event)">
+            <input type="email" id="sub-email" placeholder="you@example.com" required />
+            <button type="submit">Subscribe</button>
+          </form>
+          <p id="sub-msg" style="font-size:0.8rem;color:var(--muted);margin-top:8px;"></p>
+        </div>
+        <div class="sp-powered">Powered by <a href="https://edgeiqlabs.com">EdgeIQ Labs</a></div>
+      `;
+
+      app.innerHTML = html;
+    }
+
+    async function subscribe(e) {
+      e.preventDefault();
+      const email = document.getElementById('sub-email').value;
+      const msg = document.getElementById('sub-msg');
+      msg.textContent = 'Subscribing…';
+      try {
+        const res = await fetch(`/api/statuspage/pages/${SLUG}/subscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        msg.textContent = data.message || 'Subscribed!';
+        msg.style.color = '#3de19e';
+      } catch {
+        msg.textContent = 'Something went wrong.';
+        msg.style.color = '#ff6b6b';
+      }
+    }
+
+    loadStatus();
+  </script>
+</body>
+</html>
