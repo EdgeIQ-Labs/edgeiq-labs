@@ -31,32 +31,45 @@ export async function onRequestPost(context) {
 
   const event = JSON.parse(body);
   
-  // Handle subscription events
+  // Handle subscription lifecycle events
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const email = session.customer_email || session.customer_details?.email;
     if (email) {
-      // Store Pro subscriber in D1
       try {
         await env.PHISH_DB.prepare(
-          "INSERT OR REPLACE INTO subscribers (email, tier, stripe_customer_id, subscribed_at) VALUES (?, ?, ?, datetime('now'))"
-        ).bind(email, "pro", session.customer).run();
+          "INSERT OR REPLACE INTO subscribers (id, email, tier, stripe_customer_id, status, subscribed_at) VALUES (?, ?, 'pro', ?, 'active', datetime('now'))"
+        ).bind(session.id, email, session.customer).run();
       } catch (e) { /* D1 might not be bound yet */ }
       
-      // Send welcome email via Resend
+      // Welcome email via Resend
       try {
         await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: { "Authorization": `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            from: "support@edgeiqlabs.com",
+            from: "EdgeIQ Labs Support <support@edgeiqlabs.com>",
             to: email,
             subject: "Welcome to Phishing Analyzer Pro!",
-            html: "<h2>Welcome to Phishing Analyzer Pro!</h2><p>Your subscription is active. You now have:</p><ul><li>Unlimited email analyses</li><li>Full forensic reports</li><li>Historical lookups</li><li>Bulk API access</li></ul><p>Analyze emails at <a href='https://edgeiqlabs.com/phish-analyzer/'>edgeiqlabs.com/phish-analyzer</a></p><p>— EdgeIQ Labs Support</p>"
+            html: "<h2>Welcome to Phishing Analyzer Pro!</h2><p>Your subscription is active. You now have:</p><ul><li>Unlimited email analyses</li><li>Full forensic reports (all indicators, not just top 3)</li><li>Historical lookups</li><li>Bulk API access</li><li>DNS Firewall integration</li></ul><p>Analyze emails at <a href='https://edgeiqlabs.com/phish-analyzer/'>edgeiqlabs.com/phish-analyzer</a></p><p>— EdgeIQ Labs Support</p>"
           })
         });
       } catch (e) { /* non-fatal */ }
     }
+  } else if (event.type === "customer.subscription.updated") {
+    const sub = event.data.object;
+    try {
+      await env.PHISH_DB.prepare(
+        "UPDATE subscribers SET status = ? WHERE stripe_customer_id = ?"
+      ).bind(sub.status, sub.customer).run();
+    } catch (e) {}
+  } else if (event.type === "customer.subscription.deleted") {
+    const sub = event.data.object;
+    try {
+      await env.PHISH_DB.prepare(
+        "UPDATE subscribers SET status = 'cancelled' WHERE stripe_customer_id = ?"
+      ).bind(sub.customer).run();
+    } catch (e) {}
   }
 
   return new Response("ok", { status: 200 });

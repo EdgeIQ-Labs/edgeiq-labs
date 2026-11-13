@@ -2,19 +2,32 @@
 export async function onRequestPost(context) {
   const { request, env } = context;
   
-  // Rate limiting via KV for free tier
-  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  const rateKey = `phish-rate:${ip}`;
-  let count = parseInt(await env.PULSE_KV.get(rateKey) || "0");
-  if (count >= 5) {
-    return new Response(JSON.stringify({ error: "Rate limit exceeded. Upgrade to Pro for unlimited." }), { status: 429, headers: { "Content-Type": "application/json" } });
-  }
-  await env.PULSE_KV.put(rateKey, String(count + 1), { expirationTtl: 86400 });
-
   try {
-    const { email } = await request.json();
+    const { email, pro_key } = await request.json();
     if (!email || email.length < 10) {
       return new Response(JSON.stringify({ error: "Invalid email content" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+
+    // Check if user is Pro subscriber (bypass rate limit + show all indicators)
+    let isPro = false;
+    if (pro_key) {
+      try {
+        const sub = await env.PHISH_DB.prepare(
+          "SELECT tier, status FROM subscribers WHERE email = ? AND status = 'active'"
+        ).bind(pro_key).first();
+        if (sub && sub.tier === 'pro') isPro = true;
+      } catch (e) { /* D1 not bound yet */ }
+    }
+
+    // Rate limiting via KV for free tier only
+    if (!isPro) {
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      const rateKey = `phish-rate:${ip}`;
+      let count = parseInt(await env.PULSE_KV.get(rateKey) || "0");
+      if (count >= 5) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Upgrade to Pro for unlimited." }), { status: 429, headers: { "Content-Type": "application/json" } });
+      }
+      await env.PULSE_KV.put(rateKey, String(count + 1), { expirationTtl: 86400 });
     }
 
     const indicators = [];
@@ -81,11 +94,21 @@ export async function onRequestPost(context) {
     if (score >= 60) verdict = "malicious";
     else if (score >= 30) verdict = "suspicious";
 
-    // Return top indicators for free tier (max 3)
-    const returnedIndicators = indicators.slice(0, 3);
-    if (indicators.length > 3) {
+    // Free tier: max 3 indicators. Pro: all indicators.
+    let returnedIndicators = indicators;
+    if (!isPro && indicators.length > 3) {
+      returnedIndicators = indicators.slice(0, 3);
       returnedIndicators.push(`+${indicators.length - 3} more indicators (upgrade to Pro for full report)`);
     }
+
+    // Log analysis to D1
+    try {
+      const emailHash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(email.substring(0, 200)));
+      const hashHex = Array.from(new Uint8Array(emailHash)).map(b => b.toString(16).padStart(2, "0")).join("").substring(0, 32);
+      await env.PHISH_DB.prepare(
+        "INSERT INTO analyses (id, email_hash, verdict, score, indicators_count, urls_found, subscriber_email, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))"
+      ).bind(hashHex + Date.now(), hashHex, verdict, score, indicators.length, urls.length, pro_key || null).run();
+    } catch (e) { /* D1 not bound yet, non-fatal */ }
 
     return new Response(JSON.stringify({
       verdict,
@@ -93,6 +116,7 @@ export async function onRequestPost(context) {
       indicators: returnedIndicators,
       total_indicators: indicators.length,
       urls_found: urls.length,
+      is_pro: isPro,
       analyzed_at: new Date().toISOString()
     }), { headers: { "Content-Type": "application/json" } });
 
