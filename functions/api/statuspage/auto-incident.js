@@ -1,3 +1,4 @@
+// Auto-incident endpoint v2
 /**
  * EdgeIQ StatusPage — Internal Incident Auto-Creation
  * Called by UptimePing cron when monitors change state
