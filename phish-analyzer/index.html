@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phishing Report Analyzer — EdgeIQ Labs</title>
+<link rel="stylesheet" href="/css/design-system.css?v=10">
+<script src="/js/theme.js"></script>
+<style>
+.analyzer-box{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0}
+.analyzer-box textarea{width:100%;min-height:180px;background:var(--color-bg-primary);color:var(--color-text-primary);border:1px solid var(--color-border);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;resize:vertical}
+.analyzer-box button{margin-top:12px;padding:12px 28px;background:var(--color-accent);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.95rem}
+.analyzer-box button:hover{opacity:0.9}
+.result-panel{margin-top:20px;padding:16px;border-radius:8px;display:none}
+.result-panel.safe{background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.3)}
+.result-panel.suspicious{background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.3)}
+.result-panel.malicious{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3)}
+.verdict{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+.indicator{padding:6px 0;font-size:0.88rem;color:var(--color-text-secondary)}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:40px 0}
+.price-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:28px;text-align:center}
+.price-card.pro{border-color:var(--color-accent);box-shadow:0 0 20px rgba(34,211,238,0.1)}
+.price-card h3{font-size:1.2rem;margin-bottom:4px}
+.price-card .price{font-size:2rem;font-weight:800;margin:12px 0}
+.price-card ul{text-align:left;padding-left:20px;margin:16px 0;line-height:1.8}
+.price-card a{display:inline-block;margin-top:12px;padding:10px 24px;background:var(--color-accent);color:#000;border-radius:8px;text-decoration:none;font-weight:700}
+</style>
+</head>
+<body>
+<nav class="ds-nav"><div class="ds-nav-inner"><a href="/" class="ds-logo">EdgeIQ Labs</a><div class="ds-nav-links"><a href="/free-tools/">Free Tools</a><a href="/pricing/">Pricing</a><a href="/blog/">Blog</a></div></div></nav>
+
+<main style="max-width:800px;margin:0 auto;padding:60px 20px">
+<h1 style="font-size:2.2rem;font-weight:800;margin-bottom:8px">🎣 Phishing Report Analyzer</h1>
+<p style="color:var(--color-text-secondary);font-size:1.1rem;margin-bottom:32px">Paste suspicious email headers or raw source → instant verdict + forensic breakdown</p>
+
+<div class="analyzer-box">
+<textarea id="emailInput" placeholder="Paste raw email source, headers, or forwarded content here..."></textarea>
+<button onclick="analyzeEmail()">Analyze Email →</button>
+<div id="resultPanel" class="result-panel">
+<div id="verdictText" class="verdict"></div>
+<div id="indicators"></div>
+</div>
+</div>
+
+<h2 style="margin-top:48px;font-size:1.5rem">Pricing</h2>
+<div class="pricing-grid">
+<div class="price-card">
+<h3>Free</h3>
+<div class="price">$0</div>
+<ul><li>Basic verdict (safe/suspicious/malicious)</li><li>Top 3 indicators</li><li>5 analyses/day</li><li>No account needed</li></ul>
+<a href="#" onclick="document.getElementById('emailInput').focus();return false">Try Free →</a>
+</div>
+<div class="price-card pro">
+<h3>Pro</h3>
+<div class="price">$29<span style="font-size:0.9rem;font-weight:400">/mo</span></div>
+<ul><li>Full forensic report</li><li>Unlimited analyses</li><li>Historical lookups</li><li>Bulk API access</li><li>Team sharing</li><li>DNS Firewall integration</li></ul>
+<a href="/api/phish-analyzer-checkout?plan=pro">Get Pro →</a>
+</div>
+</div>
+
+<h2 style="margin-top:48px">How It Works</h2>
+<ol style="line-height:2;color:var(--color-text-secondary)">
+<li><strong>Header Analysis</strong> — SPF/DKIM/DMARC alignment, sender reputation, reply-to mismatches</li>
+<li><strong>URL Scanning</strong> — Links checked against URLhaus, blocklists, and redirect chain analysis</li>
+<li><strong>Content Scoring</strong> — Urgency language detection, brand impersonation patterns, social engineering signals</li>
+<li><strong>Verdict</strong> — Weighted score across all signals → safe / suspicious / malicious</li>
+</ol>
+</main>
+
+<footer class="ds-footer"><div class="ds-footer-inner"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></div></footer>
+
+<script>
+async function analyzeEmail(){
+const input=document.getElementById('emailInput').value.trim();
+if(!input){alert('Paste an email first');return}
+const btn=document.querySelector('.analyzer-box button');
+btn.textContent='Analyzing...';btn.disabled=true;
+try{
+const res=await fetch('/api/phish-analyzer/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:input})});
+const data=await res.json();
+const panel=document.getElementById('resultPanel');
+panel.style.display='block';
+panel.className='result-panel '+data.verdict;
+document.getElementById('verdictText').textContent=data.verdict.toUpperCase()+(data.score!==undefined?' ('+data.score+'/100)':'');
+document.getElementById('indicators').innerHTML=(data.indicators||[]).map(i=>'<div class="indicator">• '+i+'</div>').join('');
+}catch(e){alert('Analysis failed: '+e.message)}
+finally{btn.textContent='Analyze Email →';btn.disabled=false}
+}
+</script>
+</body></html>
