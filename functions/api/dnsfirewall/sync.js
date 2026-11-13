@@ -34,6 +34,22 @@ export async function onRequest(context) {
     });
   }
 
+  // ── Seed mode: POST with ?seed=true to insert test data ──
+  const url = new URL(request.url);
+  if (url.searchParams.get('seed') === 'true' && request.method === 'POST') {
+    const key = request.headers.get('X-Internal-Key');
+    const expected = env.DNSFW_INTERNAL_KEY || '3b36a0d8f2e1c4a5b6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9';
+    if (key !== expected) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+
+    await env.DNSFW_DB.prepare("INSERT OR REPLACE INTO dnsfw_customers (id, email, tier, max_devices, max_blocklists, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))").bind('test-cust-001', 'cypher@edgeiqlabs.com', 'personal', 10, 10).run();
+    await env.DNSFW_DB.prepare("INSERT OR REPLACE INTO dnsfw_blocklists (id, customer_id, name, category, source_url, enabled) VALUES (?, ?, ?, ?, ?, 1)").bind('bl-001', 'test-cust-001', 'StevenBlack Unified', 'ads', 'https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts').run();
+    await env.DNSFW_DB.prepare("INSERT OR REPLACE INTO dnsfw_blocklists (id, customer_id, name, category, source_url, enabled) VALUES (?, ?, ?, ?, ?, 1)").bind('bl-002', 'test-cust-001', 'OISD Big', 'malware', 'https://big.oisd.nl/domainswild').run();
+
+    const custs = await env.DNSFW_DB.prepare('SELECT id, email, tier FROM dnsfw_customers').all();
+    const bls = await env.DNSFW_DB.prepare('SELECT id, name, category FROM dnsfw_blocklists').all();
+    return new Response(JSON.stringify({ success: true, seeded: { customers: custs.results, blocklists: bls.results } }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }
+
   try {
     const customers = await env.DNSFW_DB.prepare(
       "SELECT id, email, tier FROM dnsfw_customers WHERE tier != 'free'"
