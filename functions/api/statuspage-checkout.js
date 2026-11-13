@@ -23,36 +23,46 @@ export async function onRequest(context) {
   }
 
   try {
-    const stripe = new Stripe(env.STRIPE_SECRET_KEY);
-    
-    // Check if we have a real price ID or need to use inline pricing
-    let lineItems;
-    if (planConfig.priceId.startsWith('price_')) {
-      lineItems = [{ price: planConfig.priceId, quantity: 1 }];
-    } else {
-      // Inline pricing for initial launch before Stripe products are created
-      lineItems = [{
-        price_data: {
-          currency: 'usd',
-          product_data: { name: planConfig.name },
-          unit_amount: planConfig.amount,
-          recurring: { interval: 'month' },
-        },
-        quantity: 1,
-      }];
+    const stripeKey = env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      return new Response(JSON.stringify({ error: 'Stripe not configured' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: lineItems,
-      success_url: `${url.origin}/statuspage/dashboard/?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${url.origin}/statuspage/`,
-      metadata: { product: 'statuspage', plan },
-      subscription_data: {
-        metadata: { product: 'statuspage', plan },
+    // Create checkout session via raw Stripe API (no SDK dependency)
+    const params = new URLSearchParams();
+    params.set('mode', 'subscription');
+    params.set('success_url', `${url.origin}/statuspage/dashboard/?session_id={CHECKOUT_SESSION_ID}`);
+    params.set('cancel_url', `${url.origin}/statuspage/`);
+    params.set('metadata[product]', 'statuspage');
+    params.set('metadata[plan]', plan);
+    params.set('subscription_data[metadata][product]', 'statuspage');
+    params.set('subscription_data[metadata][plan]', plan);
+    params.set('line_items[0][price_data][currency]', 'usd');
+    params.set('line_items[0][price_data][product_data][name]', planConfig.name);
+    params.set('line_items[0][price_data][unit_amount]', String(planConfig.amount));
+    params.set('line_items[0][price_data][recurring][interval]', 'month');
+    params.set('line_items[0][quantity]', '1');
+
+    const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
+      body: params.toString(),
     });
+
+    const session = await res.json();
+    if (!res.ok || !session.url) {
+      console.error('Stripe checkout error:', session);
+      return new Response(JSON.stringify({ error: session.error?.message || 'Checkout failed' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     return Response.redirect(session.url, 303);
   } catch (e) {
