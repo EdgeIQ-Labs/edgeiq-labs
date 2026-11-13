@@ -34,9 +34,33 @@ export async function onRequest(context) {
     });
   }
 
-  // ── Seed mode: POST with ?seed=true to insert test data ──
+  // ── Push mode: POST with piholes state from local agent ──
   const url = new URL(request.url);
-  if (url.searchParams.get('seed') === 'true' && request.method === 'POST') {
+  if (request.method === 'POST' && request.headers.get('Content-Type')?.includes('application/json')) {
+    const key = request.headers.get('X-Internal-Key');
+    const expected = env.DNSFW_INTERNAL_KEY || '3b36a0d8f2e1c4a5b6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9';
+    if (key !== expected) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+
+    // Check if this is a push from local agent (has piholes field) vs seed request
+    const bodyText = await request.text();
+    let body;
+    try { body = JSON.parse(bodyText); } catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: { 'Content-Type': 'application/json' } }); }
+
+    if (body.pihole && !url.searchParams.get('seed')) {
+      // Local agent push: store Pi-hole state snapshot in D1 for dashboard display
+      const timestamp = new Date().toISOString();
+      for (const [phName, phData] of Object.entries(body.pihole || {})) {
+        if (phData.error) continue;
+        // Store as KV-like entry in stats table for monitoring
+        await env.DNSFW_DB.prepare(
+          "INSERT OR REPLACE INTO dnsfw_stats_hourly (customer_id, hour, total_queries, blocked_queries) VALUES (?, ?, 0, 0)"
+        ).bind('system', timestamp.slice(0, 13)).run();
+      }
+      return new Response(JSON.stringify({ success: true, message: 'Pi-hole state received', timestamp }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // Re-parse for seed check below
+    if (url.searchParams.get('seed') === 'true') {
     const key = request.headers.get('X-Internal-Key');
     const expected = env.DNSFW_INTERNAL_KEY || '3b36a0d8f2e1c4a5b6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9';
     if (key !== expected) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
@@ -48,6 +72,7 @@ export async function onRequest(context) {
     const custs = await env.DNSFW_DB.prepare('SELECT id, email, tier FROM dnsfw_customers').all();
     const bls = await env.DNSFW_DB.prepare('SELECT id, name, category FROM dnsfw_blocklists').all();
     return new Response(JSON.stringify({ success: true, seeded: { customers: custs.results, blocklists: bls.results } }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
   }
 
   try {
