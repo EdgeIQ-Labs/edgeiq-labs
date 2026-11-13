@@ -1,5 +1,6 @@
 // UptimePing Cron — checks all monitored URLs, sends email alerts on state change
 // Triggered by CF Pages cron: every 5 minutes
+// OPTIMIZED for free tier: early-exit on no-change, KV queue for StatusPage incidents
 
 async function getSubscriber(env, email) {
   var raw = await env.PULSE_KV.get('uptimeping:sub:' + email);
@@ -25,8 +26,16 @@ async function getAlertDedup(env, email, urlHash, dateStr) {
 }
 
 async function setAlertDedup(env, email, urlHash, dateStr) {
-  // Dedup key expires after 24h to allow re-alerting next day
   await env.PULSE_KV.put('uptimeping:alerts:' + email + ':' + urlHash + ':' + dateStr, '1', { expirationTtl: 86400 });
+}
+
+async function enqueueIncident(env, item) {
+  var raw = await env.PULSE_KV.get('statuspage:incident-queue');
+  var queue = raw ? JSON.parse(raw) : [];
+  queue.push(item);
+  // Cap queue at 100 items to prevent unbounded growth
+  if (queue.length > 100) queue = queue.slice(-100);
+  await env.PULSE_KV.put('statuspage:incident-queue', JSON.stringify(queue));
 }
 
 function hashUrl(url) {
@@ -95,15 +104,14 @@ export async function onRequest(context) {
   var env = context.env;
   var resendKey = env.RESEND_API_KEY || '';
   
-  // List all subscriber keys to find active monitors
-  // Since KV doesn't support prefix listing in Pages Functions easily,
-  // we use a known-subscribers index key
   var subIndexRaw = await env.PULSE_KV.get('uptimeping:subscribers');
   var subscribers = subIndexRaw ? JSON.parse(subIndexRaw) : [];
   
   var results = [];
   var alertsSent = 0;
   var checksRun = 0;
+  var incidentsQueued = 0;
+  var skippedNoChange = 0;
   
   for (var s = 0; s < subscribers.length; s++) {
     var email = subscribers[s];
@@ -130,47 +138,44 @@ export async function onRequest(context) {
       
       await putState(env, email, urlHash, newState);
       
-      // Alert on state change (only if subscriber has active status)
+      // EARLY EXIT: skip all alert/incident work if status unchanged
       var prevStatus = prevState ? prevState.status : 'unknown';
-      if (prevStatus !== checkResult.status && prevStatus !== 'unknown') {
-        var today = new Date().toISOString().slice(0, 10);
-        var dedupKey = await getAlertDedup(env, email, urlHash, today);
-        if (!dedupKey && resendKey) {
-          await sendAlert(email, m.name || m.url, m.url, checkResult.status, checkResult.response_time_ms, resendKey);
-          await setAlertDedup(env, email, urlHash, today);
-          alertsSent++;
-        }
-        
-        // Auto-create/resolve StatusPage incidents if user has linked pages
-        var INTERNAL_KEY_FALLBACK = '3b36a01db744371bb87b58496ac5176339aed73ee5dfc7aae41d2d0c6f424e50';
-        var internalKey = env.STATUSPAGE_INTERNAL_KEY || INTERNAL_KEY_FALLBACK;
-        if (env.STATUSPAGE_DB && internalKey) {
-          try {
-            // Find all status pages owned by this subscriber
-            var pages = await env.STATUSPAGE_DB.prepare(
-              'SELECT id FROM pages WHERE owner_email = ?'
-            ).bind(email).all();
-            
-            for (var p = 0; p < (pages.results || []).length; p++) {
-              await fetch('https://edgeiqlabs.com/api/statuspage/auto-incident', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Internal-Key': env.STATUSPAGE_INTERNAL_KEY,
-                },
-                body: JSON.stringify({
-                  page_id: pages.results[p].id,
-                  component_name: m.name || m.url,
-                  monitor_url: m.url,
-                  status: checkResult.status,
-                  response_time_ms: checkResult.response_time_ms,
-                  error: checkResult.error || null,
-                }),
-              });
-            }
-          } catch (e) {
-            console.error('StatusPage auto-incident failed:', e.message);
-          }
+      if (prevStatus === checkResult.status) {
+        skippedNoChange++;
+        results.push({ email: email, url: m.url, status: checkResult.status, response_time_ms: checkResult.response_time_ms });
+        continue;
+      }
+      
+      // Skip first-ever check (no previous state to compare)
+      if (prevStatus === 'unknown') {
+        results.push({ email: email, url: m.url, status: checkResult.status, response_time_ms: checkResult.response_time_ms });
+        continue;
+      }
+      
+      // State changed — send alert
+      var today = new Date().toISOString().slice(0, 10);
+      var dedupKey = await getAlertDedup(env, email, urlHash, today);
+      if (!dedupKey && resendKey) {
+        await sendAlert(email, m.name || m.url, m.url, checkResult.status, checkResult.response_time_ms, resendKey);
+        await setAlertDedup(env, email, urlHash, today);
+        alertsSent++;
+      }
+      
+      // Queue StatusPage incident (non-blocking, processed by separate cron)
+      if (env.PULSE_KV) {
+        try {
+          await enqueueIncident(env, {
+            owner_email: email,
+            component_name: m.name || m.url,
+            monitor_url: m.url,
+            status: checkResult.status,
+            response_time_ms: checkResult.response_time_ms,
+            error: checkResult.error || null,
+            queued_at: new Date().toISOString(),
+          });
+          incidentsQueued++;
+        } catch (e) {
+          console.error('Failed to queue incident:', e.message);
         }
       }
       
@@ -182,8 +187,10 @@ export async function onRequest(context) {
     cron: 'uptimeping',
     timestamp: new Date().toISOString(),
     checks_run: checksRun,
+    skipped_no_change: skippedNoChange,
     alerts_sent: alertsSent,
-    results: results.slice(0, 50), // Cap response size
+    incidents_queued: incidentsQueued,
+    results: results.slice(0, 50),
   }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
