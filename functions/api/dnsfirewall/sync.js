@@ -46,10 +46,10 @@ export async function onRequest(context) {
     let body;
     try { body = JSON.parse(bodyText); } catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: { 'Content-Type': 'application/json' } }); }
 
-    if (body.pihole && !url.searchParams.get('seed')) {
+    if (body.piholes && !url.searchParams.get('seed')) {
       // Local agent push: store Pi-hole state snapshot in D1 for dashboard display
       const timestamp = new Date().toISOString();
-      for (const [phName, phData] of Object.entries(body.pihole || {})) {
+      for (const [phName, phData] of Object.entries(body.piholes || {})) {
         if (phData.error) continue;
         // Store as KV-like entry in stats table for monitoring
         await env.DNSFW_DB.prepare(
