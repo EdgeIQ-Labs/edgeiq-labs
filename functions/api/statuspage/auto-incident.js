@@ -12,11 +12,12 @@ export async function onRequest(context) {
     return new Response('Method not allowed', { status: 405 });
   }
   
-  // Only accept requests from our own cron (check internal header or same-origin)
-  // In CF Pages, internal calls don't have special auth — we rely on the endpoint
-  // not being documented publicly and checking a shared secret
+  // Internal auth: embedded key as fallback for CF Pages env var propagation issues
+  // This endpoint is server-to-server only (never exposed to browsers)
+  const INTERNAL_KEY_FALLBACK = '3b36a01db744371bb87b58496ac5176339aed73ee5dfc7aae41d2d0c6f424e50';
   const internalKey = request.headers.get('X-Internal-Key');
-  if (!env.STATUSPAGE_INTERNAL_KEY || internalKey !== env.STATUSPAGE_INTERNAL_KEY) {
+  const validKey = env.STATUSPAGE_INTERNAL_KEY || INTERNAL_KEY_FALLBACK;
+  if (!internalKey || internalKey !== validKey) {
     return new Response('Unauthorized', { status: 401 });
   }
   
