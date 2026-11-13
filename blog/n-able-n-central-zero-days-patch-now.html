@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N-able N-central Zero-Days: 33 Flaws, PoC Exploits, and What to Do Right Now — EdgeIQ Labs</title>
+  <meta name="description" content="A researcher dumped 33 zero-days in N-able N-central with working exploits. N-able took hosted instances offline. If you run N-central on-prem, here's what matters." />
+  <meta property="og:title" content="N-able N-central Zero-Days: 33 Flaws, PoC Exploits, and What to Do Right Now" />
+  <meta property="og:description" content="A researcher dumped 33 zero-days in N-able N-central with working exploits. Here's what matters if you run it on-prem." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/n-able-n-central-zero-days-patch-now.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="N-able N-central Zero-Days: 33 Flaws, PoC Exploits, and What to Do Right Now" />
+  <meta name="twitter:description" content="A researcher dumped 33 zero-days in N-able N-central with working exploits. Here's what matters." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0C0C14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/n-able-n-central-zero-days-patch-now.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "N-able N-central Zero-Days: 33 Flaws, PoC Exploits, and What to Do Right Now",
+    "description": "A researcher dumped 33 zero-days in N-able N-central with working exploits. N-able took hosted instances offline. If you run N-central on-prem, here's what matters.",
+    "url": "https://edgeiqlabs.com/blog/n-able-n-central-zero-days-patch-now.html",
+    "datePublished": "2026-11-13",
+    "dateModified": "2026-11-13",
+    "author": {"@type": "Organization", "name": "EdgeIQ Labs", "url": "https://edgeiqlabs.com"},
+    "publisher": {"@type": "Organization", "name": "EdgeIQ Labs", "logo": {"@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png"}},
+    "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/n-able-n-central-zero-days-patch-now.html"},
+    "image": "https://edgeiqlabs.com/og-preview.png"
+  }
+  </script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+  </nav>
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <div class="mob-section">Tools</div>
+    <a href="/free-tools/">Free Security Scanners</a>
+    <a href="/tools/">Developer Tools</a>
+    <div class="mob-section">Services</div>
+    <a href="/compliance/">Compliance Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="mob-cta">Get Protected →</a>
+  </div>
+
+  <div class="container">
+    <header class="article-header">
+      <div class="article-meta">November 13, 2026 · Threat Intel · 9 min read</div>
+      <h1>N-able N-central Zero-Days: 33 Flaws, PoC Exploits, and What to Do Right Now</h1>
+      <span class="tag">RMM Security</span>
+      <span class="tag">Zero-Day</span>
+      <span class="tag">MSP</span>
+      <p class="lead">On November 9, a researcher published proof-of-concept exploits for 33 alleged zero-day vulnerabilities in N-able N-central. N-able took its hosted platform offline and rushed out Hotfix 2 four days later. If you run N-central on-premises, your server has been exposed since Sunday.</p>
+    </header>
+
+    <p>I don't usually write about vulnerabilities this quickly after disclosure. Most CVEs sit in advisories for weeks before anyone cares. This one is different because the exploits were public before most admins even knew there was a problem, and because RMM platforms are exactly the kind of tool attackers love to abuse.</p>
+
+    <p>N-central is remote monitoring and management software. It sits on servers and endpoints across entire networks, giving administrators the ability to push updates, run scripts, and access machines remotely. When an attacker gets admin access to an RMM console, they don't just get one machine. They get every machine that RMM manages.</p>
+
+    <h2>What happened</h2>
+
+    <p>A security researcher using the GitHub account "Oracle-Security" published a repository called "Able2Shell" on November 9 at roughly 4 AM UTC. The repo contains write-ups and proof-of-concept code for 33 separate vulnerabilities in N-central Appliance version 2026.4.0.31. The flaws span credential disclosure, arbitrary file writes, directory traversal, cross-site scripting, XML external entity injection, and remote code execution.</p>
+
+    <p>The researcher claims at least one attack chain requires no authentication at all. An unauthenticated attacker can allegedly create administrator accounts, steal support tokens, execute commands as root or SYSTEM, and pivot to managed endpoints through the RMM agent.</p>
+
+    <p>N-able responded by taking its hosted N-central platform offline temporarily and releasing Hotfix 2 (version 2026.4 HF2) on November 10. The hotfix addresses seven CVEs. That leaves 26 alleged vulnerabilities unaddressed as of this writing, though N-able has not confirmed whether all 33 are legitimate or reproducible.</p>
+
+    <p>Tenable Research reported seeing exploitation attempts against N-central honeypots within hours of the disclosure. As of November 10, no confirmed customer compromise has been publicly reported, but that doesn't mean it hasn't happened. RMM breaches tend to stay quiet until the damage is already done.</p>
+
+    <h2>Why this matters more than a typical CVE</h2>
+
+    <p>RMM platforms occupy a unique position in network security. They have broad access by design. They run with elevated privileges. They connect to hundreds or thousands of endpoints. And they're often internet-facing because remote technicians need access from anywhere.</p>
+
+    <p>This isn't theoretical. In 2021, attackers exploited Kaseya VSA to deploy ransomware to over 1,000 businesses through a single supply-chain compromise. In 2023, CISA flagged active exploitation of ConnectWise ScreenConnect. Earlier this year, CVE-2026-86218 in N-central itself scored a CVSS 10.0 and landed on CISA's Known Exploited Vulnerabilities catalog within three days of disclosure.</p>
+
+    <p>The pattern is clear: RMM vulnerabilities get weaponized fast because the return on investment for attackers is enormous. One compromised RMM server equals access to an entire client base for MSPs, or an entire corporate network for internal IT teams.</p>
+
+    <h2>What to do if you run N-central on-premises</h2>
+
+    <p><strong>Apply Hotfix 2 immediately.</strong> Version 2026.4 HF2 fixes seven confirmed CVEs including the authentication bypass issues from earlier patches that turned out to be incomplete. If you're still on 2026.3 or earlier, upgrade to 2026.4 first, then apply the hotfix.</p>
+
+    <p><strong>Assume exposure since November 9.</strong> The PoC code has been public for four days. Even if you patched today, check for signs of compromise:</p>
+
+    <ul>
+      <li>Review N-central audit logs for unauthorized admin account creation or password changes</li>
+      <li>Check for new or modified automation policies and scheduled scripts</li>
+      <li>Inspect Windows endpoints for suspicious files in <code>C:\ProgramData\GetSupportService_N-Central\Logs\</code></li>
+      <li>Look for renamed system binaries like <code>svchost.exe</code> in user-writable directories</li>
+      <li>Review outbound connections from the N-central server for unknown destinations</li>
+    </ul>
+
+    <p><strong>Rotate credentials.</strong> Change passwords for all N-central admin accounts, service accounts, and any connected database credentials. Revoke and regenerate API keys and support tokens.</p>
+
+    <p><strong>Restrict network access.</strong> If your N-central server doesn't need to be directly accessible from the internet, put it behind a VPN or reverse proxy with authentication. Remove direct port exposure where possible.</p>
+
+    <p><strong>Monitor managed endpoints.</strong> The real risk isn't the server itself; it's what attackers can do through it. Check endpoint logs for unexpected script executions, new services installed, or lateral movement patterns.</p>
+
+    <h2>What to do if you use hosted N-central (NCOD)</h2>
+
+    <p>N-able patched hosted instances during the outage. Your responsibility is smaller but not zero:</p>
+
+    <ul>
+      <li>Verify your N-central version reflects the latest hotfix in the admin console</li>
+      <li>Reset admin passwords as a precaution</li>
+      <li>Review recent activity logs for anything unusual during the November 9-10 window</li>
+      <li>Check managed endpoints for indicators of compromise listed above</li>
+    </ul>
+
+    <h2>The bigger picture for MSPs and small IT teams</h2>
+
+    <p>If you're an MSP running N-central, this incident should trigger a broader conversation about RMM security posture. A few things worth considering:</p>
+
+    <p><strong>Network segmentation.</strong> Your RMM server shouldn't live on the same flat network as everything else. Isolate it. Limit which IPs can reach it. Treat it like the crown jewel it is.</p>
+
+    <p><strong>MFA everywhere.</strong> Not just for technicians logging into the console. For service accounts, API access, and any integration that touches the RMM platform. Credential theft is the easiest path in.</p>
+
+    <p><strong>Monitoring the monitor.</strong> Who watches your RMM? Set up independent alerting for RMM server activity. Log to a separate SIEM or log aggregation service that attackers can't tamper with through the RMM itself. Our <a href="/pulse/">Pulse monitoring</a> or a self-hosted Wazuh instance can provide this layer.</p>
+
+    <p><strong>Vendor communication.</strong> How did you learn about this? If the answer is "Twitter" or "a blog post," your vendor notification process needs work. Subscribe to N-able security advisories. Set up RSS feeds. Make sure someone on your team owns vulnerability intelligence as a responsibility, not an afterthought.</p>
+
+    <h2>What about the 26 unpatched vulnerabilities?</h2>
+
+    <p>N-able has only confirmed fixes for seven of the 33 alleged flaws. The remaining 26 may be invalid, duplicates, or lower-severity issues that don't warrant immediate patching. Or they may be real and dangerous.</p>
+
+    <p>Until N-able provides a complete assessment, treat your N-central deployment as partially exposed. Keep network restrictions tight. Monitor aggressively. Don't assume the hotfix closed every door.</p>
+
+    <p>This is the reality of modern vulnerability management: sometimes you have to make risk decisions with incomplete information. Waiting for perfect clarity means waiting while attackers work.</p>
+
+    <div class="eq-cta-end" style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;">
+      <h3 style="margin-bottom:8px;">Is Your Infrastructure Monitored?</h3>
+      <p style="color:var(--color-text-secondary);font-size:0.92rem;margin-bottom:14px;">EdgeIQ Pulse monitors your servers, SSL certs, and email security around the clock. VPS hosting starts at $4/mo with automated patching included. Don't wait for the next zero-day to find gaps.</p>
+      <a href="/pricing/" class="btn btn-primary">View Plans →</a>
+      <a href="/free-domain-security-score/" class="btn btn-secondary">Score Your Current Setup →</a>
+    </div>
+
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px auto;text-align:center;max-width:520px;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam, unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;color:var(--color-text-primary);font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:var(--color-accent);color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+  </div>
+
+  <footer style="border-top:1px solid var(--color-border);padding:36px 0;margin-top:60px;text-align:center;color:var(--color-text-secondary);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--color-accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+
+<script>
+function toggleMobileMenu() {
+  var btn = document.querySelector('.nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelector('.nav-hamburger').addEventListener('click', toggleMobileMenu);
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.querySelector('.nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>

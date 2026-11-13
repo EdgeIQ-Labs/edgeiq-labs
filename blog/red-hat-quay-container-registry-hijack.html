@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Red Hat Quay CVE-2026-123710: How Attackers Can Hijack Your Container Registry — EdgeIQ Labs</title>
+  <meta name="description" content="A critical flaw in Red Hat Quay lets authenticated users steal signing keys, overwrite private images, and maintain persistent access. Turning off anonymous access doesn't fix it." />
+  <meta property="og:title" content="Red Hat Quay CVE-2026-123710: How Attackers Can Hijack Your Container Registry" />
+  <meta property="og:description" content="A critical flaw in Red Hat Quay lets authenticated users steal signing keys and overwrite private images. Anonymous access being off doesn't save you." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://edgeiqlabs.com/blog/red-hat-quay-container-registry-hijack.html" />
+  <meta property="og:site_name" content="EdgeIQ Labs" />
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Red Hat Quay CVE-2026-123710: How Attackers Can Hijack Your Container Registry" />
+  <meta name="twitter:description" content="A critical flaw in Red Hat Quay lets authenticated users steal signing keys and overwrite private images." />
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+  <meta name="theme-color" content="#0C0C14" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/red-hat-quay-container-registry-hijack.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Red Hat Quay CVE-2026-123710: How Attackers Can Hijack Your Container Registry",
+    "description": "A critical flaw in Red Hat Quay lets authenticated users steal signing keys, overwrite private images, and maintain persistent access. Turning off anonymous access doesn't fix it.",
+    "url": "https://edgeiqlabs.com/blog/red-hat-quay-container-registry-hijack.html",
+    "datePublished": "2026-11-13",
+    "dateModified": "2026-11-13",
+    "author": {"@type": "Organization", "name": "EdgeIQ Labs", "url": "https://edgeiqlabs.com"},
+    "publisher": {"@type": "Organization", "name": "EdgeIQ Labs", "logo": {"@type": "ImageObject", "url": "https://edgeiqlabs.com/favicon.png"}},
+    "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edgeiqlabs.com/blog/red-hat-quay-container-registry-hijack.html"},
+    "image": "https://edgeiqlabs.com/og-preview.png"
+  }
+  </script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body>
+  <nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+  </nav>
+  <div class="nav-mobile-menu" id="nav-mobile-menu">
+    <div class="mob-section">Tools</div>
+    <a href="/free-tools/">Free Security Scanners</a>
+    <a href="/tools/">Developer Tools</a>
+    <div class="mob-section">Services</div>
+    <a href="/compliance/">Compliance Shield</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/" class="mob-cta">Get Protected →</a>
+  </div>
+
+  <div class="container">
+    <header class="article-header">
+      <div class="article-meta">November 13, 2026 · Infrastructure & Cloud · 8 min read</div>
+      <h1>Red Hat Quay CVE-2026-123710: How Attackers Can Hijack Your Container Registry</h1>
+      <span class="tag">Container Security</span>
+      <span class="tag">Supply Chain</span>
+      <span class="tag">Critical CVE</span>
+      <p class="lead">A CVSS 9.8 vulnerability in Red Hat Quay lets any authenticated user steal image signing keys, overwrite private repositories, and lock out legitimate operators. Disabling anonymous access doesn't protect you. Fixes merged November 11.</p>
+    </header>
+
+    <p>Container registries are trust anchors. When your CI/CD pipeline pulls an image from Quay, it assumes that image is what you built and signed. CVE-2026-123710 breaks that assumption completely.</p>
+
+    <p>Red Hat disclosed the vulnerability on November 12. Fixes were merged to the project's GitHub repository on November 11, but no specific patched release version has been identified in the advisory or Bugzilla report as of this writing. If you run Red Hat Quay in any capacity, check your version against upstream commits and plan accordingly.</p>
+
+    <h2>What the vulnerability does</h2>
+
+    <p>The flaw exists in Quay's signing key management service. When this service is accessible to untrusted clients, an attacker with any valid Quay account can exploit it to:</p>
+
+    <ul>
+      <li><strong>Steal private signing keys</strong> used to verify container image integrity</li>
+      <li><strong>Overwrite private container images</strong> in repositories they shouldn't have access to</li>
+      <li><strong>Delete legitimate instance keys</strong> as a side effect of key rotation, breaking normal registry operations</li>
+      <li><strong>Maintain persistent access</strong> by injecting their own signing keys that survive routine key rotation</li>
+    </ul>
+
+    <p>The critical detail: turning off anonymous access doesn't help. Any authenticated user, including low-privilege accounts, can exploit this flaw. If someone has a login to your Quay instance, they can potentially take over the entire registry.</p>
+
+    <h2>Why container registry compromise matters</h2>
+
+    <p>This isn't just about stolen source code or leaked proprietary applications. A compromised registry enables supply chain attacks at scale.</p>
+
+    <p>When an attacker can overwrite images and control signing keys, they can inject malicious code into containers that your production systems pull automatically. Your deployment pipeline trusts the registry. Your orchestration platform trusts the signatures. The malicious image passes validation, gets deployed, and runs with whatever permissions your application has.</p>
+
+    <p>We've seen this pattern before. In 2024, attackers compromised npm packages to inject cryptocurrency miners. In 2025, PyPI faced repeated supply chain attacks through typosquatting and maintainer account takeovers. Container registries represent the same attack surface with higher stakes, because compromised containers often run with elevated privileges in production environments.</p>
+
+    <p>The persistence mechanism is particularly concerning. By injecting their own signing keys, attackers ensure that even if you rotate credentials and rebuild images, their malicious keys remain valid. Routine key rotation deletes legitimate keys as a side effect, which can cause operational disruption while the attacker maintains access. This creates a scenario where fixing the symptoms actually helps the attacker stay hidden.</p>
+
+    <h2>Who's affected</h2>
+
+    <p>The vulnerability affects Red Hat Quay deployments where the signing key management service is accessible to untrusted clients. This includes:</p>
+
+    <ul>
+      <li>Self-hosted Quay instances with default or permissive configurations</li>
+      <li>Deployments where internal users have accounts but shouldn't have signing key access</li>
+      <li>Multi-tenant Quay installations where tenant isolation relies on application-level controls rather than network segmentation</li>
+    </ul>
+
+    <p>Red Hat released container images for Quay versions 3.17.7 and 3.12.24 on November 11 under security advisories RHSA-2026:99026 and RHSA-2026:99027. These advisories address both CVE-2026-123710 and a related flaw tracked as CVE-2026-110697. However, neither the advisories nor the Bugzilla reports explicitly state which versions contain the fix for CVE-2026-123710 specifically.</p>
+
+    <h2>What to do right now</h2>
+
+    <p><strong>Check your Quay version.</strong> If you're running 3.17.x or 3.12.x, update to 3.17.7 or 3.12.24 respectively. If you're on an older major version, plan an upgrade path immediately.</p>
+
+    <p><strong>Audit signing keys.</strong> List all signing keys in your Quay instance. Compare against your expected inventory. Look for keys you don't recognize or keys created outside your normal provisioning workflow. Revoke anything suspicious.</p>
+
+    <p><strong>Review image integrity.</strong> For critical images pulled since the potential exposure window, verify checksums against known-good builds. If you can't verify provenance, rebuild from source and re-sign with fresh keys.</p>
+
+    <p><strong>Rotate all signing keys.</strong> After confirming the patch is applied, generate new signing keys and revoke all existing ones. Update your CI/CD pipelines and deployment configurations to use the new keys. Yes, this will cause temporary disruption. The alternative is operating with potentially compromised keys.</p>
+
+    <p><strong>Restrict signing key service access.</strong> Network-segment the signing key management service so only trusted build infrastructure can reach it. Application-level access controls aren't sufficient when the application itself is vulnerable.</p>
+
+    <p><strong>Audit user accounts.</strong> Review all Quay user accounts. Remove inactive accounts. Ensure principle of least privilege. Consider whether every account actually needs registry access or whether some workflows can use read-only tokens with restricted scope.</p>
+
+    <h2>Broader lessons for container security</h2>
+
+    <p>This vulnerability highlights a recurring theme in container infrastructure: signing and verification are only as strong as the systems that manage the keys.</p>
+
+    <p>Many organizations implement container signing as a checkbox exercise. They enable cosign or Notary, configure policy enforcement, and consider the problem solved. But if the key management backend has a vulnerability like CVE-2026-123710, all that signing infrastructure becomes theater. The attacker controls the trust anchor.</p>
+
+    <p>A few practices worth adopting:</p>
+
+    <p><strong>Separate key management from registry operations.</strong> Don't let the same service that stores images also manage the keys that verify them. Use dedicated key management infrastructure with strict access controls and independent monitoring.</p>
+
+    <p><strong>Monitor key operations independently.</strong> Log signing key creation, rotation, and deletion to a system outside the registry. Alert on anomalous key activity. If someone creates a signing key at 3 AM on a Saturday, you want to know about it before the next deployment cycle.</p>
+
+    <p><strong>Verify images at runtime, not just at deploy time.</strong> Admission controllers catch bad images before they start, but runtime verification catches images that were good at deploy time and compromised afterward. Tools like Sigstore's Rekor provide transparency logs that enable continuous verification.</p>
+
+    <p><strong>Treat registry infrastructure like production systems.</strong> Patch promptly. Monitor actively. Segment aggressively. Your registry isn't a development tool; it's part of your production supply chain. Give it the same operational rigor you'd give a database or payment processor.</p>
+
+    <h2>If you host containers on EdgeIQ</h2>
+
+    <p>Our <a href="/vps/">VPS hosting</a> starts at $4/month with automated security patching included. We monitor for CVE disclosures affecting common container infrastructure and apply patches proactively. If you're managing container registries on our platform and need help verifying your Quay configuration or rotating keys, reach out to <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>.</p>
+
+    <div class="eq-cta-end" style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0;text-align:center;">
+      <h3 style="margin-bottom:8px;">Secure Container Hosting from $4/mo</h3>
+      <p style="color:var(--color-text-secondary);font-size:0.92rem;margin-bottom:14px;">Automated patching, 24/7 monitoring, and isolated infrastructure. Stop worrying about registry vulnerabilities and focus on shipping.</p>
+      <a href="/vps/" class="btn btn-primary">View VPS Plans →</a>
+      <a href="/free-domain-security-score/" class="btn btn-secondary">Check Your Exposure →</a>
+    </div>
+
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px auto;text-align:center;max-width:520px;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📬</div>
+      <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;color:var(--color-text-primary);">Get the EdgeIQ weekly security digest</h3>
+      <p style="font-size:0.86rem;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6;">Practical tips, new threat intel, and product updates. No spam, unsubscribe anytime.</p>
+      <form onsubmit="blogEmailSignup(event,this)" style="display:flex;gap:8px;max-width:420px;margin:0 auto;">
+        <input type="email" required placeholder="you@company.com" style="flex:1;padding:9px 14px;background:var(--color-bg-primary);border:1px solid var(--color-border);border-radius:7px;color:var(--color-text-primary);font-size:0.86rem;outline:none;"/>
+        <button type="submit" style="background:var(--color-accent);color:#071018;font-weight:700;padding:9px 16px;border:none;border-radius:7px;cursor:pointer;font-size:0.86rem;white-space:nowrap;">Subscribe →</button>
+      </form>
+      <div class="blog-sub-ok" style="display:none;color:#70f0a8;font-size:0.86rem;margin-top:10px;">✅ You're in. Check your inbox.</div>
+    </div>
+  </div>
+
+  <footer style="border-top:1px solid var(--color-border);padding:36px 0;margin-top:60px;text-align:center;color:var(--color-text-secondary);font-size:0.82rem;">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="../" style="color:var(--color-accent);">edgeiqlabs.com</a> · Security intelligence for the teams who can't wait for the SOC</p>
+    </div>
+  </footer>
+
+<script>
+function toggleMobileMenu() {
+  var btn = document.querySelector('.nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelector('.nav-hamburger').addEventListener('click', toggleMobileMenu);
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.querySelector('.nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<script>
+function blogEmailSignup(e,form){
+  e.preventDefault();
+  var email=(form.querySelector('input[type=email]')||{}).value||'';
+  email=email.trim();
+  if(!email)return;
+  form.style.display='none';
+  form.parentElement.querySelector('.blog-sub-ok').style.display='block';
+  try{localStorage.setItem('edgeiq_lead_magnet_captured','1');}catch(x){}
+  fetch('https://edgeiqlabs.substack.com/api/v1/free',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,first_url:location.href,source:'blog-footer'})
+  }).catch(function(){});
+}
+</script>
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>if(typeof RelayIntegration!=="undefined")RelayIntegration.init({relayBaseUrl:"https://relay.edgeiqlabs.com"});</script>
+
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>
