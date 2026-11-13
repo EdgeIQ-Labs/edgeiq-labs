@@ -140,6 +140,36 @@ export async function onRequest(context) {
           await setAlertDedup(env, email, urlHash, today);
           alertsSent++;
         }
+        
+        // Auto-create/resolve StatusPage incidents if user has linked pages
+        if (env.STATUSPAGE_DB && env.STATUSPAGE_INTERNAL_KEY) {
+          try {
+            // Find all status pages owned by this subscriber
+            var pages = await env.STATUSPAGE_DB.prepare(
+              'SELECT id FROM pages WHERE owner_email = ?'
+            ).bind(email).all();
+            
+            for (var p = 0; p < (pages.results || []).length; p++) {
+              await fetch('https://edgeiqlabs.com/api/statuspage/auto-incident', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Internal-Key': env.STATUSPAGE_INTERNAL_KEY,
+                },
+                body: JSON.stringify({
+                  page_id: pages.results[p].id,
+                  component_name: m.name || m.url,
+                  monitor_url: m.url,
+                  status: checkResult.status,
+                  response_time_ms: checkResult.response_time_ms,
+                  error: checkResult.error || null,
+                }),
+              });
+            }
+          } catch (e) {
+            console.error('StatusPage auto-incident failed:', e.message);
+          }
+        }
       }
       
       results.push({ email: email, url: m.url, status: checkResult.status, response_time_ms: checkResult.response_time_ms });
