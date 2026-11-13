@@ -149,7 +149,20 @@ export async function onRequest(context) {
         'INSERT INTO subscribers (id, page_id, email, verify_token) VALUES (?, ?, ?, ?)'
       ).bind(id, page.id, email, verifyToken).run();
       
-      // TODO: Send verification email via Resend
+      // Send verification email via Resend
+      if (env.RESEND_API_KEY) {
+        const verifyUrl = `https://edgeiqlabs.com/api/statuspage/verify?token=${verifyToken}`;
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'EdgeIQ Labs <support@edgeiqlabs.com>',
+            to: [email],
+            subject: 'Verify your StatusPage subscription',
+            html: `<h2>Confirm your subscription</h2><p>Click below to start receiving status updates:</p><p><a href="${verifyUrl}" style="display:inline-block;padding:12px 24px;background:#b47aff;color:#071018;border-radius:8px;text-decoration:none;font-weight:700;">Verify Email</a></p><p style="color:#666;font-size:0.85rem;margin-top:16px;">If you didn't request this, ignore this email.</p>`
+          })
+        });
+      }
       
       return json({ id, message: 'verification email sent' }, 201);
     }
