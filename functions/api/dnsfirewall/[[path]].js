@@ -35,6 +35,11 @@ export async function onRequest(context) {
   const path = url.pathname.replace('/api/dnsfirewall', '') || '/';
   const method = request.method;
 
+  // Debug: log path for troubleshooting
+  if (path.includes('sync')) {
+    console.log('DNSFW ROUTER DEBUG:', { pathname: url.pathname, extractedPath: path, method });
+  }
+
   // Auth: extract email from query param or header (simple auth for MVP)
   const email = (url.searchParams.get('email') || request.headers.get('X-DNSFW-Email') || '').toLowerCase().trim();
 
