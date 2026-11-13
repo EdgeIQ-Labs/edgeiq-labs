@@ -55,10 +55,13 @@ export async function onRequest(context) {
     
     // If going DOWN: create new incident
     if (status === 'down') {
-      // Check for existing unresolved incident for this component
-      const existing = await env.STATUSPAGE_DB.prepare(
-        'SELECT id FROM incidents WHERE page_id = ? AND component_id = ? AND resolved_at IS NULL'
-      ).bind(page_id, component.id).first();
+      // Check for existing unresolved incident mentioning this component
+      const allOpen = await env.STATUSPAGE_DB.prepare(
+        'SELECT id, affected_components FROM incidents WHERE page_id = ? AND resolved_at IS NULL'
+      ).bind(page_id).all();
+      const existing = (allOpen.results || []).find(i => {
+        try { const ids = JSON.parse(i.affected_components || '[]'); return ids.includes(component.id); } catch { return false; }
+      });
       
       if (!existing) {
         const incidentId = crypto.randomUUID();
@@ -66,8 +69,8 @@ export async function onRequest(context) {
         const bodyText = `Monitoring detected ${error || 'unreachable'} at ${new Date().toISOString()}. Response time: ${response_time_ms || 'N/A'}ms.`;
         
         await env.STATUSPAGE_DB.prepare(
-          'INSERT INTO incidents (id, page_id, component_id, title, body, status, severity, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime("now"))'
-        ).bind(incidentId, page_id, component.id, title, bodyText, 'investigating', 'critical').run();
+          'INSERT INTO incidents (id, page_id, title, body, status, severity, affected_components, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime("now"))'
+        ).bind(incidentId, page_id, title, bodyText, 'investigating', 'critical', JSON.stringify([component.id])).run();
         
         // Add initial timeline update
         await env.STATUSPAGE_DB.prepare(
@@ -80,11 +83,14 @@ export async function onRequest(context) {
     
     // If going UP: resolve any open incidents for this component
     if (status === 'up') {
-      const openIncidents = await env.STATUSPAGE_DB.prepare(
-        'SELECT id FROM incidents WHERE page_id = ? AND component_id = ? AND resolved_at IS NULL'
-      ).bind(page_id, component.id).all();
+      const allOpenUp = await env.STATUSPAGE_DB.prepare(
+        'SELECT id, affected_components FROM incidents WHERE page_id = ? AND resolved_at IS NULL'
+      ).bind(page_id).all();
+      const openIncidents = (allOpenUp.results || []).filter(i => {
+        try { const ids = JSON.parse(i.affected_components || '[]'); return ids.includes(component.id); } catch { return false; }
+      });
       
-      for (const inc of (openIncidents.results || [])) {
+      for (const inc of openIncidents) {
         const resolvedMsg = `Service recovered at ${new Date().toISOString()}. Response time: ${response_time_ms || 'N/A'}ms.`;
         
         await env.STATUSPAGE_DB.prepare(
