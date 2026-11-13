@@ -199,15 +199,6 @@ export async function onRequest(context) {
         { name: 'PH2', url: 'http://10.5.1.240', password: 'admin' },
       ];
 
-      async function phAuth(baseUrl, pw) {
-        const r = await fetch(`${baseUrl}/api/auth`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
-        const d = await r.json();
-        return d?.session?.sid || null;
-      }
-      async function phGet(url, sid) { return (await fetch(url, { headers: { 'X-FTL-SID': sid } })).json(); }
-      async function phPost(url, sid, body) { return (await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-FTL-SID': sid }, body: JSON.stringify(body) })).json(); }
-      async function phPut(url, sid, body) { return (await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-FTL-SID': sid }, body: JSON.stringify(body) })).json(); }
-
       const customers = await env.DNSFW_DB.prepare("SELECT id, email, tier FROM dnsfw_customers WHERE tier != 'free'").all();
       if (!customers.results || customers.results.length === 0) {
         return json({ success: true, message: 'No active customers', synced: 0 });
@@ -220,21 +211,27 @@ export async function onRequest(context) {
 
         for (const ph of PIHOLES) {
           try {
-            const sid = await phAuth(ph.url, ph.password);
+            // Auth
+            const authR = await fetch(`${ph.url}/api/auth`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: ph.password }) });
+            const authD = await authR.json();
+            const sid = authD?.session?.sid || null;
             if (!sid) { cResult.piholeResults[ph.name] = { error: 'Auth failed' }; continue; }
 
             const groupName = `dnsfw_${cust.id}`;
-            const groups = await phGet(`${ph.url}/api/groups`, sid);
-            let groupId = (groups.groups || []).find(g => g.name === groupName)?.id;
+            const groupsR = await fetch(`${ph.url}/api/groups`, { headers: { 'X-FTL-SID': sid } });
+            const groupsD = await groupsR.json();
+            let groupId = (groupsD.groups || []).find(g => g.name === groupName)?.id;
             if (!groupId) {
-              await phPost(`${ph.url}/api/groups`, sid, { name: groupName, comment: 'DNSFW customer', enabled: true });
-              const refreshed = await phGet(`${ph.url}/api/groups`, sid);
-              groupId = (refreshed.groups || []).find(g => g.name === groupName)?.id;
+              await fetch(`${ph.url}/api/groups`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-FTL-SID': sid }, body: JSON.stringify({ name: groupName, comment: 'DNSFW customer', enabled: true }) });
+              const refreshR = await fetch(`${ph.url}/api/groups`, { headers: { 'X-FTL-SID': sid } });
+              const refreshD = await refreshR.json();
+              groupId = (refreshD.groups || []).find(g => g.name === groupName)?.id;
             }
             if (!groupId) { cResult.piholeResults[ph.name] = { error: 'Group creation failed' }; continue; }
 
-            const currentLists = await phGet(`${ph.url}/api/lists`, sid);
-            const currentAdlists = (currentLists.lists || []).filter(l => l.type === 'block');
+            const listsR = await fetch(`${ph.url}/api/lists`, { headers: { 'X-FTL-SID': sid } });
+            const listsD = await listsR.json();
+            const currentAdlists = (listsD.lists || []).filter(l => l.type === 'block');
             let added = 0, skipped = 0;
 
             for (const bl of (bls.results || [])) {
@@ -242,11 +239,11 @@ export async function onRequest(context) {
               const existing = currentAdlists.find(l => l.address === bl.source_url);
               if (existing) {
                 if (!existing.groups.includes(groupId)) {
-                  await phPut(`${ph.url}/api/lists/${encodeURIComponent(bl.source_url)}`, sid, { groups: [...existing.groups, groupId], enabled: true });
+                  await fetch(`${ph.url}/api/lists/${encodeURIComponent(bl.source_url)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-FTL-SID': sid }, body: JSON.stringify({ groups: [...existing.groups, groupId], enabled: true }) });
                 }
                 skipped++;
               } else {
-                await phPost(`${ph.url}/api/lists`, sid, { address: bl.source_url, type: 'block', comment: `DNSFW ${cust.id}: ${bl.name}`, groups: [groupId], enabled: true });
+                await fetch(`${ph.url}/api/lists`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-FTL-SID': sid }, body: JSON.stringify({ address: bl.source_url, type: 'block', comment: `DNSFW ${cust.id}: ${bl.name}`, groups: [groupId], enabled: true }) });
                 added++;
               }
             }
@@ -259,8 +256,13 @@ export async function onRequest(context) {
       const gravity = {};
       for (const ph of PIHOLES) {
         try {
-          const sid = await phAuth(ph.url, ph.password);
-          if (sid) { await phPost(`${ph.url}/api/action/gravity`, sid, {}); gravity[ph.name] = 'triggered'; }
+          const authR = await fetch(`${ph.url}/api/auth`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: ph.password }) });
+          const authD = await authR.json();
+          const sid = authD?.session?.sid || null;
+          if (sid) {
+            await fetch(`${ph.url}/api/action/gravity`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-FTL-SID': sid }, body: JSON.stringify({}) });
+            gravity[ph.name] = 'triggered';
+          }
         } catch (e) { gravity[ph.name] = e.message; }
       }
 
