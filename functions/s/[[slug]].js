@@ -1,4 +1,13 @@
-<!DOCTYPE html>
+/**
+ * EdgeIQ StatusPage — Public Status Page Renderer
+ * Serves the SPA HTML for any /s/* route
+ */
+export async function onRequest(context) {
+  const { request } = context;
+  
+  // Read and return the static HTML shell
+  // The client-side JS handles fetching data from /api/statuspage/public/{slug}
+  const html = `<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -36,6 +45,7 @@
     .sp-incident-badge.identified { background: rgba(255,140,66,0.15); color: #ff8c42; }
     .sp-incident-badge.monitoring { background: rgba(61,217,255,0.15); color: #3dd9ff; }
     .sp-incident-badge.resolved { background: rgba(61,225,158,0.15); color: #3de19e; }
+    .sp-incident-badge.scheduled { background: rgba(61,217,255,0.15); color: #3dd9ff; }
     .sp-incident-body { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
     .sp-incident-time { color: var(--muted); font-size: 0.75rem; margin-top: 8px; }
     .sp-subscribe { text-align: center; margin-top: 40px; padding: 24px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
@@ -67,7 +77,7 @@
       }
 
       try {
-        const res = await fetch(`/api/statuspage/public/${SLUG}`);
+        const res = await fetch('/api/statuspage/public/' + SLUG);
         if (!res.ok) {
           app.innerHTML = '<div class="sp-error">Status page not found.</div>';
           return;
@@ -104,53 +114,50 @@
       const overall = overallStatus(components);
       const overallText = overall === 'operational' ? 'All Systems Operational' : overall === 'degraded' ? 'Some Systems Degraded' : 'Service Disruption Detected';
 
-      document.title = `${page.name} — Status`;
+      document.title = page.name + ' — Status';
 
-      let html = `
-        <div class="sp-header">
-          ${page.logo_url ? `<img src="${page.logo_url}" alt="" style="height:40px;margin-bottom:12px;border-radius:8px;">` : ''}
-          <h1>${page.name}</h1>
-          <p>${page.description || ''}</p>
-        </div>
-        <div class="sp-overall ${overall}">${overallText}</div>
-        <div class="sp-components">
-          ${components.map(c => `
-            <div class="sp-component">
-              <span class="sp-component-name">${c.group_name ? `<span style="color:var(--muted);font-size:0.78rem;margin-right:6px;">${c.group_name}</span>` : ''}${c.name}</span>
-              <span class="sp-component-status"><span class="sp-dot ${c.status}"></span>${statusLabel(c.status)}</span>
-            </div>
-          `).join('')}
-        </div>
-      `;
+      let html = '<div class="sp-header">';
+      if (page.logo_url) html += '<img src="' + page.logo_url + '" alt="" style="height:40px;margin-bottom:12px;border-radius:8px;">';
+      html += '<h1>' + page.name + '</h1>';
+      if (page.description) html += '<p>' + page.description + '</p>';
+      html += '</div>';
+      html += '<div class="sp-overall ' + overall + '">' + overallText + '</div>';
+      html += '<div class="sp-components">';
+      components.forEach(function(c) {
+        html += '<div class="sp-component">';
+        html += '<span class="sp-component-name">';
+        if (c.group_name) html += '<span style="color:var(--muted);font-size:0.78rem;margin-right:6px;">' + c.group_name + '</span>';
+        html += c.name + '</span>';
+        html += '<span class="sp-component-status"><span class="sp-dot ' + c.status + '"></span>' + statusLabel(c.status) + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
 
       if (incidents.length > 0) {
-        html += `<div class="sp-incidents"><h2>Incidents</h2>`;
-        incidents.forEach(i => {
-          html += `
-            <div class="sp-incident">
-              <div class="sp-incident-header">
-                <span class="sp-incident-title">${i.title}</span>
-                <span class="sp-incident-badge ${i.status}">${i.status}</span>
-              </div>
-              <div class="sp-incident-body">${i.body || ''}</div>
-              <div class="sp-incident-time">${timeAgo(i.created_at)}${i.resolved_at ? ' · Resolved ' + timeAgo(i.resolved_at) : ''}</div>
-            </div>
-          `;
+        html += '<div class="sp-incidents"><h2>Incidents</h2>';
+        incidents.forEach(function(i) {
+          html += '<div class="sp-incident">';
+          html += '<div class="sp-incident-header">';
+          html += '<span class="sp-incident-title">' + i.title + '</span>';
+          html += '<span class="sp-incident-badge ' + i.status + '">' + i.status + '</span>';
+          html += '</div>';
+          if (i.body) html += '<div class="sp-incident-body">' + i.body + '</div>';
+          html += '<div class="sp-incident-time">' + timeAgo(i.created_at);
+          if (i.resolved_at) html += ' · Resolved ' + timeAgo(i.resolved_at);
+          html += '</div></div>';
         });
-        html += `</div>`;
+        html += '</div>';
       }
 
-      html += `
-        <div class="sp-subscribe">
-          <h3>Get notified when something breaks</h3>
-          <form class="sp-subscribe-form" onsubmit="subscribe(event)">
-            <input type="email" id="sub-email" placeholder="you@example.com" required />
-            <button type="submit">Subscribe</button>
-          </form>
-          <p id="sub-msg" style="font-size:0.8rem;color:var(--muted);margin-top:8px;"></p>
-        </div>
-        <div class="sp-powered">Powered by <a href="https://edgeiqlabs.com">EdgeIQ Labs</a></div>
-      `;
+      html += '<div class="sp-subscribe">';
+      html += '<h3>Get notified when something breaks</h3>';
+      html += '<form class="sp-subscribe-form" onsubmit="subscribe(event)">';
+      html += '<input type="email" id="sub-email" placeholder="you@example.com" required />';
+      html += '<button type="submit">Subscribe</button>';
+      html += '</form>';
+      html += '<p id="sub-msg" style="font-size:0.8rem;color:var(--muted);margin-top:8px;"></p>';
+      html += '</div>';
+      html += '<div class="sp-powered">Powered by <a href="https://edgeiqlabs.com">EdgeIQ Labs</a></div>';
 
       app.innerHTML = html;
     }
@@ -161,7 +168,7 @@
       const msg = document.getElementById('sub-msg');
       msg.textContent = 'Subscribing…';
       try {
-        const res = await fetch(`/api/statuspage/pages/${SLUG}/subscribe`, {
+        const res = await fetch('/api/statuspage/pages/' + SLUG + '/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
@@ -169,7 +176,7 @@
         const data = await res.json();
         msg.textContent = data.message || 'Subscribed!';
         msg.style.color = '#3de19e';
-      } catch {
+      } catch (err) {
         msg.textContent = 'Something went wrong.';
         msg.style.color = '#ff6b6b';
       }
@@ -178,4 +185,9 @@
     loadStatus();
   </script>
 </body>
-</html>
+</html>`;
+
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
+}
