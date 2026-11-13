@@ -34,13 +34,14 @@ export async function onRequest(context) {
   const sig = request.headers.get('stripe-signature');
   const body = await request.text();
 
-  let event;
-  if (env.STATUSPAGE_WEBHOOK_SECRET && sig) {
-    event = await verifyStripeSignature(body, sig, env.STATUSPAGE_WEBHOOK_SECRET);
-    if (!event) return new Response('Invalid signature', { status: 400 });
-  } else {
-    try { event = JSON.parse(body); } catch { return new Response('Invalid payload', { status: 400 }); }
+  if (!sig) return new Response('Missing stripe-signature header', { status: 400 });
+  if (!env.STATUSPAGE_WEBHOOK_SECRET) {
+    console.error('STATUSPAGE_WEBHOOK_SECRET not configured');
+    return new Response('Webhook secret not configured', { status: 500 });
   }
+
+  const event = await verifyStripeSignature(body, sig, env.STATUSPAGE_WEBHOOK_SECRET);
+  if (!event) return new Response('Invalid signature', { status: 400 });
 
   try {
     switch (event.type) {
