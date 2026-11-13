@@ -48,11 +48,13 @@ export async function onRequest(context) {
       body: body.toString(),
     });
     
-    const session = await res.json();
-    
+    const text = await res.text();
+    let session;
+    try { session = JSON.parse(text); } catch { session = text; }
+
     if (!res.ok) {
-      console.error('Stripe checkout error:', session);
-      return new Response(JSON.stringify({ error: 'Checkout failed' }), {
+      console.error('Stripe checkout error:', JSON.stringify(session));
+      return new Response(JSON.stringify({ error: 'Checkout failed', detail: typeof session === 'object' ? session : text }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       });
