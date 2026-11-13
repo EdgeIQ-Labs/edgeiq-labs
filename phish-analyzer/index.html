@@ -3,31 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Phishing Report Analyzer — EdgeIQ Labs</title>
-<link rel="stylesheet" href="/css/design-system.css?v=10">
+<link rel="stylesheet" href="/css/design-system.css?v=12">
 <script src="/js/theme.js"></script>
 <style>
-main{color:var(--color-text-primary)}
-h1,h2,h3{color:var(--color-text-primary)}
-.analyzer-box{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:24px;margin:32px 0}
-.analyzer-box textarea{width:100%;min-height:180px;background:var(--color-bg-primary);color:var(--color-text-primary);border:1px solid var(--color-border);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.85rem;resize:vertical}
-.analyzer-box button{margin-top:12px;padding:12px 28px;background:var(--color-accent);color:#0b0f14;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.95rem}
-.analyzer-box button:hover{opacity:0.9}
-.result-panel{margin-top:20px;padding:16px;border-radius:8px;display:none}
-.result-panel.safe{background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.3);color:#22d3ee}
-.result-panel.suspicious{background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.3);color:#ff8c42}
-.result-panel.malicious{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
-.verdict{font-size:1.4rem;font-weight:800;margin-bottom:8px}
-.indicator{padding:6px 0;font-size:0.88rem;color:var(--color-text-secondary)}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:40px 0}
-.price-card{background:var(--color-bg-surface);border:1px solid var(--color-border);border-radius:12px;padding:28px;text-align:center;color:var(--color-text-primary)}
-.price-card.pro{border-color:var(--color-accent);box-shadow:0 0 20px rgba(34,211,238,0.1)}
-.price-card h3{font-size:1.2rem;margin-bottom:4px;color:var(--color-text-primary)}
-.price-card .price{font-size:2rem;font-weight:800;margin:12px 0;color:var(--color-text-primary)}
-.price-card ul{text-align:left;padding-left:20px;margin:16px 0;line-height:1.8;color:var(--color-text-secondary)}
-.price-card a{display:inline-block;margin-top:12px;padding:10px 24px;background:var(--color-accent);color:#0b0f14;border-radius:8px;text-decoration:none;font-weight:700}
-ol li{color:var(--color-text-secondary)}
-ol li strong{color:var(--color-text-primary)}
+main{color:var(--text)}
+h1,h2,h3{color:var(--text)}
+.analyzer-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-xl);margin:var(--space-2xl) 0}
+.analyzer-box textarea{width:100%;min-height:180px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-md);font-family:var(--font-mono);font-size:0.85rem;resize:vertical}
+.analyzer-box textarea::placeholder{color:var(--muted);opacity:0.7}
+.analyzer-box button{margin-top:var(--space-md);padding:12px 28px;background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius-md);font-weight:700;cursor:pointer;font-size:0.95rem}
+.analyzer-box button:hover{filter:brightness(1.15)}
+.result-panel{margin-top:var(--space-lg);padding:var(--space-md);border-radius:var(--radius-md);display:none}
+.result-panel.safe{background:rgba(61,225,158,0.08);border:1px solid rgba(61,225,158,0.3);color:var(--green)}
+.result-panel.suspicious{background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.3);color:var(--orange)}
+.result-panel.malicious{background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.3);color:var(--red)}
+.verdict{font-size:1.4rem;font-weight:800;margin-bottom:var(--space-sm)}
+.indicator{padding:6px 0;font-size:0.88rem;color:var(--muted)}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-lg);margin:var(--space-2xl) 0}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;text-align:center;color:var(--text)}
+.price-card.pro{border-color:var(--accent);box-shadow:var(--shadow-glow)}
+.price-card h3{font-size:1.2rem;margin-bottom:4px;color:var(--text)}
+.price-card .price{font-size:2rem;font-weight:800;margin:12px 0;color:var(--text)}
+.price-card ul{text-align:left;padding-left:20px;margin:16px 0;line-height:1.8;color:var(--muted)}
+.price-card a{display:inline-block;margin-top:12px;padding:10px 24px;background:var(--accent);color:var(--bg);border-radius:var(--radius-md);text-decoration:none;font-weight:700}
+.price-card a:hover{filter:brightness(1.15)}
+ol li{color:var(--muted)}
+ol li strong{color:var(--text)}
 </style>
 </head>
 <body>
