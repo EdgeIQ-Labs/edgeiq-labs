@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.png" />
+  <title>DNS Firewall — EdgeIQ Labs</title>
+  <meta name="description" content="Managed DNS filtering for SMBs. Block malware, phishing, and ads at the DNS layer. From $5/mo." />
+  <link rel="stylesheet" href="/css/design-system.css?v=13" />
+  <style>
+    .df-hero { text-align: center; padding: 80px 20px 60px; }
+    .df-hero h1 { font-size: 2.4rem; margin-bottom: 16px; }
+    .df-hero p { color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 32px; }
+    .df-pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+    .df-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; position: relative; }
+    .df-card.featured { border-color: #3dd9ff; box-shadow: 0 0 20px rgba(61,217,255,0.1); }
+    .df-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .df-price { font-size: 2.2rem; font-weight: 800; color: #3dd9ff; margin-bottom: 16px; }
+    .df-price span { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+    .df-features { list-style: none; padding: 0; margin: 0 0 24px; }
+    .df-features li { padding: 8px 0; color: var(--muted); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .df-features li::before { content: '✓'; color: #3de19e; font-weight: 700; }
+    .df-btn { display: block; width: 100%; padding: 14px; background: #3dd9ff; color: #071018; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; text-align: center; text-decoration: none; transition: opacity 0.2s; }
+    .df-btn:hover { opacity: 0.9; }
+    .df-btn.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .df-compare { max-width: 800px; margin: 0 auto 60px; padding: 0 20px; }
+    .df-compare table { width: 100%; border-collapse: collapse; }
+    .df-compare th, .df-compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .df-compare th { color: var(--muted); font-weight: 600; }
+    .df-how { max-width: 700px; margin: 0 auto 60px; padding: 0 20px; }
+    .df-how h2 { font-size: 1.5rem; margin-bottom: 24px; text-align: center; }
+    .df-step { display: flex; gap: 16px; margin-bottom: 20px; }
+    .df-step-num { flex: 0 0 36px; height: 36px; background: rgba(61,217,255,0.15); color: #3dd9ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .df-step-text h4 { margin: 0 0 4px; font-size: 1rem; }
+    .df-step-text p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+  <!-- Nav injected by design-system.js -->
+
+  <div class="df-hero">
+    <h1>DNS Firewall</h1>
+    <p>Block malware, phishing, and ads before they reach your network. Managed DNS filtering powered by enterprise threat intelligence.</p>
+    <a href="/api/dnsfirewall-checkout?plan=personal" class="df-btn" style="max-width:280px;margin:0 auto;">Get Started — $5/mo</a>
+  </div>
+
+  <div class="df-pricing">
+    <div class="df-card">
+      <h3>Free</h3>
+      <div class="df-price">$0<span>/mo</span></div>
+      <ul class="df-features">
+        <li>1 device</li>
+        <li>3 blocklists</li>
+        <li>Basic ad blocking</li>
+        <li>Community support</li>
+      </ul>
+      <a href="/dnsfirewall/dashboard/" class="df-btn outline">Sign Up Free</a>
+    </div>
+    <div class="df-card featured">
+      <h3>Personal</h3>
+      <div class="df-price">$5<span>/mo</span></div>
+      <ul class="df-features">
+        <li>Up to 10 devices</li>
+        <li>10 blocklists</li>
+        <li>Malware & phishing protection</li>
+        <li>Custom allowlists</li>
+        <li>Weekly digest</li>
+      </ul>
+      <a href="/api/dnsfirewall-checkout?plan=personal" class="df-btn">Get Started</a>
+    </div>
+    <div class="df-card">
+      <h3>Business</h3>
+      <div class="df-price">$19<span>/mo</span></div>
+      <ul class="df-features">
+        <li>Unlimited devices</li>
+        <li>Unlimited blocklists</li>
+        <li>Real-time alerts</li>
+        <li>Compliance reporting</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="/api/dnsfirewall-checkout?plan=business" class="df-btn">Get Started</a>
+    </div>
+  </div>
+
+  <div class="df-how">
+    <h2>How It Works</h2>
+    <div class="df-step">
+      <div class="df-step-num">1</div>
+      <div class="df-step-text">
+        <h4>Sign up & get your DNS servers</h4>
+        <p>We assign you dedicated DNS resolver IPs with your custom blocklist profile.</p>
+      </div>
+    </div>
+    <div class="df-step">
+      <div class="df-step-num">2</div>
+      <div class="df-step-text">
+        <h4>Point your router DNS</h4>
+        <p>Change your router or firewall DNS settings to our resolvers. Takes 2 minutes.</p>
+      </div>
+    </div>
+    <div class="df-step">
+      <div class="df-step-num">3</div>
+      <div class="df-step-text">
+        <h4>Threats blocked automatically</h4>
+        <p>Malware, phishing, C2 callbacks, and ads are blocked at the DNS layer before they reach your network.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="df-compare">
+    <table>
+      <tr><th>Feature</th><th>EdgeIQ DNS Firewall</th><th>Cloudflare Gateway</th><th>Cisco Umbrella</th></tr>
+      <tr><td>Starting price</td><td><strong>$5/mo</strong></td><td>$0 (limited)</td><td>$2.50/user/mo</td></tr>
+      <tr><td>Custom blocklists</td><td>✓</td><td>Enterprise only</td><td>✓</td></tr>
+      <tr><td>Real-time alerts</td><td>✓ (Business)</td><td>✓</td><td>✓</td></tr>
+      <tr><td>No agent required</td><td>✓</td><td>✗</td><td>✗</td></tr>
+      <tr><td>SMB-friendly</td><td>✓</td><td>Enterprise focus</td><td>Enterprise focus</td></tr>
+    </table>
+  </div>
+
+  <!-- Footer injected by design-system.js -->
+  <script src="/js/theme.js"></script>
+</body>
+</html>

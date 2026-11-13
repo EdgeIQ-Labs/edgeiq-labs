@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.png" />
+  <title>DNS Firewall Dashboard — EdgeIQ Labs</title>
+  <link rel="stylesheet" href="/css/design-system.css?v=13" />
+  <style>
+    .dash { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    .dash h1 { font-size: 1.6rem; margin-bottom: 24px; }
+    .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .stat-card .label { color: var(--muted); font-size: 0.8rem; margin-bottom: 4px; }
+    .stat-card .value { font-size: 1.8rem; font-weight: 800; }
+    .stat-card .value.green { color: #3de19e; }
+    .stat-card .value.red { color: #ff6b6b; }
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; margin-bottom: 16px; }
+    .device-list, .bl-list { display: flex; flex-direction: column; gap: 8px; }
+    .device-item, .bl-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; }
+    .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+    .badge.ads { background: rgba(61,217,255,0.15); color: #3dd9ff; }
+    .badge.malware { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+    .badge.phishing { background: rgba(255,196,0,0.15); color: #ffc400; }
+    .badge.custom { background: rgba(180,122,255,0.15); color: #b47aff; }
+    .query-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .query-table th, .query-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    .query-table th { color: var(--muted); font-weight: 600; }
+    .action-blocked { color: #ff6b6b; font-weight: 600; }
+    .action-allowed { color: #3de19e; }
+    .add-form { display: flex; gap: 8px; margin-top: 12px; }
+    .add-form input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.9rem; outline: none; }
+    .add-form button { background: #3dd9ff; color: #071018; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
+    .login-box input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text); font-size: 1rem; outline: none; margin-bottom: 12px; }
+    .login-box button { width: 100%; background: #3dd9ff; color: #071018; border: none; border-radius: 8px; padding: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+    .empty { color: var(--muted); font-size: 0.9rem; padding: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const app = document.getElementById('app');
+    let EMAIL = localStorage.getItem('dnsfw_email') || '';
+
+    async function api(path, opts) {
+      const url = '/api/dnsfirewall' + path + (path.includes('?') ? '&' : '?') + 'email=' + encodeURIComponent(EMAIL);
+      const res = await fetch(url, opts);
+      return res.json();
+    }
+
+    function showLogin() {
+      app.innerHTML = '<div class="login-box"><h1>DNS Firewall</h1><p style="color:var(--muted);margin-bottom:24px;">Enter your email to access your dashboard</p><input type="email" id="login-email" placeholder="you@example.com" value="' + EMAIL + '" /><button onclick="doLogin()">Access Dashboard</button><p style="color:var(--muted);font-size:0.8rem;margin-top:16px;">Don\'t have an account? <a href="/dnsfirewall/" style="color:#3dd9ff;">Sign up</a></p></div>';
+    }
+
+    async function doLogin() {
+      EMAIL = document.getElementById('login-email').value.trim().toLowerCase();
+      if (!EMAIL) return;
+      localStorage.setItem('dnsfw_email', EMAIL);
+      await loadDashboard();
+    }
+
+    async function loadDashboard() {
+      app.innerHTML = '<div class="dash"><p style="color:var(--muted);">Loading...</p></div>';
+      try {
+        const data = await api('/dashboard');
+        if (data.error) { showLogin(); return; }
+        render(data);
+      } catch (e) { showLogin(); }
+    }
+
+    function render(data) {
+      const { customer, devices, blocklists, stats, alerts } = data;
+      let html = '<div class="dash">';
+      html += '<h1>DNS Firewall Dashboard</h1>';
+      html += '<div class="dash-grid">';
+      html += '<div class="stat-card"><div class="label">Plan</div><div class="value">' + customer.tier.charAt(0).toUpperCase() + customer.tier.slice(1) + '</div></div>';
+      html += '<div class="stat-card"><div class="label">Queries (24h)</div><div class="value">' + (stats.total_queries || 0).toLocaleString() + '</div></div>';
+      html += '<div class="stat-card"><div class="label">Blocked (24h)</div><div class="value red">' + (stats.blocked_queries || 0).toLocaleString() + '</div></div>';
+      html += '<div class="stat-card"><div class="label">Devices</div><div class="value green">' + devices.length + '/' + customer.max_devices + '</div></div>';
+      html += '</div>';
+
+      // Devices
+      html += '<div class="section"><h2>Protected Devices</h2>';
+      if (devices.length === 0) html += '<div class="empty">No devices configured yet.</div>';
+      else {
+        html += '<div class="device-list">';
+        devices.forEach(function(d) {
+          html += '<div class="device-item"><span><strong>' + d.name + '</strong> <span style="color:var(--muted);font-size:0.8rem;">(' + d.identifier + ')</span></span><button onclick="removeDevice(\'' + d.id + '\')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.8rem;">Remove</button></div>';
+        });
+        html += '</div>';
+      }
+      html += '<div class="add-form"><input type="text" id="new-device" placeholder="Device name (e.g., Office Router)" /><button onclick="addDevice()">Add Device</button></div>';
+      html += '</div>';
+
+      // Blocklists
+      html += '<div class="section"><h2>Active Blocklists</h2>';
+      html += '<div class="bl-list">';
+      blocklists.forEach(function(bl) {
+        html += '<div class="bl-item"><span>' + bl.name + '</span><span class="badge ' + bl.category + '">' + bl.category + '</span></div>';
+      });
+      html += '</div></div>';
+
+      // Recent queries
+      html += '<div class="section"><h2>Recent Queries</h2>';
+      html += '<div id="queries"><div class="empty">Loading...</div></div></div>';
+
+      html += '</div>';
+      app.innerHTML = html;
+
+      // Load queries separately
+      loadQueries();
+    }
+
+    async function loadQueries() {
+      const data = await api('/queries?limit=20');
+      const el = document.getElementById('queries');
+      if (!data.queries || data.queries.length === 0) {
+        el.innerHTML = '<div class="empty">No queries logged yet. Point your DNS to our resolvers to start.</div>';
+        return;
+      }
+      let html = '<table class="query-table"><tr><th>Time</th><th>Domain</th><th>Type</th><th>Action</th></tr>';
+      data.queries.forEach(function(q) {
+        const time = new Date(q.queried_at + 'Z').toLocaleTimeString();
+        const actionClass = q.action === 'blocked' ? 'action-blocked' : 'action-allowed';
+        html += '<tr><td>' + time + '</td><td>' + q.domain + '</td><td>' + q.type + '</td><td class="' + actionClass + '">' + q.action.toUpperCase() + '</td></tr>';
+      });
+      html += '</table>';
+      el.innerHTML = html;
+    }
+
+    async function addDevice() {
+      const name = document.getElementById('new-device').value.trim();
+      if (!name) return;
+      await api('/devices', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
+      await loadDashboard();
+    }
+
+    async function removeDevice(id) {
+      await api('/devices/' + id, { method: 'DELETE' });
+      await loadDashboard();
+    }
+
+    if (EMAIL) loadDashboard();
+    else showLogin();
+  </script>
+  <script src="/js/theme.js"></script>
+</body>
+</html>
