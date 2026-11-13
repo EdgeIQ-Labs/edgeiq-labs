@@ -282,7 +282,7 @@ export async function onRequest(context) {
       });
     }
 
-    return error('Not found', 404);
+    return json({ error: 'Not found', debug_path: path, debug_method: method, debug_url: url.pathname }, 404);
   } catch (e) {
     console.error('DNSFirewall API error:', e);
     return error('Internal error', 500);
