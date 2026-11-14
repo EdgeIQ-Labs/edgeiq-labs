@@ -45,18 +45,30 @@ export async function onRequest(context) {
     });
   }
 
+  // Extract affiliate ref from query string or body (before duplicate check so we can update)
+  const url = new URL(request.url);
+  const ref = (body.ref || url.searchParams.get('ref') || '').trim().toLowerCase();
+
   // Check if already subscribed
   const existing = await env.RATE_WATCH_KV.get(`sub:${email}`, 'json');
   if (existing && existing.status === 'active') {
+    // Update ref if this signup came through a new affiliate link
+    if (ref && existing.ref !== ref) {
+      existing.ref = ref;
+      await env.RATE_WATCH_KV.put(`sub:${email}`, JSON.stringify(existing));
+      // Track the referral
+      const refKey = `ref:${ref}`;
+      const refData = await env.RATE_WATCH_KV.get(refKey, 'json') || { count: 0, emails: [] };
+      refData.count++;
+      if (!refData.emails.includes(email)) refData.emails.push(email);
+      refData.last_signup = new Date().toISOString();
+      await env.RATE_WATCH_KV.put(refKey, JSON.stringify(refData));
+    }
     return new Response(JSON.stringify({ success: true, message: 'Already subscribed' }), {
       status: 200,
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
     });
   }
-
-  // Extract affiliate ref from query string or body
-  const url = new URL(request.url);
-  const ref = (body.ref || url.searchParams.get('ref') || '').trim().toLowerCase();
 
   // Store subscriber
   const subscriber = {
