@@ -12,7 +12,7 @@ export async function onRequestGet(context) {
       return new Response(JSON.stringify({ error: 'KV not bound' }), { status: 500, headers });
     }
 
-    const rateData = await kv.get('current_rate', 'json');
+    const rateData = await kv.get('prime_rate_current', 'json');
     if (!rateData) {
       return new Response(JSON.stringify({
         rate: null,
@@ -23,9 +23,9 @@ export async function onRequestGet(context) {
 
     return new Response(JSON.stringify({
       rate: rateData.rate,
-      updated: rateData.updated,
+      updated: rateData.updated_at || null,
       previous_rate: rateData.previous_rate || null,
-      changed: rateData.changed || false
+      changed: rateData.previous_rate !== null && rateData.previous_rate !== rateData.rate
     }), { status: 200, headers });
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
