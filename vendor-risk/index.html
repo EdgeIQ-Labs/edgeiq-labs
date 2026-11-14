@@ -304,8 +304,49 @@
 304|304|    </div>
 305|305|  </footer>
 306|306|
-307|307|  <script src="/assets/js/theme.js"></script>
-308|308|<footer class="site-footer">
+<!-- Email Capture Lead Magnet -->
+<section style="padding:60px 0;text-align:center;border-top:1px solid var(--border);">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+    <h3 style="font-size:1.3rem;margin-bottom:8px;color:var(--text);">Free Vendor Risk Assessment Template</h3>
+    <p style="color:var(--muted);font-size:0.95rem;margin-bottom:20px;">HIPAA-compliant vendor scoring matrix used by healthcare orgs. Enter your email and we'll send it instantly.</p>
+    <form id="lead-capture" style="display:flex;gap:8px;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
+      <input type="email" name="email" required placeholder="you@company.com" style="flex:1;min-width:200px;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.95rem;outline:none;" />
+      <button type="submit" class="btn btn-primary" style="padding:12px 24px;white-space:nowrap;">Send It</button>
+    </form>
+    <p id="lead-msg" style="margin-top:12px;font-size:0.85rem;color:var(--green);display:none;"></p>
+    <p style="margin-top:8px;font-size:0.75rem;color:var(--muted);">No spam. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<script src="/assets/js/theme.js"></script>
+<script>
+document.getElementById('lead-capture')?.addEventListener('submit', async(e) => {
+  e.preventDefault();
+  const email = e.target.querySelector('input[name=email]').value;
+  const msg = document.getElementById('lead-msg');
+  try {
+    const r = await fetch('/api/lead-capture', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, source: 'vendor-risk'})
+    });
+    if (r.ok) {
+      msg.textContent = 'Check your inbox!';
+      msg.style.display = 'block';
+      e.target.reset();
+    } else {
+      msg.textContent = 'Something went wrong. Try again.';
+      msg.style.color = 'var(--red)';
+      msg.style.display = 'block';
+    }
+  } catch(err) {
+    msg.textContent = 'Network error. Try again.';
+    msg.style.color = 'var(--red)';
+    msg.style.display = 'block';
+  }
+});
+</script>
+<footer class="site-footer">
 309|    <div class="footer-inner">
 310|      <div class="footer-brand">
 311|        <strong>EdgeIQ Labs</strong>

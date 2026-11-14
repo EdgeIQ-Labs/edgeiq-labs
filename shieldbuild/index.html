@@ -313,8 +313,22 @@
 313|      </div>
 314|    </section>
 315|
-316|    <!-- CTA -->
-317|    <section class="sb-cta">
+    <!-- Email Capture Lead Magnet -->
+    <section style="padding:60px 0;text-align:center;border-top:1px solid var(--border);">
+      <div style="max-width:600px;margin:0 auto;padding:40px 24px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <h3 style="font-size:1.3rem;margin-bottom:8px;color:var(--text);">Free OSHA Compliance Checklist</h3>
+        <p style="color:var(--muted);font-size:0.95rem;margin-bottom:20px;">17 inspection points most construction crews miss. Enter your email and we'll send it instantly.</p>
+        <form id="lead-capture" style="display:flex;gap:8px;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
+          <input type="email" name="email" required placeholder="you@company.com" style="flex:1;min-width:200px;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.95rem;outline:none;" />
+          <button type="submit" class="btn btn-primary" style="padding:12px 24px;white-space:nowrap;">Send It</button>
+        </form>
+        <p id="lead-msg" style="margin-top:12px;font-size:0.85rem;color:var(--green);display:none;"></p>
+        <p style="margin-top:8px;font-size:0.75rem;color:var(--muted);">No spam. Unsubscribe anytime.</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="sb-cta">
 318|      <h2>Ready to get your crew compliant?</h2>
 319|      <p>Email us to schedule a demo or start your self-serve onboarding today.</p>
 320|      <a class="btn btn-primary" href="mailto:safety@edgeiqlabs.com?subject=ShieldBuild%20Inquiry" style="font-size:1.05rem;padding:16px 32px;">Email safety@edgeiqlabs.com</a>
@@ -329,8 +343,35 @@
 329|    </div>
 330|  </footer>
 331|
-332|  <script src="/assets/js/theme.js"></script>
-333|<footer class="site-footer">
+<script src="/assets/js/theme.js"></script>
+<script>
+document.getElementById('lead-capture')?.addEventListener('submit', async(e) => {
+  e.preventDefault();
+  const email = e.target.querySelector('input[name=email]').value;
+  const msg = document.getElementById('lead-msg');
+  try {
+    const r = await fetch('/api/lead-capture', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, source: 'shieldbuild'})
+    });
+    if (r.ok) {
+      msg.textContent = 'Check your inbox!';
+      msg.style.display = 'block';
+      e.target.reset();
+    } else {
+      msg.textContent = 'Something went wrong. Try again.';
+      msg.style.color = 'var(--red)';
+      msg.style.display = 'block';
+    }
+  } catch(err) {
+    msg.textContent = 'Network error. Try again.';
+    msg.style.color = 'var(--red)';
+    msg.style.display = 'block';
+  }
+});
+</script>
+<footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
         <strong>EdgeIQ Labs</strong>
