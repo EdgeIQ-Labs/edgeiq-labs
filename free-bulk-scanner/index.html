@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Bulk Domain Security Scanner — Free A-F Grades | EdgeIQ Labs</title>
+  <meta name="description" content="Scan up to 20 domains at once and get instant A-F security grades. Check SSL, headers, SPF, and DMARC in bulk. Free tool by EdgeIQ Labs."/>
+  <meta property="og:title" content="Bulk Domain Security Scanner — Free A-F Grades"/>
+  <meta property="og:description" content="Paste up to 20 domains and get instant security grades for SSL, headers, SPF, and DMARC. Free bulk scanner from EdgeIQ Labs."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-bulk-scanner/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-bulk-scanner/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "EdgeIQ Bulk Domain Security Scanner",
+    "url": "https://edgeiqlabs.com/free-bulk-scanner/",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Free bulk domain security scanner that checks SSL, security headers, SPF, and DMARC for up to 20 domains at once and assigns A-F grades.",
+    "featureList": [
+      "Scan up to 20 domains simultaneously",
+      "A-F security grading",
+      "SSL certificate validation",
+      "Security headers check",
+      "SPF and DMARC DNS lookup",
+      "Free forever, no login required"
+    ]
+  }</script>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What does each grade mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Grade A means all checks passed (SSL, headers, SPF, DMARC). B means 1 issue found. C means 2 issues. D means 3 issues. F means 4 or more issues, or the domain was unreachable."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is this different from individual scanners?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Individual scanners check one domain at a time. The Bulk Domain Scanner lets you paste up to 20 domains and runs all checks in parallel, giving you a unified results table so you can compare security posture across your entire portfolio at once."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I export results?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Currently, results are displayed on screen. You can copy the table or use your browser's print function to save as PDF. Export functionality may be added in future updates."
+        }
+      }
+    ]
+  }</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .scanner-textarea{width:100%;min-height:160px;background:var(--card);border:2px solid var(--border);border-radius:var(--radius-md);color:var(--text);padding:14px 18px;font-size:0.95rem;font-family:var(--font-mono);line-height:1.7;resize:vertical;outline:none;transition:border-color 0.2s;}
+    .scanner-textarea:focus{border-color:var(--accent);}
+    .scanner-textarea::placeholder{color:var(--muted);opacity:0.5;}
+    .scanner-label{display:block;font-size:0.88rem;font-weight:600;color:var(--muted);margin-bottom:8px;}
+    .scanner-actions{display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap;}
+    .domain-count{font-size:0.82rem;color:var(--muted);}
+    .results-wrap{margin-top:40px;overflow-x:auto;border-radius:var(--radius-lg);border:1px solid var(--border);background:var(--card);}
+    .results-table{width:100%;border-collapse:collapse;font-size:0.88rem;min-width:640px;}
+    .results-table thead{position:sticky;top:0;z-index:2;}
+    .results-table th{background:var(--card2);color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.72rem;letter-spacing:0.06em;padding:14px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+    .results-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+    .results-table tr:last-child td{border-bottom:none;}
+    .results-table tr:hover td{background:rgba(61,217,255,0.03);}
+    .grade-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;font-weight:900;font-size:0.95rem;line-height:1;}
+    .grade-A{background:rgba(0,255,102,0.12);color:#00ff66;}
+    .grade-B{background:rgba(61,225,158,0.12);color:#3de19e;}
+    .grade-C{background:rgba(251,191,36,0.12);color:#fbbf24;}
+    .grade-D{background:rgba(255,140,66,0.12);color:#ff8c42;}
+    .grade-F{background:rgba(255,85,85,0.12);color:#ff5555;}
+    .check-pass{color:#00ff66;font-weight:700;}
+    .check-fail{color:#ff5555;font-weight:700;}
+    .check-skip{color:var(--muted);opacity:0.5;}
+    .worst-issue{font-size:0.8rem;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(7,16,24,0.3);border-top-color:#071018;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:8px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .cta-upsell{background:linear-gradient(135deg,rgba(61,217,255,0.08),rgba(61,217,255,0.02));border:1px solid rgba(61,217,255,0.2);border-radius:var(--radius-lg);padding:24px 32px;text-align:center;margin-top:24px;}
+    .cta-upsell p{color:var(--muted);font-size:0.92rem;margin-bottom:12px;}
+    .cta-upsell a{color:var(--accent);font-weight:700;text-decoration:none;}
+    .cta-upsell a:hover{text-decoration:underline;}
+    .error-msg{background:rgba(255,85,85,0.08);border:1px solid rgba(255,85,85,0.25);color:#ff5555;padding:14px 18px;border-radius:var(--radius-md);font-size:0.9rem;margin-top:16px;}
+    .faq{margin-top:64px;}
+    .faq h2{font-size:1.5rem;font-weight:800;margin-bottom:24px;}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/blog/">Blog</a>
+      <a href="/free-repo-scanner/" class="nav-cta">Free Tools →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool</div>
+    <h1>Bulk Domain Security Scanner</h1>
+    <p>Scan up to 20 domains at once. Free A-F security grades.</p>
+  </div>
+
+  <div class="tool-card">
+    <label class="scanner-label" for="domains-input">Enter domains (one per line, max 20)</label>
+    <textarea id="domains-input" class="scanner-textarea" placeholder="example.com&#10;example.org&#10;myshop.io&#10;..." spellcheck="false"></textarea>
+    <div class="scanner-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="scan-btn" onclick="runScan()">Scan All →</button>
+      <span class="domain-count" id="domain-count">0 / 20 domains</span>
+    </div>
+    <div id="error-box"></div>
+  </div>
+
+  <div id="results-container"></div>
+
+  <div class="features-grid" style="margin-top:56px;">
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">SSL Validation</div>
+      <div class="feature-desc">Checks whether each domain serves over HTTPS with a valid certificate.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">Security Headers</div>
+      <div class="feature-desc">Verifies X-Frame-Options, CSP, HSTS, and X-Content-Type-Options are set.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <div class="feature-title">SPF & DMARC</div>
+      <div class="feature-desc">DNS lookups to confirm email authentication records are configured.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Parallel Scanning</div>
+      <div class="feature-desc">All domains and checks run concurrently. Results in seconds, not minutes.</div>
+    </div>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What does each grade mean?</div><div class="faq-a">Grade A means all four checks passed — valid SSL, security headers present, SPF record found, and DMARC record found. Grade B means 1 check failed. Grade C means 2 failures. Grade D means 3 failures. Grade F means all 4 checks failed or the domain was completely unreachable.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How is this different from individual scanners?</div><div class="faq-a">Individual scanners like our Domain Security Score tool check one domain at a time. The Bulk Scanner lets you paste up to 20 domains and runs every check in parallel, returning a single unified table. It's built for agencies, developers, and teams managing multiple properties who need a fast portfolio-wide security snapshot.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I export results?</div><div class="faq-a">Results are currently displayed on screen. You can select and copy the table directly, or use your browser's Print function (Ctrl/Cmd + P) to save it as a PDF. We're considering CSV export for a future update.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Secure your whole portfolio</h3>
+    <p>Run bulk scans anytime. No account needed for up to 5 domains.</p>
+    <a href="#" onclick="document.getElementById('domains-input').focus();return false;" class="cta-btn">Start Scanning →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/free-repo-scanner/">Repo Scanner</a>
+    <a href="/free-domain-security-score/">Security Score</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">Informational only. Not security advice.</p>
+    <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+<script>
+// Domain counter
+(function(){
+  var ta = document.getElementById('domains-input');
+  var counter = document.getElementById('domain-count');
+  ta.addEventListener('input', function(){
+    var lines = ta.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+    var n = Math.min(lines.length, 20);
+    counter.textContent = n + ' / 20 domains';
+  });
+})();
+
+function toggleFaq(el){ var a = el.nextElementSibling; var open = el.classList.toggle('open'); a.style.display = open ? 'block' : 'none'; }
+
+function showError(msg){
+  var box = document.getElementById('error-box');
+  box.innerHTML = '<div class="error-msg">' + msg + '</div>';
+}
+function clearError(){ document.getElementById('error-box').innerHTML = ''; }
+
+function runScan(){
+  var ta = document.getElementById('domains-input');
+  var btn = document.getElementById('scan-btn');
+  var container = document.getElementById('results-container');
+  clearError();
+
+  var raw = ta.value.split('\n')
+    .map(function(s){ return s.trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*/,''); })
+    .filter(function(s){ return s.length > 0 && /^[a-z0-9]([a-z0-9-]*\.)+[a-z]{2,}$/.test(s); });
+
+  // Dedupe
+  var seen = {};
+  var domains = [];
+  for(var i=0;i<raw.length;i++){
+    if(!seen[raw[i]]){ seen[raw[i]]=true; domains.push(raw[i]); }
+  }
+
+  if(domains.length === 0){
+    showError('Please enter at least one valid domain (e.g. example.com).');
+    return;
+  }
+  if(domains.length > 20){
+    domains = domains.slice(0, 20);
+  }
+
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Scanning…';
+  container.innerHTML = '';
+
+  fetch('/api/bulk-scan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ domains: domains })
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('API returned ' + r.status);
+    return r.json();
+  })
+  .then(function(data){
+    btn.disabled = false;
+    btn.innerHTML = 'Scan All →';
+    if(!data.results || data.results.length === 0){
+      showError('No results returned. Please try again.');
+      return;
+    }
+    renderResults(data.results, domains.length);
+  })
+  .catch(function(err){
+    btn.disabled = false;
+    btn.innerHTML = 'Scan All →';
+    showError('Scan failed: ' + (err.message || 'Network error. Please try again.'));
+  });
+}
+
+function renderResults(results, inputCount){
+  var container = document.getElementById('results-container');
+  var html = '<div class="results-wrap"><table class="results-table"><thead><tr>';
+  html += '<th>Domain</th><th>Grade</th><th>SSL</th><th>Headers</th><th>SPF</th><th>DMARC</th><th>Worst Issue</th>';
+  html += '</tr></thead><tbody>';
+
+  for(var i=0;i<results.length;i++){
+    var r = results[i];
+    var gClass = 'grade-' + r.grade;
+    html += '<tr>';
+    html += '<td style="font-weight:600;font-family:var(--font-mono);font-size:0.85rem;">' + escHtml(r.domain) + '</td>';
+    html += '<td><span class="grade-badge ' + gClass + '">' + r.grade + '</span></td>';
+    html += '<td>' + checkIcon(r.checks.ssl) + '</td>';
+    html += '<td>' + checkIcon(r.checks.headers) + '</td>';
+    html += '<td>' + checkIcon(r.checks.spf) + '</td>';
+    html += '<td>' + checkIcon(r.checks.dmarc) + '</td>';
+    html += '<td class="worst-issue" title="' + escAttr(r.worst) + '">' + escHtml(r.worst || '—') + '</td>';
+    html += '</tr>';
+  }
+
+  html += '</tbody></table></div>';
+
+  // Upsell CTA if >5 domains entered
+  if(inputCount > 5){
+    html += '<div class="cta-upsell">';
+    html += '<p>You scanned ' + inputCount + ' domains. Free tier includes 5 without an account.</p>';
+    html += '<a href="/dashboard/">Sign up for 50+ domains →</a>';
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function checkIcon(check){
+  if(!check) return '<span class="check-skip">—</span>';
+  if(check.status === 'skipped') return '<span class="check-skip">—</span>';
+  if(check.pass === null) return '<span class="check-skip">—</span>';
+  if(check.pass) return '<span class="check-pass">✓</span>';
+  return '<span class="check-fail">✗</span>';
+}
+
+function escHtml(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+
+</body>
+</html>
