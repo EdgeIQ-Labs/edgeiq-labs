@@ -41,3 +41,7 @@ database_id = "2493e288-3313-4458-b4e4-94beb48caa54"
 
 [triggers]
 crons = ["0 */6 * * *"]
+
+[[kv_namespaces]]
+binding = "EMAIL_SUITE_KV"
+id = "33a461acca5444438645df58acb27024"
