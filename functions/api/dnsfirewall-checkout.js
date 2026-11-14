@@ -4,8 +4,8 @@
  */
 
 const PRICES = {
-  personal: { amount: 500, name: 'DNS Firewall Personal', interval: 'month' },
-  business: { amount: 1900, name: 'DNS Firewall Business', interval: 'month' },
+  personal: { priceId: 'price_1UbfMsRC1NZ20yDTWByvHu85', name: 'DNS Firewall Personal' },
+  business: { priceId: 'price_1UbfMsRC1NZ20yDT4TOlBSYg', name: 'DNS Firewall Business' },
 };
 
 export async function onRequest(context) {
@@ -33,10 +33,7 @@ export async function onRequest(context) {
     body.append('cancel_url', 'https://edgeiqlabs.com/dnsfirewall/');
     body.append('metadata[product]', 'dnsfirewall');
     body.append('metadata[plan]', plan);
-    body.append('line_items[0][price_data][currency]', 'usd');
-    body.append('line_items[0][price_data][unit_amount]', priceConfig.amount);
-    body.append('line_items[0][price_data][recurring][interval]', priceConfig.interval);
-    body.append('line_items[0][price_data][product_data][name]', priceConfig.name);
+    body.append('line_items[0][price]', priceConfig.priceId);
     body.append('line_items[0][quantity]', '1');
     
     const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {

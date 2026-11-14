@@ -4,9 +4,9 @@
  */
 
 const PLANS = {
-  starter: { priceId: 'price_statuspage_starter', name: 'StatusPage Starter', amount: 900 },
-  pro: { priceId: 'price_statuspage_pro', name: 'StatusPage Pro', amount: 1900 },
-  business: { priceId: 'price_statuspage_business', name: 'StatusPage Business', amount: 4900 },
+  starter: { priceId: 'price_1UbfMqRC1NZ20yDTM38VIK93', name: 'StatusPage Starter' },
+  pro: { priceId: 'price_1UbfMrRC1NZ20yDTSwf5TYUo', name: 'StatusPage Pro' },
+  business: { priceId: 'price_1UbfMrRC1NZ20yDTl88DAvKy', name: 'StatusPage Business' },
 };
 
 export async function onRequest(context) {
@@ -40,10 +40,7 @@ export async function onRequest(context) {
     params.set('metadata[plan]', plan);
     params.set('subscription_data[metadata][product]', 'statuspage');
     params.set('subscription_data[metadata][plan]', plan);
-    params.set('line_items[0][price_data][currency]', 'usd');
-    params.set('line_items[0][price_data][product_data][name]', planConfig.name);
-    params.set('line_items[0][price_data][unit_amount]', String(planConfig.amount));
-    params.set('line_items[0][price_data][recurring][interval]', 'month');
+    params.set('line_items[0][price]', planConfig.priceId);
     params.set('line_items[0][quantity]', '1');
 
     const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {

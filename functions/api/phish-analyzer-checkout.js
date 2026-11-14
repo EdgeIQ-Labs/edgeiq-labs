@@ -3,19 +3,14 @@ export async function onRequestGet(context) {
   const { request, env } = context;
   const plan = new URL(request.url).searchParams.get("plan") || "pro";
   
-  const prices = { pro: 2900 }; // $29/mo in cents
-  const priceCents = prices[plan] || prices.pro;
-  const planName = plan === "pro" ? "Phishing Analyzer Pro" : "Phishing Analyzer Pro";
+  const PRICE_ID = "price_1UbfMsRC1NZ20yDT5HE1QfxL"; // Phishing Analyzer Pro $29/mo
 
   try {
     const formData = new URLSearchParams();
     formData.append("mode", "subscription");
     formData.append("success_url", "https://edgeiqlabs.com/phish-analyzer/?upgraded=true");
     formData.append("cancel_url", "https://edgeiqlabs.com/phish-analyzer/");
-    formData.append("line_items[0][price_data][currency]", "usd");
-    formData.append("line_items[0][price_data][unit_amount]", String(priceCents));
-    formData.append("line_items[0][price_data][recurring][interval]", "month");
-    formData.append("line_items[0][price_data][product_data][name]", planName);
+    formData.append("line_items[0][price]", PRICE_ID);
     formData.append("line_items[0][quantity]", "1");
 
     const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
