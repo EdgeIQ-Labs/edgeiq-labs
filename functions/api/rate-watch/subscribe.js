@@ -54,11 +54,16 @@ export async function onRequest(context) {
     });
   }
 
+  // Extract affiliate ref from query string or body
+  const url = new URL(request.url);
+  const ref = (body.ref || url.searchParams.get('ref') || '').trim().toLowerCase();
+
   // Store subscriber
   const subscriber = {
     email,
     subscribed_at: new Date().toISOString(),
     status: 'active',
+    ref: ref || null,
   };
 
   await env.RATE_WATCH_KV.put(`sub:${email}`, JSON.stringify(subscriber));
@@ -68,6 +73,16 @@ export async function onRequest(context) {
   if (!index.includes(email)) {
     index.push(email);
     await env.RATE_WATCH_KV.put('subscribers_index', JSON.stringify(index));
+  }
+
+  // Track affiliate referral counts
+  if (ref) {
+    const refKey = `ref:${ref}`;
+    const refData = await env.RATE_WATCH_KV.get(refKey, 'json') || { count: 0, emails: [] };
+    refData.count++;
+    if (!refData.emails.includes(email)) refData.emails.push(email);
+    refData.last_signup = new Date().toISOString();
+    await env.RATE_WATCH_KV.put(refKey, JSON.stringify(refData));
   }
 
   return new Response(JSON.stringify({ success: true }), {
