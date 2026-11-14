@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free SPF & DMARC Record Generator | EdgeIQ Labs</title>
+  <meta name="description" content="Generate valid SPF and DMARC DNS records in seconds. Supports Google Workspace, Microsoft 365, Mailchimp, SendGrid, and more. Free tool, no signup required."/>
+  <meta property="og:title" content="Free SPF & DMARC Record Generator"/>
+  <meta property="og:description" content="Generate valid SPF and DMARC DNS records in seconds. Free tool from EdgeIQ Labs."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-spf-dmarc-generator/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-spf-dmarc-generator/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "EdgeIQ SPF & DMARC Generator",
+    "url": "https://edgeiqlabs.com/free-spf-dmarc-generator/",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Generate valid SPF and DMARC DNS records interactively. Supports major email providers and custom configurations.",
+    "featureList": [
+      "SPF record generation with major providers",
+      "DMARC policy configuration",
+      "DNS lookup count validation",
+      "One-click copy to clipboard",
+      "No signup required"
+    ]
+  }</script>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is SPF and why do I need it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SPF (Sender Policy Framework) is a DNS TXT record that specifies which mail servers are authorized to send email on behalf of your domain. Without SPF, receiving servers can't verify if an email claiming to be from you is legitimate, making your domain vulnerable to spoofing and increasing the chance your emails land in spam."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is DMARC and how does it protect my domain?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "DMARC (Domain-based Message Authentication, Reporting & Conformance) builds on SPF and DKIM to tell receiving servers what to do when an email fails authentication. It also provides aggregate reports so you can see who's sending email as your domain and catch spoofing attempts before they damage your reputation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take for DNS changes to propagate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "DNS changes typically propagate within 1-24 hours, though many resolvers update within minutes. TTL (Time To Live) values on your existing records affect this — lower TTLs mean faster propagation. Use tools like dig or online DNS checkers to verify your new records are live."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I have multiple SPF records on one domain?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NO. Having multiple SPF TXT records on a single domain violates the SPF specification (RFC 7208) and causes a PermError result, which breaks email delivery entirely. You must combine all mechanisms into a single SPF record. If you exceed the 10-DNS-lookup limit, use SPF flattening services."
+        }
+      }
+    ]
+  }</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .generator-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:28px;}
+    .generator-title{font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:6px;}
+    .generator-desc{font-size:0.9rem;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+    .form-group{margin-bottom:18px;}
+    .form-label{display:block;font-size:0.85rem;font-weight:600;color:#fff;margin-bottom:8px;}
+    .checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+    .checkbox-item{display:flex;align-items:center;gap:8px;font-size:0.88rem;color:var(--text);cursor:pointer;}
+    .checkbox-item input[type="checkbox"]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;}
+    .text-input,.select-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:8px;color:var(--text);padding:10px 14px;font-size:0.9rem;font-family:inherit;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
+    .text-input:focus,.select-input:focus{border-color:var(--accent);}
+    .select-input{cursor:pointer;}
+    .output-box{position:relative;background:#071018;border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:16px;}
+    .output-label{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:8px;}
+    .output-text{font-family:'Courier New',monospace;font-size:0.85rem;color:#e0e0e0;word-break:break-all;line-height:1.6;white-space:pre-wrap;min-height:24px;}
+    .copy-btn{position:absolute;top:12px;right:12px;background:var(--accent);color:#071018;font-weight:700;font-size:0.78rem;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;transition:opacity 0.2s;font-family:inherit;}
+    .copy-btn:hover{opacity:0.87;}
+    .warning-box{background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.3);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:0.85rem;color:#ffaa00;line-height:1.5;}
+    .info-box{background:rgba(61,217,255,0.08);border:1px solid rgba(61,217,255,0.3);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:0.85rem;color:var(--accent);line-height:1.5;}
+    .slider-container{display:flex;align-items:center;gap:12px;}
+    .slider-container input[type="range"]{flex:1;accent-color:var(--accent);height:6px;cursor:pointer;}
+    .slider-value{font-size:0.9rem;font-weight:600;color:#fff;min-width:40px;text-align:right;}
+    .dns-name-box{background:rgba(61,217,255,0.06);border:1px dashed rgba(61,217,255,0.25);border-radius:8px;padding:12px 16px;margin-top:10px;font-size:0.82rem;color:var(--muted);}
+    .dns-name-box strong{color:var(--accent);}
+    .upsell-card{background:linear-gradient(135deg,#0a1520,#0d1a26);border:1px solid var(--ok);border-radius:12px;padding:28px;margin:32px 0;text-align:center;}
+    .upsell-title{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:10px;}
+    .upsell-body{font-size:0.9rem;color:var(--muted);margin-bottom:20px;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto;}
+    .upsell-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .upsell-btn{background:var(--ok);color:#071018;font-weight:700;font-size:0.9rem;padding:12px 24px;border-radius:8px;text-decoration:none;transition:opacity 0.2s;white-space:nowrap;}
+    .upsell-btn:hover{opacity:0.87;}
+    .faq{margin-top:40px;}
+    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-q{font-size:1rem;font-weight:600;color:#fff;cursor:pointer;padding-right:24px;position:relative;}
+    .faq-q::after{content:'+';position:absolute;right:0;color:var(--accent);font-weight:700;transition:transform 0.2s;}
+    .faq-q.open::after{content:'−';}
+    .faq-a{display:none;font-size:0.9rem;color:var(--muted);line-height:1.6;margin-top:10px;padding-right:24px;}
+    @media(max-width:600px){
+      .checkbox-grid{grid-template-columns:1fr;}
+      .upsell-buttons{flex-direction:column;align-items:stretch;}
+    }
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/blog/">Blog</a>
+      <a href="/free-repo-scanner/" class="nav-cta">Free Tools →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool</div>
+    <h1>SPF & DMARC Record Generator</h1>
+    <p>Generate valid DNS records in seconds. No signup, no backend — everything runs in your browser.</p>
+  </div>
+
+  <!-- SPF GENERATOR -->
+  <div class="generator-section">
+    <div class="generator-title">SPF Record Generator</div>
+    <div class="generator-desc">Select the email providers and services authorized to send mail from your domain.</div>
+
+    <div class="form-group">
+      <label class="form-label">Email Providers</label>
+      <div class="checkbox-grid" id="spf-providers">
+        <label class="checkbox-item"><input type="checkbox" value="include:_spf.google.com" data-lookups="1"> Google Workspace</label>
+        <label class="checkbox-item"><input type="checkbox" value="include:spf.protection.outlook.com" data-lookups="1"> Microsoft 365</label>
+        <label class="checkbox-item"><input type="checkbox" value="include:servers.mcsv.net" data-lookups="1"> Mailchimp</label>
+        <label class="checkbox-item"><input type="checkbox" value="include:sendgrid.net" data-lookups="1"> SendGrid</label>
+        <label class="checkbox-item"><input type="checkbox" value="include:amazonses.com" data-lookups="1"> Amazon SES</label>
+        <label class="checkbox-item"><input type="checkbox" value="include:zoho.com" data-lookups="1"> Zoho Mail</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Custom Provider (optional)</label>
+      <input type="text" class="text-input" id="spf-custom" placeholder="e.g. include:mail.yourprovider.com" autocomplete="off"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Additional Mechanisms (optional)</label>
+      <div class="checkbox-grid">
+        <label class="checkbox-item"><input type="checkbox" id="spf-a" value="a"> Allow website IP (+a)</label>
+        <label class="checkbox-item"><input type="checkbox" id="spf-mx" value="mx"> Allow MX servers (+mx)</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">IPv4 Ranges (optional, comma-separated CIDRs)</label>
+      <input type="text" class="text-input" id="spf-ipv4" placeholder="e.g. 192.168.1.0/24, 10.0.0.0/8" autocomplete="off"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">IPv6 Ranges (optional, comma-separated)</label>
+      <input type="text" class="text-input" id="spf-ipv6" placeholder="e.g. 2001:db8::/32" autocomplete="off"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Policy</label>
+      <select class="select-input" id="spf-policy">
+        <option value="~all">~all — Soft fail (recommended)</option>
+        <option value="-all">-all — Hard fail (strict)</option>
+        <option value="?all">?all — Neutral</option>
+      </select>
+    </div>
+
+    <div id="spf-warning"></div>
+
+    <div class="output-box">
+      <div class="output-label">Generated SPF Record</div>
+      <div class="output-text" id="spf-output">v=spf1 ~all</div>
+      <button class="copy-btn" onclick="copyToClipboard('spf-output', this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- DMARC GENERATOR -->
+  <div class="generator-section">
+    <div class="generator-title">DMARC Record Generator</div>
+    <div class="generator-desc">Configure your DMARC policy to protect against spoofing and phishing.</div>
+
+    <div class="form-group">
+      <label class="form-label">Domain</label>
+      <input type="text" class="text-input" id="dmarc-domain" placeholder="example.com" autocomplete="off"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Policy (p=)</label>
+      <select class="select-input" id="dmarc-policy">
+        <option value="none">none — Monitoring only</option>
+        <option value="quarantine" selected>quarantine — Recommended</option>
+        <option value="reject">reject — Strict enforcement</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Subdomain Policy (sp=)</label>
+      <select class="select-input" id="dmarc-sp">
+        <option value="same">Same as domain policy</option>
+        <option value="none">none</option>
+        <option value="quarantine">quarantine</option>
+        <option value="reject">reject</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Percentage (pct=)</label>
+      <div class="slider-container">
+        <input type="range" id="dmarc-pct" min="0" max="100" value="100"/>
+        <span class="slider-value" id="dmarc-pct-display">100%</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Aggregate Report Email (rua=)</label>
+      <input type="email" class="text-input" id="dmarc-rua" placeholder="dmarc@example.com" autocomplete="off"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Forensic Report Email (ruf=, optional)</label>
+      <input type="email" class="text-input" id="dmarc-ruf" placeholder="forensics@example.com" autocomplete="off"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">DKIM Alignment (adkim=)</label>
+      <select class="select-input" id="dmarc-adkim">
+        <option value="r" selected>r — Relaxed (recommended)</option>
+        <option value="s">s — Strict</option>
+      </select>
+    </div>
+
+    <div id="dmarc-warning"></div>
+
+    <div class="output-box">
+      <div class="output-label">Generated DMARC Record</div>
+      <div class="output-text" id="dmarc-output">v=DMARC1; p=quarantine; pct=100; adkim=r</div>
+      <button class="copy-btn" onclick="copyToClipboard('dmarc-output', this)">Copy</button>
+    </div>
+    <div class="dns-name-box" id="dmarc-dns-name">
+      DNS TXT record name: <strong>_dmarc.example.com</strong>
+    </div>
+  </div>
+
+  <!-- UPSELL CTA -->
+  <div class="upsell-card">
+    <div class="upsell-title">Monitor Your Records for Changes</div>
+    <div class="upsell-body">DNS records can be modified by attackers or misconfigured by staff. Get instant alerts when your SPF or DMARC records change.</div>
+    <div class="upsell-buttons">
+      <a href="https://buy.stripe.com/8x2eVf2TF7hb4nWg367wA46" class="upsell-btn">CertWatch Pro → $1/mo</a>
+      <a href="https://buy.stripe.com/5kQ9AV2TF0SN8Ec7wA7wA47" class="upsell-btn">UptimePing → $1/mo</a>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is SPF and why do I need it?</div><div class="faq-a">SPF (Sender Policy Framework) is a DNS TXT record that specifies which mail servers are authorized to send email on behalf of your domain. Without SPF, receiving servers can't verify if an email claiming to be from you is legitimate, making your domain vulnerable to spoofing and increasing the chance your emails land in spam.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is DMARC and how does it protect my domain?</div><div class="faq-a">DMARC (Domain-based Message Authentication, Reporting & Conformance) builds on SPF and DKIM to tell receiving servers what to do when an email fails authentication. It also provides aggregate reports so you can see who's sending email as your domain and catch spoofing attempts before they damage your reputation.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How long does it take for DNS changes to propagate?</div><div class="faq-a">DNS changes typically propagate within 1–24 hours, though many resolvers update within minutes. TTL (Time To Live) values on your existing records affect this — lower TTLs mean faster propagation. Use tools like dig or online DNS checkers to verify your new records are live.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I have multiple SPF records on one domain?</div><div class="faq-a">NO. Having multiple SPF TXT records on a single domain violates the SPF specification (RFC 7208) and causes a PermError result, which breaks email delivery entirely. You must combine all mechanisms into a single SPF record. If you exceed the 10-DNS-lookup limit, use SPF flattening services.</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/free-repo-scanner/">Repo Scanner</a>
+    <a href="/free-domain-security-score/">Security Score</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">Informational only. Not security advice.</p>
+    <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+<script>
+(function(){
+  // === SPF GENERATOR ===
+  var spfCheckboxes = document.querySelectorAll('#spf-providers input[type="checkbox"]');
+  var spfCustom = document.getElementById('spf-custom');
+  var spfA = document.getElementById('spf-a');
+  var spfMx = document.getElementById('spf-mx');
+  var spfIpv4 = document.getElementById('spf-ipv4');
+  var spfIpv6 = document.getElementById('spf-ipv6');
+  var spfPolicy = document.getElementById('spf-policy');
+  var spfOutput = document.getElementById('spf-output');
+  var spfWarning = document.getElementById('spf-warning');
+
+  function generateSPF(){
+    var parts = ['v=spf1'];
+    var lookups = 0;
+
+    spfCheckboxes.forEach(function(cb){
+      if(cb.checked){
+        parts.push(cb.value);
+        lookups += parseInt(cb.getAttribute('data-lookups') || '0', 10);
+      }
+    });
+
+    var customVal = spfCustom.value.trim();
+    if(customVal){
+      if(!customVal.startsWith('include:')){
+        customVal = 'include:' + customVal;
+      }
+      parts.push(customVal);
+      lookups += 1;
+    }
+
+    if(spfA.checked) parts.push('a');
+    if(spfMx.checked){ parts.push('mx'); lookups += 1; }
+
+    var ipv4Val = spfIpv4.value.trim();
+    if(ipv4Val){
+      ipv4Val.split(',').forEach(function(cidr){
+        cidr = cidr.trim();
+        if(cidr) parts.push('ip4:' + cidr);
+      });
+    }
+
+    var ipv6Val = spfIpv6.value.trim();
+    if(ipv6Val){
+      ipv6Val.split(',').forEach(function(cidr){
+        cidr = cidr.trim();
+        if(cidr) parts.push('ip6:' + cidr);
+      });
+    }
+
+    parts.push(spfPolicy.value);
+    spfOutput.textContent = parts.join(' ');
+
+    // Warnings
+    var warnings = [];
+    var providerCount = 0;
+    spfCheckboxes.forEach(function(cb){ if(cb.checked) providerCount++; });
+    if(customVal) providerCount++;
+
+    if(providerCount === 0 && !spfA.checked && !spfMx.checked && !ipv4Val && !ipv6Val){
+      warnings.push('<div class="warning-box">⚠️ Select at least one email provider above.</div>');
+    }
+    if(lookups > 10){
+      warnings.push('<div class="warning-box">⚠️ You have ' + lookups + ' DNS lookups. SPF spec limits to 10. Remove some providers or use SPF flattening.</div>');
+    }
+    spfWarning.innerHTML = warnings.join('');
+  }
+
+  spfCheckboxes.forEach(function(cb){ cb.addEventListener('change', generateSPF); });
+  [spfCustom, spfA, spfMx, spfIpv4, spfIpv6, spfPolicy].forEach(function(el){
+    el.addEventListener('input', generateSPF);
+    el.addEventListener('change', generateSPF);
+  });
+  generateSPF();
+
+  // === DMARC GENERATOR ===
+  var dmarcDomain = document.getElementById('dmarc-domain');
+  var dmarcPolicy = document.getElementById('dmarc-policy');
+  var dmarcSp = document.getElementById('dmarc-sp');
+  var dmarcPct = document.getElementById('dmarc-pct');
+  var dmarcPctDisplay = document.getElementById('dmarc-pct-display');
+  var dmarcRua = document.getElementById('dmarc-rua');
+  var dmarcRuf = document.getElementById('dmarc-ruf');
+  var dmarcAdkim = document.getElementById('dmarc-adkim');
+  var dmarcOutput = document.getElementById('dmarc-output');
+  var dmarcDnsName = document.getElementById('dmarc-dns-name');
+  var dmarcWarning = document.getElementById('dmarc-warning');
+
+  function generateDMARC(){
+    var domain = dmarcDomain.value.trim() || 'example.com';
+    var policy = dmarcPolicy.value;
+    var sp = dmarcSp.value;
+    var pct = dmarcPct.value;
+    var rua = dmarcRua.value.trim();
+    var ruf = dmarcRuf.value.trim();
+    var adkim = dmarcAdkim.value;
+
+    dmarcPctDisplay.textContent = pct + '%';
+
+    var parts = ['v=DMARC1', 'p=' + policy];
+
+    if(sp !== 'same'){
+      parts.push('sp=' + sp);
+    }
+
+    if(rua){
+      parts.push('rua=mailto:' + rua);
+    } else {
+      parts.push('rua=mailto:dmarc@' + domain);
+    }
+
+    if(ruf){
+      parts.push('ruf=mailto:' + ruf);
+    }
+
+    parts.push('pct=' + pct);
+    parts.push('adkim=' + adkim);
+
+    dmarcOutput.textContent = parts.join('; ');
+    dmarcDnsName.innerHTML = 'DNS TXT record name: <strong>_dmarc.' + domain + '</strong>';
+
+    // Warnings
+    var warnings = [];
+    if(policy === 'none'){
+      warnings.push('<div class="info-box">ℹ️ p=none only monitors. Upgrade to quarantine or reject after reviewing aggregate reports.</div>');
+    }
+    dmarcWarning.innerHTML = warnings.join('');
+  }
+
+  [dmarcDomain, dmarcPolicy, dmarcSp, dmarcPct, dmarcRua, dmarcRuf, dmarcAdkim].forEach(function(el){
+    el.addEventListener('input', generateDMARC);
+    el.addEventListener('change', generateDMARC);
+  });
+  generateDMARC();
+})();
+
+// Copy to clipboard with fallback
+function copyToClipboard(elementId, btn){
+  var text = document.getElementById(elementId).textContent;
+  var originalText = btn.textContent;
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      btn.textContent = 'Copied!';
+      setTimeout(function(){ btn.textContent = originalText; }, 2000);
+    }).catch(function(){
+      fallbackCopy(text, btn, originalText);
+    });
+  } else {
+    fallbackCopy(text, btn, originalText);
+  }
+}
+
+function fallbackCopy(text, btn, originalText){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    btn.textContent = 'Copied!';
+    setTimeout(function(){ btn.textContent = originalText; }, 2000);
+  } catch(e){
+    btn.textContent = 'Failed';
+    setTimeout(function(){ btn.textContent = originalText; }, 2000);
+  }
+  document.body.removeChild(ta);
+}
+
+function toggleFaq(el){ var a = el.nextElementSibling; var open = el.classList.toggle('open'); a.style.display = open ? 'block' : 'none'; }
+</script>
+
+</body>
+</html>
