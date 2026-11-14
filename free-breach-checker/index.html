@@ -382,5 +382,95 @@ document.getElementById('capture-form').addEventListener('submit', async (e) => 
   btn.textContent = 'Send Checklist';
 });
 </script>
+
+<!-- EdgeIQ Security Badge Widget -->
+<div id="edgeiq-badge-section" style="margin-top:24px;padding:20px;background:var(--card,#121923);border:1px solid var(--border,#1e2a3a);border-radius:12px;text-align:center;display:none;">
+  <p style="color:var(--muted,#9fb0c7);font-size:0.85rem;margin-bottom:12px;">Show off your security grade on your site</p>
+  <button id="get-badge-btn" style="padding:10px 24px;background:#3dd9ff;color:#0b0f14;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9rem;">Get Your Free Badge</button>
+  <div id="badge-embed-result" style="display:none;margin-top:16px;">
+    <p style="color:#3de19e;font-size:0.85rem;margin-bottom:8px;">✅ Badge created! Copy this code:</p>
+    <textarea id="badge-embed-code" readonly style="width:100%;max-width:500px;height:60px;background:#0b0f14;border:1px solid #1e2a3a;border-radius:8px;color:#e8eef7;font-family:monospace;font-size:0.75rem;padding:10px;resize:none;"></textarea>
+    <button onclick="navigator.clipboard.writeText(document.getElementById('badge-embed-code').value).then(()=>this.textContent='Copied!')" style="margin-top:8px;padding:6px 16px;background:transparent;border:1px solid #3dd9ff;color:#3dd9ff;border-radius:6px;cursor:pointer;font-size:0.8rem;">Copy to Clipboard</button>
+  </div>
+</div>
+<script>
+(function(){
+  // Hook into existing grade display — find the grade element and show badge section
+  function tryShowBadgeSection() {
+    var gradeEl = document.querySelector('.grade-badge,.grade-circle,.grade-letter,[class*="grade-"]');
+    if (gradeEl) {
+      var section = document.getElementById('edgeiq-badge-section');
+      if (section) section.style.display = 'block';
+      return true;
+    }
+    return false;
+  }
+  
+  // Try immediately and also observe for dynamic content
+  if (!tryShowBadgeSection()) {
+    var observer = new MutationObserver(function(mutations) {
+      if (tryShowBadgeSection()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(function(){ observer.disconnect(); }, 30000);
+  }
+  
+  // Badge creation handler
+  var btn = document.getElementById('get-badge-btn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      btn.disabled = true;
+      btn.textContent = 'Creating badge...';
+      
+      // Extract grade and score from page
+      var gradeText = '';
+      var scoreNum = 0;
+      var gradeEl = document.querySelector('.grade-badge,.grade-letter');
+      if (gradeEl) gradeText = gradeEl.textContent.trim().charAt(0);
+      var scoreEl = document.querySelector('.score-fill');
+      if (scoreEl) scoreNum = parseInt(scoreEl.style.width) || 0;
+      if (!scoreNum) {
+        var scoreText = document.body.innerText.match(/(?:Score|score)[:\s]*(\d+)/);
+        if (scoreText) scoreNum = parseInt(scoreText[1]) || 0;
+      }
+      if (!gradeText) gradeText = scoreNum >= 90 ? 'A' : scoreNum >= 80 ? 'B' : scoreNum >= 70 ? 'C' : scoreNum >= 60 ? 'D' : 'F';
+      
+      // Determine tool name from URL
+      var toolName = window.location.pathname.replace(/^\//,'').replace(/\/$/,'') || 'free-tools';
+      
+      fetch('/api/badge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: toolName,
+          score: scoreNum,
+          grade: gradeText,
+          domain: null,
+          report_url: window.location.href
+        })
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.ok && data.embed_code) {
+          document.getElementById('badge-embed-code').value = data.embed_code;
+          document.getElementById('badge-embed-result').style.display = 'block';
+          btn.textContent = 'Badge Created ✓';
+          btn.style.background = '#3de19e';
+        } else {
+          btn.textContent = 'Error — try again';
+          btn.disabled = false;
+          btn.style.background = '#ff6b6b';
+        }
+      })
+      .catch(function(e){
+        btn.textContent = 'Error — try again';
+        btn.disabled = false;
+        btn.style.background = '#ff6b6b';
+      });
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
