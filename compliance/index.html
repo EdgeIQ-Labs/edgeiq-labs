@@ -1,161 +1,161 @@
-1|1|<!DOCTYPE html>
-2|2|<html lang="en">
-3|3|<head>
-4|4|  <meta charset="UTF-8">
-5|5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-6|6|  <link rel="icon" type="image/png" href="/favicon.png">
-7|7|  <link rel="apple-touch-icon" href="/favicon.png">
-8|8|  <link rel="canonical" href="https://edgeiqlabs.com/compliance/">
-9|9|  <title>Compliance Posture Tracker — EdgeIQ Labs</title>
-10|10|  <meta name="description" content="Track your SOC 2 compliance posture over time. Scan your domain, see control-by-control pass/fail, and watch your score trend month by month.">
-11|11|  <meta name="theme-color" content="#0b0f14">
-12|12|  <meta property="og:type" content="website">
-13|13|  <meta property="og:site_name" content="EdgeIQ Labs">
-14|14|  <meta property="og:url" content="https://edgeiqlabs.com/compliance/">
-15|15|  <meta property="og:title" content="Compliance Posture Tracker — EdgeIQ Labs">
-16|16|  <meta property="og:description" content="Monitor your SOC 2 readiness score over time. Control-by-control pass/fail scanning, built for small security teams.">
-17|17|  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png">
-18|18|  <meta property="og:image:width" content="1200">
-19|19|  <meta property="og:image:height" content="630">
-20|20|  <meta property="og:image:alt" content="Compliance Posture Tracker — EdgeIQ Labs">
-21|21|  <meta name="twitter:card" content="summary_large_image">
-22|22|  <meta name="twitter:title" content="Compliance Posture Tracker — EdgeIQ Labs">
-23|23|  <meta name="twitter:description" content="Track SOC 2 compliance with control-by-control scanning and month-over-month score trends.">
-24|24|  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png">
-25|25|  <style>
-26|26|    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-27|27|    :root {
-28|28|      --bg: #0b0f14; --card: #111820; --border: #1e2e3e;
-29|29|      --text: #e8eef7; --muted: #9fb0c7; --dim: #4a6080;
-30|30|      --green: #3de19e; --blue: #3dd9ff; --yellow: #ffb347;
-31|31|      --red: #ff6b6b; --orange: #ff8c42;
-32|32|    }
-33|33|    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100vh; }
-34|34|    a { color: inherit; text-decoration: none; }
-35|35|
-36|36|    /* Nav */
-37|37|    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
-38|38|    .nav-logo { font-weight: 800; font-size: 15px; }
-39|39|    .nav-logo span { color: var(--green); }
-40|40|    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--muted); }
-41|41|    .nav-links a:hover { color: var(--text); }
-42|42|    .nav-cta { background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; }
-43|43|
-44|44|    /* Layout */
-45|45|    .page { display: grid; grid-template-columns: 1fr 280px; gap: 20px; max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
-46|46|    @media(max-width: 860px) { .page { grid-template-columns: 1fr; } .sidebar { order: -1; } }
-47|47|
-48|48|    /* Scan bar */
-49|49|    .scan-bar { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-50|50|    .scan-bar-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); flex: 0 0 100%; }
-51|51|    .scan-input { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; transition: border-color .2s; }
-52|52|    .scan-input:focus { border-color: var(--green); }
-53|53|    .scan-input::placeholder { color: var(--dim); }
-54|54|    .framework-select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--muted); outline: none; font-family: inherit; cursor: pointer; }
-55|55|    .scan-btn { background: var(--green); color: #071018; font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s; }
-56|56|    .scan-btn:hover { opacity: .88; }
-57|57|    .scan-btn:disabled { opacity: .5; cursor: not-allowed; }
-58|58|
-59|59|    /* Status bar */
-60|60|    .status-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 20px; overflow: hidden; display: none; }
-61|61|    .status-bar-inner { height: 100%; background: var(--green); border-radius: 2px; width: 0; transition: width .4s ease; }
-62|62|
-63|63|    /* Score hero */
-64|64|    .score-hero { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 20px; display: none; }
-65|65|    .score-hero-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-66|66|    .grade-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--green); flex-shrink: 0; }
-67|67|    .score-stats { display: flex; gap: 24px; flex-wrap: wrap; }
-68|68|    .stat { text-align: center; }
-69|69|    .stat-val { font-size: 22px; font-weight: 800; }
-70|70|    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
-71|71|    .score-meta { margin-left: auto; text-align: right; font-size: 12px; color: var(--muted); }
-72|72|    .score-meta strong { color: var(--text); display: block; font-size: 14px; margin-bottom: 2px; }
-73|73|
-74|74|    /* Trend chart */
-75|75|    .trend-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: none; }
-76|76|    .trend-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
-77|77|    .trend-title { font-size: 13px; font-weight: 700; }
-78|78|    .trend-subtitle { font-size: 11px; color: var(--muted); }
-79|79|    canvas#trendCanvas { width: 100%; display: block; }
-80|80|
-81|81|    /* Controls grid */
-82|82|    .controls-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: none; }
-83|83|    .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-84|84|    .controls-title { font-size: 13px; font-weight: 700; }
-85|85|    .controls-list { display: flex; flex-direction: column; gap: 8px; }
-86|86|    .control-row { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; }
-87|87|    .control-status { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-88|88|    .control-status.pass { background: rgba(61,225,158,.15); color: var(--green); }
-89|89|    .control-status.warning { background: rgba(255,179,71,.15); color: var(--yellow); }
-90|90|    .control-status.fail { background: rgba(255,107,107,.15); color: var(--red); }
-91|91|    .control-body { flex: 1; min-width: 0; }
-92|92|    .control-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-93|93|    .control-id { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
-94|94|    .control-action { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
-95|95|    .control-score { font-size: 13px; font-weight: 700; flex-shrink: 0; }
-96|96|
-97|97|    /* Empty / placeholder */
-98|98|    .empty-state { text-align: center; padding: 48px 24px; }
-99|99|    .empty-icon { font-size: 40px; margin-bottom: 12px; }
-100|100|    .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-101|101|    .empty-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
-102|102|
-103|103|    /* Sidebar */
-104|104|    .sidebar { display: flex; flex-direction: column; gap: 16px; }
-105|105|    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-106|106|    .sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
-107|107|    .history-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: pointer; transition: background .15s; }
-108|108|    .history-item:hover { background: rgba(255,255,255,.04); }
-109|109|    .history-item.active { background: rgba(61,225,158,.08); border: 1px solid rgba(61,225,158,.2); }
-110|110|    .history-grade { font-size: 15px; font-weight: 900; width: 28px; text-align: center; flex-shrink: 0; }
-111|111|    .history-domain { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-112|112|    .history-date { font-size: 11px; color: var(--muted); }
-113|113|    .history-score { font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
-114|114|    .no-history { font-size: 12px; color: var(--muted); line-height: 1.6; }
-115|115|
-116|116|    /* Upsell */
-117|117|    .plans-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-118|118|    .plan-tier { padding: 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
-119|119|    .plan-tier:last-child { margin-bottom: 0; }
-120|120|    .plan-tier.featured { background: linear-gradient(135deg,#0d1f17,#071018); border-color: rgba(61,225,158,.3); }
-121|121|    .plan-tier-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-122|122|    .plan-tier-price { font-size: 20px; font-weight: 900; color: var(--green); margin-bottom: 8px; }
-123|123|    .plan-tier-price span { font-size: 12px; font-weight: 400; color: var(--muted); }
-124|124|    .plan-tier-features { font-size: 11px; color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
-125|125|    .plan-tier-features li { list-style: none; }
-126|126|    .plan-tier-features li::before { content: '✓ '; color: var(--green); font-weight: 700; }
-127|127|    .plan-tier-features li.no::before { content: '✗ '; color: var(--dim); }
-128|128|    .plan-tier-features li.no { color: var(--dim); }
-129|129|    .plan-tier-btn { display: block; text-align: center; font-weight: 700; font-size: 12px; padding: 8px; border-radius: 7px; transition: opacity .2s; }
-130|130|    .plan-tier-btn:hover { opacity: .88; }
-131|131|    .plan-tier-btn.primary { background: var(--green); color: #071018; }
-132|132|    .plan-tier-btn.secondary { background: transparent; border: 1px solid rgba(61,225,158,.4); color: var(--green); }
-133|133|
-134|134|    /* Snackbar */
-135|135|    .snack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: 13px; color: var(--text); display: none; z-index: 200; white-space: nowrap; }
-136|136|    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
-137|137|    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
-138|138|    .product-strip-inner::-webkit-scrollbar { display: none; }
-139|139|    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
-140|140|    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
-141|141|    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
-142|142|    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
-143|143|    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
-144|144|    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-145|145|    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-146|146|    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-147|147|    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
-148|148|    .nav-mobile-menu.open { display: flex; }
-149|149|    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
-150|150|    .nav-mobile-menu a:last-child { border-bottom: none; }
-151|151|    .nav-mobile-menu a:hover { color: #e8eef7; }
-152|152|    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
-153|153|    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
-154|154|    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
-155|155|  </style>
-156|156|<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
-157|157|</head>
-158|158|<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="canonical" href="https://edgeiqlabs.com/compliance/">
+  <title>Compliance Posture Tracker — EdgeIQ Labs</title>
+  <meta name="description" content="Track your SOC 2 compliance posture over time. Scan your domain, see control-by-control pass/fail, and watch your score trend month by month.">
+  <meta name="theme-color" content="#0b0f14">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="EdgeIQ Labs">
+  <meta property="og:url" content="https://edgeiqlabs.com/compliance/">
+  <meta property="og:title" content="Compliance Posture Tracker — EdgeIQ Labs">
+  <meta property="og:description" content="Monitor your SOC 2 readiness score over time. Control-by-control pass/fail scanning, built for small security teams.">
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Compliance Posture Tracker — EdgeIQ Labs">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Compliance Posture Tracker — EdgeIQ Labs">
+  <meta name="twitter:description" content="Track SOC 2 compliance with control-by-control scanning and month-over-month score trends.">
+  <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0f14; --card: #111820; --border: #1e2e3e;
+      --text: #e8eef7; --muted: #9fb0c7; --dim: #4a6080;
+      --green: #3de19e; --blue: #3dd9ff; --yellow: #ffb347;
+      --red: #ff6b6b; --orange: #ff8c42;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,15,20,0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 76px; }
+    .nav-logo { font-weight: 800; font-size: 15px; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--green); color: #071018; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; }
+
+    /* Layout */
+    .page { display: grid; grid-template-columns: 1fr 280px; gap: 20px; max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+    @media(max-width: 860px) { .page { grid-template-columns: 1fr; } .sidebar { order: -1; } }
+
+    /* Scan bar */
+    .scan-bar { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .scan-bar-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); flex: 0 0 100%; }
+    .scan-input { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; transition: border-color .2s; }
+    .scan-input:focus { border-color: var(--green); }
+    .scan-input::placeholder { color: var(--dim); }
+    .framework-select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--muted); outline: none; font-family: inherit; cursor: pointer; }
+    .scan-btn { background: var(--green); color: #071018; font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s; }
+    .scan-btn:hover { opacity: .88; }
+    .scan-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Status bar */
+    .status-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 20px; overflow: hidden; display: none; }
+    .status-bar-inner { height: 100%; background: var(--green); border-radius: 2px; width: 0; transition: width .4s ease; }
+
+    /* Score hero */
+    .score-hero { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 20px; display: none; }
+    .score-hero-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .grade-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--green); flex-shrink: 0; }
+    .score-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-val { font-size: 22px; font-weight: 800; }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+    .score-meta { margin-left: auto; text-align: right; font-size: 12px; color: var(--muted); }
+    .score-meta strong { color: var(--text); display: block; font-size: 14px; margin-bottom: 2px; }
+
+    /* Trend chart */
+    .trend-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; display: none; }
+    .trend-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+    .trend-title { font-size: 13px; font-weight: 700; }
+    .trend-subtitle { font-size: 11px; color: var(--muted); }
+    canvas#trendCanvas { width: 100%; display: block; }
+
+    /* Controls grid */
+    .controls-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: none; }
+    .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .controls-title { font-size: 13px; font-weight: 700; }
+    .controls-list { display: flex; flex-direction: column; gap: 8px; }
+    .control-row { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; }
+    .control-status { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .control-status.pass { background: rgba(61,225,158,.15); color: var(--green); }
+    .control-status.warning { background: rgba(255,179,71,.15); color: var(--yellow); }
+    .control-status.fail { background: rgba(255,107,107,.15); color: var(--red); }
+    .control-body { flex: 1; min-width: 0; }
+    .control-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .control-id { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .control-action { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+    .control-score { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+
+    /* Empty / placeholder */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
+    .history-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: pointer; transition: background .15s; }
+    .history-item:hover { background: rgba(255,255,255,.04); }
+    .history-item.active { background: rgba(61,225,158,.08); border: 1px solid rgba(61,225,158,.2); }
+    .history-grade { font-size: 15px; font-weight: 900; width: 28px; text-align: center; flex-shrink: 0; }
+    .history-domain { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-date { font-size: 11px; color: var(--muted); }
+    .history-score { font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
+    .no-history { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* Upsell */
+    .plans-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .plan-tier { padding: 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+    .plan-tier:last-child { margin-bottom: 0; }
+    .plan-tier.featured { background: linear-gradient(135deg,#0d1f17,#071018); border-color: rgba(61,225,158,.3); }
+    .plan-tier-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .plan-tier-price { font-size: 20px; font-weight: 900; color: var(--green); margin-bottom: 8px; }
+    .plan-tier-price span { font-size: 12px; font-weight: 400; color: var(--muted); }
+    .plan-tier-features { font-size: 11px; color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
+    .plan-tier-features li { list-style: none; }
+    .plan-tier-features li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+    .plan-tier-features li.no::before { content: '✗ '; color: var(--dim); }
+    .plan-tier-features li.no { color: var(--dim); }
+    .plan-tier-btn { display: block; text-align: center; font-weight: 700; font-size: 12px; padding: 8px; border-radius: 7px; transition: opacity .2s; }
+    .plan-tier-btn:hover { opacity: .88; }
+    .plan-tier-btn.primary { background: var(--green); color: #071018; }
+    .plan-tier-btn.secondary { background: transparent; border: 1px solid rgba(61,225,158,.4); color: var(--green); }
+
+    /* Snackbar */
+    .snack { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; font-size: 13px; color: var(--text); display: none; z-index: 200; white-space: nowrap; }
+    .product-strip { background: #0e1621; border-bottom: 1px solid #233142; position: sticky; top: 76px; z-index: 9; }
+    .product-strip-inner { display: flex; align-items: center; gap: 2px; padding: 5px 0 5px 24px; overflow-x: auto; scrollbar-width: none; max-width: 980px; margin: 0 auto; }
+    .product-strip-inner::-webkit-scrollbar { display: none; }
+    .product-strip-inner::after { content: ""; flex: 0 0 28px; }
+    .product-strip-inner a { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
+    .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #9fb0c7; border-radius: 2px; transition: all 0.2s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu { display: none; flex-direction: column; background: #121923; border-top: 1px solid #233142; padding: 12px 20px 16px; position: sticky; top: 76px; z-index: 8; }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a { color: #9fb0c7; text-decoration: none; padding: 10px 4px; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid rgba(35,49,66,0.5); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: #e8eef7; }
+    .nav-mobile-menu .mob-cta { margin-top: 12px; background: #3dd9ff; color: #071018 !important; font-weight: 700; text-align: center; padding: 11px !important; border-radius: 8px; border-bottom: none !important; }
+    .nav-mobile-menu .mob-section { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #4a6080; padding: 12px 4px 4px; border-bottom: none !important; }
+    @media (max-width: 720px) { .nav-links { display: none !important; } .nav-hamburger { display: flex !important; } .product-strip-inner a { padding: 4px 8px; font-size: 0.75rem; } }
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
 159|  <nav class="nav-bar">
 160|    <div class="nav-inner">
 161|      <a class="nav-brand" href="/">
@@ -173,573 +173,573 @@
 173|      </div>
 174|    </div>
 175|  </nav>
-176|159|
-177|160|<nav>
-178|161|  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
-179|162|  <div class="nav-links">
-180|163|    <a href="/">Home</a>
-181|164|    <a href="/dashboard/">Dashboard</a>
-182|165|    <a href="/pulse/">Pulse</a>
-183|166|    <a href="/inbox-shield/">Inbox Shield</a>
-184|167|    <a href="/account/">My Account</a>
-185|168|    <a href="/api/compliance-checkout?plan=starter" class="nav-cta" onclick="document.getElementById('domainInput').focus();return false;" style="background:var(--green);color:#071018;">Free Scan</a>
-186|169|  </div>
-187|170|  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
-188|171|</nav>
-189|172|<div class="product-strip">
-190|173|  <div class="product-strip-inner">
-191|174|    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
-192|175|    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
-193|176|    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
-194|177|    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
-195|178|    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
-196|179|    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
-197|180|    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
-198|181|    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
-199|182|  </div>
-200|183|</div>
-201|184|<div class="nav-mobile-menu" id="nav-mobile-menu">
-202|185|  <span class="mob-section">Navigation</span>
-203|186|  <a href="/">Home</a>
-204|187|  <a href="/products/">All Products</a>
-205|188|  <a href="/blog/">Blog</a>
-206|189|  <span class="mob-section">Products</span>
-207|190|  <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
-208|191|  <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
-209|192|  <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
-210|193|  <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
-211|194|  <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
-212|195|  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
-213|196|  <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
-214|197|  <a href="/account/">🔐 My Account</a>
-215|198|  <a class="mob-cta" href="/compliance/">Free Compliance Scan →</a>
-216|199|</div>
-217|200|
-218|201|<div class="page">
-219|202|  <!-- Main column -->
-220|203|  <div>
-221|204|
-222|205|
-223|206|    <!-- Scan bar -->
-224|207|    <div class="scan-bar">
-225|208|      <div class="scan-bar-label">Compliance Posture Tracker</div>
-226|209|      <input id="domainInput" class="scan-input" type="text" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
-227|210|      <select id="frameworkSelect" class="framework-select">
-228|211|        <option value="soc2">SOC 2</option>
-229|212|        <option value="hipaa">HIPAA</option>
-230|213|        <option value="pci">PCI-DSS</option>
-231|214|      </select>
-232|215|      <button id="scanBtn" class="scan-btn" onclick="runScan()">Run Scan</button>
-233|216|    </div>
-234|217|
-235|218|    <!-- Progress bar -->
-236|219|    <div class="status-bar" id="statusBar">
-237|220|      <div class="status-bar-inner" id="statusBarInner"></div>
-238|221|    </div>
-239|222|
-240|223|    <!-- Score hero (shown after scan) -->
-241|224|    <div class="score-hero" id="scoreHero">
-242|225|      <div class="score-hero-inner">
-243|226|        <div class="grade-circle" id="gradeCircle">—</div>
-244|227|        <div class="score-stats">
-245|228|          <div class="stat"><div class="stat-val" id="statScore">—</div><div class="stat-label">Score</div></div>
-246|229|          <div class="stat"><div class="stat-val" style="color:var(--green)" id="statPassed">—</div><div class="stat-label">Passed</div></div>
-247|230|          <div class="stat"><div class="stat-val" style="color:var(--yellow)" id="statWarning">—</div><div class="stat-label">Warning</div></div>
-248|231|          <div class="stat"><div class="stat-val" style="color:var(--red)" id="statFailed">—</div><div class="stat-label">Failed</div></div>
-249|232|        </div>
-250|233|        <div class="score-meta">
-251|234|          <strong id="metaDomain">—</strong>
-252|235|          <span id="metaDate">—</span><br>
-253|236|          <span id="metaFramework">—</span>
-254|237|        </div>
-255|238|      </div>
-256|239|    </div>
-257|240|
-258|241|    <!-- Trend chart (shown when 2+ snapshots exist) -->
-259|242|    <div class="trend-card" id="trendCard">
-260|243|      <div class="trend-header">
-261|244|        <div>
-262|245|          <div class="trend-title">Score over time</div>
-263|246|          <div class="trend-subtitle" id="trendSubtitle">Compliance posture history</div>
-264|247|        </div>
-265|248|      </div>
-266|249|      <canvas id="trendCanvas" height="120"></canvas>
-267|250|    </div>
-268|251|
-269|252|    <!-- Controls breakdown -->
-270|253|    <div class="controls-card" id="controlsCard">
-271|254|      <div class="controls-header">
-272|255|        <div class="controls-title">Control Breakdown</div>
-273|256|      </div>
-274|257|      <div class="controls-list" id="controlsList"></div>
-275|258|    </div>
-276|259|
-277|260|    <!-- Pro upsell (shown after first scan) -->
-278|261|    <div id="proUpsell" style="display:none;background:linear-gradient(135deg,#071810,#0b1f14);border:1px solid rgba(61,225,158,0.35);border-radius:12px;padding:20px 22px;margin-bottom:20px;position:relative;">
-279|262|      <button onclick="dismissProUpsell()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#4a6080;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;" title="Dismiss">×</button>
-280|263|      <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
-281|264|        <div style="font-size:1.6rem;line-height:1;flex-shrink:0;">📬</div>
-282|265|        <div style="flex:1;min-width:200px;">
-283|266|          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Get this emailed every week</div>
-284|267|          <p style="font-size:0.9rem;color:#c8d8ea;margin-bottom:12px;line-height:1.6;">You just ran a manual scan. <strong style="color:#e8eef7;">Compliance Pro ($9/mo)</strong> runs this automatically every Monday — sends your grade, score diff, and a prioritised fix list straight to your inbox so you catch regressions before they matter.</p>
-285|268|          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-286|269|            <button onclick="scrollToProSignup()" style="background:var(--green);color:#071018;font-weight:700;font-size:0.85rem;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">Start Weekly Monitoring — $9/mo →</button>
-287|270|            <span style="font-size:0.78rem;color:#4a6080;">No setup · cancel anytime</span>
-288|271|          </div>
-289|272|        </div>
-290|273|      </div>
-291|274|    </div>
-292|275|
-293|276|    <!-- Empty state -->
-294|277|    <div class="empty-state" id="emptyState">
-295|278|      <div class="empty-icon">📋</div>
-296|279|      <div class="empty-title">Track your compliance posture over time</div>
-297|280|      <div class="empty-sub">Enter your domain and run a SOC 2 scan. Each scan is saved locally — run it monthly and watch your score trend improve as you fix issues.</div>
-298|281|    </div>
-299|282|
-300|283|  </div>
-301|284|
-302|285|  <!-- Sidebar -->
-303|286|  <div class="sidebar">
-304|287|
-305|288|    <div class="sidebar-card">
-306|289|      <div class="sidebar-title">Scan History</div>
-307|290|      <div id="historyList"><p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p></div>
-308|291|    </div>
-309|292|
-310|293|    <div class="plans-card" id="plans">
-311|294|      <div class="sidebar-title">Automated Monitoring</div>
-312|295|      <div style="background:rgba(61,225,158,0.06);border:1px solid rgba(61,225,158,0.25);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
-313|296|        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">✓ Live scans active</p>
-314|297|        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0;">Real-time DNS + HTTP checks on every scan — no sample data.</p>
-315|298|      </div>
-316|299|      <div class="plan-tier">
-317|300|        <div class="plan-tier-name">Free</div>
-318|301|        <div class="plan-tier-price">$0 <span>/ forever</span></div>
-319|302|        <ul class="plan-tier-features">
-320|303|          <li>On-demand scans anytime</li>
-321|304|          <li>8 SOC 2 controls</li>
-322|305|          <li>HIPAA &amp; PCI views</li>
-323|306|          <li class="no">No weekly email digest</li>
-324|307|          <li class="no">No score trend tracking</li>
-325|308|        </ul>
-326|309|        <a href="#scan" class="plan-tier-btn primary" onclick="document.getElementById('domainInput').focus();return false;">Run Free Scan →</a>
-327|310|      </div>
-328|311|      <div class="plan-tier featured">
-329|312|        <div class="plan-tier-name" style="color:var(--green);">Pro <span style="font-size:11px;font-weight:400;color:var(--muted);">— $9/mo</span></div>
-330|313|        <div class="plan-tier-price">$9 <span>/ month</span></div>
-331|314|        <ul class="plan-tier-features">
-332|315|          <li>Everything in Free</li>
-333|316|          <li>Weekly scan every Monday</li>
-334|317|          <li>Email digest with grade + diff</li>
-335|318|          <li>Score trend &amp; drop alerts</li>
-336|319|        </ul>
-337|320|        <form id="pro-signup-form" onsubmit="startProSignup(event)" style="margin-top:12px;">
-338|321|          <input type="email" id="pro-email" placeholder="you@company.com" required
-339|322|            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
-340|323|            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-341|324|          <input type="text" id="pro-domain" placeholder="yourdomain.com" required
-342|325|            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
-343|326|            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-344|327|          <button type="submit" id="pro-submit-btn"
-345|328|            style="width:100%;background:var(--green);color:#071018;font-weight:700;font-size:12px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;">
-346|329|            Start Weekly Monitoring →
-347|330|          </button>
-348|331|        </form>
-349|332|        <div id="pro-signup-msg" style="display:none;font-size:11px;margin-top:8px;text-align:center;line-height:1.4;"></div>
-350|333|      </div>
-351|334|    </div>
-352|335|
-353|336|    <div class="sidebar-card">
-354|337|      <div class="sidebar-title">What we check</div>
-355|338|      <div id="checksInfo" style="font-size:12px;color:var(--muted);line-height:1.9;">
-356|339|        <span style="color:var(--text);font-weight:600;">CC6.1</span> — HTTPS + HSTS + HTTP redirect<br>
-357|340|        <span style="color:var(--text);font-weight:600;">CC6.2</span> — X-Frame-Options / CSP framing<br>
-358|341|        <span style="color:var(--text);font-weight:600;">CC6.6</span> — Referrer-Policy, Permissions, Cookies<br>
-359|342|        <span style="color:var(--text);font-weight:600;">CC7.2</span> — Server / X-Powered-By exposure<br>
-360|343|        <span style="color:var(--text);font-weight:600;">CC8.1</span> — SPF + DMARC DNS records<br>
-361|344|        <span style="color:var(--text);font-weight:600;">A1</span> — Content-Security-Policy<br>
-362|345|        <span style="color:var(--text);font-weight:600;">A3</span> — TLS active + HSTS long-lived<br>
-363|346|        <span style="color:var(--text);font-weight:600;">A5</span> — SPF, DMARC policy, MX records
-364|347|      </div>
-365|348|    </div>
-366|349|
-367|350|  </div>
-368|351|</div>
-369|352|
-370|353|<div class="snack" id="snack"></div>
-371|354|
-372|355|<script>
-373|356|const API = '/api/compliance';
-374|357|const STORAGE_KEY = 'edgeiq_compliance_history'; // array of snapshots
-375|358|const GRADE_COLOR = { A:'#3de19e', B:'#70f0a8', C:'#ffb347', D:'#ff8c42', F:'#ff6b6b' };
-376|359|
-377|360|// ── Storage helpers ──────────────────────────────────────────────────────────
-378|361|
-379|362|function loadHistory() {
-380|363|  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
-381|364|}
-382|365|
-383|366|function saveHistory(history) {
-384|367|  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch {}
-385|368|}
-386|369|
-387|370|function addSnapshot(result) {
-388|371|  const history = loadHistory();
-389|372|  history.unshift({
-390|373|    domain: result.domain,
-391|374|    framework: result.framework,
-392|375|    score: result.score,
-393|376|    grade: result.grade,
-394|377|    passed: result.passed,
-395|378|    warning: result.warning,
-396|379|    failed: result.failed,
-397|380|    controls: result.controls,
-398|381|    scanned_at: new Date().toISOString(),
-399|382|  });
-400|383|  // Keep last 60 snapshots total
-401|384|  saveHistory(history.slice(0, 60));
-402|385|  return history;
-403|386|}
-404|387|
-405|388|// ── Render ───────────────────────────────────────────────────────────────────
-406|389|
-407|390|function gradeColor(grade) { return GRADE_COLOR[grade] || '#9fb0c7'; }
-408|391|
-409|392|function renderHero(snap) {
-410|393|  const el = document.getElementById('scoreHero');
-411|394|  const gc = document.getElementById('gradeCircle');
-412|395|  gc.textContent = snap.grade;
-413|396|  gc.style.color = gradeColor(snap.grade);
-414|397|  gc.style.borderColor = gradeColor(snap.grade);
-415|398|  document.getElementById('statScore').textContent = Math.round(snap.score) + '%';
-416|399|  document.getElementById('statScore').style.color = gradeColor(snap.grade);
-417|400|  document.getElementById('statPassed').textContent = snap.passed ?? '—';
-418|401|  document.getElementById('statWarning').textContent = snap.warning ?? '—';
-419|402|  document.getElementById('statFailed').textContent = snap.failed ?? '—';
-420|403|  document.getElementById('metaDomain').textContent = snap.domain;
-421|404|  document.getElementById('metaDate').textContent = new Date(snap.scanned_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-422|405|  document.getElementById('metaFramework').textContent = snap.framework || 'SOC 2';
-423|406|  el.style.display = 'block';
-424|407|}
-425|408|
-426|409|function renderControls(controls) {
-427|410|  const list = document.getElementById('controlsList');
-428|411|  list.innerHTML = '';
-429|412|  controls.forEach(c => {
-430|413|    const icon = c.status === 'pass' ? '✓' : c.status === 'warning' ? '!' : '✗';
-431|414|    list.innerHTML += `
-432|415|      <div class="control-row">
-433|416|        <div class="control-status ${c.status}">${icon}</div>
-434|417|        <div class="control-body">
-435|418|          <div class="control-name">${c.name}</div>
-436|419|          <div class="control-id">${c.id} · ${c.category}</div>
-437|420|          ${c.action ? `<div class="control-action">${c.action}</div>` : ''}
-438|421|        </div>
-439|422|        <div class="control-score" style="color:${c.score >= 80 ? 'var(--green)' : c.score >= 50 ? 'var(--yellow)' : 'var(--red)'}">${Math.round(c.score)}%</div>
-440|423|      </div>`;
-441|424|  });
-442|425|  document.getElementById('controlsCard').style.display = 'block';
-443|426|}
-444|427|
-445|428|function renderTrend(domain) {
-446|429|  const history = loadHistory().filter(s => s.domain === domain);
-447|430|  if (history.length < 2) {
-448|431|    document.getElementById('trendCard').style.display = 'none';
-449|432|    return;
-450|433|  }
-451|434|
-452|435|  // Chronological order for chart
-453|436|  const snapshots = history.slice().reverse();
-454|437|  document.getElementById('trendSubtitle').textContent =
-455|438|    domain + ' · ' + snapshots.length + ' scan' + (snapshots.length > 1 ? 's' : '');
-456|439|  document.getElementById('trendCard').style.display = 'block';
-457|440|
-458|441|  const canvas = document.getElementById('trendCanvas');
-459|442|  const W = canvas.parentElement.offsetWidth - 40;
-460|443|  const H = 120;
-461|444|  canvas.width = W;
-462|445|  canvas.height = H;
-463|446|  const ctx = canvas.getContext('2d');
-464|447|  ctx.clearRect(0, 0, W, H);
-465|448|
-466|449|  const PAD = { t: 10, r: 20, b: 28, l: 36 };
-467|450|  const cw = W - PAD.l - PAD.r;
-468|451|  const ch = H - PAD.t - PAD.b;
-469|452|
-470|453|  // Grid lines at 25, 50, 75, 100
-471|454|  ctx.strokeStyle = 'rgba(30,46,62,0.8)';
-472|455|  ctx.lineWidth = 1;
-473|456|  [25, 50, 75, 100].forEach(v => {
-474|457|    const y = PAD.t + ch - (v / 100) * ch;
-475|458|    ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + cw, y); ctx.stroke();
-476|459|    ctx.fillStyle = '#4a6080';
-477|460|    ctx.font = '10px Inter,system-ui,sans-serif';
-478|461|    ctx.textAlign = 'right';
-479|462|    ctx.fillText(v, PAD.l - 6, y + 3.5);
-480|463|  });
-481|464|
-482|465|  const n = snapshots.length;
-483|466|  const pts = snapshots.map((s, i) => ({
-484|467|    x: PAD.l + (n === 1 ? cw / 2 : (i / (n - 1)) * cw),
-485|468|    y: PAD.t + ch - (s.score / 100) * ch,
-486|469|    score: s.score,
-487|470|    grade: s.grade,
-488|471|    date: new Date(s.scanned_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-489|472|  }));
-490|473|
-491|474|  // Gradient fill
-492|475|  const grad = ctx.createLinearGradient(0, PAD.t, 0, PAD.t + ch);
-493|476|  grad.addColorStop(0, 'rgba(61,225,158,0.25)');
-494|477|  grad.addColorStop(1, 'rgba(61,225,158,0.01)');
-495|478|  ctx.beginPath();
-496|479|  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
-497|480|  ctx.lineTo(pts[pts.length - 1].x, PAD.t + ch);
-498|481|  ctx.lineTo(pts[0].x, PAD.t + ch);
-499|482|  ctx.closePath();
-500|483|  ctx.fillStyle = grad;
-501|484|  ctx.fill();
-502|485|
-503|486|  // Line
-504|487|  ctx.beginPath();
-505|488|  ctx.strokeStyle = '#3de19e';
-506|489|  ctx.lineWidth = 2;
-507|490|  ctx.lineJoin = 'round';
-508|491|  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
-509|492|  ctx.stroke();
-510|493|
-511|494|  // Dots + date labels
-512|495|  pts.forEach((p, i) => {
-513|496|    ctx.beginPath();
-514|497|    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-515|498|    ctx.fillStyle = gradeColor(p.grade);
-516|499|    ctx.fill();
-517|500|
-518|501|    // Date label every other point if crowded
-519|502|    if (n <= 8 || i % Math.ceil(n / 8) === 0 || i === n - 1) {
-520|503|      ctx.fillStyle = '#4a6080';
-521|504|      ctx.font = '9px Inter,system-ui,sans-serif';
-522|505|      ctx.textAlign = 'center';
-523|506|      ctx.fillText(p.date, p.x, PAD.t + ch + 16);
-524|507|    }
-525|508|  });
-526|509|}
-527|510|
-528|511|function renderHistory(activeDomain) {
-529|512|  const history = loadHistory();
-530|513|  const list = document.getElementById('historyList');
-531|514|  if (!history.length) {
-532|515|    list.innerHTML = '<p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p>';
-533|516|    return;
-534|517|  }
-535|518|
-536|519|  // Group by domain, show latest per domain + count
-537|520|  const byDomain = {};
-538|521|  history.forEach(s => {
-539|522|    if (!byDomain[s.domain]) byDomain[s.domain] = [];
-540|523|    byDomain[s.domain].push(s);
-541|524|  });
-542|525|
-543|526|  list.innerHTML = '';
-544|527|  Object.entries(byDomain).forEach(([domain, snaps]) => {
-545|528|    const latest = snaps[0];
-546|529|    const isActive = domain === activeDomain;
-547|530|    const div = document.createElement('div');
-548|531|    div.className = 'history-item' + (isActive ? ' active' : '');
-549|532|    div.innerHTML = `
-550|533|      <div class="history-grade" style="color:${gradeColor(latest.grade)}">${latest.grade}</div>
-551|534|      <div>
-552|535|        <div class="history-domain" title="${domain}">${domain}</div>
-553|536|        <div class="history-date">${new Date(latest.scanned_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} · ${snaps.length} scan${snaps.length>1?'s':''}</div>
-554|537|      </div>
-555|538|      <div class="history-score">${Math.round(latest.score)}%</div>`;
-556|539|    div.addEventListener('click', () => loadDomainHistory(domain));
-557|540|    list.appendChild(div);
-558|541|  });
-559|542|}
-560|543|
-561|544|function loadDomainHistory(domain) {
-562|545|  const history = loadHistory().filter(s => s.domain === domain);
-563|546|  if (!history.length) return;
-564|547|  const latest = history[0];
-565|548|  document.getElementById('domainInput').value = domain;
-566|549|  document.getElementById('emptyState').style.display = 'none';
-567|550|  renderHero(latest);
-568|551|  if (latest.controls) renderControls(latest.controls);
-569|552|  renderTrend(domain);
-570|553|  renderHistory(domain);
-571|554|}
-572|555|
-573|556|// ── Scan ─────────────────────────────────────────────────────────────────────
-574|557|
-575|558|async function runScan() {
-576|559|  let domain = document.getElementById('domainInput').value.trim().toLowerCase()
-577|560|    .replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
-578|561|
-579|562|  if (!domain || !/^[a-z0-9][a-z0-9\-\.]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
-580|563|    document.getElementById('domainInput').style.borderColor = 'var(--red)';
-581|564|    setTimeout(() => document.getElementById('domainInput').style.borderColor = '', 1400);
-582|565|    return;
-583|566|  }
-584|567|
-585|568|  const framework = document.getElementById('frameworkSelect').value;
-586|569|  const btn = document.getElementById('scanBtn');
-587|570|  btn.disabled = true;
-588|571|  btn.textContent = 'Scanning…';
-589|572|
-590|573|  const bar = document.getElementById('statusBar');
-591|574|  const barInner = document.getElementById('statusBarInner');
-592|575|  bar.style.display = 'block';
-593|576|  barInner.style.width = '15%';
-594|577|
-595|578|  document.getElementById('emptyState').style.display = 'none';
-596|579|
-597|580|  let pct = 15;
-598|581|  const ticker = setInterval(() => {
-599|582|    pct = Math.min(pct + 8, 88);
-600|583|    barInner.style.width = pct + '%';
-601|584|  }, 600);
-602|585|
-603|586|  try {
-604|587|    const resp = await fetch(`${API}?domain=${encodeURIComponent(domain)}&framework=${encodeURIComponent(framework)}`);
-605|588|    clearInterval(ticker);
-606|589|    barInner.style.width = '100%';
-607|590|
-608|591|    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-609|592|    const result = await resp.json();
-610|593|
-611|594|    const history = addSnapshot(result);
-612|595|    renderHero(history[0]);
-613|596|    renderControls(result.controls || []);
-614|597|    renderTrend(domain);
-615|598|    renderHistory(domain);
-616|599|
-617|600|    setTimeout(() => { bar.style.display = 'none'; barInner.style.width = '0'; }, 600);
-618|601|    snack('Scan complete — snapshot saved');
-619|602|
-620|603|    // Show Pro upsell 1.5s after scan (unless already dismissed or signed up)
-621|604|    if (!localStorage.getItem('compliance_pro_upsell_dismissed') && !localStorage.getItem('compliance_pro_active')) {
-622|605|      setTimeout(() => {
-623|606|        const el = document.getElementById('proUpsell');
-624|607|        if (el) el.style.display = 'block';
-625|608|      }, 1500);
-626|609|    }
-627|610|  } catch (err) {
-628|611|    clearInterval(ticker);
-629|612|    bar.style.display = 'none';
-630|613|    snack('Scan failed — please try again');
-631|614|    console.error(err);
-632|615|  }
-633|616|
-634|617|  btn.disabled = false;
-635|618|  btn.textContent = 'Run Scan';
-636|619|}
-637|620|
-638|621|function dismissProUpsell() {
-639|622|  const el = document.getElementById('proUpsell');
-640|623|  if (el) el.style.display = 'none';
-641|624|  try { localStorage.setItem('compliance_pro_upsell_dismissed', '1'); } catch(x) {}
-642|625|}
-643|626|
-644|627|function scrollToProSignup() {
-645|628|  const form = document.getElementById('pro-signup-form');
-646|629|  if (form) {
-647|630|    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-648|631|    setTimeout(() => {
-649|632|      const emailInput = document.getElementById('pro-email');
-650|633|      if (emailInput) emailInput.focus();
-651|634|    }, 600);
-652|635|  }
-653|636|}
-654|637|
-655|638|function snack(msg) {
-656|639|  const el = document.getElementById('snack');
-657|640|  el.textContent = msg;
-658|641|  el.style.display = 'block';
-659|642|  setTimeout(() => { el.style.display = 'none'; }, 3000);
-660|643|}
-661|644|
-662|645|// ── Init ─────────────────────────────────────────────────────────────────────
-663|646|
-664|647|const FRAMEWORK_CHECKS = {
-665|648|  soc2:  '<b>CC6.1</b> — HTTPS + HSTS + HTTP redirect<br><b>CC6.2</b> — X-Frame-Options / CSP framing<br><b>CC6.6</b> — Referrer-Policy, Permissions, Cookies<br><b>CC7.2</b> — Server / X-Powered-By exposure<br><b>CC8.1</b> — SPF + DMARC DNS records<br><b>A1</b> — Content-Security-Policy<br><b>A3</b> — TLS active + HSTS long-lived<br><b>A5</b> — SPF, DMARC policy, MX records',
-666|649|  hipaa: '<b>164.312(a)(1)</b> — HTTPS + HSTS + redirect<br><b>164.312(c)(1)</b> — TLS + HSTS data integrity<br><b>164.308(a)(5)</b> — Server version exposure',
-667|650|  pci:   '<b>Req 1</b> — HTTPS + HSTS + HTTP redirect<br><b>Req 6</b> — Content-Security-Policy<br><b>Req 11</b> — Server / X-Powered-By exposure',
-668|651|};
-669|652|
-670|653|document.getElementById('frameworkSelect').addEventListener('change', function() {
-671|654|  const info = document.getElementById('checksInfo');
-672|655|  info.innerHTML = FRAMEWORK_CHECKS[this.value] || FRAMEWORK_CHECKS.soc2;
-673|656|});
-674|657|
-675|658|document.getElementById('domainInput').addEventListener('keydown', e => {
-676|659|  if (e.key === 'Enter') runScan();
-677|660|});
-678|661|
-679|662|// Pre-fill from URL param
-680|663|const urlDomain = new URLSearchParams(location.search).get('domain');
-681|664|if (urlDomain) {
-682|665|  document.getElementById('domainInput').value = urlDomain;
-683|666|  runScan();
-684|667|} else {
-685|668|  // Load most recently scanned domain from history
-686|669|  const history = loadHistory();
-687|670|  if (history.length) {
-688|671|    loadDomainHistory(history[0].domain);
-689|672|  }
-690|673|}
-691|674|</script>
-692|675|<script>
-693|676|var COMPLIANCE_PRO_LINK = '/api/compliance-checkout?plan=starter';
-694|677|
-695|678|async function startProSignup(e) {
-696|679|  e.preventDefault();
-697|680|  var email  = document.getElementById('pro-email').value.trim();
-698|681|  var domain = document.getElementById('pro-domain').value.trim()
-699|682|                  .toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-700|683|  var btn = document.getElementById('pro-submit-btn');
-701|684|  var msg = document.getElementById('pro-signup-msg');
-702|685|  if (!email || !domain) return;
-703|686|  btn.disabled = true;
-704|687|  btn.textContent = 'Redirecting…';
-705|688|  msg.style.display = 'none';
-706|689|  try {
-707|690|    sessionStorage.setItem('compliance_pending', JSON.stringify({ email: email, domain: domain, plan: 'pro' }));
-708|691|    try { localStorage.setItem('compliance_pro_active', '1'); } catch(x) {}
-709|692|    var url = COMPLIANCE_PRO_LINK
-710|693|      + '?prefilled_email=' + encodeURIComponent(email)
-711|694|      + '&client_reference_id=' + encodeURIComponent(domain);
-712|695|    window.location.href = url;
-713|696|  } catch (err) {
-714|697|    msg.style.color = 'var(--red)';
-715|698|    msg.textContent = 'Something went wrong — please try again.';
-716|699|    msg.style.display = 'block';
-717|700|    btn.disabled = false;
-718|701|    btn.textContent = 'Start Weekly Monitoring →';
-719|702|  }
-720|703|}
-721|704|
-722|705|function toggleMobileMenu() {
-723|706|  var btn = document.getElementById('nav-hamburger');
-724|707|  var menu = document.getElementById('nav-mobile-menu');
-725|708|  btn.classList.toggle('open');
-726|709|  menu.classList.toggle('open');
-727|710|}
-728|711|document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
-729|712|  a.addEventListener('click', function() {
-730|713|    document.getElementById('nav-hamburger').classList.remove('open');
-731|714|    document.getElementById('nav-mobile-menu').classList.remove('open');
-732|715|  });
-733|716|});
-734|717|</script>
-735|718|<footer style="text-align:center;padding:28px 20px;border-top:1px solid #1e2e3e;margin-top:48px;font-size:0.82rem;color:#4a6080;">
-736|719|  <p><a href="/" style="color:#4a6080;">Home</a> · <a href="/products/" style="color:#4a6080;">All Tools</a> · <a href="/privacy.html" style="color:#4a6080;">Privacy</a> · <a href="mailto:support@edgeiqlabs.com?subject=Finding%20Report" style="color:#4a6080;">Report a Finding</a> · <a href="mailto:billing@edgeiqlabs.com" style="color:#4a6080;">Billing</a></p>
-737|720|  <p style="margin-top:8px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
-738|721|</footer>
-739|722|<!-- Relay Affiliate Tracking -->
-740|723|<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
-741|724|<script>RelayIntegration.init({ relayBaseUrl: 'https://relay.edgeiqlabs.com' });</script>
-742|725|<footer class="site-footer">
+
+<nav>
+  <a href="/" class="nav-logo">EdgeIQ<span> Labs</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/account/">My Account</a>
+    <a href="/api/compliance-checkout?plan=starter" class="nav-cta" onclick="document.getElementById('domainInput').focus();return false;" style="background:var(--green);color:#071018;">Free Scan</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="product-strip">
+  <div class="product-strip-inner">
+    <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+    <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+    <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+    <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+    <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+    <a href="/brandguard/" style="color:#f472b6;">🛡️ BrandGuard</a>
+  </div>
+</div>
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <span class="mob-section">Navigation</span>
+  <a href="/">Home</a>
+  <a href="/products/">All Products</a>
+  <a href="/blog/">Blog</a>
+  <span class="mob-section">Products</span>
+  <a href="/dashboard/" style="color:#3dd9ff;">📊 Dashboard</a>
+  <a href="/pulse/" style="color:#3de19e;">🟢 Pulse</a>
+  <a href="/inbox-shield/" style="color:#b47aff;">✉ Inbox Shield</a>
+  <a href="/vendor-watch/" style="color:#ff9f43;">📡 Vendor Watch</a>
+  <a href="/integrations/" style="color:#a78bfa;">🔗 Integrations</a>
+  <a href="https://phishsim.edgeiqlabs.com/" style="color:#ff6b7a;">🎣 PhishSim</a>
+  <a href="/compliance/" style="color:#f472b6;">📋 Compliance</a>
+  <a href="/account/">🔐 My Account</a>
+  <a class="mob-cta" href="/compliance/">Free Compliance Scan →</a>
+</div>
+
+<div class="page">
+  <!-- Main column -->
+  <div>
+
+
+    <!-- Scan bar -->
+    <div class="scan-bar">
+      <div class="scan-bar-label">Compliance Posture Tracker</div>
+      <input id="domainInput" class="scan-input" type="text" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
+      <select id="frameworkSelect" class="framework-select">
+        <option value="soc2">SOC 2</option>
+        <option value="hipaa">HIPAA</option>
+        <option value="pci">PCI-DSS</option>
+      </select>
+      <button id="scanBtn" class="scan-btn" onclick="runScan()">Run Scan</button>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="status-bar" id="statusBar">
+      <div class="status-bar-inner" id="statusBarInner"></div>
+    </div>
+
+    <!-- Score hero (shown after scan) -->
+    <div class="score-hero" id="scoreHero">
+      <div class="score-hero-inner">
+        <div class="grade-circle" id="gradeCircle">—</div>
+        <div class="score-stats">
+          <div class="stat"><div class="stat-val" id="statScore">—</div><div class="stat-label">Score</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--green)" id="statPassed">—</div><div class="stat-label">Passed</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--yellow)" id="statWarning">—</div><div class="stat-label">Warning</div></div>
+          <div class="stat"><div class="stat-val" style="color:var(--red)" id="statFailed">—</div><div class="stat-label">Failed</div></div>
+        </div>
+        <div class="score-meta">
+          <strong id="metaDomain">—</strong>
+          <span id="metaDate">—</span><br>
+          <span id="metaFramework">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trend chart (shown when 2+ snapshots exist) -->
+    <div class="trend-card" id="trendCard">
+      <div class="trend-header">
+        <div>
+          <div class="trend-title">Score over time</div>
+          <div class="trend-subtitle" id="trendSubtitle">Compliance posture history</div>
+        </div>
+      </div>
+      <canvas id="trendCanvas" height="120"></canvas>
+    </div>
+
+    <!-- Controls breakdown -->
+    <div class="controls-card" id="controlsCard">
+      <div class="controls-header">
+        <div class="controls-title">Control Breakdown</div>
+      </div>
+      <div class="controls-list" id="controlsList"></div>
+    </div>
+
+    <!-- Pro upsell (shown after first scan) -->
+    <div id="proUpsell" style="display:none;background:linear-gradient(135deg,#071810,#0b1f14);border:1px solid rgba(61,225,158,0.35);border-radius:12px;padding:20px 22px;margin-bottom:20px;position:relative;">
+      <button onclick="dismissProUpsell()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#4a6080;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;" title="Dismiss">×</button>
+      <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div style="font-size:1.6rem;line-height:1;flex-shrink:0;">📬</div>
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Get this emailed every week</div>
+          <p style="font-size:0.9rem;color:#c8d8ea;margin-bottom:12px;line-height:1.6;">You just ran a manual scan. <strong style="color:#e8eef7;">Compliance Pro ($9/mo)</strong> runs this automatically every Monday — sends your grade, score diff, and a prioritised fix list straight to your inbox so you catch regressions before they matter.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <button onclick="scrollToProSignup()" style="background:var(--green);color:#071018;font-weight:700;font-size:0.85rem;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">Start Weekly Monitoring — $9/mo →</button>
+            <span style="font-size:0.78rem;color:#4a6080;">No setup · cancel anytime</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">Track your compliance posture over time</div>
+      <div class="empty-sub">Enter your domain and run a SOC 2 scan. Each scan is saved locally — run it monthly and watch your score trend improve as you fix issues.</div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Scan History</div>
+      <div id="historyList"><p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p></div>
+    </div>
+
+    <div class="plans-card" id="plans">
+      <div class="sidebar-title">Automated Monitoring</div>
+      <div style="background:rgba(61,225,158,0.06);border:1px solid rgba(61,225,158,0.25);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">✓ Live scans active</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0;">Real-time DNS + HTTP checks on every scan — no sample data.</p>
+      </div>
+      <div class="plan-tier">
+        <div class="plan-tier-name">Free</div>
+        <div class="plan-tier-price">$0 <span>/ forever</span></div>
+        <ul class="plan-tier-features">
+          <li>On-demand scans anytime</li>
+          <li>8 SOC 2 controls</li>
+          <li>HIPAA &amp; PCI views</li>
+          <li class="no">No weekly email digest</li>
+          <li class="no">No score trend tracking</li>
+        </ul>
+        <a href="#scan" class="plan-tier-btn primary" onclick="document.getElementById('domainInput').focus();return false;">Run Free Scan →</a>
+      </div>
+      <div class="plan-tier featured">
+        <div class="plan-tier-name" style="color:var(--green);">Pro <span style="font-size:11px;font-weight:400;color:var(--muted);">— $9/mo</span></div>
+        <div class="plan-tier-price">$9 <span>/ month</span></div>
+        <ul class="plan-tier-features">
+          <li>Everything in Free</li>
+          <li>Weekly scan every Monday</li>
+          <li>Email digest with grade + diff</li>
+          <li>Score trend &amp; drop alerts</li>
+        </ul>
+        <form id="pro-signup-form" onsubmit="startProSignup(event)" style="margin-top:12px;">
+          <input type="email" id="pro-email" placeholder="you@company.com" required
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <input type="text" id="pro-domain" placeholder="yourdomain.com" required
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <button type="submit" id="pro-submit-btn"
+            style="width:100%;background:var(--green);color:#071018;font-weight:700;font-size:12px;padding:10px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;">
+            Start Weekly Monitoring →
+          </button>
+        </form>
+        <div id="pro-signup-msg" style="display:none;font-size:11px;margin-top:8px;text-align:center;line-height:1.4;"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">What we check</div>
+      <div id="checksInfo" style="font-size:12px;color:var(--muted);line-height:1.9;">
+        <span style="color:var(--text);font-weight:600;">CC6.1</span> — HTTPS + HSTS + HTTP redirect<br>
+        <span style="color:var(--text);font-weight:600;">CC6.2</span> — X-Frame-Options / CSP framing<br>
+        <span style="color:var(--text);font-weight:600;">CC6.6</span> — Referrer-Policy, Permissions, Cookies<br>
+        <span style="color:var(--text);font-weight:600;">CC7.2</span> — Server / X-Powered-By exposure<br>
+        <span style="color:var(--text);font-weight:600;">CC8.1</span> — SPF + DMARC DNS records<br>
+        <span style="color:var(--text);font-weight:600;">A1</span> — Content-Security-Policy<br>
+        <span style="color:var(--text);font-weight:600;">A3</span> — TLS active + HSTS long-lived<br>
+        <span style="color:var(--text);font-weight:600;">A5</span> — SPF, DMARC policy, MX records
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script>
+const API = '/api/compliance';
+const STORAGE_KEY = 'edgeiq_compliance_history'; // array of snapshots
+const GRADE_COLOR = { A:'#3de19e', B:'#70f0a8', C:'#ffb347', D:'#ff8c42', F:'#ff6b6b' };
+
+// ── Storage helpers ──────────────────────────────────────────────────────────
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHistory(history) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch {}
+}
+
+function addSnapshot(result) {
+  const history = loadHistory();
+  history.unshift({
+    domain: result.domain,
+    framework: result.framework,
+    score: result.score,
+    grade: result.grade,
+    passed: result.passed,
+    warning: result.warning,
+    failed: result.failed,
+    controls: result.controls,
+    scanned_at: new Date().toISOString(),
+  });
+  // Keep last 60 snapshots total
+  saveHistory(history.slice(0, 60));
+  return history;
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function gradeColor(grade) { return GRADE_COLOR[grade] || '#9fb0c7'; }
+
+function renderHero(snap) {
+  const el = document.getElementById('scoreHero');
+  const gc = document.getElementById('gradeCircle');
+  gc.textContent = snap.grade;
+  gc.style.color = gradeColor(snap.grade);
+  gc.style.borderColor = gradeColor(snap.grade);
+  document.getElementById('statScore').textContent = Math.round(snap.score) + '%';
+  document.getElementById('statScore').style.color = gradeColor(snap.grade);
+  document.getElementById('statPassed').textContent = snap.passed ?? '—';
+  document.getElementById('statWarning').textContent = snap.warning ?? '—';
+  document.getElementById('statFailed').textContent = snap.failed ?? '—';
+  document.getElementById('metaDomain').textContent = snap.domain;
+  document.getElementById('metaDate').textContent = new Date(snap.scanned_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('metaFramework').textContent = snap.framework || 'SOC 2';
+  el.style.display = 'block';
+}
+
+function renderControls(controls) {
+  const list = document.getElementById('controlsList');
+  list.innerHTML = '';
+  controls.forEach(c => {
+    const icon = c.status === 'pass' ? '✓' : c.status === 'warning' ? '!' : '✗';
+    list.innerHTML += `
+      <div class="control-row">
+        <div class="control-status ${c.status}">${icon}</div>
+        <div class="control-body">
+          <div class="control-name">${c.name}</div>
+          <div class="control-id">${c.id} · ${c.category}</div>
+          ${c.action ? `<div class="control-action">${c.action}</div>` : ''}
+        </div>
+        <div class="control-score" style="color:${c.score >= 80 ? 'var(--green)' : c.score >= 50 ? 'var(--yellow)' : 'var(--red)'}">${Math.round(c.score)}%</div>
+      </div>`;
+  });
+  document.getElementById('controlsCard').style.display = 'block';
+}
+
+function renderTrend(domain) {
+  const history = loadHistory().filter(s => s.domain === domain);
+  if (history.length < 2) {
+    document.getElementById('trendCard').style.display = 'none';
+    return;
+  }
+
+  // Chronological order for chart
+  const snapshots = history.slice().reverse();
+  document.getElementById('trendSubtitle').textContent =
+    domain + ' · ' + snapshots.length + ' scan' + (snapshots.length > 1 ? 's' : '');
+  document.getElementById('trendCard').style.display = 'block';
+
+  const canvas = document.getElementById('trendCanvas');
+  const W = canvas.parentElement.offsetWidth - 40;
+  const H = 120;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { t: 10, r: 20, b: 28, l: 36 };
+  const cw = W - PAD.l - PAD.r;
+  const ch = H - PAD.t - PAD.b;
+
+  // Grid lines at 25, 50, 75, 100
+  ctx.strokeStyle = 'rgba(30,46,62,0.8)';
+  ctx.lineWidth = 1;
+  [25, 50, 75, 100].forEach(v => {
+    const y = PAD.t + ch - (v / 100) * ch;
+    ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + cw, y); ctx.stroke();
+    ctx.fillStyle = '#4a6080';
+    ctx.font = '10px Inter,system-ui,sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v, PAD.l - 6, y + 3.5);
+  });
+
+  const n = snapshots.length;
+  const pts = snapshots.map((s, i) => ({
+    x: PAD.l + (n === 1 ? cw / 2 : (i / (n - 1)) * cw),
+    y: PAD.t + ch - (s.score / 100) * ch,
+    score: s.score,
+    grade: s.grade,
+    date: new Date(s.scanned_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+  }));
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, PAD.t, 0, PAD.t + ch);
+  grad.addColorStop(0, 'rgba(61,225,158,0.25)');
+  grad.addColorStop(1, 'rgba(61,225,158,0.01)');
+  ctx.beginPath();
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length - 1].x, PAD.t + ch);
+  ctx.lineTo(pts[0].x, PAD.t + ch);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#3de19e';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.stroke();
+
+  // Dots + date labels
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = gradeColor(p.grade);
+    ctx.fill();
+
+    // Date label every other point if crowded
+    if (n <= 8 || i % Math.ceil(n / 8) === 0 || i === n - 1) {
+      ctx.fillStyle = '#4a6080';
+      ctx.font = '9px Inter,system-ui,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.date, p.x, PAD.t + ch + 16);
+    }
+  });
+}
+
+function renderHistory(activeDomain) {
+  const history = loadHistory();
+  const list = document.getElementById('historyList');
+  if (!history.length) {
+    list.innerHTML = '<p class="no-history">No scans yet. Enter a domain above and click Run Scan.</p>';
+    return;
+  }
+
+  // Group by domain, show latest per domain + count
+  const byDomain = {};
+  history.forEach(s => {
+    if (!byDomain[s.domain]) byDomain[s.domain] = [];
+    byDomain[s.domain].push(s);
+  });
+
+  list.innerHTML = '';
+  Object.entries(byDomain).forEach(([domain, snaps]) => {
+    const latest = snaps[0];
+    const isActive = domain === activeDomain;
+    const div = document.createElement('div');
+    div.className = 'history-item' + (isActive ? ' active' : '');
+    div.innerHTML = `
+      <div class="history-grade" style="color:${gradeColor(latest.grade)}">${latest.grade}</div>
+      <div>
+        <div class="history-domain" title="${domain}">${domain}</div>
+        <div class="history-date">${new Date(latest.scanned_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} · ${snaps.length} scan${snaps.length>1?'s':''}</div>
+      </div>
+      <div class="history-score">${Math.round(latest.score)}%</div>`;
+    div.addEventListener('click', () => loadDomainHistory(domain));
+    list.appendChild(div);
+  });
+}
+
+function loadDomainHistory(domain) {
+  const history = loadHistory().filter(s => s.domain === domain);
+  if (!history.length) return;
+  const latest = history[0];
+  document.getElementById('domainInput').value = domain;
+  document.getElementById('emptyState').style.display = 'none';
+  renderHero(latest);
+  if (latest.controls) renderControls(latest.controls);
+  renderTrend(domain);
+  renderHistory(domain);
+}
+
+// ── Scan ─────────────────────────────────────────────────────────────────────
+
+async function runScan() {
+  let domain = document.getElementById('domainInput').value.trim().toLowerCase()
+    .replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+
+  if (!domain || !/^[a-z0-9][a-z0-9\-\.]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
+    document.getElementById('domainInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('domainInput').style.borderColor = '', 1400);
+    return;
+  }
+
+  const framework = document.getElementById('frameworkSelect').value;
+  const btn = document.getElementById('scanBtn');
+  btn.disabled = true;
+  btn.textContent = 'Scanning…';
+
+  const bar = document.getElementById('statusBar');
+  const barInner = document.getElementById('statusBarInner');
+  bar.style.display = 'block';
+  barInner.style.width = '15%';
+
+  document.getElementById('emptyState').style.display = 'none';
+
+  let pct = 15;
+  const ticker = setInterval(() => {
+    pct = Math.min(pct + 8, 88);
+    barInner.style.width = pct + '%';
+  }, 600);
+
+  try {
+    const resp = await fetch(`${API}?domain=${encodeURIComponent(domain)}&framework=${encodeURIComponent(framework)}`);
+    clearInterval(ticker);
+    barInner.style.width = '100%';
+
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const result = await resp.json();
+
+    const history = addSnapshot(result);
+    renderHero(history[0]);
+    renderControls(result.controls || []);
+    renderTrend(domain);
+    renderHistory(domain);
+
+    setTimeout(() => { bar.style.display = 'none'; barInner.style.width = '0'; }, 600);
+    snack('Scan complete — snapshot saved');
+
+    // Show Pro upsell 1.5s after scan (unless already dismissed or signed up)
+    if (!localStorage.getItem('compliance_pro_upsell_dismissed') && !localStorage.getItem('compliance_pro_active')) {
+      setTimeout(() => {
+        const el = document.getElementById('proUpsell');
+        if (el) el.style.display = 'block';
+      }, 1500);
+    }
+  } catch (err) {
+    clearInterval(ticker);
+    bar.style.display = 'none';
+    snack('Scan failed — please try again');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Run Scan';
+}
+
+function dismissProUpsell() {
+  const el = document.getElementById('proUpsell');
+  if (el) el.style.display = 'none';
+  try { localStorage.setItem('compliance_pro_upsell_dismissed', '1'); } catch(x) {}
+}
+
+function scrollToProSignup() {
+  const form = document.getElementById('pro-signup-form');
+  if (form) {
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      const emailInput = document.getElementById('pro-email');
+      if (emailInput) emailInput.focus();
+    }, 600);
+  }
+}
+
+function snack(msg) {
+  const el = document.getElementById('snack');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+const FRAMEWORK_CHECKS = {
+  soc2:  '<b>CC6.1</b> — HTTPS + HSTS + HTTP redirect<br><b>CC6.2</b> — X-Frame-Options / CSP framing<br><b>CC6.6</b> — Referrer-Policy, Permissions, Cookies<br><b>CC7.2</b> — Server / X-Powered-By exposure<br><b>CC8.1</b> — SPF + DMARC DNS records<br><b>A1</b> — Content-Security-Policy<br><b>A3</b> — TLS active + HSTS long-lived<br><b>A5</b> — SPF, DMARC policy, MX records',
+  hipaa: '<b>164.312(a)(1)</b> — HTTPS + HSTS + redirect<br><b>164.312(c)(1)</b> — TLS + HSTS data integrity<br><b>164.308(a)(5)</b> — Server version exposure',
+  pci:   '<b>Req 1</b> — HTTPS + HSTS + HTTP redirect<br><b>Req 6</b> — Content-Security-Policy<br><b>Req 11</b> — Server / X-Powered-By exposure',
+};
+
+document.getElementById('frameworkSelect').addEventListener('change', function() {
+  const info = document.getElementById('checksInfo');
+  info.innerHTML = FRAMEWORK_CHECKS[this.value] || FRAMEWORK_CHECKS.soc2;
+});
+
+document.getElementById('domainInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runScan();
+});
+
+// Pre-fill from URL param
+const urlDomain = new URLSearchParams(location.search).get('domain');
+if (urlDomain) {
+  document.getElementById('domainInput').value = urlDomain;
+  runScan();
+} else {
+  // Load most recently scanned domain from history
+  const history = loadHistory();
+  if (history.length) {
+    loadDomainHistory(history[0].domain);
+  }
+}
+</script>
+<script>
+var COMPLIANCE_PRO_LINK = '/api/compliance-checkout?plan=starter';
+
+async function startProSignup(e) {
+  e.preventDefault();
+  var email  = document.getElementById('pro-email').value.trim();
+  var domain = document.getElementById('pro-domain').value.trim()
+                  .toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  var btn = document.getElementById('pro-submit-btn');
+  var msg = document.getElementById('pro-signup-msg');
+  if (!email || !domain) return;
+  btn.disabled = true;
+  btn.textContent = 'Redirecting…';
+  msg.style.display = 'none';
+  try {
+    sessionStorage.setItem('compliance_pending', JSON.stringify({ email: email, domain: domain, plan: 'pro' }));
+    try { localStorage.setItem('compliance_pro_active', '1'); } catch(x) {}
+    var url = COMPLIANCE_PRO_LINK
+      + '?prefilled_email=' + encodeURIComponent(email)
+      + '&client_reference_id=' + encodeURIComponent(domain);
+    window.location.href = url;
+  } catch (err) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Something went wrong — please try again.';
+    msg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Start Weekly Monitoring →';
+  }
+}
+
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+<footer style="text-align:center;padding:28px 20px;border-top:1px solid #1e2e3e;margin-top:48px;font-size:0.82rem;color:#4a6080;">
+  <p><a href="/" style="color:#4a6080;">Home</a> · <a href="/products/" style="color:#4a6080;">All Tools</a> · <a href="/privacy.html" style="color:#4a6080;">Privacy</a> · <a href="mailto:support@edgeiqlabs.com?subject=Finding%20Report" style="color:#4a6080;">Report a Finding</a> · <a href="mailto:billing@edgeiqlabs.com" style="color:#4a6080;">Billing</a></p>
+  <p style="margin-top:8px;">© 2026 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+<!-- Relay Affiliate Tracking -->
+<script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>
+<script>RelayIntegration.init({ relayBaseUrl: 'https://relay.edgeiqlabs.com' });</script>
+<footer class="site-footer">
 743|    <div class="footer-inner">
 744|      <div class="footer-brand">
 745|        <strong>EdgeIQ Labs</strong>
@@ -755,4 +755,4 @@
 755|    </div>
 756|  </footer>
 757|</body>
-758|726|</html>
+</html>
