@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EdgeIQ Developer API — Programmatic Security Scanning</title>
+  <meta name="description" content="Access EdgeIQ security scanners programmatically. Repo scanning, header analysis, SSL checks, DNS lookups, breach detection — all via REST API."/>
+  <link rel="stylesheet" href="/css/design-system.css"/>
+  <style>
+    .dev-hero{text-align:center;padding:60px 20px 40px;}
+    .dev-hero h1{font-size:2.4rem;font-weight:900;color:var(--text);margin-bottom:12px;}
+    .dev-hero p{color:var(--muted);font-size:1.1rem;max-width:650px;margin:0 auto 32px;line-height:1.6;}
+    .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:900px;margin:0 auto 60px;padding:0 20px;}
+    .price-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;transition:border-color 0.2s;}
+    .price-card.featured{border-color:var(--accent);box-shadow:0 0 30px rgba(61,217,255,0.1);}
+    .price-card h3{color:var(--text);margin:0 0 8px;font-size:1.2rem;}
+    .price-card .price{font-size:2.5rem;font-weight:900;color:var(--accent);margin:16px 0;}
+    .price-card .price span{font-size:1rem;font-weight:400;color:var(--muted);}
+    .price-card ul{list-style:none;padding:0;margin:20px 0;text-align:left;}
+    .price-card li{color:var(--muted);padding:6px 0;font-size:0.9rem;border-bottom:1px solid rgba(30,42,58,0.5);}
+    .price-card li::before{content:"✓ ";color:#3de19e;font-weight:700;}
+    .cta-btn{display:inline-block;padding:12px 28px;background:var(--accent);color:#0b0f14;border-radius:8px;font-weight:700;text-decoration:none;transition:transform 0.2s;}
+    .cta-btn:hover{transform:translateY(-2px);}
+    .docs-section{max-width:900px;margin:0 auto;padding:40px 20px;}
+    .docs-section h2{color:var(--text);font-size:1.5rem;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+    .endpoint{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;}
+    .endpoint-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+    .method{padding:4px 10px;border-radius:4px;font-weight:700;font-size:0.75rem;text-transform:uppercase;}
+    .method-get{background:rgba(61,225,158,0.2);color:#3de19e;}
+    .method-post{background:rgba(61,217,255,0.2);color:#3dd9ff;}
+    .endpoint-path{font-family:monospace;color:var(--text);font-size:0.95rem;}
+    .endpoint p{color:var(--muted);font-size:0.85rem;margin:0 0 10px;}
+    pre{background:#0b0f14;border:1px solid #1e2a3a;border-radius:8px;padding:14px;overflow-x:auto;font-size:0.8rem;color:#e8eef7;margin:8px 0;}
+    code{font-family:'JetBrains Mono',monospace;}
+    .key-form{max-width:500px;margin:0 auto 60px;padding:30px;background:var(--card);border:1px solid var(--border);border-radius:14px;text-align:center;}
+    .key-form input{width:100%;padding:12px;background:#0b0f14;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.95rem;margin-bottom:12px;box-sizing:border-box;}
+    .key-result{display:none;margin-top:16px;padding:14px;background:#0b0f14;border:1px solid #3de19e;border-radius:8px;font-family:monospace;color:#3de19e;word-break:break-all;font-size:0.85rem;}
+  </style>
+</head>
+<body>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="dev-hero">
+  <h1>⚡ EdgeIQ Developer API</h1>
+  <p>Programmatic access to 14+ security scanners. Integrate repo scanning, header analysis, SSL checks, DNS lookups, and breach detection into your CI/CD pipeline, dashboard, or product.</p>
+</div>
+
+<div class="pricing-grid">
+  <div class="price-card">
+    <h3>Free</h3>
+    <div class="price">$0<span>/mo</span></div>
+    <ul>
+      <li>10 requests/minute</li>
+      <li>All 5 endpoints</li>
+      <li>Email capture required</li>
+      <li>Community support</li>
+    </ul>
+    <a href="#get-key" class="cta-btn" style="background:transparent;border:1px solid var(--accent);color:var(--accent);">Get Free Key</a>
+  </div>
+  <div class="price-card featured">
+    <h3>Pro</h3>
+    <div class="price">$19<span>/mo</span></div>
+    <ul>
+      <li>100 requests/minute</li>
+      <li>All 5 endpoints</li>
+      <li>Clean JSON responses</li>
+      <li>Priority support</li>
+      <li>Usage dashboard</li>
+    </ul>
+    <a href="/api/api-market-checkout?plan=pro" class="cta-btn">Subscribe →</a>
+  </div>
+  <div class="price-card">
+    <h3>Enterprise</h3>
+    <div class="price">$99<span>/mo</span></div>
+    <ul>
+      <li>1000 requests/minute</li>
+      <li>All endpoints + custom</li>
+      <li>SLA guarantee</li>
+      <li>Dedicated support</li>
+      <li>Custom integrations</li>
+    </ul>
+    <a href="/contact/" class="cta-btn" style="background:transparent;border:1px solid var(--accent);color:var(--accent);">Contact Sales</a>
+  </div>
+</div>
+
+<div id="get-key" class="key-form">
+  <h3 style="color:var(--text);margin:0 0 8px;">Get Your Free API Key</h3>
+  <p style="color:var(--muted);font-size:0.85rem;margin:0 0 16px;">Enter your email to receive a free-tier API key instantly.</p>
+  <input type="email" id="key-email" placeholder="you@company.com" />
+  <button class="cta-btn" onclick="generateFreeKey()" id="key-btn" style="width:100%;border:none;cursor:pointer;">Generate Key</button>
+  <div class="key-result" id="key-result"></div>
+</div>
+
+<div class="docs-section">
+  <h2>API Reference</h2>
+  <p style="color:var(--muted);margin-bottom:24px;">All endpoints require authentication via <code>Authorization: Bearer &lt;key&gt;</code> or <code>X-API-Key: &lt;key&gt;</code> header.</p>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method method-post">POST</span>
+      <span class="endpoint-path">/api/v1/repo-scan</span>
+    </div>
+    <p>Scan a GitHub repository for leaked secrets, missing .gitignore, and RLS gaps.</p>
+    <pre><code>curl -X POST https://edgeiqlabs.com/api/v1/repo-scan \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://github.com/org/repo"}'</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/header-check?domain=example.com</span>
+    </div>
+    <p>Analyze HTTP security headers (HSTS, CSP, X-Frame-Options, etc.) for any domain.</p>
+    <pre><code>curl -H "Authorization: Bearer YOUR_KEY" \
+  "https://edgeiqlabs.com/api/v1/header-check?domain=example.com"</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/ssl-check?domain=example.com</span>
+    </div>
+    <p>Check SSL certificate validity, HTTPS enforcement, HSTS, and security headers.</p>
+    <pre><code>curl -H "Authorization: Bearer YOUR_KEY" \
+  "https://edgeiqlabs.com/api/v1/ssl-check?domain=example.com"</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/dns-check?domain=example.com</span>
+    </div>
+    <p>Lookup DNS records (A, AAAA, MX, TXT, NS, CNAME) for any domain.</p>
+    <pre><code>curl -H "Authorization: Bearer YOUR_KEY" \
+  "https://edgeiqlabs.com/api/v1/dns-check?domain=example.com"</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/breach-check?email=user@example.com</span>
+    </div>
+    <p>Check if an email address has been exposed in known data breaches.</p>
+    <pre><code>curl -H "Authorization: Bearer YOUR_KEY" \
+  "https://edgeiqlabs.com/api/v1/breach-check?email=user@example.com"</code></pre>
+  </div>
+
+  <h2 style="margin-top:40px;">Response Format</h2>
+  <p style="color:var(--muted);">All responses include API metadata in the <code>_api</code> field:</p>
+  <pre><code>{
+  "grade": "A",
+  "score": 92,
+  "findings": [...],
+  "_api": {
+    "tier": "pro",
+    "remaining_requests": 87,
+    "rate_limit": 100
+  }
+}</code></pre>
+
+  <h2 style="margin-top:40px;">Error Codes</h2>
+  <div class="endpoint">
+    <p><strong>401</strong> — Missing or invalid API key</p>
+    <p><strong>403</strong> — Key revoked or expired</p>
+    <p><strong>429</strong> — Rate limit exceeded (check Retry-After header)</p>
+    <p><strong>500</strong> — Internal error</p>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:40px 20px;color:var(--muted);font-size:0.8rem;border-top:1px solid var(--border);">
+  © 2026 EdgeIQ Labs. All rights reserved.
+</footer>
+
+<script>
+async function generateFreeKey() {
+  var email = document.getElementById('key-email').value;
+  if (!email || !email.includes('@')) { alert('Enter a valid email'); return; }
+  var btn = document.getElementById('key-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  try {
+    var r = await fetch('/api/api-keys', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, tier: 'free' })
+    });
+    var d = await r.json();
+    if (d.ok && d.key) {
+      var result = document.getElementById('key-result');
+      result.style.display = 'block';
+      result.textContent = 'Your API key: ' + d.key;
+      btn.textContent = 'Key Generated ✓';
+      btn.style.background = '#3de19e';
+    } else {
+      alert(d.error || 'Failed to generate key');
+      btn.disabled = false;
+      btn.textContent = 'Generate Key';
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Generate Key';
+  }
+}
+</script>
+</body>
+</html>
