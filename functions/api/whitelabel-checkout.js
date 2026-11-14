@@ -4,7 +4,7 @@
  */
 export async function onRequest(context) {
   const { request, env } = context;
-  const PRICE_ID = env.WHITELABEL_REPORT_PRICE_ID || 'price_1UbiTqRC1NZ20yDTkMxNwPzR';
+  const PRICE_ID = env.WHITELABEL_REPORT_PRICE_ID || 'price_1Ubif1RC1NZ20yDTbP77Gymy';
   try {
     const resp = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
