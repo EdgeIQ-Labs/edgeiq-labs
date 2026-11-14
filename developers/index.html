@@ -201,20 +201,69 @@ jobs:
     <p style="margin-top:12px;"><a href="https://github.com/EdgeIQ-Labs/edgeiq-security-action" style="color:var(--accent);font-weight:700;text-decoration:none;">View on GitHub →</a> · <a href="https://github.com/marketplace/actions/edgeiq-security-scan" style="color:var(--accent);text-decoration:none;">GitHub Marketplace →</a></p>
   </div>
 
-  <div class="endpoint" style="opacity:0.6;">
+  <div class="endpoint" style="border-color:rgba(112,240,168,0.3);">
     <div class="endpoint-header">
-      <span class="method method-get" style="background:rgba(159,176,199,0.2);color:var(--muted);">COMING SOON</span>
-      <span class="endpoint-path">Slack Webhook Integration</span>
+      <span class="method method-get" style="background:rgba(112,240,168,0.2);color:#70f0a8;">SLACK WEBHOOK</span>
+      <span class="endpoint-path">EdgeIQ-Labs/edgeiq-slack-webhook</span>
     </div>
-    <p>Scheduled scans post results to your #security channel. Daily grade updates without visiting the dashboard.</p>
+    <p>Scheduled scans post results to your #security channel. Slash command for on-demand scans. Zero-dependency Node.js server.</p>
+    <pre><code># Deploy &amp; configure
+export EDGEIQ_API_KEY="eiq_live_..."
+export SLACK_BOT_TOKEN="xoxb-..."
+node index.js
+
+# Or use slash command in Slack
+/edgeiq-scan https://github.com/myorg/myrepo</code></pre>
+    <p style="margin-top:12px;"><a href="https://github.com/EdgeIQ-Labs/edgeiq-slack-webhook" style="color:var(--accent);font-weight:700;text-decoration:none;">View on GitHub →</a></p>
   </div>
 
-  <div class="endpoint" style="opacity:0.6;">
+  <div class="endpoint" style="border-color:rgba(99,102,241,0.3);">
     <div class="endpoint-header">
-      <span class="method method-get" style="background:rgba(159,176,199,0.2);color:var(--muted);">COMING SOON</span>
-      <span class="endpoint-path">Terraform Provider</span>
+      <span class="method method-get" style="background:rgba(99,102,241,0.2);color:#818cf8;">DISCORD BOT</span>
+      <span class="endpoint-path">EdgeIQ-Labs/edgeiq-discord-bot</span>
     </div>
-    <p>Run security checks during <code>terraform plan</code>. Block deploys on failing grades. Infrastructure-as-code security gates.</p>
+    <p>Slash command bot for Discord servers. Run <code>/scan</code> to get grade badges and findings as rich embeds. HTTP interactions only — no gateway needed.</p>
+    <pre><code># Deploy &amp; register commands
+export DISCORD_APP_ID="..."
+export DISCORD_BOT_TOKEN="..."
+export EDGEIQ_API_KEY="eiq_live_..."
+node index.js
+
+# Use in any Discord channel
+/scan url:https://github.com/myorg/myrepo</code></pre>
+    <p style="margin-top:12px;"><a href="https://github.com/EdgeIQ-Labs/edgeiq-discord-bot" style="color:var(--accent);font-weight:700;text-decoration:none;">View on GitHub →</a></p>
+  </div>
+
+  <div class="endpoint" style="border-color:rgba(99,102,241,0.3);">
+    <div class="endpoint-header">
+      <span class="method method-get" style="background:rgba(99,102,241,0.2);color:#818cf8;">TEAMS CONNECTOR</span>
+      <span class="endpoint-path">EdgeIQ-Labs/edgeiq-teams-connector</span>
+    </div>
+    <p>Microsoft Teams bot with Adaptive Cards. Mention the bot with a repo URL, get rich cards with severity-colored findings and action buttons.</p>
+    <pre><code># Deploy webhook server
+export EDGEIQ_API_KEY="eiq_live_..."
+node index.js
+
+# Use in Teams
+@EdgeIQ Scanner https://github.com/myorg/myrepo</code></pre>
+    <p style="margin-top:12px;"><a href="https://github.com/EdgeIQ-Labs/edgeiq-teams-connector" style="color:var(--accent);font-weight:700;text-decoration:none;">View on GitHub →</a></p>
+  </div>
+
+  <div class="endpoint" style="border-color:rgba(180,122,255,0.3);">
+    <div class="endpoint-header">
+      <span class="method method-get" style="background:rgba(180,122,255,0.2);color:#b47aff;">TERRAFORM PROVIDER</span>
+      <span class="endpoint-path">EdgeIQ-Labs/terraform-provider-edgeiq</span>
+    </div>
+    <p>Run security scans during <code>terraform plan</code>. Block deploys when repos fall below your grade threshold. Infrastructure-as-code security gates.</p>
+    <pre><code>data "edgeiq_scan" "my_app" {
+  url       = "https://github.com/myorg/myapp"
+  min_grade = "B"  # fails plan if grade &lt; B
+}
+
+output "security_grade" {
+  value = data.edgeiq_scan.my_app.grade
+}</code></pre>
+    <p style="margin-top:12px;"><a href="https://github.com/EdgeIQ-Labs/terraform-provider-edgeiq" style="color:var(--accent);font-weight:700;text-decoration:none;">View on GitHub →</a></p>
   </div>
 
   <h2 style="margin-top:40px;">Error Codes</h2>
