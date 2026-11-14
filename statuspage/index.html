@@ -57,26 +57,20 @@
 </head>
 <body>
   <!-- Nav -->
-  <nav class="nav-bar">
-  <div class="nav-inner">
-    <a class="nav-brand" href="/">
-      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
-      <div class="nav-wordmark">
-        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
-        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+  <nav style="border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.92);backdrop-filter:blur(6px);z-index:10;">
+    <div style="max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+      <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+        <img src="/favicon.png" alt="" style="height:36px;border-radius:8px;" />
+        <span style="font-weight:800;font-size:1.05rem;color:var(--text);">EdgeIQ<span style="color:var(--accent);">Labs</span></span>
+      </a>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <a href="/tools/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">Tools</a>
+        <a href="/blog/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">Blog</a>
+        <a href="/pricing/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">Pricing</a>
+        <a href="/account/" style="color:var(--muted);text-decoration:none;padding:6px 12px;font-size:0.9rem;border-radius:8px;">My Account</a>
       </div>
-    </a>
-    <div class="nav-links">
-      <a href="/free-tools/">Free Tools</a>
-      <a href="/tools/">Dev Tools</a>
-      <a href="/compliance/">Compliance</a>
-      <a href="/pricing/">Pricing</a>
-      <a href="/blog/">Blog</a>
-      <a href="/pricing/" class="nav-cta">Get Protected</a>
     </div>
-    <button class="nav-hamburger" aria-label="Menu">☰</button>
-  </div>
-</nav>
+  </nav>
 
   <!-- Hero -->
   <section class="sp-hero">

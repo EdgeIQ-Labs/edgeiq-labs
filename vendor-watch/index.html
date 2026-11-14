@@ -226,25 +226,18 @@
 </head>
 <body>
 
-<nav class="nav-bar">
-  <div class="nav-inner">
-    <a class="nav-brand" href="/">
-      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
-      <div class="nav-wordmark">
-        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
-        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
-      </div>
-    </a>
-    <div class="nav-links">
-      <a href="/free-tools/">Free Tools</a>
-      <a href="/tools/">Dev Tools</a>
-      <a href="/compliance/">Compliance</a>
-      <a href="/pricing/">Pricing</a>
-      <a href="/blog/">Blog</a>
-      <a href="/pricing/" class="nav-cta">Get Protected</a>
-    </div>
-    <button class="nav-hamburger" aria-label="Menu">☰</button>
+<nav>
+  <a class="nav-logo" href="/"><span>EdgeIQ</span> Labs</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/pulse/" style="color:#3de19e;font-weight:600;">🟢 Pulse</a>
+    <a href="/inbox-shield/" style="color:#b47aff;font-weight:600;">✉ Inbox Shield</a>
+    <a href="/vendor-watch/" style="color:#ff9f43;font-weight:600;">📡 Vendor Watch</a>
+    <a href="/account/">My Account</a>
+    <a class="nav-cta" href="#get-alerts">Get Alerts Free</a>
   </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="product-strip">
   <div class="product-strip-inner">

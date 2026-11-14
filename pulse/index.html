@@ -336,25 +336,19 @@
 </head>
 <body>
 
-<nav class="nav-bar">
-  <div class="nav-inner">
-    <a class="nav-brand" href="/">
-      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
-      <div class="nav-wordmark">
-        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
-        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
-      </div>
-    </a>
-    <div class="nav-links">
-      <a href="/free-tools/">Free Tools</a>
-      <a href="/tools/">Dev Tools</a>
-      <a href="/compliance/">Compliance</a>
-      <a href="/pricing/">Pricing</a>
-      <a href="/blog/">Blog</a>
-      <a href="/pricing/" class="nav-cta">Get Protected</a>
-    </div>
-    <button class="nav-hamburger" aria-label="Menu">☰</button>
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="/favicon.png" alt="EdgeIQ" />
+    EdgeIQ Labs
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products/">Products</a>
+    <a href="/#scanner">Free Scan</a>
+    <a href="/account/" style="color:var(--muted);">My Account</a>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="nav-cta">Start Monitoring →</a>
   </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="product-strip">
   <div class="product-strip-inner">
