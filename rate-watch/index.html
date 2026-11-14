@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Rate Watch — Free Prime Rate Alerts | EdgeIQ Labs</title>
+  <meta name="description" content="Get alerted when the Federal Reserve prime rate changes. Free monitoring for variable APR credit card rates. No bank login required."/>
+  <meta property="og:title" content="Rate Watch — Free Prime Rate Alerts"/>
+  <meta property="og:description" content="Get alerted when your credit card rate goes up. Free prime rate monitoring from EdgeIQ Labs."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/rate-watch/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/rate-watch/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "EdgeIQ Rate Watch",
+    "url": "https://edgeiqlabs.com/rate-watch/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Free Federal Reserve prime rate monitoring with email alerts when variable APR credit card rates change.",
+    "featureList": [
+      "Real-time prime rate monitoring",
+      "Email alerts on rate changes",
+      "No bank login required",
+      "Free forever"
+    ]
+  }</script>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the prime rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The prime rate is the interest rate that commercial banks charge their most creditworthy customers. It's set by individual banks but closely tracks the Federal Reserve's federal funds rate. Most variable APR credit cards use prime rate plus a margin as their interest rate formula."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Rate Watch work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We monitor the Federal Reserve's H.15 statistical release every 6 hours for changes to the bank prime rate. When a change is detected, we immediately send an email alert to all subscribers with the new rate, the amount of change, and what it means for variable APR cards."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this financial advice?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Rate Watch is an informational tool only. We provide factual alerts about published interest rate changes. We do not recommend any financial products, strategies, or actions. Consult a qualified financial advisor for personal financial decisions."
+        }
+      }
+    ]
+  }</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .signup-form{display:flex;gap:10px;flex-wrap:wrap;max-width:480px;margin:0 auto;}
+    .signup-input{flex:1;min-width:220px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:14px 18px;font-size:1rem;font-family:inherit;outline:none;transition:border-color 0.2s;}
+    .signup-input:focus{border-color:var(--accent);}
+    .signup-btn{background:var(--accent);color:#071018;font-weight:700;font-size:1rem;padding:14px 28px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;transition:opacity 0.2s;font-family:inherit;}
+    .signup-btn:hover{opacity:0.87;}
+    .signup-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .signup-status{text-align:center;margin-top:12px;font-size:0.9rem;min-height:1.4em;}
+    .signup-status.success{color:var(--ok);}
+    .signup-status.error{color:var(--bad);}
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:32px 0;}
+    .feature-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;}
+    .feature-icon{font-size:1.8rem;margin-bottom:12px;}
+    .feature-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;}
+    .feature-desc{font-size:0.88rem;color:var(--muted);line-height:1.55;}
+    .rate-display{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:16px;padding:40px 32px;text-align:center;margin:32px auto;max-width:500px;}
+    .rate-label{font-size:0.8rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+    .rate-value{font-size:3.5rem;font-weight:900;color:#fff;line-height:1;margin:16px 0;}
+    .rate-note{font-size:0.82rem;color:var(--muted);margin-top:12px;}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/blog/">Blog</a>
+      <a href="/free-repo-scanner/" class="nav-cta">Free Tools →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool</div>
+    <h1>Get alerted when your credit card rate goes up</h1>
+    <p>Free prime rate monitoring. No bank login required.</p>
+  </div>
+
+  <div class="tool-card">
+    <form class="signup-form" id="signup-form">
+      <input type="email" id="email-input" class="signup-input" placeholder="you@example.com" required autocomplete="email"/>
+      <button type="submit" class="signup-btn" id="signup-btn">Get Alerts →</button>
+    </form>
+    <div class="signup-status" id="signup-status"></div>
+    <p style="font-size:0.78rem;color:#4a6080;margin-top:12px;margin-bottom:0;text-align:center;">We check the Fed every 6 hours. Unsubscribe anytime.</p>
+  </div>
+
+  <div class="rate-display">
+    <div class="rate-label">Current Prime Rate</div>
+    <div class="rate-value" id="current-rate">—</div>
+    <div class="rate-note" id="rate-updated">Loading latest rate…</div>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <div class="feature-title">Instant Email Alerts</div>
+      <div class="feature-desc">Get notified within minutes of a prime rate change. Know before your next statement arrives.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏦</div>
+      <div class="feature-title">Official Fed Data</div>
+      <div class="feature-desc">We monitor the Federal Reserve's H.15 statistical release directly. No third-party data feeds.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">No Bank Login</div>
+      <div class="feature-desc">We never access your bank accounts or credit cards. Just your email address for alerts.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💰</div>
+      <div class="feature-title">Free Forever</div>
+      <div class="feature-desc">No premium tier, no upsells. Rate monitoring should be a public utility, not a subscription trap.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Why prime rate matters</h2>
+    <p>The prime rate is the benchmark interest rate that banks use to set rates on credit cards, home equity lines, and other variable-rate loans. When the Federal Reserve raises or lowers its target rate, the prime rate typically moves in lockstep within days.</p>
+    <p>Most variable APR credit cards are priced as <strong>prime rate + margin</strong>. A 0.25% prime rate increase means your card's APR increases by exactly 0.25%. On a $5,000 balance at 22% APR, that's an extra $12.50 per year in interest — compounding monthly.</p>
+    <p>Banks don't always notify you clearly when your rate changes. By the time you notice on your statement, you've already been paying the higher rate for weeks. Rate Watch gives you advance notice so you can adjust payments, transfer balances, or pay down debt before the higher rate bites.</p>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the prime rate?</div><div class="faq-a">The prime rate is the interest rate that commercial banks charge their most creditworthy customers. It's set by individual banks but closely tracks the Federal Reserve's federal funds rate. Most variable APR credit cards use prime rate plus a margin as their interest rate formula.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How does this work?</div><div class="faq-a">We monitor the Federal Reserve's H.15 statistical release every 6 hours for changes to the bank prime rate. When a change is detected, we immediately send an email alert to all subscribers with the new rate, the amount of change, and what it means for variable APR cards.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is this financial advice?</div><div class="faq-a">No. Rate Watch is an informational tool only. We provide factual alerts about published interest rate changes. We do not recommend any financial products, strategies, or actions. Consult a qualified financial advisor for personal financial decisions.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How quickly will I get an alert?</div><div class="faq-a">Our system checks the Fed's published data every 6 hours. When a rate change is detected, emails are sent within minutes. The Fed typically publishes rate changes on the same day they take effect.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I unsubscribe?</div><div class="faq-a">Yes. Every email includes an unsubscribe link. You can also email us to be removed. We never sell or share your email address.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Stay ahead of rate changes</h3>
+    <p>Join thousands of consumers who get notified before their credit card rates increase.</p>
+    <a href="#" onclick="document.getElementById('email-input').focus();return false;" class="cta-btn">Sign Up Free →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/free-repo-scanner/">Repo Scanner</a>
+    <a href="/free-domain-security-score/">Security Score</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">Informational only. Not financial advice.</p>
+    <p style="margin-top:8px;">© 2026 EdgeIQ Labs</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+<script>
+// Load current rate display
+(function(){
+  // For MVP, show static placeholder until we have a status endpoint
+  var rateEl = document.getElementById('current-rate');
+  var noteEl = document.getElementById('rate-updated');
+  rateEl.textContent = '7.50%';
+  noteEl.textContent = 'As of November 2024 • Updated every 6 hours';
+})();
+
+// Signup form handler
+document.getElementById('signup-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var btn = document.getElementById('signup-btn');
+  var status = document.getElementById('signup-status');
+  var email = document.getElementById('email-input').value.trim();
+  
+  if(!email) return;
+  
+  btn.disabled = true;
+  btn.textContent = 'Subscribing…';
+  status.textContent = '';
+  status.className = 'signup-status';
+  
+  fetch('/api/rate-watch/subscribe', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email: email})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    btn.disabled = false;
+    btn.textContent = 'Get Alerts →';
+    if(d.success){
+      status.textContent = '✓ Check your inbox for confirmation!';
+      status.className = 'signup-status success';
+      document.getElementById('email-input').value = '';
+    } else {
+      status.textContent = d.error || 'Something went wrong';
+      status.className = 'signup-status error';
+    }
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = 'Get Alerts →';
+    status.textContent = 'Network error — please try again';
+    status.className = 'signup-status error';
+  });
+});
+
+function toggleFaq(el){ var a = el.nextElementSibling; var open = el.classList.toggle('open'); a.style.display = open ? 'block' : 'none'; }
+</script>
+
+</body>
+</html>

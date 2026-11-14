@@ -28,9 +28,16 @@ id = "90d9db38d744434d9aa14a6722740269"
 binding = "VENDORRISK_KV"
 id = "a822596800d746a1a234d1d9ff3642d7"
 
+[[kv_namespaces]]
+binding = "RATE_WATCH_KV"
+id = "543afb6d90ba427b8b60e08a8f96159e"
+
 # D1 database for StatusPage
 # Replace DATABASE_ID with actual ID after creating in CF Dashboard
 [[d1_databases]]
 binding = "STATUSPAGE_DB"
 database_name = "statuspage"
 database_id = "2493e288-3313-4458-b4e4-94beb48caa54"
+
+[triggers]
+crons = ["0 */6 * * *"]
