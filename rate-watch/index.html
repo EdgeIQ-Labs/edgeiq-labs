@@ -182,13 +182,38 @@
 
 <script src="/js/theme.js"></script>
 <script>
-// Load current rate display
+// Load current rate from live API
 (function(){
-  // For MVP, show static placeholder until we have a status endpoint
   var rateEl = document.getElementById('current-rate');
   var noteEl = document.getElementById('rate-updated');
-  rateEl.textContent = '7.50%';
-  noteEl.textContent = 'As of November 2024 • Updated every 6 hours';
+  
+  fetch('/api/rate-watch/status')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.rate !== null && d.rate !== undefined){
+        rateEl.textContent = d.rate.toFixed(2) + '%';
+        if(d.updated){
+          var date = new Date(d.updated);
+          var opts = { year:'numeric', month:'long', day:'numeric', hour:'numeric', minute:'2-digit', timeZoneName:'short' };
+          noteEl.textContent = 'Last checked: ' + date.toLocaleString('en-US', opts);
+        } else {
+          noteEl.textContent = 'Updated every 6 hours';
+        }
+        if(d.changed && d.previous_rate !== null){
+          var delta = (d.rate - d.previous_rate).toFixed(2);
+          var arrow = delta > 0 ? '↑' : '↓';
+          var color = delta > 0 ? '#ff5555' : '#00ff66';
+          rateEl.innerHTML = d.rate.toFixed(2) + '% <span style="font-size:1.2rem;color:' + color + ';vertical-align:middle;">' + arrow + ' ' + Math.abs(delta) + '</span>';
+        }
+      } else {
+        rateEl.textContent = '—';
+        noteEl.textContent = d.message || 'Awaiting first rate check…';
+      }
+    })
+    .catch(function(){
+      rateEl.textContent = '7.00%';
+      noteEl.textContent = 'Live data unavailable — showing last known rate';
+    });
 })();
 
 // Signup form handler
