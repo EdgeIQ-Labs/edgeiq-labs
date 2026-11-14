@@ -89,9 +89,14 @@ const panel=document.getElementById('resultPanel');
 panel.style.display='block';
 panel.className='result-panel '+data.verdict;
 document.getElementById('verdictText').textContent=data.verdict.toUpperCase()+(data.score!==undefined?' ('+data.score+'/100)':'');
-document.getElementById('indicators').innerHTML=(data.indicators||[]).map(i=>'<div class="indicator">• '+i+'</div>').join('');
+document.getElementById('indicators').innerHTML=(data.indicators||[]).map(i=>'<div class="indicator">• '+i+'</div>').join('')+'<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:0.85rem;color:var(--muted)">Share this result:</span><button onclick="shareResult(\''+data.verdict+'\','+(data.score||0)+')" style="padding:6px 16px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:0.82rem">📋 Copy Link</button><a href="https://twitter.com/intent/tweet?text=I+just+scanned+an+email+with+EdgeIQ+Phishing+Analyzer+—+got+'+data.verdict.toUpperCase()+'+('+((data.score||0))+'/100).+Free+tool:+https://edgeiqlabs.com/phish-analyzer/" target="_blank" style="padding:6px 16px;background:#1da1f2;color:#fff;border-radius:6px;font-weight:700;text-decoration:none;font-size:0.82rem">Tweet</a></div>';
 }catch(e){alert('Analysis failed: '+e.message)}
 finally{btn.textContent='Analyze Email →';btn.disabled=false}
+}
+function shareResult(verdict,score){
+const url='https://edgeiqlabs.com/phish-analyzer/';
+const text='I just scanned an email with EdgeIQ Phishing Analyzer — got '+verdict.toUpperCase()+' ('+score+'/100). Free tool: '+url;
+navigator.clipboard.writeText(text).then(()=>alert('Copied to clipboard!')).catch(()=>prompt('Copy this:',text));
 }
 </script>
 </body></html>
