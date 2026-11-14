@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Backup Audit Tool — Free Backup Verification & Compliance Grade | EdgeIQ Labs</title>
+  <meta name="description" content="Upload your backup config or log and get an instant A-F compliance grade. Checks encryption, offsite copies, retention policies, and test restore evidence. Free tool by EdgeIQ Labs."/>
+  <meta property="og:title" content="Free Backup Audit Tool — Instant Compliance Grade"/>
+  <meta property="og:description" content="Verify your backup strategy meets compliance standards. Encryption, offsite, retention, restore testing — graded in seconds."/>
+  <link rel="stylesheet" href="/css/design-system.css"/>
+  <style>
+    .audit-hero{text-align:center;padding:60px 20px 40px;}
+    .audit-hero h1{font-size:2.2rem;font-weight:900;color:var(--text);margin-bottom:16px;}
+    .audit-hero p{color:var(--muted);font-size:1.1rem;max-width:650px;margin:0 auto 32px;line-height:1.6;}
+    .upload-zone{max-width:700px;margin:0 auto 40px;padding:40px;border:2px dashed var(--border);border-radius:16px;background:var(--card);text-align:center;transition:border-color 0.3s,background 0.3s;cursor:pointer;}
+    .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(61,217,255,0.05);}
+    .upload-zone h3{color:var(--text);margin-bottom:8px;font-size:1.1rem;}
+    .upload-zone p{color:var(--muted);font-size:0.9rem;margin-bottom:16px;}
+    .upload-btn{display:inline-block;padding:12px 28px;background:var(--accent);color:#0b0f14;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.95rem;transition:transform 0.2s;}
+    .upload-btn:hover{transform:translateY(-2px);}
+    #file-input{display:none;}
+    #results{display:none;max-width:800px;margin:0 auto;padding:20px;}
+    .grade-display{display:flex;align-items:center;gap:24px;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:24px;flex-wrap:wrap;}
+    .grade-circle{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;}
+    .grade-A{background:rgba(61,225,158,0.15);color:#3de19e;border:3px solid #3de19e;}
+    .grade-B{background:rgba(61,217,255,0.15);color:#3dd9ff;border:3px solid #3dd9ff;}
+    .grade-C{background:rgba(255,209,102,0.15);color:#ffd166;border:3px solid #ffd166;}
+    .grade-D{background:rgba(255,140,66,0.15);color:#ff8c42;border:3px solid #ff8c42;}
+    .grade-F{background:rgba(255,107,107,0.15);color:#ff6b6b;border:3px solid #ff6b6b;}
+    .grade-letter{font-size:2.5rem;line-height:1;}
+    .grade-score{font-size:0.85rem;opacity:0.8;margin-top:4px;}
+    .grade-details{flex:1;min-width:200px;}
+    .grade-details h2{color:var(--text);margin:0 0 8px;font-size:1.3rem;}
+    .grade-details p{color:var(--muted);margin:0;line-height:1.5;}
+    .checklist{margin-top:24px;}
+    .checklist h3{color:var(--text);margin-bottom:16px;font-size:1.1rem;}
+    .check-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;}
+    .check-icon{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;}
+    .check-pass{background:rgba(61,225,158,0.2);color:#3de19e;}
+    .check-fail{background:rgba(255,107,107,0.2);color:#ff6b6b;}
+    .check-warn{background:rgba(255,209,102,0.2);color:#ffd166;}
+    .check-text{flex:1;}
+    .check-text strong{color:var(--text);display:block;margin-bottom:2px;}
+    .check-text span{color:var(--muted);font-size:0.85rem;line-height:1.4;}
+    .upsell-box{margin-top:32px;padding:24px;background:linear-gradient(135deg,rgba(61,217,255,0.08),rgba(180,122,255,0.06));border:1px solid rgba(61,217,255,0.3);border-radius:14px;text-align:center;}
+    .upsell-box h3{color:var(--text);margin:0 0 8px;}
+    .upsell-box p{color:var(--muted);margin:0 0 16px;font-size:0.9rem;}
+    .upsell-btn{display:inline-block;padding:12px 28px;background:var(--accent);color:#0b0f14;border-radius:8px;font-weight:700;text-decoration:none;transition:transform 0.2s;}
+    .upsell-btn:hover{transform:translateY(-2px);}
+    .sample-link{color:var(--accent);cursor:pointer;text-decoration:underline;font-size:0.85rem;}
+  </style>
+</head>
+<body>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="audit-hero">
+  <h1>🛡️ Backup Audit Tool</h1>
+  <p>Upload your backup configuration file or log and get an instant A–F compliance grade. We check encryption, offsite copies, retention policies, and test restore evidence against industry best practices.</p>
+</div>
+
+<div class="upload-zone" id="drop-zone">
+  <h3>Drop your backup config or log here</h3>
+  <p>Supports .conf, .cfg, .json, .yaml, .yml, .xml, .log, .txt (max 5MB)</p>
+  <button class="upload-btn" onclick="document.getElementById('file-input').click()">Choose File</button>
+  <input type="file" id="file-input" accept=".conf,.cfg,.json,.yaml,.yml,.xml,.log,.txt,.bak,.sh"/>
+  <p style="margin-top:16px;"><span class="sample-link" onclick="loadSample()">or try a sample backup config →</span></p>
+</div>
+
+<div id="results"></div>
+
+<footer style="text-align:center;padding:40px 20px;color:var(--muted);font-size:0.8rem;border-top:1px solid var(--border);">
+  © 2026 EdgeIQ Labs. All rights reserved.
+</footer>
+
+<script>
+(function(){
+  var dropZone = document.getElementById('drop-zone');
+  var fileInput = document.getElementById('file-input');
+  var resultsDiv = document.getElementById('results');
+
+  // Drag and drop
+  dropZone.addEventListener('dragover', function(e){ e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', function(){ dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', function(e){
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if(e.dataTransfer.files.length) analyzeFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', function(){ if(fileInput.files.length) analyzeFile(fileInput.files[0]); });
+
+  function analyzeFile(file){
+    if(file.size > 5*1024*1024){ alert('File too large. Max 5MB.'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e){ runAudit(e.target.result, file.name); };
+    reader.readAsText(file);
+  }
+
+  window.loadSample = function(){
+    var sample = `# Veeam Backup Config\nencryption=AES256\nretention_days=30\noffsite_target=s3://backups-prod\ntest_restore_schedule=monthly\nlast_test_restore=2026-10-15\ncompression=lz4\nbackup_type=incremental\nsource=/data/production\ndestination=/mnt/backup-nas\ncloud_replica=aws:s3:us-east-1:backup-vault`;
+    runAudit(sample, 'sample-veeam-config.conf');
+  };
+
+  function runAudit(content, filename){
+    var lower = content.toLowerCase();
+    var checks = [];
+    var score = 0;
+    var maxScore = 0;
+
+    // Check 1: Encryption
+    maxScore += 25;
+    var hasEncryption = /encrypt|aes|cipher|ssl|tls|kms|key.?manage/i.test(lower);
+    if(hasEncryption){ score += 25; checks.push({status:'pass',title:'Encryption Enabled',desc:'Backup data is encrypted at rest or in transit.'}); }
+    else { checks.push({status:'fail',title:'No Encryption Detected',desc:'Backups appear unencrypted. This violates HIPAA, SOC2, PCI-DSS, and GDPR requirements. Enable AES-256 or equivalent immediately.'}); }
+
+    // Check 2: Offsite / Cloud Copy
+    maxScore += 25;
+    var hasOffsite = /s3|azure|gcs|cloud|offsite|remote|replica|cross.?region|secondary.?site|dr.?site|disaster.?recovery/i.test(lower);
+    if(hasOffsite){ score += 25; checks.push({status:'pass',title:'Offsite Copy Configured',desc:'Backups are replicated to a remote location for disaster recovery.'}); }
+    else { checks.push({status:'fail',title:'No Offsite Copy',desc:'All backups appear local-only. A single site failure could destroy all data. Configure cloud replication or secondary site backup.'}); }
+
+    // Check 3: Retention Policy
+    maxScore += 20;
+    var retentionMatch = lower.match(/retention[_ ]?(days?|period)?[_ :=]*(\d+)/i) || lower.match(/keep[_ ]?(days?|period)?[_ :=]*(\d+)/i);
+    var retentionDays = retentionMatch ? parseInt(retentionMatch[2]) : 0;
+    if(retentionDays >= 30){ score += 20; checks.push({status:'pass',title:'Retention Policy ('+retentionDays+' days)',desc:'Meets minimum 30-day retention requirement for most compliance frameworks.'}); }
+    else if(retentionDays > 0){ score += 10; checks.push({status:'warn',title:'Short Retention ('+retentionDays+' days)',desc:'Less than recommended 30-day minimum. Extend to meet compliance requirements.'}); }
+    else { checks.push({status:'fail',title:'No Retention Policy Found',desc:'No retention period detected. Backups may be overwritten prematurely. Set minimum 30-day retention.'}); }
+
+    // Check 4: Test Restore Evidence
+    maxScore += 20;
+    var hasTestRestore = /test.?restore|verify|validation|integrity.?check|restore.?test|recover.?test/i.test(lower);
+    if(hasTestRestore){ score += 20; checks.push({status:'pass',title:'Test Restore Configured',desc:'Automated restore verification ensures backups are actually recoverable.'}); }
+    else { checks.push({status:'fail',title:'No Test Restore Evidence',desc:'Untested backups are just hopes. Schedule automated restore tests at least monthly.'}); }
+
+    // Check 5: Compression
+    maxScore += 10;
+    var hasCompression = /compress|lz4|gzip|zstd|snappy|deflate/i.test(lower);
+    if(hasCompression){ score += 10; checks.push({status:'pass',title:'Compression Enabled',desc:'Storage-efficient compression reduces costs and transfer times.'}); }
+    else { checks.push({status:'warn',title:'No Compression',desc:'Enable compression to reduce storage costs by 40-70%.'}); }
+
+    // Calculate grade
+    var pct = Math.round((score / maxScore) * 100);
+    var grade = pct >= 90 ? 'A' : pct >= 80 ? 'B' : pct >= 70 ? 'C' : pct >= 60 ? 'D' : 'F';
+    var summary = grade === 'A' ? 'Excellent backup posture. Minor optimizations possible.' :
+                  grade === 'B' ? 'Good foundation. Address warnings to reach full compliance.' :
+                  grade === 'C' ? 'Significant gaps. Prioritize failed checks immediately.' :
+                  grade === 'D' ? 'Critical deficiencies. Your backups may not survive a real disaster.' :
+                  'Failing. Immediate remediation required before next audit.';
+
+    // Render results
+    var html = '<div class="grade-display">' +
+      '<div class="grade-circle grade-'+grade+'"><span class="grade-letter">'+grade+'</span><span class="grade-score">'+pct+'/100</span></div>' +
+      '<div class="grade-details"><h2>'+summary+'</h2><p>Analyzed: '+esc(filename)+' • '+checks.filter(c=>c.status==='pass').length+'/'+checks.length+' checks passed</p></div>' +
+    '</div>';
+
+    html += '<div class="checklist"><h3>Detailed Findings</h3>';
+    checks.forEach(function(c){
+      var icon = c.status==='pass'?'✓':c.status==='fail'?'✗':'!';
+      html += '<div class="check-item"><div class="check-icon check-'+c.status+'">'+icon+'</div><div class="check-text"><strong>'+c.title+'</strong><span>'+c.desc+'</span></div></div>';
+    });
+    html += '</div>';
+
+    // Upsell
+    html += '<div class="upsell-box"><h3>Need to fix these issues?</h3><p>Compliance Shield automates backup verification, generates audit-ready reports, and monitors your backup health 24/7.</p><a href="/compliance/" class="upsell-btn">Explore Compliance Shield →</a></div>';
+
+    resultsDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+    dropZone.style.display = 'none';
+    resultsDiv.scrollIntoView({behavior:'smooth'});
+
+    // Create badge
+    createBadge(pct, grade, filename);
+  }
+
+  function createBadge(score, grade, filename){
+    fetch('/api/badge', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tool:'backup-audit',score:score,grade:grade,domain:null,report_url:window.location.href})
+    }).then(function(r){return r.json();}).then(function(data){
+      if(data.ok && data.embed_code){
+        var badgeHtml = '<div style="margin-top:24px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;">' +
+          '<p style="color:var(--muted);font-size:0.85rem;margin-bottom:12px;">Show off your backup compliance grade</p>' +
+          '<textarea readonly style="width:100%;max-width:500px;height:50px;background:#0b0f14;border:1px solid #1e2a3a;border-radius:8px;color:#e8eef7;font-family:monospace;font-size:0.75rem;padding:10px;resize:none;">'+esc(data.embed_code)+'</textarea>' +
+          '<button onclick="navigator.clipboard.writeText(this.previousElementSibling.value).then(function(){this.textContent=\'Copied!\';}.bind(this))" style="margin-top:8px;padding:6px 16px;background:transparent;border:1px solid #3dd9ff;color:#3dd9ff;border-radius:6px;cursor:pointer;font-size:0.8rem;">Copy Embed Code</button>' +
+        '</div>';
+        resultsDiv.insertAdjacentHTML('beforeend', badgeHtml);
+      }
+    }).catch(function(){});
+  }
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+})();
+</script>
+</body>
+</html>
