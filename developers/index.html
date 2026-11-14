@@ -179,6 +179,44 @@
   }
 }</code></pre>
 
+  <h2 style="margin-top:60px;">Integrations</h2>
+  <p style="color:var(--muted);margin-bottom:24px;">Use EdgeIQ scanners inside the tools you already use. Install once, get security feedback automatically.</p>
+
+  <div class="endpoint" style="border-color:rgba(61,217,255,0.3);">
+    <div class="endpoint-header">
+      <span class="method method-get" style="background:rgba(61,217,255,0.2);color:#3dd9ff;">GITHUB ACTION</span>
+      <span class="endpoint-path">EdgeIQ-Labs/edgeiq-security-action@v1</span>
+    </div>
+    <p>Automatic security scanning on every PR. Posts grade badge + findings as PR comments. Free API key works out of the box.</p>
+    <pre><code># .github/workflows/security-scan.yml
+name: Security Scan
+on: [pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: EdgeIQ-Labs/edgeiq-security-action@v1
+        with:
+          api-key: ${{ secrets.EDGEIQ_API_KEY }}</code></pre>
+    <p style="margin-top:12px;"><a href="https://github.com/EdgeIQ-Labs/edgeiq-security-action" style="color:var(--accent);font-weight:700;text-decoration:none;">View on GitHub →</a> · <a href="https://github.com/marketplace/actions/edgeiq-security-scan" style="color:var(--accent);text-decoration:none;">GitHub Marketplace →</a></p>
+  </div>
+
+  <div class="endpoint" style="opacity:0.6;">
+    <div class="endpoint-header">
+      <span class="method method-get" style="background:rgba(159,176,199,0.2);color:var(--muted);">COMING SOON</span>
+      <span class="endpoint-path">Slack Webhook Integration</span>
+    </div>
+    <p>Scheduled scans post results to your #security channel. Daily grade updates without visiting the dashboard.</p>
+  </div>
+
+  <div class="endpoint" style="opacity:0.6;">
+    <div class="endpoint-header">
+      <span class="method method-get" style="background:rgba(159,176,199,0.2);color:var(--muted);">COMING SOON</span>
+      <span class="endpoint-path">Terraform Provider</span>
+    </div>
+    <p>Run security checks during <code>terraform plan</code>. Block deploys on failing grades. Infrastructure-as-code security gates.</p>
+  </div>
+
   <h2 style="margin-top:40px;">Error Codes</h2>
   <div class="endpoint">
     <p><strong>401</strong> — Missing or invalid API key</p>
