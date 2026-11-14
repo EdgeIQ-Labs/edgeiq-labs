@@ -126,20 +126,25 @@
 </head>
 <body>
 
-<nav>
-  <a href="/" class="nav-logo">
-    <img src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs" class="nav-logo-img">
-    EdgeIQ<span> Labs</span>
-  </a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products/">Products</a>
-    <a href="/pulse/">Pulse</a>
-    <a href="/compliance/">Compliance</a>
-    <a href="/account/">My Account</a>
-    <a href="#signup" class="nav-cta" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'});return false;">Get BrandGuard →</a>
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
   </div>
-  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="nav-mobile-menu" id="nav-mobile-menu">
   <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4a6080;padding:12px 4px 4px;">Navigation</span>
