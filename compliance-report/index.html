@@ -102,7 +102,7 @@
       <li>Executive summary</li>
       <li>Print-ready format</li>
     </ul>
-    <a href="/api/compliance-report-checkout" class="cta-btn" style="width:100%;box-sizing:border-box;text-align:center;">Buy Full Report →</a>
+    <a href="/api/compliance-report-checkout" class="cta-btn" id="buy-full-report-btn" style="width:100%;box-sizing:border-box;text-align:center;">Buy Full Report →</a>
   </div>
   <div class="cr-card">
     <h3>CompliancePro</h3>
@@ -197,6 +197,24 @@
 </footer>
 
 <script>
+// Wire up Buy Full Report button to include email from form
+(function() {
+  var buyBtn = document.getElementById('buy-full-report-btn');
+  var emailInput = document.getElementById('cr-email');
+  if (buyBtn && emailInput) {
+    function updateCheckoutLink() {
+      var email = emailInput.value.trim();
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        buyBtn.href = '/api/compliance-report-checkout?email=' + encodeURIComponent(email);
+      } else {
+        buyBtn.href = '/api/compliance-report-checkout';
+      }
+    }
+    emailInput.addEventListener('input', updateCheckoutLink);
+    emailInput.addEventListener('change', updateCheckoutLink);
+  }
+})();
+
 async function generateReport() {
   var domain = document.getElementById('cr-domain').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
   var email = document.getElementById('cr-email').value.trim();
