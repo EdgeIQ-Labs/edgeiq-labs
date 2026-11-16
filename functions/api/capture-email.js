@@ -493,6 +493,36 @@ function buildNewsletterEmail() {
   return { subject, html };
 }
 
+// ── Nurture enrollment ────────────────────────────────────────────────────────
+// Honors the durable suppression record written by /api/nurture-unsub, so an
+// unsubscribe survives a later re-capture instead of restarting the drip.
+
+async function enrollNurture(env, email, source, extra = {}) {
+  if (!env.PULSE_KV) return;
+  try {
+    const suppressed = await env.PULSE_KV.get(`nurture:unsub:${email}`);
+    if (suppressed) return;
+
+    const pending = await env.PULSE_KV.get('nurture:pending', 'json') || [];
+    const existing = pending.find(e => e.email === email && e.source === source);
+    if (existing) {
+      // A tombstone stays a tombstone; never revive it here.
+      if (existing.unsubscribed || existing.completed || existing.dead) return;
+      return;
+    }
+    pending.push({
+      email,
+      step: 0,
+      enqueued_at: Date.now(),
+      last_sent_at: Date.now(),   // immediate deliverable counts as step 0 send
+      attempts: 0,
+      source,
+      ...extra,
+    });
+    await env.PULSE_KV.put('nurture:pending', JSON.stringify(pending));
+  } catch (_) {}
+}
+
 // ── Send helper ───────────────────────────────────────────────────────────────
 
 async function sendEmail(env, to, payload, fromOverride) {
@@ -552,22 +582,14 @@ export async function onRequestPost(context) {
       }), { expirationTtl: 90 * 24 * 60 * 60 }).catch(() => {});
     }
 
-    // Send DSS drip
+    // Send immediate DSS report
     if (env.RESEND_API_KEY) {
-      const now  = Date.now();
-      const day3 = new Date(now + 3 * 24 * 60 * 60 * 1000).toISOString();
-      const day7 = new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString();
-
       const e1 = buildDssEmail1(domain, grade, score, categories, issues);
-      const e2 = buildDssEmail2(domain, grade, issues);
-      const e3 = buildDssEmail3(domain);
-
-      await Promise.allSettled([
-        sendEmail(env, email, e1),
-        sendEmail(env, email, { ...e2, scheduledAt: day3 }),
-        sendEmail(env, email, { ...e3, scheduledAt: day7 }),
-      ]);
+      await sendEmail(env, email, e1);
     }
+
+    // Enroll in nurture sequence (follow-ups handled by nurture-queue cron)
+    await enrollNurture(env, email, 'domain-security-score', { domain });
 
     return Response.json({ ok: true });
   }
@@ -637,6 +659,8 @@ export async function onRequestPost(context) {
       const cl = buildChecklistEmail();
       await sendEmail(env, email, cl, COMPLIANCE_FROM);
     }
+    // Enroll in nurture sequence
+    await enrollNurture(env, email, 'checklist');
     return Response.json({ ok: true });
   }
 
@@ -663,22 +687,14 @@ export async function onRequestPost(context) {
 
   // ── Generic newsletter path ───────────────────────────────────────────────
 
-  // Generic 3-email drip via Resend (Substack removed — Resend Audience is primary)
+  // Send immediate welcome email
   if (env.RESEND_API_KEY) {
-    const now  = Date.now();
-    const day3 = new Date(now + 3 * 24 * 60 * 60 * 1000).toISOString();
-    const day7 = new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString();
-
     const e1 = buildEmail1();
-    const e2 = buildEmail2();
-    const e3 = buildEmail3();
-
-    await Promise.allSettled([
-      sendEmail(env, email, e1),
-      sendEmail(env, email, { ...e2, scheduledAt: day3 }),
-      sendEmail(env, email, { ...e3, scheduledAt: day7 }),
-    ]);
+    await sendEmail(env, email, e1);
   }
+
+  // Enroll in nurture sequence (follow-ups handled by nurture-queue cron)
+  await enrollNurture(env, email, 'generic');
 
   return Response.json({ ok: true });
 }
