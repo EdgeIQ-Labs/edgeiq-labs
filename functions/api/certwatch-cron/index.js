@@ -192,20 +192,60 @@ async function sendAlert(env, email, domain, daysUntilExpiry, expiryDate) {
 }
 
 // ─── Main Cron Handler ─────────────────────────────────────────
+// HARD CAPS (free-tier CPU protection, 2026-11-16):
+//   - Max 5 subscribers per invocation
+//   - Max 3 domains per subscriber
+//   - 8ms CPU budget guard (bail if exceeded)
+//   - KV cursor pagination to avoid full list scan
+const MAX_SUBS_PER_RUN = 5;
+const MAX_DOMAINS_PER_SUB = 3;
+const CPU_BUDGET_MS = 8;
+
 export async function onRequest(context) {
   const { env } = context;
+  const startTime = Date.now();
 
-  const subscribers = await getAllSubscribers(env);
-  const activeSubs = subscribers.filter(s => s.status === 'active' || s.status === 'free');
+  // Paginated subscriber fetch with hard cap
+  const subscribers = [];
+  let cursor = undefined;
+  while (subscribers.length < MAX_SUBS_PER_RUN) {
+    const result = await env.PULSE_KV.list({ prefix: 'certwatch:sub:', cursor, limit: 20 });
+    for (const key of result.keys) {
+      if (subscribers.length >= MAX_SUBS_PER_RUN) break;
+      const raw = await env.PULSE_KV.get(key.name);
+      if (raw) {
+        try {
+          const sub = JSON.parse(raw);
+          if (sub.status === 'active' || sub.status === 'free') subscribers.push(sub);
+        } catch {}
+      }
+    }
+    cursor = result.list_complete ? undefined : result.cursor;
+    if (!cursor) break;
+  }
 
   let totalChecked = 0;
   let totalAlerts = 0;
   let errors = [];
+  let cpuBailed = false;
 
-  for (const sub of activeSubs) {
-    const domains = await getDomains(env, sub.email);
+  for (const sub of subscribers) {
+    // CPU budget check before each subscriber
+    if (Date.now() - startTime > CPU_BUDGET_MS) {
+      cpuBailed = true;
+      break;
+    }
+
+    const allDomains = await getDomains(env, sub.email);
+    const domains = allDomains.slice(0, MAX_DOMAINS_PER_SUB);
 
     for (const domainObj of domains) {
+      // CPU budget check before each domain
+      if (Date.now() - startTime > CPU_BUDGET_MS) {
+        cpuBailed = true;
+        break;
+      }
+
       totalChecked++;
 
       const result = await checkCert(domainObj.domain);
@@ -242,8 +282,7 @@ export async function onRequest(context) {
         }
       }
 
-      // Rate limit between checks
-      await new Promise(r => setTimeout(r, 500));
+      // REMOVED: 500ms sleep was burning CPU on free tier for no benefit
     }
 
     // Save updated domain data
@@ -258,6 +297,9 @@ export async function onRequest(context) {
     alerts_sent: totalAlerts,
     errors: errors.length,
     error_details: errors.slice(0, 10),
+    cpu_bailed: cpuBailed,
+    subs_processed: subscribers.length,
+    elapsed_ms: Date.now() - startTime,
     timestamp: new Date().toISOString(),
   }), {
     headers: { 'Content-Type': 'application/json' },

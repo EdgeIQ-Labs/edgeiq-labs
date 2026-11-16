@@ -50,7 +50,7 @@ async function checkUrl(url) {
   var start = Date.now();
   try {
     var controller = new AbortController();
-    var timeout = setTimeout(function() { controller.abort(); }, 10000);
+    var timeout = setTimeout(function() { controller.abort(); }, 5000); // reduced from 10s for free-tier CPU
     var resp = await fetch(url, {
       method: 'HEAD',
       redirect: 'follow',
@@ -100,9 +100,17 @@ async function sendAlert(email, monitorName, monitorUrl, newStatus, responseTime
   }
 }
 
+// HARD CAPS (free-tier CPU protection, 2026-11-16):
+//   - Max 10 monitors total per invocation across all subscribers
+//   - 8ms CPU budget guard (bail if exceeded)
+//   - Reduced fetch timeout from 10s to 5s
+var MAX_CHECKS_PER_RUN = 10;
+var CPU_BUDGET_MS = 8;
+
 export async function onRequest(context) {
   var env = context.env;
   var resendKey = env.RESEND_API_KEY || '';
+  var startTime = Date.now();
   
   var subIndexRaw = await env.PULSE_KV.get('uptimeping:subscribers');
   var subscribers = subIndexRaw ? JSON.parse(subIndexRaw) : [];
@@ -112,14 +120,27 @@ export async function onRequest(context) {
   var checksRun = 0;
   var incidentsQueued = 0;
   var skippedNoChange = 0;
+  var cpuBailed = false;
   
   for (var s = 0; s < subscribers.length; s++) {
+    // CPU budget check before each subscriber
+    if (Date.now() - startTime > CPU_BUDGET_MS || checksRun >= MAX_CHECKS_PER_RUN) {
+      cpuBailed = true;
+      break;
+    }
+
     var email = subscribers[s];
     var sub = await getSubscriber(env, email);
     if (!sub || sub.status !== 'active') continue;
     
     var monitors = await getMonitors(env, email);
     for (var i = 0; i < monitors.length; i++) {
+      // Hard cap + CPU budget check before each monitor
+      if (checksRun >= MAX_CHECKS_PER_RUN || Date.now() - startTime > CPU_BUDGET_MS) {
+        cpuBailed = true;
+        break;
+      }
+
       var m = monitors[i];
       checksRun++;
       var urlHash = hashUrl(m.url);
@@ -190,6 +211,8 @@ export async function onRequest(context) {
     skipped_no_change: skippedNoChange,
     alerts_sent: alertsSent,
     incidents_queued: incidentsQueued,
+    cpu_bailed: cpuBailed,
+    elapsed_ms: Date.now() - startTime,
     results: results.slice(0, 50),
   }), {
     status: 200,

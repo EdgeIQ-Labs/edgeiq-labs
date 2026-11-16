@@ -39,8 +39,11 @@ binding = "STATUSPAGE_DB"
 database_name = "statuspage"
 database_id = "2493e288-3313-4458-b4e4-94beb48caa54"
 
-[triggers]
-crons = ["0 */6 * * *", "30 */6 * * *"]
+# [triggers]
+# DISABLED 2026-11-16: Monolithic Pages crons caused 1,000+ free-tier CPU exceeds.
+# All scheduled work moved to Hermes cron jobs hitting specific endpoints,
+# or standalone workers with individual triggers.
+# crons = ["0 */6 * * *", "30 */6 * * *"]
 
 [[kv_namespaces]]
 binding = "PULSE_KV"
