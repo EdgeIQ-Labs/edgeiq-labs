@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AI Agents Are Now Hacking at Machine Speed. Your Defenses Aren't Ready. — EdgeIQ Labs</title>
+  <meta name="description" content="The FBI warned that ARTEX, an AI-powered pentest framework, can go from first scan to admin access in under three hours. Here's what small businesses need to know about autonomous attacks."/>
+  <meta property="og:title" content="ARTEX: When AI Agents Hack Faster Than You Can Respond"/>
+  <meta property="og:description" content="FBI FLASH alert: ARTEX automates reconnaissance through exfiltration. Some intrusions hit privileged access in under 3 hours. What defenders should do now."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/artex-ai-agents-hacking-machine-speed-fbi-warning.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/artex-ai-agents-hacking-machine-speed-fbi-warning.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"AI Agents Are Now Hacking at Machine Speed. Your Defenses Aren't Ready.","datePublished":"2026-11-16","dateModified":"2026-11-16","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018 !important;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.orange{color:#f97316;background:#1f1710;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag orange">Threat Intel</span>
+      <span class="tag">AI Security</span>
+      <span class="tag">FBI Advisory</span>
+    </div>
+    <h1>AI Agents Are Now Hacking at Machine Speed. Your Defenses Aren't Ready.</h1>
+    <div class="meta">
+      <span>November 16, 2026</span>
+      <span>·</span>
+      <span>10 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>On November 13, the FBI published a FLASH advisory about ARTEX, an open-source penetration testing framework that uses AI agents to automate intrusions. The bureau says some attacks went from initial scan to privileged access in under three hours. The operator didn't need to be an expert. The agents did the work.</p>
+
+    <p>ARTEX was released on GitHub in July by a developer known as Autumn-27, later identified as Chinese security engineer Li Puhua. It was meant for authorized testing. By October, reports of abuse prompted the developer to pull the repository. That didn't stop anything. Community forks, archived copies, localized versions, and a commercial "ARTEX PRO" edition kept it available. As of early November, Censys counted more than 1,600 publicly exposed ARTEX consoles. The real number is certainly higher.</p>
+
+    <p>This isn't theoretical. The FBI says ARTEX has been used since at least August against financial services, government agencies, defense contractors, healthcare systems, semiconductor companies, energy providers, and legal firms across multiple countries. South Korean banks lost personal data on roughly 67,000 people. A ConnectWise supply-chain compromise let attackers reach over 2,250 Microsoft 365 tenants. CrowdStrike tracked a Chinese espionage group called Vapor Panda using ARTEX against more than 200 organizations in 14 countries.</p>
+
+    <h2>What Makes ARTEX Different</h2>
+
+    <p>Automated attack tools aren't new. Metasploit has existed for two decades. Cobalt Strike has powered red teams and threat actors alike since 2012. What's different about ARTEX is the integration layer between human intent and machine execution.</p>
+
+    <p>ARTEX doesn't ship its own AI model. Instead, it connects to external LLMs — Claude, GPT, DeepSeek, GLM, Grok, Kimi — and translates high-level objectives into commands executed by specialized agents. You describe what you want in plain language. The framework figures out how to get there, chains techniques together, adapts when paths fail, and keeps going with minimal human input.</p>
+
+    <p>The FBI's advisory notes that Chinese models dominate observed usage because they offer capable inference at low cost with fewer observable guardrails when framed as penetration testing. Amazon's CISO CJ Moses described campaigns where stolen API keys paid for the LLM inference powering further credential theft — a self-sustaining loop where the attack funds itself.</p>
+
+    <p>This compresses the timeline defenders have traditionally relied on. Reconnaissance that took days now takes minutes. Credential spraying, privilege escalation, lateral movement, and data staging happen in sequence without waiting for a human operator to review results and decide what to try next. Three hours from first contact to domain admin isn't a worst-case scenario anymore. It's the documented baseline.</p>
+
+    <div class="callout warn">
+      <strong>Why this matters for small businesses:</strong> ARTEX specifically targets overlooked systems — partner portals, employee applications, legacy services, third-party integrations, sales-support tools. These are exactly the systems small businesses tend to secure last (or never). Attackers know this. The framework exploits it systematically.
+    </div>
+
+    <h2>What Actually Happened in Known Attacks</h2>
+
+    <p>The ConnectWise incident illustrates the pattern. Attackers compromised application identities used by ConnectWise's cloud backup service (formerly SkyKick). Those identities had permissions previously granted by customers. Using ARTEX, the attackers attempted authentication against more than 2,250 downstream Microsoft 365 tenants. In some environments, they reached privileged access and made changes that Microsoft warns can persist even after credential resets.</p>
+
+    <p>Huntress identified at least 162 compromised tenants. Microsoft attributed the campaign to Storm-0940, a China-state-aligned threat actor. ARTEX accelerated reconnaissance, password spraying, and cloud permission abuse across all targets simultaneously. Most attempts failed. Some didn't.</p>
+
+    <p>In South Korea, a Chinese-speaking attacker combined ARTEX with Claude Code agents to hit Shinhan Bank, KB Kookmin Bank, and Hana Bank. CrowdStrike found the attacker's exposed infrastructure containing ARTEX configuration files and Claude Code session histories documenting the intrusions. South Korean police arrested seven suspects linked to attacks against more than 90 organizations, with ARTEX reportedly used in most of them. Authorities said the gang stole approximately 8.2 million records.</p>
+
+    <p>Vapor Panda used ARTEX against more than 200 organizations across 14 countries. The AI agents performed reconnaissance, exploited vulnerabilities, deployed web shells, stole credentials, and pursued alternative attack paths when initial attempts failed. At least nine organizations were confirmed compromised.</p>
+
+    <h2>What Defenders Should Do Now</h2>
+
+    <p>The FBI's advisory includes indicators of compromise — IP addresses, command-and-control infrastructure, suspicious network patterns. But the bureau also warns that IP-based IOCs rot quickly. Static signatures won't save you here.</p>
+
+    <h3>1. Monitor for Behavioral Bursts, Not Just Signatures</h3>
+    <p>ARTEX generates high-volume automated traffic that triggers alerts. The problem is speed: by the time your SOC triages the alert, the intrusion may already be complete. Tune detection for abnormal authentication rates, unusual cloud privilege escalations, sudden spikes in API calls, unexpected data transfers, and new administrative sessions outside business hours. Behavioral signals catch what static IOCs miss.</p>
+
+    <h3>2. Secure Internet-Facing Applications Aggressively</h3>
+    <p>ARTEX excels at finding forgotten systems. Audit every internet-facing application your organization operates. Remove unused endpoints. Enforce MFA everywhere. Rate-limit authentication APIs. Restrict cloud administration interfaces to known IP ranges or VPN-only access. If a system doesn't need to be public, make it private.</p>
+
+    <h3>3. Review Third-Party Application Permissions</h3>
+    <p>The ConnectWise attack succeeded because customers had granted broad permissions to a third-party application identity. Review every OAuth app, SAML provider, and API integration connected to your Microsoft 365 tenant, Google Workspace, or cloud infrastructure. Remove unused grants. Reduce scopes. Monitor for permission changes. Treat application identities like service accounts with privileged access.</p>
+
+    <h3>4. Assume Compromise and Segment Accordingly</h3>
+    <p>If an attacker reaches privileged access in three hours, your detection window is essentially zero. Design networks assuming breach. Limit lateral movement. Separate critical assets from general user environments. Use jump hosts for administrative access. Log everything to independent storage that survives credential compromise.</p>
+
+    <h3>5. Deploy Independent Monitoring</h3>
+    <p>If your SIEM, logging, and alerting live in the same environment as the systems being attacked, they fail when those systems fail. Run monitoring on separate infrastructure. Our VPS hosting ($4/mo) includes Wazuh SIEM pre-installed on isolated infrastructure that won't go blind when your primary environment gets compromised. For small teams without dedicated SOC staff, this is the difference between knowing you're breached and finding out weeks later.</p>
+
+    <div class="callout">
+      <strong>Detection resources:</strong> Researcher MalwareMustDie released an open-source ARTEX detection signature pack covering suspicious network requests, identity abuse, cloud activity, malicious files, and automated attack patterns. The FBI's 13-page FLASH advisory includes TTPs mapped to MITRE ATT&CK. Both are free. Use them.
+    </div>
+
+    <h2>The Bigger Picture</h2>
+
+    <p>ARTEX isn't the only autonomous attack framework, and it won't be the last. The underlying trend is clear: AI-assisted tooling reduces the skill floor for complex intrusions while compressing timelines below human response capability. Smaller threat groups can now run concurrent campaigns at scales previously reserved for well-funded nation-states.</p>
+
+    <p>This landed the same week as the Vanderbilt ransomware attack, N-able N-central zero-days, ScreenConnect MSP compromises, Microsoft Patch Tuesday fixing over 1,000 vulnerabilities including an actively exploited Outlook flaw, and Operation Endgame disrupting Gootloader infrastructure. Infrastructure failures and security incidents don't schedule themselves conveniently. They stack.</p>
+
+    <p>The businesses that survive aren't the ones with perfect defenses. They're the ones that assumed automation would eventually outrun manual response and built accordingly. Start there.</p>
+  </div>
+
+  <div class="cta-box">
+    <h3>Monitoring That Doesn't Sleep</h3>
+    <p>EdgeIQ Labs VPS hosting from $4/mo — NVMe, root SSH, DDoS mitigation, Wazuh SIEM pre-installed on isolated infrastructure. Independent monitoring that survives when your primary environment doesn't.</p>
+    <a href="/pricing/" class="btn btn-primary">See Plans →</a>
+  </div>
+
+  <!-- Email Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;">
+    <h3 style="margin:0 0 10px;font-size:1.1rem;">Weekly Infrastructure & Security Briefings</h3>
+    <p style="margin:0 0 16px;color:var(--muted);font-size:0.88rem;">Outages, CVEs, breaches, and practical fixes — delivered to your inbox every Tuesday.</p>
+    <form id="blogEmailSignup" style="display:flex;gap:8px;max-width:400px;margin:0 auto;" onsubmit="event.preventDefault();var e=this.querySelector('input[type=email]').value;if(!e)return;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:'blog'})}).then(()=>{this.innerHTML='<p style=color:var(--green)>✓ You\'re in. Watch your inbox.</p>';});">
+      <input type="email" placeholder="you@company.com" required style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;"/>
+      <button type="submit" style="background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;">Subscribe</button>
+    </form>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>© 2026 EdgeIQ Labs. Cybersecurity · Hosting for Small Business.</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>
