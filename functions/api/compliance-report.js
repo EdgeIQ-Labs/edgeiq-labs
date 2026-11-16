@@ -53,6 +53,10 @@ export async function onRequest(context) {
 
     await env.PULSE_KV.put(reportKey, JSON.stringify(reportMeta), { expirationTtl: 86400 * 30 });
     await env.PULSE_KV.put(`${reportKey}:html`, html, { expirationTtl: 86400 * 30 });
+    // Store scanner data for paid upgrade webhook
+    await env.PULSE_KV.put(`${reportKey}:scan`, JSON.stringify(scanner_data), { expirationTtl: 86400 * 90 });
+    // Index by email for webhook lookup
+    await env.PULSE_KV.put(`compliance-report:email:${email}`, reportId, { expirationTtl: 86400 * 90 });
 
     // Send via Resend
     if (env.RESEND_API_KEY) {
