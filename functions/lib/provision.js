@@ -65,6 +65,14 @@ export const SERVICE_CONFIG = {
       'price_1UWye5RC1NZ20yDTw9l6DaCe': 'pro',
     },
   },
+  'verified-badge': {
+    name: 'EdgeIQ Verified Badge',
+    dashboardPath: '/badge/dashboard/',
+    kvPrefix: 'PULSE_',
+    priceToPlan: {
+      'price_1UcOIGRC1NZ20yDTpuXPodLz': 'annual',
+    },
+  },
 };
 
 // Detect which service a subscription belongs to based on price ID

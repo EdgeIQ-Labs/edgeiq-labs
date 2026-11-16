@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verified Badge Dashboard — EdgeIQ Labs</title>
+  <link rel="stylesheet" href="/css/design-system.css"/>
+  <style>
+    body{padding:40px 20px;max-width:700px;margin:0 auto;}
+    h1{color:var(--text);font-size:1.8rem;margin-bottom:8px;}
+    .subtitle{color:var(--muted);margin-bottom:32px;}
+    .dash-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:20px;}
+    .dash-card h2{color:var(--text);font-size:1.1rem;margin:0 0 16px;}
+    label{display:block;color:var(--muted);font-size:0.85rem;margin-bottom:6px;}
+    input[type=text],input[type=email]{width:100%;padding:12px;background:#0b0f14;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.95rem;margin-bottom:16px;box-sizing:border-box;}
+    .btn{display:inline-block;padding:12px 28px;background:#b47aff;color:#fff;border-radius:8px;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-size:0.95rem;transition:transform 0.2s;}
+    .btn:hover{transform:translateY(-2px);}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+    .embed-box{background:#0b0f14;border:1px solid var(--border);border-radius:8px;padding:16px;font-family:monospace;font-size:0.8rem;color:#9fb0c7;word-break:break-all;margin:12px 0;position:relative;}
+    .copy-btn{position:absolute;top:8px;right:8px;padding:4px 12px;background:rgba(180,122,255,0.2);border:1px solid #b47aff;border-radius:4px;color:#b47aff;font-size:0.75rem;cursor:pointer;}
+    .copy-btn:hover{background:rgba(180,122,255,0.4);}
+    .status-active{color:#3de19e;font-weight:700;}
+    .status-expired{color:#ff6b7a;font-weight:700;}
+    .logo-preview{max-width:80px;max-height:80px;border-radius:8px;margin:12px 0;border:1px solid var(--border);}
+    .msg{padding:12px;border-radius:8px;font-size:0.9rem;margin-bottom:16px;display:none;}
+    .msg.ok{background:rgba(61,225,158,0.1);border:1px solid #3de19e;color:#3de19e;}
+    .msg.err{background:rgba(255,107,122,0.1);border:1px solid #ff6b7a;color:#ff6b7a;}
+    .hidden{display:none;}
+  </style>
+</head>
+<body>
+<h1>🏅 Verified Badge Dashboard</h1>
+<p class="subtitle">Manage your EdgeIQ Verified Badge, upload your logo, and grab your embed code.</p>
+
+<!-- Login -->
+<div id="login-section" class="dash-card">
+  <h2>Sign In</h2>
+  <label for="login-email">Email address used at checkout</label>
+  <input type="email" id="login-email" placeholder="you@company.com" />
+  <button class="btn" onclick="doLogin()">Load My Badge →</button>
+  <div id="login-msg" class="msg"></div>
+</div>
+
+<!-- Dashboard (hidden until loaded) -->
+<div id="dashboard" class="hidden">
+  <div class="dash-card">
+    <h2>Badge Status</h2>
+    <p>Domain: <strong id="dash-domain" style="color:var(--text);"></strong></p>
+    <p>Status: <span id="dash-status"></span></p>
+    <p>Verified: <span id="dash-verified" style="color:var(--muted);"></span></p>
+    <p>Expires: <span id="dash-expires" style="color:var(--muted);"></span></p>
+  </div>
+
+  <div class="dash-card">
+    <h2>Customize</h2>
+    <label for="company-name">Company Display Name</label>
+    <input type="text" id="company-name" placeholder="Acme Corp" />
+    <label for="logo-upload">Company Logo (PNG/JPG, max 100KB)</label>
+    <input type="file" id="logo-upload" accept="image/png,image/jpeg,image/svg+xml" style="margin-bottom:16px;color:var(--muted);" />
+    <img id="logo-preview" class="logo-preview hidden" />
+    <button class="btn" onclick="saveSettings()" id="save-btn">Save Changes</button>
+    <div id="save-msg" class="msg"></div>
+  </div>
+
+  <div class="dash-card">
+    <h2>Embed Code</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;">Paste this snippet anywhere on your site. The badge auto-updates.</p>
+    <div class="embed-box" id="embed-code">
+      <button class="copy-btn" onclick="copyEmbed()">Copy</button>
+      <span id="embed-text"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+var BADGE_ID = null;
+var API_KEY = null;
+
+async function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var msg = document.getElementById('login-msg');
+  if (!email) { showMsg(msg, 'Enter your email', 'err'); return; }
+  try {
+    // Look up badge by email via the API
+    var r = await fetch('/api/verified-badge?id=email:' + encodeURIComponent(email));
+    if (!r.ok) {
+      // Try alternate lookup: the API stores vbadge:email:<email> -> badge_id
+      // But GET /api/verified-badge?id= expects a badge ID, not email lookup
+      // We need a separate lookup endpoint or handle it in the API
+      showMsg(msg, 'No badge found for that email. Did you complete checkout?', 'err');
+      return;
+    }
+    var d = await r.json();
+    loadDashboard(d);
+  } catch(e) {
+    showMsg(msg, 'Error: ' + e.message, 'err');
+  }
+}
+
+function loadDashboard(data) {
+  BADGE_ID = data.id;
+  document.getElementById('login-section').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('dash-domain').textContent = data.domain;
+  var statusEl = document.getElementById('dash-status');
+  statusEl.textContent = data.status === 'active' ? 'Active' : 'Expired';
+  statusEl.className = data.status === 'active' ? 'status-active' : 'status-expired';
+  document.getElementById('dash-verified').textContent = new Date(data.verified_at).toLocaleDateString();
+  document.getElementById('dash-expires').textContent = new Date(data.expires_at).toLocaleDateString();
+  document.getElementById('company-name').value = data.company || '';
+  if (data.logo) {
+    var preview = document.getElementById('logo-preview');
+    preview.src = data.logo;
+    preview.classList.remove('hidden');
+  }
+  document.getElementById('embed-text').textContent = '<script src="https://edgeiqlabs.com/verified-badge.js" data-badge-id="' + data.id + '"></script>';
+}
+
+async function saveSettings() {
+  var btn = document.getElementById('save-btn');
+  var msg = document.getElementById('save-msg');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    var body = { id: BADGE_ID, company: document.getElementById('company-name').value.trim() };
+    var fileInput = document.getElementById('logo-upload');
+    if (fileInput.files && fileInput.files[0]) {
+      var file = fileInput.files[0];
+      if (file.size > 102400) { showMsg(msg, 'Logo too large (max 100KB)', 'err'); btn.disabled = false; btn.textContent = 'Save Changes'; return; }
+      var reader = new FileReader();
+      reader.onloadend = async function() {
+        body.logo = reader.result;
+        await doSave(body, btn, msg);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      await doSave(body, btn, msg);
+    }
+  } catch(e) {
+    showMsg(msg, 'Error: ' + e.message, 'err');
+    btn.disabled = false; btn.textContent = 'Save Changes';
+  }
+}
+
+async function doSave(body, btn, msg) {
+  var r = await fetch('/api/verified-badge', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  var d = await r.json();
+  if (d.ok) {
+    showMsg(msg, 'Saved! Badge updated.', 'ok');
+    if (body.logo) {
+      var preview = document.getElementById('logo-preview');
+      preview.src = body.logo;
+      preview.classList.remove('hidden');
+    }
+  } else {
+    showMsg(msg, 'Error: ' + (d.error || 'Save failed'), 'err');
+  }
+  btn.disabled = false; btn.textContent = 'Save Changes';
+}
+
+function copyEmbed() {
+  var text = document.getElementById('embed-text').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+function showMsg(el, text, type) {
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  el.style.display = 'block';
+}
+
+// Auto-load from URL params (after Stripe redirect)
+var params = new URLSearchParams(window.location.search);
+if (params.get('session_id')) {
+  // Fresh checkout — show success message and prompt login
+  var msg = document.getElementById('login-msg');
+  showMsg(msg, '✅ Payment confirmed! Enter your email below to set up your badge.', 'ok');
+}
+</script>
+</body>
+</html>

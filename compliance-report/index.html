@@ -184,12 +184,8 @@ async function generateReport() {
   result.style.display = 'none';
 
   try {
-    // Step 1: Run real scan via existing API
-    var scanResp = await fetch('/api/domain-score', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: domain })
-    });
+    // Step 1: Run real scan via existing API (GET endpoint)
+    var scanResp = await fetch('/api/domain-score?domain=' + encodeURIComponent(domain));
     var scanData = await scanResp.json();
     btn.textContent = 'Generating report...';
 

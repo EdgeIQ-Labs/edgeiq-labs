@@ -89,13 +89,39 @@ export async function onRequest(context) {
           break;
         }
 
-        const customer = await provisionCustomer(kvNamespace, serviceConfig.slug, {
-          email,
-          customerId,
-          subscriptionId,
-          plan,
-          apiKey,
-        });
+        // Special handling for verified-badge: custom KV structure
+        if (serviceConfig.slug === 'verified-badge') {
+          const domain = session.metadata?.domain || '';
+          const badgeId = crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+          const now = new Date();
+          const expires = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+          const badgeData = {
+            id: badgeId,
+            domain,
+            email,
+            customerId,
+            subscriptionId,
+            company: '',
+            logo: null,
+            verified_at: now.toISOString(),
+            expires_at: expires.toISOString(),
+            status: 'active',
+          };
+          await kvNamespace.put(`vbadge:${badgeId}`, JSON.stringify(badgeData));
+          await kvNamespace.put(`vbadge:domain:${domain}`, badgeId);
+          await kvNamespace.put(`vbadge:email:${email}`, badgeId);
+          await kvNamespace.put(`vbadge:stripe:${customerId}`, badgeId);
+          await kvNamespace.put(`vbadge:key:${badgeId}`, apiKey);
+          console.log(`[Webhook] ✅ Badge ${badgeId} created for ${domain}`);
+        } else {
+          await provisionCustomer(kvNamespace, serviceConfig.slug, {
+            email,
+            customerId,
+            subscriptionId,
+            plan,
+            apiKey,
+          });
+        }
 
         // Send welcome email
         const dashboardUrl = `https://edgeiqlabs.com${serviceConfig.dashboardPath}`;
