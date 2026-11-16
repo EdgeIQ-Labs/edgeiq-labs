@@ -22,9 +22,15 @@ export async function onRequest(context) {
   if (!domain) return apiResponse({ error: 'Missing ?domain= parameter' }, 400);
 
   try {
-    const resp = await fetch(`https://edgeiqlabs.com/api/dns-check?domain=${encodeURIComponent(domain)}`);
-    const data = await resp.json();
-    data._api = { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit };
+    // Direct DNS check via Cloudflare DoH — no self-fetch loop
+    const types = ['A','AAAA','MX','TXT','NS','CNAME'];
+    const records = {};
+    for (const type of types) {
+      const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`, { headers: { 'Accept': 'application/dns-json' } });
+      const j = await r.json();
+      if (j.Answer) records[type] = j.Answer.map(a => ({ name: a.name, type: a.type, data: a.data, ttl: a.TTL }));
+    }
+    const data = { domain, records, _api: { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit } };
     return apiResponse(data);
   } catch (e) {
     return apiResponse({ error: e.message }, 500);

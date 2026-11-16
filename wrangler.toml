@@ -40,7 +40,11 @@ database_name = "statuspage"
 database_id = "2493e288-3313-4458-b4e4-94beb48caa54"
 
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["0 */6 * * *", "30 */6 * * *"]
+
+[[kv_namespaces]]
+binding = "PULSE_KV"
+id = "543afb6d90ba427b8b60e08a8f96159e"
 
 [[kv_namespaces]]
 binding = "EMAIL_SUITE_KV"

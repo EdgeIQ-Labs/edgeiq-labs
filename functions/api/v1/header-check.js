@@ -22,9 +22,15 @@ export async function onRequest(context) {
   if (!domain) return apiResponse({ error: 'Missing ?domain= parameter' }, 400);
 
   try {
-    const resp = await fetch(`https://edgeiqlabs.com/api/header-check?domain=${encodeURIComponent(domain)}`);
-    const data = await resp.json();
-    data._api = { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit };
+    // Direct header check — no self-fetch loop
+    const resp = await fetch(`https://${domain}`, { method: 'HEAD', redirect: 'follow', headers: { 'User-Agent': 'EdgeIQ-HeaderCheck/1.0' } });
+    const headers = {};
+    resp.headers.forEach((v, k) => { headers[k] = v; });
+    const securityHeaders = ['strict-transport-security','content-security-policy','x-frame-options','x-content-type-options','referrer-policy','permissions-policy','cross-origin-opener-policy','cross-origin-resource-policy'];
+    const found = {}, missing = [];
+    securityHeaders.forEach(h => { if (headers[h]) found[h] = headers[h]; else missing.push(h); });
+    const grade = missing.length === 0 ? 'A' : missing.length <= 2 ? 'B' : missing.length <= 4 ? 'C' : 'D';
+    const data = { domain, grade, found, missing, status_code: resp.status, _api: { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit } };
     return apiResponse(data);
   } catch (e) {
     return apiResponse({ error: e.message }, 500);

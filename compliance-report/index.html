@@ -153,8 +153,9 @@
 </div>
 
 <div id="generate" class="email-form">
-  <h3 style="color:var(--text);margin:0 0 8px;">Generate Free Compliance Summary</h3>
-  <p style="color:var(--muted);font-size:0.85rem;margin:0 0 16px;">Enter your email and select a framework. We'll generate a sample report so you can see the format.</p>
+  <h3 style="color:var(--text);margin:0 0 8px;">Get Your Free Compliance Review</h3>
+  <p style="color:var(--muted);font-size:0.85rem;margin:0 0 16px;">Enter your domain and email. We'll run a real security scan and deliver a graded compliance report — no calls, no meetings, fully automated.</p>
+  <input type="text" id="cr-domain" placeholder="example.com" />
   <input type="email" id="cr-email" placeholder="you@company.com" />
   <select id="cr-framework">
     <option value="SOC2_LITE">SOC 2 Lite Trust Report</option>
@@ -162,7 +163,7 @@
     <option value="PCI_DSS">PCI-DSS Gap Analysis</option>
     <option value="GENERAL">General Security Assessment</option>
   </select>
-  <button class="cta-btn" onclick="generateSample()" id="cr-btn" style="width:100%;">Generate Sample Report</button>
+  <button class="cta-btn" onclick="generateReport()" id="cr-btn" style="width:100%;">Scan & Generate Report →</button>
   <div class="form-result" id="cr-result"></div>
 </div>
 
@@ -171,55 +172,83 @@
 </footer>
 
 <script>
-async function generateSample() {
-  var email = document.getElementById('cr-email').value;
+async function generateReport() {
+  var domain = document.getElementById('cr-domain').value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+  var email = document.getElementById('cr-email').value.trim();
   var framework = document.getElementById('cr-framework').value;
+  if (!domain || !domain.includes('.')) { alert('Enter a valid domain (e.g. example.com)'); return; }
   if (!email || !email.includes('@')) { alert('Enter a valid email'); return; }
   var btn = document.getElementById('cr-btn');
   var result = document.getElementById('cr-result');
-  btn.disabled = true; btn.textContent = 'Generating...';
+  btn.disabled = true; btn.textContent = 'Scanning domain...';
   result.style.display = 'none';
+
   try {
+    // Step 1: Run real scan via existing API
+    var scanResp = await fetch('/api/domain-score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: domain })
+    });
+    var scanData = await scanResp.json();
+    btn.textContent = 'Generating report...';
+
+    // Normalize findings from domain-score response
+    var findings = [];
+    var checks = scanData.checks || scanData.results || scanData.findings || [];
+    if (Array.isArray(checks)) {
+      findings = checks.map(function(c) {
+        return {
+          severity: c.severity || c.level || (c.passed ? 'low' : 'high'),
+          description: c.description || c.name || c.message || c.check || 'Check result',
+          remediation: c.remediation || c.fix || c.recommendation || ''
+        };
+      });
+    }
+    if (findings.length === 0) {
+      findings = [
+        { severity: 'medium', description: 'Scan completed — detailed findings processing', remediation: 'Upgrade to full report for complete analysis' }
+      ];
+    }
+
+    var grade = scanData.grade || scanData.score_letter || 'N/A';
+    var score = scanData.score || scanData.security_score || 0;
+
+    // Step 2: Generate compliance report from real scan data
     var r = await fetch('/api/compliance-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: email,
         framework: framework,
-        scanner_type: 'Demo Scanner',
+        scanner_type: 'Domain Security Scanner',
         paid: false,
         scanner_data: {
-          grade: 'C+',
-          score: 62,
-          domain: 'example.com',
-          findings: [
-            { severity: 'high', description: 'Missing HSTS header allows potential downgrade attacks', remediation: 'Add Strict-Transport-Security header with max-age=31536000' },
-            { severity: 'medium', description: 'No Content-Security-Policy header detected', remediation: 'Implement CSP header to prevent XSS attacks' },
-            { severity: 'medium', description: 'Server version disclosed in headers', remediation: 'Remove Server header or configure to hide version' },
-            { severity: 'low', description: 'X-Frame-Options not set', remediation: 'Add X-Frame-Options: DENY to prevent clickjacking' },
-            { severity: 'low', description: 'Referrer-Policy missing', remediation: 'Add Referrer-Policy: strict-origin-when-cross-origin' }
-          ]
+          grade: grade,
+          score: score,
+          domain: domain,
+          findings: findings
         }
       })
     });
     var d = await r.json();
     if (d.ok) {
       result.className = 'form-result success';
-      result.innerHTML = '✅ ' + d.message + '<br/><small>Check your inbox for the report.</small>';
+      result.innerHTML = '✅ ' + d.message + '<br/><small>Report sent to <strong>' + email + '</strong>. Check your inbox (and spam folder).</small>';
       result.style.display = 'block';
-      btn.textContent = 'Sent ✓';
+      btn.textContent = 'Report Sent ✓';
       btn.style.background = '#3de19e';
     } else {
       result.className = 'form-result error';
       result.textContent = '❌ ' + (d.error || 'Failed to generate report');
       result.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'Generate Sample Report';
+      btn.disabled = false; btn.textContent = 'Scan & Generate Report →';
     }
   } catch(e) {
     result.className = 'form-result error';
     result.textContent = '❌ Error: ' + e.message;
     result.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Generate Sample Report';
+    btn.disabled = false; btn.textContent = 'Scan & Generate Report →';
   }
 }
 </script>

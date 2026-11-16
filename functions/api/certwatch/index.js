@@ -29,13 +29,40 @@ async function putDomains(env, email, domains) {
   await env.PULSE_KV.put('certwatch:domains:' + email, JSON.stringify(domains));
 }
 
+// INLINED cert check — no self-fetch loop
 async function checkCertViaWorker(domain) {
   try {
-    var resp = await fetch('https://edgeiqlabs.com/api/cert-expiry?domain=' + encodeURIComponent(domain));
-    if (!resp.ok) return { domain: domain, status: 'error', error: 'cert-expiry returned ' + resp.status };
-    var data = await resp.json();
-    if (data.error || data.status === 'error') return { domain: domain, status: 'error', error: data.error || 'Check failed' };
-    return { domain: domain, status: data.status || 'valid', expiry_date: data.expiry_date, days_until_expiry: data.days_until_expiry, issuer: data.issuer || 'Unknown' };
+    var resp = await fetch(
+      'https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json',
+      { headers: { 'User-Agent': 'EdgeIQ-CertWatch/1.0', 'Accept': 'application/json' } }
+    );
+    if (!resp.ok) return { domain: domain, status: 'error', error: 'Certificate lookup failed' };
+    var text = await resp.text();
+    var certs;
+    try { certs = JSON.parse(text); } catch { return { domain: domain, status: 'error', error: 'Failed to parse certificate data' }; }
+    if (!Array.isArray(certs) || certs.length === 0) return { domain: domain, status: 'error', error: 'No certificates found' };
+    var matching = [];
+    for (var i = 0; i < certs.length; i++) {
+      var c = certs[i];
+      if (!c.not_after || !c.not_before) continue;
+      var nameValue = c.name_value || '';
+      var commonName = c.common_name || '';
+      if (nameValue.indexOf(domain) !== -1 || commonName === domain) matching.push(c);
+    }
+    if (matching.length === 0) matching = certs.filter(function(c) { return c.not_after && c.not_before; });
+    if (matching.length === 0) return { domain: domain, status: 'error', error: 'No valid certificates found' };
+    matching.sort(function(a, b) { return new Date(b.not_before).getTime() - new Date(a.not_before).getTime(); });
+    var latest = matching[0];
+    var expiryDate = new Date(latest.not_after);
+    var now = new Date();
+    var daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+    var status = 'valid';
+    if (daysUntilExpiry <= 0) status = 'expired';
+    else if (daysUntilExpiry <= 30) status = 'expiring_soon';
+    var issuerRaw = latest.issuer_name || 'Unknown';
+    var cnMatch = issuerRaw.match(/CN=([^,]+)/);
+    var issuerCN = cnMatch ? cnMatch[1] : issuerRaw;
+    return { domain: domain, status: status, expiry_date: expiryDate.toISOString(), days_until_expiry: daysUntilExpiry, issuer: issuerCN };
   } catch (e) {
     return { domain: domain, status: 'error', error: e.message };
   }

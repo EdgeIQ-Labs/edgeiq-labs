@@ -22,9 +22,15 @@ export async function onRequest(context) {
   if (!email) return apiResponse({ error: 'Missing ?email= parameter' }, 400);
 
   try {
-    const resp = await fetch(`https://edgeiqlabs.com/api/breach-check?email=${encodeURIComponent(email)}`);
-    const data = await resp.json();
-    data._api = { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit };
+    // Direct breach check via Have I Been Pwned — no self-fetch loop
+    const hibpKey = env.HIBP_API_KEY || '';
+    const resp = await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}?truncateResponse=true`, {
+      headers: { 'hibp-api-key': hibpKey, 'User-Agent': 'EdgeIQ-BreachCheck/1.0' }
+    });
+    if (resp.status === 404) return apiResponse({ email, breached: false, breaches: [], _api: { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit } });
+    if (!resp.ok) return apiResponse({ error: 'Breach check failed: ' + resp.status }, 500);
+    const breaches = await resp.json();
+    const data = { email, breached: true, breach_count: breaches.length, breaches: breaches.map(b => ({ name: b.Name, domain: b.Domain, date: b.BreachDate, records: b.PwnCount })), _api: { tier: auth.tier, remaining_requests: auth.keyData.remaining, rate_limit: auth.keyData.limit } };
     return apiResponse(data);
   } catch (e) {
     return apiResponse({ error: e.message }, 500);
