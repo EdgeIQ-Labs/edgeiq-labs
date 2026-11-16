@@ -230,7 +230,7 @@ async function generateReport() {
     var d = await r.json();
     if (d.ok) {
       result.className = 'form-result success';
-      result.innerHTML = '✅ ' + d.message + '<br/><small>Report sent to <strong>' + email + '</strong>. Check your inbox (and spam folder).</small>';
+      result.innerHTML = '✅ ' + d.message + '<br/><small>Report sent to <strong>' + email + '</strong>. Check your inbox (and spam folder).</small><div style="margin-top:16px;padding:16px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.3);border-radius:10px;text-align:center;"><p style="color:#a78bfa;font-size:0.85rem;margin:0 0 8px;font-weight:600;">🏅 Show Your Compliance Score</p><p style="color:var(--muted);font-size:0.8rem;margin:0 0 12px;">Add an EdgeIQ Verified Badge to your site — proves security posture to customers and partners.</p><a href="/badge/?ref=compliance-report" style="display:inline-block;padding:8px 18px;background:#a78bfa;color:#071018;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;">Get Verified Badge →</a></div>';
       result.style.display = 'block';
       btn.textContent = 'Report Sent ✓';
       btn.style.background = '#3de19e';
