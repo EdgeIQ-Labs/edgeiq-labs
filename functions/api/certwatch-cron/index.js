@@ -55,12 +55,33 @@ async function recordAlert(env, email, domain, alertType) {
   await env.PULSE_KV.put(key, 'sent', { expirationTtl: 172800 });
 }
 
-// ─── SSL Cert Expiry Check (INLINED — no self-fetch loop) ─────────
-async function checkCert(domain) {
+// ─── SSL Cert Expiry Check (KV-cached crt.sh, 2026-11-16 optimization) ─────────
+// Strategy: Cache crt.sh results in KV for 24h. Only hit external API on cache miss.
+// This reduces CPU from N×external_fetch to N×KV_get (sub-ms vs seconds).
+const CERT_CACHE_TTL = 86400; // 24 hours
+
+async function checkCert(domain, env) {
   try {
+    // Check KV cache first (sub-ms read vs 3-10s external fetch)
+    const cacheKey = 'certwatch:cache:' + domain;
+    const cached = await env.PULSE_KV.get(cacheKey);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        // Validate cache isn't stale (defensive)
+        if (parsed._cached_at && (Date.now() - parsed._cached_at < CERT_CACHE_TTL * 1000)) {
+          return parsed;
+        }
+      } catch {}
+    }
+
+    // Cache miss — hit crt.sh with optimized query
     var resp = await fetch(
-      'https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json',
-      { headers: { 'User-Agent': 'EdgeIQ-CertWatch-Cron/1.0', 'Accept': 'application/json' } }
+      'https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json&exclude=expired',
+      { 
+        headers: { 'User-Agent': 'EdgeIQ-CertWatch-Cron/1.0', 'Accept': 'application/json' },
+        cf: { cacheTtl: 3600 } // Also leverage CF edge cache
+      }
     );
     if (!resp.ok) return null;
 
@@ -94,12 +115,18 @@ async function checkCert(domain) {
     var cnMatch = issuerRaw.match(/CN=([^,]+)/);
     var issuerCN = cnMatch ? cnMatch[1] : issuerRaw;
 
-    return {
+    var result = {
       expiry_date: expiryDate.toISOString(),
       days_until_expiry: daysUntilExpiry,
       issuer: issuerCN,
       status: status,
+      _cached_at: Date.now(),
     };
+
+    // Write to KV cache (non-blocking, fire-and-forget style)
+    await env.PULSE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CERT_CACHE_TTL });
+
+    return result;
   } catch {
     return null;
   }
@@ -248,7 +275,7 @@ export async function onRequest(context) {
 
       totalChecked++;
 
-      const result = await checkCert(domainObj.domain);
+      const result = await checkCert(domainObj.domain, env);
 
       if (!result) {
         errors.push(`${domainObj.domain}: check failed`);
