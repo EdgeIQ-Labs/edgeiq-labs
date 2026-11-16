@@ -686,7 +686,7 @@
     <a href="/products/">Products</a>
     <a href="/msp/" style="color:#c084fc;font-weight:600;">For MSPs</a>
     <a href="/blog/">Blog</a>
-    <a href="/pricing/" class="nav-cta">Get Started</a>
+    <a href="/products/" class="nav-cta">Get Started</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
@@ -835,7 +835,6 @@
         </article>
 
         <article id="msp" class="card anim-card" style="background:linear-gradient(135deg,#1a0a2e 0%,#0b0f14 100%);border-color:rgba(192,132,252,0.35);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:12px;right:14px;background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.35);color:#c084fc;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">NEW</div>
           <h3>🏢 MSP Essentials</h3>
           <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">Security monitoring for IT consultants and MSPs. One plan covers 10 client domains with Pulse + Inbox Shield scans, weekly digests, and a central dashboard.</p>
           <ul>
@@ -849,6 +848,22 @@
           <div class="plan-actions" style="margin-top:auto;">
             <a class="btn btn-primary" href="/msp/" style="background:#c084fc;color:#1a0033;font-weight:800;">Learn More →</a>
             <a class="btn btn-secondary" href="https://buy.stripe.com/bJebJ3am744Z8Ec6sw7wB1k" target="_blank" rel="noopener" style="font-size:0.8rem;color:#c084fc;border-color:rgba(192,132,252,0.3);">Get MSP Plan — $199/mo →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="background:linear-gradient(135deg,#0d1a20 0%,#0b0f14 100%);border-color:rgba(61,217,255,0.35);position:relative;overflow:hidden;">
+          <div style="position:absolute;top:12px;right:14px;background:rgba(61,217,255,0.15);border:1px solid rgba(61,217,255,0.35);color:#3dd9ff;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;">NEW</div>
+          <h3>📦 Email Security Suite</h3>
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">Complete email security monitoring bundle: SPF, DMARC, DKIM analysis + breach exposure tracking + automated compliance scoring. Provisioned instantly via Stripe.</p>
+          <ul>
+            <li>✅ <strong>$29/mo</strong> — full email security stack</li>
+            <li>✅ Automated SPF/DMARC/DKIM monitoring</li>
+            <li>✅ Breach exposure alerts + compliance scoring</li>
+            <li>📧 Weekly digest with actionable fixes</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="/email-security-suite/" style="background:#3dd9ff;color:#071018;font-weight:800;">Learn More →</a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/7sYeVfdyjcBv1bKcQU7wB2y" target="_blank" rel="noopener" style="font-size:0.8rem;">Subscribe $29/mo →</a>
           </div>
         </article>
 
@@ -932,6 +947,67 @@
           </ul>
           <div class="plan-actions" style="margin-top:auto;">
             <a class="btn btn-primary" href="/vendor-risk/" style="background:#ffa500;color:#1a0a00;font-weight:800;">Learn more →</a>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- ── Free Tools with Paid Upgrades ──────────────────────────────── -->
+      <h2 id="free-tools-upsell" style="margin:32px 0 8px;font-size:1.2rem;">🆓 Free Tools with Paid Upgrades</h2>
+      <p class="section-sub" style="margin-bottom:16px;">Free forever for personal use. Upgrade for white-label reports, bulk scanning, or automated compliance.</p>
+      <div class="pricing">
+
+        <article class="card anim-card" style="border-color:rgba(61,217,255,0.3);">
+          <h3>🌐 Bulk Domain Scanner</h3>
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">Scan up to 20 domains at once for SSL, headers, SPF, and DMARC. Instant A-F grades. White-label PDF reports for MSPs.</p>
+          <ul>
+            <li>✅ <strong>Free:</strong> up to 5 domains per scan</li>
+            <li>✅ <strong>$99 one-time:</strong> white-label PDF reports (unlimited)</li>
+            <li>📊 A-F grading · SSL · Headers · SPF · DMARC</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="/free-bulk-scanner/" style="background:var(--accent);color:#071018;font-weight:800;">Scan Free →</a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/8x2eVf2TF7hb4nWg367wA46" target="_blank" rel="noopener" style="font-size:0.8rem;">White-Label Reports $99 →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="border-color:rgba(61,217,255,0.3);">
+          <h3>📋 Compliance Report Generator</h3>
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">Automated SOC 2, HIPAA, and PCI-DSS compliance reports. Free tier gives you a C+ grade preview. Paid unlocks full findings and remediation steps.</p>
+          <ul>
+            <li>✅ <strong>Free:</strong> watermarked report, top 3 findings, C+ grade</li>
+            <li>✅ <strong>$49 one-time:</strong> full findings, remediation, B grade, no watermark</li>
+            <li>📈 Compliance mapping matrix included</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="/compliance-report/" style="background:var(--accent);color:#071018;font-weight:800;">Free Scan →</a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/00w6oJgKv6d7bQoeZ27wB2x" target="_blank" rel="noopener" style="font-size:0.8rem;">Full Report $49 →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="border-color:rgba(61,217,255,0.3);">
+          <h3>💾 Backup Audit Tool</h3>
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">Upload your backup config and get an instant A-F compliance grade. Checks encryption, offsite copies, retention policies, and test restore evidence.</p>
+          <ul>
+            <li>✅ <strong>Free forever</strong> — 5 checks, A-F grading</li>
+            <li>🔒 Zero data leaves your browser</li>
+            <li>📋 Remediation guidance included</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="/backup-audit/" style="background:var(--accent);color:#071018;font-weight:800;">Audit Free →</a>
+          </div>
+        </article>
+
+        <article class="card anim-card" style="border-color:rgba(61,217,255,0.3);">
+          <h3>📧 SPF/DMARC Record Generator</h3>
+          <p style="color:var(--muted);font-size:0.88rem;margin-bottom:10px;">Generate valid SPF and DMARC DNS records interactively. Supports Google Workspace, Microsoft 365, Mailchimp, SendGrid, SES, Zoho, and custom includes.</p>
+          <ul>
+            <li>✅ <strong>Free forever</strong> — client-side only, no backend</li>
+            <li>🔑 Multi-provider support + custom includes</li>
+            <li>📋 Copy-paste ready DNS records</li>
+          </ul>
+          <div class="plan-actions" style="margin-top:auto;">
+            <a class="btn btn-primary" href="/free-spf-dmarc-generator/" style="background:var(--accent);color:#071018;font-weight:800;">Generate Free →</a>
           </div>
         </article>
 
@@ -1372,7 +1448,7 @@
       </div>
     </section>
 
-        <section id="microsaas"<section id="microsaas" style="border-top: 1px solid var(--border); padding-top: 42px;">
+        <section id="micro-saas" style="border-top: 1px solid var(--border); padding-top: 42px;">
       <h2 id="micro-saas">Micro-SaaS Products</h2>
       <p class="section-sub">Standalone subscription tools — each solving one problem, built on top of our existing infrastructure.</p>
       <div class="grid grid-3">
