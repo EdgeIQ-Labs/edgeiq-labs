@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>Security Awareness Training · EdgeIQ Labs</title>
+  <meta name="description" content="5-minute interactive micro-courses based on real phishing findings. Auto-assigned when employees fail simulations. HIPAA-compliant tracking. $5/user/mo." />
+  <meta property="og:title" content="Security Awareness Training That Actually Changes Behavior" />
+  <meta property="og:description" content="Not generic videos. Interactive modules triggered by real phishing failures. Compliance-ready tracking." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://edgeiqlabs.com/security-awareness-training/" />
+  <link rel="stylesheet" href="/css/design-system.css?v=42" />
+  <script src="/js/theme.js"></script>
+  <style>
+    .hero-training { text-align: center; padding: 80px 20px 60px; }
+    .hero-training h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; line-height: 1.15; }
+    .hero-training h1 span { color: var(--accent); }
+    .hero-training p { font-size: 1.15rem; color: var(--muted); max-width: 640px; margin: 0 auto 32px; line-height: 1.7; }
+    .hero-cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    
+    .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; padding: 0 20px 60px; max-width: 1100px; margin: 0 auto; }
+    .value-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 24px; }
+    .value-card .icon { font-size: 2rem; margin-bottom: 12px; }
+    .value-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .value-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+    
+    .pricing-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 60px 20px; text-align: center; }
+    .pricing-section h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; }
+    .pricing-section .subtitle { color: var(--muted); margin-bottom: 40px; font-size: 1rem; }
+    .pricing-card { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; max-width: 420px; margin: 0 auto; position: relative; overflow: hidden; }
+    .pricing-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+    .pricing-card .price { font-size: 3rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .pricing-card .price span { font-size: 1rem; color: var(--muted); font-weight: 500; }
+    .pricing-card .features { list-style: none; padding: 0; margin: 24px 0 32px; text-align: left; }
+    .pricing-card .features li { padding: 10px 0; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+    .pricing-card .features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .pricing-card .features li:last-child { border-bottom: none; }
+    
+    .compliance-strip { padding: 48px 20px; text-align: center; max-width: 800px; margin: 0 auto; }
+    .compliance-strip h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; }
+    .compliance-strip p { color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+    .compliance-badges { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .compliance-badge { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+    
+    .checkout-form { max-width: 420px; margin: 0 auto; padding: 0 20px 60px; }
+    .checkout-form label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+    .checkout-form input, .checkout-form select { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 1rem; color: var(--text); margin-bottom: 16px; font-family: inherit; }
+    .checkout-form input:focus, .checkout-form select:focus { outline: none; border-color: var(--accent); }
+    .checkout-form .btn-checkout { width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; border: none; border-radius: 8px; background: var(--accent); color: #000; cursor: pointer; transition: opacity 0.2s; }
+    .checkout-form .btn-checkout:hover { opacity: 0.9; }
+    .checkout-form .btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; }
+    .checkout-form .error-msg { color: var(--red); font-size: 0.85rem; margin-top: -12px; margin-bottom: 16px; display: none; }
+    
+    @media (max-width: 640px) {
+      .hero-training h1 { font-size: 1.8rem; }
+      .pricing-card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__brand">EdgeIQ Labs</a>
+      <div class="nav__links">
+        <a href="/products/" class="nav__link">Products</a>
+        <a href="/phishsim/" class="nav__link">PhishSim</a>
+        <a href="#pricing" class="nav__link nav__link--active">Training</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-training container">
+    <h1>Training that triggers<br><span>when it matters most.</span></h1>
+    <p>5-minute interactive micro-courses auto-assigned when employees fail phishing simulations. Not generic video libraries — behavior-triggered remediation tied to your actual attack surface.</p>
+    <div class="hero-cta-row">
+      <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+      <a href="/phishsim/" class="btn btn-secondary">See PhishSim →</a>
+    </div>
+  </section>
+
+  <div class="value-grid">
+    <div class="value-card">
+      <div class="icon">🎯</div>
+      <h3>Behavior-Triggered</h3>
+      <p>Employee clicks a fake "IT Password Reset" in your PhishSim campaign → automatically assigned the credential harvesting module within seconds. No manual enrollment.</p>
+    </div>
+    <div class="value-card">
+      <div class="icon">⚡</div>
+      <h3>5 Minutes, Not 30</h3>
+      <p>Interactive scenario walkthroughs with red-flag highlights and 3-question quizzes. Completion takes under 5 minutes. Respects employee time while meeting compliance requirements.</p>
+    </div>
+    <div class="value-card">
+      <div class="icon">📊</div>
+      <h3>Audit-Ready Reports</h3>
+      <p>One-click PDF export showing who completed what, when, and remediation rates. Hand it directly to HIPAA, SOC 2, or cyber insurance auditors. No spreadsheet wrangling.</p>
+    </div>
+    <div class="value-card">
+      <div class="icon">🔒</div>
+      <h3>Real Findings, Not Stock</h3>
+      <p>Modules built from actual phishing templates used in your campaigns. "73% of your team clicked the invoice attachment this month" hits harder than generic statistics.</p>
+    </div>
+  </div>
+
+  <section class="compliance-strip">
+    <h2>HIPAA requires annual security awareness training.</h2>
+    <p>§164.308(a)(5)(i) mandates periodic security awareness training for all workforce members. Most organizations check this box with generic videos nobody watches. Our modules are tied to actual simulation failures — proving targeted remediation, not just attendance tracking.</p>
+    <div class="compliance-badges">
+      <span class="compliance-badge">HIPAA §164.308</span>
+      <span class="compliance-badge">SOC 2 CC6.1</span>
+      <span class="compliance-badge">NIST SP 800-50</span>
+      <span class="compliance-badge">Cyber Insurance Ready</span>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing-section">
+    <h2>Simple per-user pricing</h2>
+    <p class="subtitle">First 5 users free forever. No credit card required to start.</p>
+    <div class="pricing-card">
+      <div class="price">$5<span>/user/mo</span></div>
+      <ul class="features">
+        <li>All 12 scenario modules (+ new quarterly)</li>
+        <li>Auto-assignment from PhishSim failures</li>
+        <li>Manager dashboard with team progress</li>
+        <li>PDF compliance reports for auditors</li>
+        <li>HIPAA / SOC 2 audit trail</li>
+        <li>First 5 users free forever</li>
+      </ul>
+    </div>
+  </section>
+
+  <form class="checkout-form" id="checkoutForm">
+    <label for="email">Work Email</label>
+    <input type="email" id="email" name="email" placeholder="you@company.com" required />
+    <label for="seats">Number of Users</label>
+    <select id="seats" name="seats">
+      <option value="5">5 users (Free tier)</option>
+      <option value="10">10 users ($50/mo)</option>
+      <option value="25" selected>25 users ($125/mo)</option>
+      <option value="50">50 users ($250/mo)</option>
+      <option value="100">100 users ($500/mo)</option>
+    </select>
+    <div class="error-msg" id="errorMsg"></div>
+    <button type="submit" class="btn-checkout" id="checkoutBtn">Continue to Checkout →</button>
+    <p style="text-align:center;font-size:0.8rem;color:var(--muted);margin-top:16px;">Powered by Stripe. Cancel anytime.</p>
+  </form>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 EdgeIQ Labs · <a href="/">Home</a> · <a href="/products/">Products</a> · <a href="/phishsim/">PhishSim</a> · <a href="mailto:support@edgeiqlabs.com">Support</a></p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('checkoutBtn');
+      const errEl = document.getElementById('errorMsg');
+      const email = document.getElementById('email').value.trim();
+      const seats = parseInt(document.getElementById('seats').value);
+      
+      if (!email || !email.includes('@')) {
+        errEl.textContent = 'Please enter a valid work email.';
+        errEl.style.display = 'block';
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.textContent = 'Creating checkout session...';
+      errEl.style.display = 'none';
+      
+      try {
+        const resp = await fetch('/api/training-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, seats }),
+        });
+        const data = await resp.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          errEl.textContent = data.error || 'Checkout failed. Please try again.';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Continue to Checkout →';
+        }
+      } catch (err) {
+        errEl.textContent = 'Network error. Please check your connection.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Continue to Checkout →';
+      }
+    });
+  </script>
+</body>
+</html>

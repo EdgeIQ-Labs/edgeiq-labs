@@ -1172,6 +1172,103 @@ const FUNDAMENTALS = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Subscription & Auth Gate
+// ─────────────────────────────────────────────────────────────────────────────
+let IS_SUBSCRIBER = false;
+let USER_EMAIL = '';
+const FREE_MODULES = ['google', 'microsoft', 'linkedin']; // First 3 free for everyone
+
+async function checkSubscription() {
+  const params = new URLSearchParams(window.location.search);
+  const upgraded = params.get('upgraded') === 'true';
+  const sessionId = params.get('session_id');
+  
+  // If just returned from Stripe checkout, store session marker
+  if (upgraded && sessionId) {
+    localStorage.setItem('training_session', sessionId);
+    localStorage.setItem('training_subscriber', '1');
+    IS_SUBSCRIBER = true;
+    return;
+  }
+  
+  // Check local cache first
+  const cached = localStorage.getItem('training_subscriber');
+  const email = localStorage.getItem('training_email');
+  if (cached === '1' && email) {
+    IS_SUBSCRIBER = true;
+    USER_EMAIL = email;
+    // Verify against API in background (non-blocking)
+    verifySubscription(email);
+    return;
+  }
+  
+  // No local state — show email prompt
+  showEmailGate();
+}
+
+async function verifySubscription(email) {
+  try {
+    const resp = await fetch('/api/training/progress?email=' + encodeURIComponent(email), {
+      headers: { 'X-Training-Token': localStorage.getItem('training_token') || '' }
+    });
+    if (resp.status === 401) {
+      // Token expired or invalid — fall back to free tier
+      IS_SUBSCRIBER = false;
+      localStorage.removeItem('training_subscriber');
+      localStorage.removeItem('training_token');
+      if (!FREE_MODULES.includes(scenario)) showPaywall();
+    } else {
+      IS_SUBSCRIBER = true;
+    }
+  } catch {
+    // Network error — trust local cache
+  }
+}
+
+function showEmailGate() {
+  const wrap = document.getElementById('training-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div style="text-align:center;padding:60px 20px;">
+      <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+      <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:12px;color:var(--text);">Enter your work email to continue</h2>
+      <p style="color:var(--muted);margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto;">Your organization's training subscription is linked to your email. Enter it below to access your assigned modules.</p>
+      <form id="emailGateForm" style="max-width:360px;margin:0 auto;">
+        <input type="email" id="gateEmail" placeholder="you@company.com" required style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1rem;margin-bottom:12px;font-family:inherit;" />
+        <button type="submit" class="btn-home" style="width:100%;padding:12px;font-size:1rem;">Access Training →</button>
+      </form>
+      <p style="margin-top:16px;font-size:0.8rem;color:var(--muted);">First 3 modules are free. <a href="/security-awareness-training/#pricing" style="color:var(--accent);">See pricing →</a></p>
+    </div>`;
+  document.getElementById('emailGateForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+    if (!email) return;
+    localStorage.setItem('training_email', email);
+    USER_EMAIL = email;
+    // For now, grant access — real JWT issuance happens at checkout
+    // Free-tier users can access FREE_MODULES; paid users get everything
+    IS_SUBSCRIBER = FREE_MODULES.includes(scenario);
+    render();
+    if (!IS_SUBSCRIBER && !FREE_MODULES.includes(scenario)) {
+      showPaywall();
+    }
+  });
+}
+
+function showPaywall() {
+  const wrap = document.getElementById('training-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div style="text-align:center;padding:60px 20px;">
+      <div style="font-size:3rem;margin-bottom:16px;">⬆️</div>
+      <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:12px;color:var(--text);">Premium module</h2>
+      <p style="color:var(--muted);margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto;">This scenario module requires an active subscription. Your organization's admin can enroll your team at $5/user/mo.</p>
+      <a href="/security-awareness-training/#pricing" class="btn-home" style="display:inline-block;padding:12px 28px;font-size:1rem;text-decoration:none;">View Pricing & Subscribe →</a>
+      <p style="margin-top:20px;font-size:0.85rem;color:var(--muted);">Free modules available: <strong>${FREE_MODULES.map(s => SCENARIOS[s]?.title || s).join(', ')}</strong></p>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // State
 // ─────────────────────────────────────────────────────────────────────────────
 const params   = new URLSearchParams(window.location.search);
@@ -1442,11 +1539,12 @@ function setProgress(pct) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Mark complete
 // ─────────────────────────────────────────────────────────────────────────────
-function markComplete() {
+async function markComplete() {
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  
+  // Always save locally as fallback
   localStorage.setItem('phishsim_complete_' + scenario, '1');
   localStorage.setItem('phishsim_complete_' + scenario + '_date', date);
-
   setProgress(100);
 
   const btn = document.getElementById('btn-complete');
@@ -1457,6 +1555,32 @@ function markComplete() {
     btn.disabled = true;
   }
   if (note) note.textContent = 'Recorded on ' + date;
+
+  // Sync to KV if subscriber
+  if (IS_SUBSCRIBER && USER_EMAIL) {
+    const quizAnswered = Object.keys(quizState).length;
+    const quizTotal = data ? data.quiz.length : 3;
+    const score = Math.round((quizAnswered / quizTotal) * 100);
+    
+    try {
+      await fetch('/api/training/webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Training-Token': localStorage.getItem('training_token') || '',
+        },
+        body: JSON.stringify({
+          module_id: scenario,
+          score: score,
+          total_questions: quizTotal,
+        }),
+      });
+      if (note) note.textContent = 'Recorded on ' + date + ' · Synced ✓';
+    } catch {
+      // Silent fail — local storage is the source of truth for UX
+      if (note) note.textContent = 'Recorded on ' + date + ' · Offline';
+    }
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1471,7 +1595,15 @@ function escHtml(str) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Init
 // ─────────────────────────────────────────────────────────────────────────────
-render();
+checkSubscription().then(() => {
+  if (IS_SUBSCRIBER || FREE_MODULES.includes(scenario)) {
+    render();
+  } else if (!document.getElementById('emailGateForm')) {
+    // Not yet gated — show paywall for premium modules
+    if (scenario && !FREE_MODULES.includes(scenario)) showPaywall();
+    else render();
+  }
+});
 </script>
 </body>
 </html>
