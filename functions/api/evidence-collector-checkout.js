@@ -51,11 +51,14 @@ export async function onRequest(context) {
       body: new URLSearchParams({
         mode: 'subscription',
         customer_email: email,
-        line_items: [{ price: PRICE_ID, quantity: 1 }],
+        'line_items[0][price]': PRICE_ID,
+        'line_items[0][quantity]': '1',
         success_url: 'https://edgeiqlabs.com/evidence-collector/?upgraded=true&session_id={CHECKOUT_SESSION_ID}',
         cancel_url: 'https://edgeiqlabs.com/evidence-collector/',
-        metadata: JSON.stringify({ service: 'evidence-collector', org_name: orgName }),
-        subscription_data: JSON.stringify({ metadata: { service: 'evidence-collector', org_name: orgName } }),
+        'metadata[service]': 'evidence-collector',
+        'metadata[org_name]': orgName,
+        'subscription_data[metadata][service]': 'evidence-collector',
+        'subscription_data[metadata][org_name]': orgName,
       }).toString(),
     });
 
