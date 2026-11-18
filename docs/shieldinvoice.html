@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldInvoice Documentation — EdgeIQ Labs</title>
+  <meta name="description" content="Reference documentation for ShieldInvoice: AI-powered invoice processing and AP automation." />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="/css/design-system.css?v=10" />
+  
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/shieldinvoice.html" />
+<meta property="og:title" content="ShieldInvoice Documentation — EdgeIQ Labs" />
+<meta property="og:description" content="Reference documentation for ShieldInvoice: AI-powered invoice processing and AP automation." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="ShieldInvoice Documentation — EdgeIQ Labs" />
+<meta name="twitter:description" content="Reference documentation for ShieldInvoice: AI-powered invoice processing and AP automation." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head>
+<body data-theme="dark">
+  <nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+
+  <div class="container--narrow">
+    <div class="doc-header">
+      <a href="/docs/" class="back-link">← All Guides</a>
+      <h1>ShieldInvoice Documentation</h1>
+      <p>AI-powered invoice processing and accounts payable automation for SMB accounting teams.</p>
+    </div>
+
+    <div class="prose">
+      <h2>Overview</h2>
+      <p>ShieldInvoice automates accounts payable workflows by extracting structured data from PDF invoices using AI. It identifies vendors, line items, totals, tax amounts, and PO numbers automatically, flags duplicates and anomalies, and exports clean data to CSV or QuickBooks Online.</p>
+      <ul>
+        <li><strong>Pricing:</strong> $149/month (Starter) or $299/month (Pro). No per-invoice overages on Pro.</li>
+        <li><strong>Core Function:</strong> OCR + semantic extraction grounded in invoice structure patterns.</li>
+        <li><strong>Output:</strong> Structured JSON with confidence scores, anomaly flags, and audit trail.</li>
+      </ul>
+
+      <h2>Getting Started</h2>
+      <ol>
+        <li>Sign up at <a href="https://edgeiqlabs.com/shieldinvoice/">edgeiqlabs.com/shieldinvoice</a>.</li>
+        <li>Navigate to <strong>Dashboard → Settings → API Keys</strong> to generate credentials for integrations.</li>
+        <li>Upload a test invoice via the dashboard or API to validate extraction accuracy.</li>
+        <li>Configure export preferences (CSV or QuickBooks Online) under <strong>Settings → Integrations</strong>.</li>
+      </ol>
+      <div class="note">
+        <p><strong>Onboarding:</strong> New accounts include a live demo with sample invoices. Contact <a href="mailto:billing@edgeiqlabs.com">billing@edgeiqlabs.com</a> for a guided walkthrough tailored to your invoice formats.</p>
+      </div>
+
+      <h2>Authentication</h2>
+      <p>All API requests require authentication via API key or session token.</p>
+      <h3>API Key</h3>
+      <p>Include your API key in the <code>Authorization</code> header as a Bearer token:</p>
+      <pre><code>Authorization: Bearer si_live_abc123xyz</code></pre>
+      <h3>Session Token</h3>
+      <p>For browser-based integrations, use session cookies obtained after login at <code>/shieldinvoice/dashboard</code>. Session tokens expire after 24 hours of inactivity.</p>
+      <div class="warn">
+        <p><strong>Security:</strong> Never expose API keys in client-side code. Use environment variables or secret managers for server-side integrations.</p>
+      </div>
+
+      <h2>API Reference</h2>
+      <p>Base URL: <code>https://edgeiqlabs.com/api/shieldinvoice</code></p>
+
+      <h3>Process Invoice</h3>
+      <p>Upload a PDF invoice for AI extraction.</p>
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>POST</td><td><code>/api/shieldinvoice/process</code></td><td>Upload and process a single invoice</td></tr>
+        </tbody>
+      </table>
+      <h4>Request</h4>
+      <ul>
+        <li><strong>Content-Type:</strong> <code>multipart/form-data</code></li>
+        <li><strong>Parameters:</strong>
+          <ul>
+            <li><code>file</code> (required): PDF file (max 20 MB)</li>
+            <li><code>vendor_hint</code> (optional): Expected vendor name for improved matching</li>
+            <li><code>po_number</code> (optional): Expected PO number for validation</li>
+          </ul>
+        </li>
+      </ul>
+      <pre><code>curl -X POST https://edgeiqlabs.com/api/shieldinvoice/process \
+  -H "Authorization: Bearer si_live_abc123xyz" \
+  -F "file=@invoice_2026_001.pdf" \
+  -F "vendor_hint=Acme Corp"</code></pre>
+      <h4>Response</h4>
+      <pre><code>{
+  "invoice_id": "inv_7f8g9h",
+  "status": "processed",
+  "extracted": {
+    "vendor": "Acme Corporation",
+    "invoice_number": "INV-2026-001",
+    "date": "2026-11-15",
+    "due_date": "2026-12-15",
+    "subtotal": 1250.00,
+    "tax": 100.00,
+    "total": 1350.00,
+    "po_number": "PO-9876",
+    "line_items": [
+      { "description": "Widget A", "quantity": 10, "unit_price": 125.00, "total": 1250.00 }
+    ]
+  },
+  "confidence": 0.96,
+  "anomalies": [],
+  "created_at": "2026-11-18T14:32:00Z"
+}</code></pre>
+
+      <h3>List Invoices</h3>
+      <p>Retrieve a paginated list of processed invoices.</p>
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/api/shieldinvoice/invoices</code></td><td>List all invoices with optional filters</td></tr>
+        </tbody>
+      </table>
+      <h4>Query Parameters</h4>
+      <ul>
+        <li><code>limit</code> (integer, default 20): Results per page (max 100)</li>
+        <li><code>offset</code> (integer, default 0): Pagination offset</li>
+        <li><code>vendor</code> (string): Filter by vendor name</li>
+        <li><code>status</code> (string): Filter by status (<code>processed</code>, <code>flagged</code>, <code>exported</code>)</li>
+        <li><code>from_date</code> / <code>to_date</code> (ISO 8601): Date range filter</li>
+      </ul>
+      <pre><code>curl -X GET "https://edgeiqlabs.com/api/shieldinvoice/invoices?limit=10&vendor=Acme" \
+  -H "Authorization: Bearer si_live_abc123xyz"</code></pre>
+
+      <h3>Get Invoice Detail</h3>
+      <p>Retrieve full extraction details for a specific invoice.</p>
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/api/shieldinvoice/invoices/[id]</code></td><td>Get detailed extraction results</td></tr>
+        </tbody>
+      </table>
+      <pre><code>curl -X GET https://edgeiqlabs.com/api/shieldinvoice/invoices/inv_7f8g9h \
+  -H "Authorization: Bearer si_live_abc123xyz"</code></pre>
+
+      <h3>Export Invoices</h3>
+      <p>Export processed invoices to CSV or QuickBooks Online format.</p>
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>POST</td><td><code>/api/shieldinvoice/export</code></td><td>Generate export file for selected invoices</td></tr>
+        </tbody>
+      </table>
+      <h4>Request Body</h4>
+      <pre><code>{
+  "invoice_ids": ["inv_7f8g9h", "inv_4d5e6f"],
+  "format": "csv",
+  "include_line_items": true
+}</code></pre>
+      <h4>Supported Formats</h4>
+      <ul>
+        <li><code>csv</code>: Standard CSV with headers (all plans)</li>
+        <li><code>qbo</code>: QuickBooks Online IIF format (Pro plan only)</li>
+      </ul>
+      <pre><code>curl -X POST https://edgeiqlabs.com/api/shieldinvoice/export \
+  -H "Authorization: Bearer si_live_abc123xyz" \
+  -H "Content-Type: application/json" \
+  -d '{"invoice_ids": ["inv_7f8g9h"], "format": "csv"}'</code></pre>
+
+      <h2>Dashboard Guide</h2>
+      <p>The ShieldInvoice dashboard at <a href="/shieldinvoice/dashboard">/shieldinvoice/dashboard</a> provides a visual interface for managing invoices.</p>
+      <h3>Key Features</h3>
+      <ul>
+        <li><strong>Invoice List:</strong> Searchable table with vendor, date, total, status, and confidence score columns. Click any row to view details.</li>
+        <li><strong>Anomaly Flags:</strong> Yellow warning icons indicate potential issues (duplicate invoice numbers, amount mismatches, missing PO). Click the flag to see explanation.</li>
+        <li><strong>Bulk Actions:</strong> Select multiple invoices to export, archive, or re-process with adjusted parameters.</li>
+        <li><strong>Analytics:</strong> Monthly spend by vendor, processing volume trends, and average confidence scores.</li>
+        <li><strong>Email Ingest:</strong> Your unique ingest address appears under <strong>Settings → Email Ingest</strong>. Forward PDFs directly from your email client.</li>
+      </ul>
+      <div class="note">
+        <p><strong>Keyboard Shortcuts:</strong> Press <code>/</code> to focus search, <code>E</code> to export selected, <code>R</code> to refresh the list.</p>
+      </div>
+
+      <h2>Pricing</h2>
+      <table>
+        <thead><tr><th>Feature</th><th>Starter ($149/mo)</th><th>Pro ($299/mo)</th></tr></thead>
+        <tbody>
+          <tr><td>Monthly invoice limit</td><td>100</td><td>Unlimited</td></tr>
+          <tr><td>Email ingest</td><td>✓</td><td>✓ (dedicated address)</td></tr>
+          <tr><td>CSV export</td><td>✓</td><td>✓</td></tr>
+          <tr><td>QuickBooks Online export</td><td>—</td><td>✓</td></tr>
+          <tr><td>Anomaly detection</td><td>Basic</td><td>Advanced</td></tr>
+          <tr><td>Support</td><td>Standard</td><td>Priority</td></tr>
+          <tr><td>Overage rate</td><td>$1.50/invoice</td><td>None</td></tr>
+        </tbody>
+      </table>
+      <p>Subscribe via Stripe checkout:</p>
+      <ul>
+        <li>Starter: <code>GET /api/shieldinvoice-checkout?plan=starter</code></li>
+        <li>Pro: <code>GET /api/shieldinvoice-checkout?plan=pro</code></li>
+      </ul>
+      <div class="note">
+        <p><strong>Billing:</strong> Prorated upgrades mid-cycle. Cancel anytime with no penalty. Usage resets monthly on your signup anniversary.</p>
+      </div>
+
+      <h2>Troubleshooting</h2>
+      <table>
+        <thead><tr><th>Issue</th><th>Cause</th><th>Resolution</th></tr></thead>
+        <tbody>
+          <tr><td>Low confidence score (&lt;0.7)</td><td>Scanned PDF or poor image quality</td><td>Ensure PDF has text layer; re-scan at 300 DPI minimum</td></tr>
+          <tr><td>Missing line items</td><td>Non-standard invoice layout</td><td>Contact support with sample invoice for model tuning</td></tr>
+          <tr><td>Duplicate flagged incorrectly</td><td>Vendor uses same invoice # across years</td><td>Add year prefix to invoice numbers or ignore flag if verified</td></tr>
+          <tr><td>Export fails</td><td>Selected invoices have conflicting currencies</td><td>Export by currency group or enable multi-currency in settings</td></tr>
+          <tr><td>API returns 401</td><td>Invalid or expired API key</td><td>Regenerate key at Dashboard → Settings → API Keys</td></tr>
+          <tr><td>Rate limit errors (429)</td><td>Exceeding 60 req/min threshold</td><td>Implement exponential backoff; contact support for higher limits</td></tr>
+          <tr><td>Email ingest not working</td><td>Forwarded email lacks PDF attachment</td><td>Ensure PDF is attached (not linked); check spam folder</td></tr>
+        </tbody>
+      </table>
+      <div class="warn">
+        <p><strong>Support:</strong> For issues not covered here, email <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> with your account ID and invoice IDs. Include raw PDF samples when reporting extraction accuracy issues.</p>
+      </div>
+    </div>
+
+    <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+  </div>
+
+  <script src="/js/theme.js"></script>
+</body>
+</html>

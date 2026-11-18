@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Inbox Triage Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Inbox Triage. AI-powered email prioritization, auto-drafting, and smart routing for Gmail and Outlook.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/inbox-triage.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/inbox-triage.html" />
+<meta property="og:title" content="Inbox Triage Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs Inbox Triage. AI-powered email prioritization, auto-drafting, and smart routing for Gmail and Outlook." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Inbox Triage Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs Inbox Triage. AI-powered email prioritization, auto-drafting, and smart routing for Gmail and Outlook." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Inbox Triage</h1>
+        <p>AI-powered email prioritization, auto-drafting, and intelligent routing for Gmail and Outlook.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Full AI features &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Inbox Triage uses AI to automatically classify incoming emails by priority, draft contextual replies, and route messages to the right team members or folders. It integrates directly with your existing Gmail or Outlook inbox — no new interface to learn.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Automatic priority classification (Urgent, Normal, FYI, Spam)</li>
+            <li>Context-aware reply drafting with tone adjustment</li>
+            <li>Smart routing rules based on sender, content, and labels</li>
+            <li>Digest mode: batch low-priority emails into daily summaries</li>
+            <li>Team collaboration: shared triage rules and handoff workflows</li>
+            <li>REST API for custom integrations and automation</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Connecting Your Inbox</h3>
+        <p>Connect your email provider to enable AI processing:</p>
+        <pre><code># Connect Gmail account
+inbox-triage connect gmail --account user@example.com
+
+# Connect Outlook/Microsoft 365
+inbox-triage connect outlook --tenant-id xxxxx --client-id yyyyy
+
+# Verify connection status
+inbox-triage connections list</code></pre>
+        <div class="note">Email access uses OAuth 2.0 with read/write scopes limited to message metadata and drafts. Full mailbox access is never stored on our servers.</div>
+
+        <h3>Configuring Triage Rules</h3>
+        <p>Define how emails should be classified and routed:</p>
+        <pre><code># Set priority keywords
+inbox-triage rules add priority urgent --keywords "outage,down,asap,emergency"
+
+# Create routing rule
+inbox-triage rules add route support --from "*@customer.com" --folder "Support Queue"
+
+# Enable auto-draft for specific senders
+inbox-triage config set auto_draft_enabled true
+inbox-triage config set auto_draft_senders "boss@company.com,ceo@company.com"
+
+# View active rules
+inbox-triage rules list</code></pre>
+
+        <h2>Features</h2>
+        <h3>Priority Classification</h3>
+        <table>
+            <tr><th>Level</th><th>Color</th><th>Description</th><th>Action</th></tr>
+            <tr><td>Urgent</td><td><span class="badge badge-danger">Red</span></td><td>Requires immediate attention</td><td>Push notification + top of inbox</td></tr>
+            <tr><td>Normal</td><td><span class="badge badge-info">Blue</span></td><td>Standard business communication</td><td>Normal inbox position</td></tr>
+            <tr><td>FYI</td><td><span class="badge badge-success">Green</span></td><td>Informational, no action needed</td><td>Auto-archive after 24h</td></tr>
+            <tr><td>Spam</td><td><span class="badge badge-warning">Gray</span></td><td>Low-value or promotional</td><td>Move to spam/digest</td></tr>
+        </table>
+
+        <h3>Auto-Draft Replies</h3>
+        <p>Inbox Triage generates draft replies based on email context, your writing style, and conversation history. Drafts are saved to your Drafts folder for review before sending.</p>
+        <pre><code># Generate draft for latest email
+inbox-triage draft generate --thread-id abc123
+
+# Adjust tone (professional, casual, brief)
+inbox-triage draft generate --thread-id abc123 --tone brief
+
+# Regenerate with different approach
+inbox-triage draft regenerate --draft-id xyz789 --strategy apologetic</code></pre>
+        <div class="note">Auto-drafts are never sent automatically. You always review and approve before sending.</div>
+
+        <h3>Digest Mode</h3>
+        <p>Batch low-priority emails into a single daily digest instead of constant notifications:</p>
+        <pre><code># Enable digest for FYI category
+inbox-triage digest enable --category fyi --time 08:00
+
+# Customize digest format
+inbox-triage config set digest_format "bullet_summary"
+
+# Pause digest temporarily
+inbox-triage digest pause --until "2026-11-25"</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API when running <code>inbox-triage serve --port 8402</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/triage/status</code></td><td>Get current triage stats and queue depth</td></tr>
+            <tr><td>POST</td><td><code>/api/triage/classify</code></td><td>Classify a single email by ID</td></tr>
+            <tr><td>POST</td><td><code>/api/triage/draft</code></td><td>Generate draft reply for a thread</td></tr>
+            <tr><td>GET</td><td><code>/api/triage/rules</code></td><td>List active triage and routing rules</td></tr>
+            <tr><td>PUT</td><td><code>/api/triage/rules/{id}</code></td><td>Update an existing rule</td></tr>
+            <tr><td>GET</td><td><code>/api/triage/history</code></td><td>Retrieve classification and action history</td></tr>
+        </table>
+        <h3>Example: Classify Email via API</h3>
+        <pre><code>curl -X POST http://localhost:8402/api/triage/classify \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ***" \
+  -d '{
+    "message_id": "abc123",
+    "include_reasoning": true
+  }'</code></pre>
+        <h3>Example: Generate Draft via API</h3>
+        <pre><code>curl -X POST http://localhost:8402/api/triage/draft \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ***" \
+  -d '{
+    "thread_id": "xyz789",
+    "tone": "professional",
+    "max_length": 150
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>OAuth connection fails:</strong> Verify your Google/Microsoft app credentials are correct and redirect URI matches. Re-authenticate with <code>inbox-triage connect gmail --force</code>.</p>
+        <p><strong>Emails not being classified:</strong> Check that triage is enabled for the connected account. Run <code>inbox-triage status</code> to verify processing is active.</p>
+        <p><strong>Drafts not appearing:</strong> Confirm write permissions were granted during OAuth setup. Check Drafts folder (not Sent). Use <code>inbox-triage draft test</code> to verify access.</p>
+        <p><strong>Rules not triggering:</strong> Rule syntax may be invalid. Validate with <code>inbox-triage rules validate --rule-id abc</code>. Check logs with <code>inbox-triage logs --tail 50</code>.</p>
+        <p><strong>API returns 401 Unauthorized:</strong> Verify API key is valid. Regenerate with <code>inbox-triage api-key rotate</code>.</p>
+        <p><strong>High latency on classification:</strong> Large attachments slow processing. Set <code>inbox-triage config set max_attachment_size 5MB</code> to skip oversized files.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Full AI features, unlimited emails, team rules.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">Free <span>/ forever</span></div>
+                <p style="margin:0;">50 classifications/day, basic priority tags, no auto-draft.</p>
+            </div>
+        </div>
+        <p>The $19/mo plan includes unlimited email classifications, auto-draft replies with tone control, smart routing rules, digest mode, team collaboration, API access, and priority support. Free tier includes 50 daily classifications with basic priority tagging only. Team licenses and volume discounts available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Start Smart Email Triage</h3><p>AI prioritization and auto-drafting for Gmail &amp; Outlook</p><a href="/inbox-triage/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

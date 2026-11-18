@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vendor Watch Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Vendor Watch. Monitor vendor security posture, compliance changes, and supply chain risks with automated alerts.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/vendor-watch.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/vendor-watch.html" />
+<meta property="og:title" content="Vendor Watch Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs Vendor Watch. Monitor vendor security posture, compliance changes, and supply chain risks with automated alerts." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Vendor Watch Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs Vendor Watch. Monitor vendor security posture, compliance changes, and supply chain risks with automated alerts." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Vendor Watch</h1>
+        <p>Continuous vendor security monitoring with risk scoring, compliance tracking, and supply chain alerting.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 20 vendors</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Vendor Watch continuously monitors third-party vendors for security incidents, compliance violations, breach disclosures, and risk posture changes. Designed for procurement teams, CISOs, and compliance officers managing supply chain risk without manual questionnaires or point-in-time assessments.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Track unlimited vendors across industries and regions</li>
+            <li>Automated security rating based on public signals</li>
+            <li>Detect breaches, CVEs, and regulatory actions in real time</li>
+            <li>Monitor SOC 2, ISO 27001, GDPR, and HIPAA compliance status</li>
+            <li>Instant alerts via email, webhook, Slack, or Discord</li>
+            <li>REST API for GRC platform integration and automated reporting</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Vendors to Monitor</h3>
+        <pre><code># Add a single vendor by domain
+vendor-watch add acme-corp.com
+
+# Add multiple vendors from CSV
+vendor-watch add --file vendors.csv
+
+# Import from existing GRC platform
+vendor-watch import --source onetrust --api-key YOUR_KEY
+
+# List monitored vendors
+vendor-watch list</code></pre>
+
+        <h3>Configuring Alert Channels</h3>
+        <pre><code># Email alerts
+vendor-watch config --alert-email security@example.com
+
+# Webhook (generic)
+vendor-watch config --alert-webhook https://hooks.example.com/vendor-watch
+
+# Slack integration
+vendor-watch config --slack-webhook https://hooks.slack.com/services/xxx
+
+# Discord integration
+vendor-watch config --discord-webhook https://discord.com/api/webhooks/xxx
+
+# Test alert delivery
+vendor-watch test-alert</code></pre>
+        <div class="note">Multiple alert channels can be configured simultaneously. All channels receive identical payloads for audit consistency.</div>
+
+        <h2>Monitoring Configuration</h2>
+        <table>
+            <tr><th>Setting</th><th>Flag</th><th>Default</th><th>Description</th></tr>
+            <tr><td>Risk threshold</td><td><code>--risk-threshold</code></td><td>medium</td><td>Alert when score drops below level (low, medium, high)</td></tr>
+            <tr><td>Compliance frameworks</td><td><code>--frameworks</code></td><td>soc2,iso27001</td><td>Frameworks to track per vendor</td></tr>
+            <tr><td>Breach feeds</td><td><code>--breach-feeds</code></td><td>curated</td><td>Sources for breach intelligence (curated, government, darkweb)</td></tr>
+            <tr><td>CVE monitoring</td><td><code>--cve-check</code></td><td>true</td><td>Track CVEs affecting vendor products</td></tr>
+            <tr><td>News scanning</td><td><code>--news-scan</code></td><td>true</td><td>Monitor news for vendor-related incidents</td></tr>
+            <tr><td>Rescan interval</td><td><code>--interval</code></td><td>86400</td><td>Seconds between full vendor reassessments</td></tr>
+        </table>
+
+        <pre><code># Custom monitoring profile
+vendor-watch monitor config acme-corp.com \
+  --risk-threshold high \
+  --frameworks soc2,gdpr,hipaa \
+  --breach-feeds curated,darkweb \
+  --interval 43200
+
+# Apply settings globally
+vendor-watch config --global --risk-threshold medium --cve-check</code></pre>
+
+        <h2>Alert Types</h2>
+        <table>
+            <tr><th>Alert Type</th><th>Severity</th><th>Trigger</th></tr>
+            <tr><td>Data Breach Confirmed</td><td><span class="badge badge-danger">Critical</span></td><td>Verified breach involving vendor systems</td></tr>
+            <tr><td>Compliance Lapse</td><td><span class="badge badge-danger">Critical</span></td><td>Certification expired or revoked</td></tr>
+            <tr><td>Risk Score Drop</td><td><span class="badge badge-warning">Warning</span></td><td>Security rating fell below threshold</td></tr>
+            <tr><td>New CVE Affecting Vendor</td><td><span class="badge badge-warning">Warning</span></td><td>Critical/high CVE in vendor software stack</td></tr>
+            <tr><td>Regulatory Action</td><td><span class="badge badge-warning">Warning</span></td><td>Fine, sanction, or enforcement notice filed</td></tr>
+            <tr><td>Executive Departure</td><td><span class="badge badge-info">Info</span></td><td>CISO or key security leader left organization</td></tr>
+            <tr><td>Acquisition/Merger</td><td><span class="badge badge-info">Info</span></td><td>Vendor acquired or merged with another entity</td></tr>
+        </table>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API at <code>/api/vendor-watch/</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/vendor-watch/</code></td><td>List all monitored vendors</td></tr>
+            <tr><td>POST</td><td><code>/api/vendor-watch/</code></td><td>Add new vendor to monitor</td></tr>
+            <tr><td>GET</td><td><code>/api/vendor-watch/{domain}/score</code></td><td>Current risk score and breakdown</td></tr>
+            <tr><td>GET</td><td><code>/api/vendor-watch/{domain}/compliance</code></td><td>Compliance framework statuses</td></tr>
+            <tr><td>GET</td><td><code>/api/vendor-watch/{domain}/alerts</code></td><td>Historical alerts for vendor</td></tr>
+            <tr><td>POST</td><td><code>/api/vendor-watch/rescan</code></td><td>Trigger immediate rescan of all vendors</td></tr>
+        </table>
+        <h3>Example: Get Vendor Risk Score via API</h3>
+        <pre><code>curl -X GET https://edgeiqlabs.com/api/vendor-watch/acme-corp.com/score \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Response
+{
+  "domain": "acme-corp.com",
+  "score": 78,
+  "grade": "B+",
+  "factors": {
+    "breach_history": 85,
+    "compliance": 92,
+    "patch_cadence": 65,
+    "infrastructure": 80
+  },
+  "last_updated": "2026-11-18T14:30:00Z"
+}</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Vendor not found:</strong> Verify the domain is correct and publicly resolvable. Use <code>vendor-watch check acme-corp.com</code> to run a one-off assessment including DNS validation, certificate analysis, and breach database lookup.</p>
+        <p><strong>Risk score seems inaccurate:</strong> Scores are based on public signals only. Private infrastructure and internal controls are not visible. Supplement with manual questionnaire data via <code>vendor-watch update acme-corp.com --manual-score 85</code>.</p>
+        <p><strong>Alerts not delivering:</strong> Test with <code>vendor-watch test-alert</code>. Check <code>~/.edgeiq/logs/vendor-watch.log</code> for SMTP errors, webhook HTTP status codes, or rate-limit responses from notification providers.</p>
+        <p><strong>Compliance status outdated:</strong> Certification databases may lag. Manually verify via auditor reports and update with <code>vendor-watch compliance set acme-corp.com --framework soc2 --status valid --expiry 2027-03-01</code>.</p>
+        <p><strong>Too many false positives:</strong> Narrow breach feeds to <code>curated</code> only. Adjust <code>--risk-threshold</code> to reduce noise from minor score fluctuations. Enable <code>--debounce 2</code> to require confirmation before alerting.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$19 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 20 vendors, email alerts</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$49 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited vendors, API + GRC export</p>
+            </div>
+        </div>
+        <p>Both plans include continuous monitoring, risk scoring, and breach detection. Pro adds API access, GRC platform integrations, custom compliance frameworks, SLA guarantees, and priority support. Team and enterprise licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Vendor Watch</h3><p>Vendor security monitoring starting at $19/mo</p><a href="/products/#subscription-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

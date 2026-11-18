@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Evidence Collector Documentation — EdgeIQ Docs</title><meta name="description" content="Reference documentation for EdgeIQ Labs Evidence Collector: form-based evidence collection for HIPAA, OSHA, and SOC2 audits."/><link rel="stylesheet" href="/css/design-system.css?v=10"/><script defer src="/js/theme.js"></script><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/evidence-collector.html" />
+<meta property="og:title" content="Evidence Collector Documentation — EdgeIQ Docs" />
+<meta property="og:description" content="Reference documentation for EdgeIQ Labs Evidence Collector: form-based evidence collection for HIPAA, OSHA, and SOC2 audits." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Evidence Collector Documentation — EdgeIQ Docs" />
+<meta name="twitter:description" content="Reference documentation for EdgeIQ Labs Evidence Collector: form-based evidence collection for HIPAA, OSHA, and SOC2 audits." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body><nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav><main class="container container--narrow prose">
+<h1>Evidence Collector Documentation</h1>
+<p>Form-based evidence collection reference for HIPAA, OSHA, and SOC2 compliance audits.</p>
+
+<h2>Overview</h2>
+<p>Evidence Collector is a streamlined compliance evidence management tool designed for organizations undergoing HIPAA, OSHA, or SOC2 audits. Employees upload screenshots, policy acknowledgments, sign-off documents, and other artifacts through a simple form interface. Each submission is automatically tagged to the relevant control framework identifier, organized by auditor-ready categories, and exportable as a structured ZIP bundle.</p>
+<ul>
+<li><strong>Price:</strong> $99/month per organization (flat rate, unlimited users and evidence items).</li>
+<li><strong>Billing:</strong> Monthly via Stripe; cancel anytime with no lock-in.</li>
+<li><strong>Storage:</strong> Cloudflare KV with base64 encoding; 25MB max per file, 1-year retention default.</li>
+<li><strong>Auth:</strong> JWT-based manager tokens issued at subscription activation.</li>
+<li><strong>Export format:</strong> ZIP archive with cover sheet and per-control folder structure.</li>
+</ul>
+
+<h2>Setup</h2>
+<ol>
+<li><strong>Subscribe:</strong> Complete checkout at <a href="/evidence-collector/">/evidence-collector/</a> using Stripe price ID <code>price_1UdBJxRC1NZ20yDT0LKs4D30</code>.</li>
+<li><strong>Receive token:</strong> After successful payment, your organization’s JWT manager token is emailed to the billing contact. This token includes your <code>org_id</code> claim and <code>manager</code> role.</li>
+<li><strong>Distribute upload access:</strong> Share the upload form URL with employees who need to submit evidence. They do not need individual accounts — only managers require API tokens.</li>
+<li><strong>Map controls:</strong> Prepare a list of control identifiers (e.g., <code>HIPAA_164.308(a)(1)</code>, <code>SOC2_CC6.1</code>, <code>OSHA_1910.134</code>) that correspond to your audit scope. Submitters select from this list when uploading.</li>
+<li><strong>Test submission:</strong> Use the curl example below to verify your token works and files are stored correctly before rolling out to staff.</li>
+</ol>
+
+<h2>API Reference</h2>
+<p>All endpoints require the <code>X-Evidence-Token</code> header containing a valid JWT with <code>role: manager</code> and your organization’s <code>org</code> claim.</p>
+
+<h3>Submit Evidence</h3>
+<p><code>POST /api/evidence-collector/submit</code></p>
+<p>Upload a single evidence file tagged to a specific control.</p>
+<ul>
+<li><strong>Content-Type:</strong> <code>multipart/form-data</code></li>
+<li><strong>Fields:</strong>
+  <ul>
+    <li><code>file</code> (required): Screenshot, PDF, image, or document. Max 25MB.</li>
+    <li><code>control_id</code> (required): Framework control identifier (e.g., <code>HIPAA_164.312(a)(1)</code>).</li>
+    <li><code>description</code> (optional): Free-text explanation of what this evidence demonstrates.</li>
+  </ul>
+</li>
+<li><strong>Returns:</strong> <code>201 Created</code> with <code>evidence_id</code>, <code>filename</code>, <code>size_bytes</code>, and <code>submitted_at</code>.</li>
+</ul>
+<pre><code>curl -X POST https://edgeiqlabs.com/api/evidence-collector/submit \
+  -H "X-Evidence-Token: YOUR_JWT_TOKEN" \
+  -F "file=@screenshots/access-review-q3.png" \
+  -F "control_id=HIPAA_164.308(a)(4)" \
+  -F "description=Quarterly access review sign-off from IT director"</code></pre>
+
+<h3>List Evidence</h3>
+<p><code>GET /api/evidence-collector/list</code></p>
+<p>Retrieve all evidence records for your organization, optionally filtered by control.</p>
+<ul>
+<li><strong>Query params:</strong>
+  <ul>
+    <li><code>org</code> (optional): Override org_id (defaults to token’s org claim).</li>
+    <li><code>control</code> (optional): Filter to a single control identifier.</li>
+  </ul>
+</li>
+<li><strong>Returns:</strong> Summary stats (<code>total_evidence</code>, <code>controls_covered</code>, <code>pending_review</code>, <code>approved</code>) plus array of evidence metadata sorted newest-first.</li>
+</ul>
+<pre><code>curl -G https://edgeiqlabs.com/api/evidence-collector/list \
+  -H "X-Evidence-Token: YOUR_JWT_TOKEN" \
+  --data-urlencode "control=SOC2_CC7.2"</code></pre>
+
+<h3>Export Audit Bundle</h3>
+<p><code>POST /api/evidence-collector/export</code></p>
+<p>Generate a ZIP archive containing all evidence organized by control folder, plus a cover sheet with audit metadata.</p>
+<ul>
+<li><strong>Body:</strong> JSON with optional <code>controls</code> array to filter exports.
+  <ul>
+    <li><code>org_id</code> (optional): Defaults to token’s org.</li>
+    <li><code>controls</code> (optional): Array of control IDs. Omit to export everything.</li>
+  </ul>
+</li>
+<li><strong>Returns:</strong> <code>application/zip</code> stream with filename <code>compliance-evidence-{org_id}-{date}.zip</code>.</li>
+</ul>
+<pre><code>curl -X POST https://edgeiqlabs.com/api/evidence-collector/export \
+  -H "X-Evidence-Token: YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"controls": ["HIPAA_164.308", "HIPAA_164.310"]}' \
+  -o audit-bundle.zip</code></pre>
+
+<h2>Authentication</h2>
+<p>Tokens are HMAC-signed JWTs with two base64-encoded parts separated by a dot. The payload must include:</p>
+<ul>
+<li><code>org</code>: Your organization identifier (assigned at checkout).</li>
+<li><code>role</code>: Must be <code>manager</code> for all write operations.</li>
+<li><code>exp</code> (optional): Unix timestamp expiration. Expired tokens are rejected.</li>
+</ul>
+<p>Tokens are signed server-side using your organization’s secret derived from <code>EVIDENCE_JWT_SECRET</code>. Never share or embed tokens in client-side code. Rotate tokens annually or immediately if compromised.</p>
+
+<h2>Storage &amp; Limits</h2>
+<ul>
+<li><strong>File size:</strong> Maximum 25MB per upload. Files are base64-encoded for KV storage, so effective binary limit is ~18MB after encoding overhead.</li>
+<li><strong>Retention:</strong> Evidence records expire after 365 days by default. Contact support@edgeiqlabs.com to extend retention for regulatory requirements (HIPAA mandates 6 years minimum).</li>
+<li><strong>Supported formats:</strong> PNG, JPG, PDF, DOCX, XLSX, TXT, CSV. Executable files (.exe, .sh, .bat) are rejected.</li>
+<li><strong>Index consistency:</strong> The org index (<code>evidence:index:{org_id}</code>) updates synchronously on submit. List queries read from this index; allow 1-2 seconds propagation delay after uploads.</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+<ul>
+<li><strong>401 Unauthorized:</strong> Verify your JWT token has not expired and contains both <code>org</code> and <code>role: manager</code> claims. Regenerate via your subscription dashboard if needed.</li>
+<li><strong>413 File Too Large:</strong> Reduce file size below 25MB. Compress images or split large PDFs into multiple submissions.</li>
+<li><strong>Missing evidence in list:</strong> Wait 2 seconds after upload before querying. If still missing, check that the <code>control_id</code> spelling matches exactly (case-sensitive).</li>
+<li><strong>Export returns empty ZIP:</strong> Confirm at least one evidence record exists for the requested controls. Run <code>GET /list</code> first to verify coverage.</li>
+<li><strong>CORS errors in browser:</strong> All endpoints return <code>Access-Control-Allow-Origin: *</code>. If blocked, check that your request includes the <code>X-Evidence-Token</code> header (preflight may fail without it).</li>
+<li><strong>Token rotation:</strong> Old tokens remain valid until expiration. To force-revoke, contact support with your org_id to invalidate the signing secret.</li>
+</ul>
+
+<h2>Pricing</h2>
+<div class="card">
+<p><strong>$99/month per organization</strong></p>
+<ul>
+<li>Unlimited evidence uploads and users</li>
+<li>All three frameworks supported (HIPAA, OSHA, SOC2)</li>
+<li>ZIP export with auditor-ready folder structure</li>
+<li>1-year evidence retention (extendable on request)</li>
+<li>Email support included; priority SLA available at $199/mo tier</li>
+</ul>
+<p>Stripe Price ID: <code>price_1UdBJxRC1NZ20yDT0LKs4D30</code></p>
+<p><a href="/evidence-collector/" class="btn btn-primary">Subscribe Now →</a></p>
+</div>
+
+<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a> · <a href="compliance-shield.html">Compliance Shield Documentation</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main></body></html>

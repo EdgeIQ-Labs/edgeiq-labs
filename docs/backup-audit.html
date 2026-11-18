@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Backup Audit Tool Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Backup Audit Tool. Free client-side backup configuration compliance checker with A-F grading.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/backup-audit.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/backup-audit.html" />
+<meta property="og:title" content="Backup Audit Tool Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs Backup Audit Tool. Free client-side backup configuration compliance checker with A-F grading." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Backup Audit Tool Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs Backup Audit Tool. Free client-side backup configuration compliance checker with A-F grading." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Backup Audit Tool</h1>
+        <p>Free client-side backup configuration compliance checker with instant A-F grading.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">Free <span>/ forever</span></div>
+                <p style="margin:0;">Client-side only &mdash; no account required</p>
+            </div>
+            <a href="/backup-audit/" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Try It Now</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Backup Audit Tool analyzes your backup configuration files or logs and generates an instant compliance grade (A-F) based on industry best practices. All processing happens entirely in your browser — no data is uploaded to our servers.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Checks encryption-at-rest and in-transit settings</li>
+            <li>Validates offsite/cloud copy requirements (3-2-1 rule)</li>
+            <li>Audits retention policies against compliance frameworks</li>
+            <li>Verifies test restore evidence and frequency</li>
+            <li>Detects immutable/air-gapped backup configurations</li>
+            <li>Generates actionable remediation checklist</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Using the Web Tool</h3>
+        <p>No installation required. Simply visit <a href="/backup-audit/">/backup-audit/</a> and upload your backup configuration file:</p>
+        <pre><code># Supported formats:
+# - Veeam Backup & Replication XML/JSON configs
+# - AWS Backup JSON policies
+# - Azure Backup XML configurations
+# - Restic/Borg/Kopia config files
+# - Generic backup logs (text/csv)
+
+# Or paste raw config text directly into the tool</code></pre>
+        <div class="note">All parsing runs locally in your browser via JavaScript. Your backup configuration never leaves your machine.</div>
+
+        <h3>CLI Alternative</h3>
+        <p>For automated pipelines or bulk auditing, use the CLI version:</p>
+        <pre><code># Install via npm
+npm install -g @edgeiq/backup-audit
+
+# Audit a single config file
+backup-audit check ./veeam-config.xml
+
+# Audit all configs in a directory
+backup-audit check ./backups/ --recursive
+
+# Export results as JSON
+backup-audit check ./config.json --output results.json
+
+# Compare against specific framework
+backup-audit check ./policy.json --framework hipaa</code></pre>
+
+        <h2>Grading Criteria</h2>
+        <table>
+            <tr><th>Category</th><th>Weight</th><th>Pass Criteria</th></tr>
+            <tr><td>Encryption</td><td>25%</td><td>AES-256 or stronger at rest; TLS 1.2+ in transit</td></tr>
+            <tr><td>Offsite Copy</td><td>20%</td><td>At least one copy in separate geographic region/cloud</td></tr>
+            <tr><td>Retention Policy</td><td>20%</td><td>Meets minimum retention for selected framework</td></tr>
+            <tr><td>Test Restores</td><td>15%</td><td>Evidence of successful restore within last 90 days</td></tr>
+            <tr><td>Immutability</td><td>10%</td><td>WORM, air-gap, or object lock enabled</td></tr>
+            <tr><td>Monitoring</td><td>10%</td><td>Failure alerts configured and tested</td></tr>
+        </table>
+
+        <h3>Grade Thresholds</h3>
+        <table>
+            <tr><th>Grade</th><th>Score Range</th><th>Interpretation</th></tr>
+            <tr><td><span class="badge badge-success">A</span></td><td>90-100%</td><td>Exceeds compliance requirements</td></tr>
+            <tr><td><span class="badge badge-info">B</span></td><td>80-89%</td><td>Meets core requirements, minor gaps</td></tr>
+            <tr><td><span class="badge badge-warning">C</span></td><td>70-79%</td><td>Significant gaps, audit risk</td></tr>
+            <tr><td><span class="badge badge-danger">D</span></td><td>60-69%</td><td>Fails multiple critical controls</td></tr>
+            <tr><td><span class="badge badge-danger">F</span></td><td>&lt;60%</td><td>Critical exposure, immediate remediation needed</td></tr>
+        </table>
+
+        <h2>Supported Frameworks</h2>
+        <p>Select a compliance framework to adjust grading weights and retention minimums:</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>SOC 2:</strong> CC7.1, CC7.2 — 7-year retention default</li>
+            <li><strong>HIPAA:</strong> §164.310(a)(2)(ii) — 6-year retention minimum</li>
+            <li><strong>PCI-DSS:</strong> Req 12.10 — 1-year retention, quarterly restores</li>
+            <li><strong>GDPR:</strong> Art. 32 — Encryption mandatory, right-to-delete support</li>
+            <li><strong>General Best Practice:</strong> 3-2-1 rule, no framework-specific retention</li>
+        </ul>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>File not recognized:</strong> Ensure your config file matches a supported format. Try converting to JSON/XML first. Use <code>backup-audit detect ./file.txt</code> to identify format.</p>
+        <p><strong>Grade seems too low/high:</strong> Verify you selected the correct compliance framework. General best practice uses different weights than HIPAA/SOC2. Check category breakdown for specific failures.</p>
+        <p><strong>Browser hangs on large files:</strong> Files over 10MB may cause performance issues. Split multi-server configs into individual files or use the CLI version.</p>
+        <p><strong>False positive on encryption check:</strong> Some tools use non-standard cipher names. Manually verify with <code>backup-audit explain --category encryption</code> to see detection logic.</p>
+        <p><strong>CLI returns "no configs found":</strong> Verify file extensions match supported types. Use <code>--force</code> flag to attempt parsing unrecognized formats.</p>
+        <p><strong>Need help interpreting results:</strong> Each failed check includes a remediation link. For complex environments, consider our paid Compliance Posture Tracker ($9/mo) for continuous monitoring.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">Free <span>/ forever</span></div>
+                <p style="margin:0;">Unlimited audits, all frameworks, client-side only.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Compliance Posture Tracker: continuous monitoring + trend tracking.</p>
+            </div>
+        </div>
+        <p>Backup Audit Tool is completely free with no usage limits. For organizations needing continuous backup compliance monitoring, automated evidence collection, and auditor-ready reports, upgrade to Compliance Posture Tracker at $9/mo. Includes weekly scans, score history, regression alerts, and PDF exports. Learn more at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Audit Your Backup Config</h3><p>Free instant compliance grade — no signup, no upload</p><a href="/backup-audit/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Try Free Tool →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Compliance Audit Documentation — EdgeIQ Docs</title><meta name="description" content="Reference documentation for EdgeIQ Labs Compliance Audit ($499): full security assessment, compliance mapping matrix, executive summary, and prioritized remediation playbook."/><meta property="og:title" content="Compliance Audit Documentation | EdgeIQ Labs"/><meta property="og:description" content="Full paid compliance audit with findings, remediation steps, compliance mapping, and executive summary. $499 one-time."/><meta property="og:url" content="https://edgeiqlabs.com/docs/compliance-audit.html"/><meta property="og:type" content="article"/><link rel="stylesheet" href="/css/design-system.css?v=10"/><script defer src="/js/theme.js"></script><script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script></head><body><nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav><main class="container container--narrow prose">
+<h1>Compliance Audit Documentation</h1>
+<p>Full paid compliance audit report with deep findings, remediation playbook, compliance mapping matrix, and executive summary.</p>
+
+<h2>Overview</h2>
+<p>The Compliance Audit is EdgeIQ Labs’ premium security assessment tier. Unlike the automated $49 Compliance Report Generator or the free scan, this service combines comprehensive automated scanning with human analyst review to deliver a complete security posture assessment suitable for board presentations, vendor due diligence, and regulatory compliance evidence.</p>
+<ul>
+<li><strong>Price:</strong> $499 one-time per domain.</li>
+<li><strong>Billing:</strong> Single payment via Stripe; no subscription required.</li>
+<li><strong>Delivery:</strong> Full report delivered within 24 hours of payment confirmation.</li>
+<li><strong>Data handling:</strong> Scan data is processed securely and retained only for report generation. Raw data is purged after delivery unless you opt into extended retention for re-audits.</li>
+<li><strong>Supported frameworks:</strong> SOC 2, HIPAA, PCI-DSS, NIST CSF, GDPR, ISO 27001, and custom frameworks on request.</li>
+</ul>
+
+<h2>Tier Comparison: Free vs $49 vs $499</h2>
+<p>Understanding the differences between tiers ensures you select the right level of assurance for your needs.</p>
+<table>
+<tr><th>Feature</th><th>Free Scan</th><th>$49 Report</th><th style="color:var(--accent,#3b82f6);">$499 Audit</th></tr>
+<tr><td>Security Checks</td><td>15 basic</td><td>All automated findings</td><td>200+ deep checks + manual validation</td></tr>
+<tr><td>Remediation Guidance</td><td>None</td><td>Standard steps</td><td>Code-level fixes with effort estimates</td></tr>
+<tr><td>Compliance Mapping</td><td>None</td><td>Basic matrix</td><td>Full framework control mapping</td></tr>
+<tr><td>Executive Summary</td><td>No</td><td>No</td><td>Stakeholder-ready PDF</td></tr>
+<tr><td>Analyst Review</td><td>Automated only</td><td>Automated only</td><td>Human expert validation</td></tr>
+<tr><td>Delivery Time</td><td>Instant</td><td>Instant</td><td>Within 24 hours</td></tr>
+<tr><td>Verified Badge</td><td>Ineligible</td><td>Ineligible</td><td>First year free ($99 value)</td></tr>
+<tr><td>Follow-up Support</td><td>None</td><td>Email support</td><td>Dedicated analyst exchange</td></tr>
+</table>
+
+<h2>What’s Included</h2>
+
+<h3>Full Security Assessment</h3>
+<p>We execute 200+ security checks across network, application, infrastructure, and configuration layers. This includes port scanning, TLS analysis, header inspection, DNSSEC validation, API endpoint testing, cloud storage exposure checks, and dependency vulnerability correlation. Every finding is validated to reduce false positives.</p>
+
+<h3>Prioritized Remediation Playbook</h3>
+<p>Each finding includes severity ranking (CVSS v3.1), business impact context, specific code-level fix guidance, implementation effort estimates (hours/days), and responsible team assignment suggestions. Findings are ordered by risk-adjusted priority, not just severity score.</p>
+
+<h3>Compliance Mapping Matrix</h3>
+<p>A detailed cross-reference table mapping every finding to relevant controls in SOC 2, HIPAA, PCI-DSS, NIST CSF, and other applicable frameworks. Includes gap analysis showing which controls are satisfied, partially met, or missing entirely. Specific control references (e.g., "SOC 2 CC6.1", "HIPAA §164.312(a)(1)") are cited for auditor readiness.</p>
+
+<h3>Executive Summary</h3>
+<p>A polished 2-3 page overview designed for non-technical stakeholders. Includes overall risk rating, trend indicators (if historical data exists), top 5 strategic recommendations, budget allocation guidance, and compliance readiness status. Delivered as print-ready PDF with professional formatting.</p>
+
+<h3>Verified Badge Eligibility</h3>
+<p>Audit customers achieving A or B grade qualify for the EdgeIQ Verified Badge at no additional cost for the first year ($99 value). The badge demonstrates independently verified security posture to customers, partners, and regulators.</p>
+
+<h2>Setup & Ordering</h2>
+<ol>
+<li><strong>Visit the landing page:</strong> Navigate to <a href="/compliance-audit/">/compliance-audit/</a> or <a href="/compliance-report/">/compliance-report/</a> (upsell tier).</li>
+<li><strong>Enter target domain:</strong> Provide the primary domain to audit (e.g., <code>example.com</code>). Subdomains are automatically discovered and included.</li>
+<li><strong>Provide email:</strong> Enter the delivery email address. This must be accessible immediately as checkout confirmation and report delivery use this address.</li>
+<li><strong>Complete checkout:</strong> Click "Begin Compliance Audit — $499" to redirect to Stripe secure checkout. Payment is one-time; no recurring charges.</li>
+<li><strong>Receive confirmation:</strong> After payment, you receive an immediate email confirming receipt and estimated delivery window (within 24 hours).</li>
+<li><strong>Download report:</strong> Once ready, you receive a second email with a secure download link. Links expire after 7 days for security.</li>
+</ol>
+
+<h2>API Reference</h2>
+<p>For programmatic integration or reseller workflows, the Compliance Audit exposes REST endpoints. Base URL: <code>https://api.edgeiqlabs.com/v1/audit</code>. Authenticate via Bearer token from your dashboard.</p>
+
+<h3>Initiate Audit</h3>
+<pre><code>POST /v1/audit/initiate
+Content-Type: application/json
+Authorization: Bearer ***
+
+{
+  "domain": "example.com",
+  "email": "security@example.com",
+  "frameworks": ["SOC2", "HIPAA"],
+  "priority": "standard"
+}</code></pre>
+<p>Returns <code>{"audit_id": "aud_xyz789", "status": "queued", "estimated_delivery": "2026-11-20T15:00:00Z"}</code>.</p>
+
+<h3>Check Audit Status</h3>
+<pre><code>GET /v1/audit/{audit_id}
+Authorization: Bearer ***</code></pre>
+<p>Returns <code>{"status": "completed", "download_url": "...", "expires_at": "2026-11-27T15:00:00Z", "grade": "B+", "score": 78}</code>.</p>
+
+<h3>Generate Report (Alternative Flow)</h3>
+<p>If using the Compliance Report Generator API to trigger an audit-tier report:</p>
+<pre><code>POST /api/compliance-report
+Content-Type: application/json
+
+{
+  "email": "security@example.com",
+  "framework": "SOC2",
+  "scanner_type": "ComplianceAudit",
+  "paid": true,
+  "audit_tier": true,
+  "scanner_data": {
+    "domain": "example.com",
+    "grade": "B+",
+    "score": 78,
+    "findings": [...]
+  }
+}</code></pre>
+<p>Note: This endpoint requires prior payment verification. Unpaid requests default to the $49 tier.</p>
+
+<h3>Download Report</h3>
+<pre><code>GET /api/compliance-report/download?id={report_id}
+Authorization: Bearer ***</code></pre>
+<p>Returns binary PDF stream. Set <code>Accept: application/pdf</code> header. Download URLs expire after 7 days.</p>
+
+<h3>Stripe Checkout Integration</h3>
+<pre><code>GET /api/compliance-audit-checkout?email={encoded_email}&amp;domain={encoded_domain}</code></pre>
+<p>Redirects to Stripe Checkout session. On success, Stripe redirects back to your configured success URL with <code>?session_id={sess_xxx}</code>. Verify session server-side before granting access.</p>
+
+<h2>Troubleshooting</h2>
+<ul>
+<li><strong>Checkout fails or loops:</strong> Ensure email and domain fields contain valid values without leading/trailing whitespace. Disable browser extensions that block Stripe scripts. Try incognito mode if issues persist.</li>
+<li><strong>Report not received within 24 hours:</strong> Check spam/junk folders first. If still missing, contact support with your Stripe session ID or receipt number. Delays may occur during high-volume periods but never exceed 48 hours.</li>
+<li><strong>Download link expired:</strong> Links expire after 7 days for security. Request a fresh link via the support portal using your original order email. Re-issuance is free within 30 days of purchase.</li>
+<li><strong>Findings seem incorrect:</strong> Use your included follow-up exchange to request clarification. Include specific finding IDs and evidence screenshots. Analysts respond within 1 business day.</li>
+<li><strong>Framework mapping incomplete:</strong> Specify all relevant frameworks during checkout. Custom frameworks require advance notice; contact sales before purchasing if you need non-standard mappings (e.g., FedRAMP, CMMC).</li>
+<li><strong>API returns 401 Unauthorized:</strong> Verify Bearer token hasn’t expired. Tokens rotate every 90 days; regenerate from dashboard → API Keys. Never share tokens or embed in client-side code.</li>
+<li><strong>Grade differs from free scan:</strong> Expected. The audit uses deeper checks, manual validation, and contextual risk adjustment. Free scans show surface-level posture; audits reveal true organizational risk.</li>
+<li><strong>Badge not appearing after qualifying:</strong> Wait 24 hours post-delivery for badge eligibility propagation. Verify score ≥ B in report. Embed code is sent separately; check inbox for "Your EdgeIQ Verified Badge" email.</li>
+</ul>
+
+<h2>Pricing Breakdown</h2>
+<div class="card" style="padding:2rem;margin:1.5rem 0;background:var(--bg-secondary,#1e293b);border:1px solid var(--border,#334155);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+<div>
+<div style="font-size:2rem;font-weight:bold;color:var(--accent,#3b82f6);">$499 <span style="font-size:1rem;color:var(--text-secondary,#94a3b8);font-weight:normal;">one-time</span></div>
+<p style="margin:0.5rem 0 0;color:var(--text-secondary,#94a3b8);">Per domain. No subscription. Includes 24-hour delivery, analyst review, and first-year Verified Badge.</p>
+</div>
+<a href="/compliance-audit/" style="background:var(--accent,#3b82f6);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;text-decoration:none;">Order Audit</a>
+</div>
+<p>The $499 Compliance Audit includes everything in the $49 report plus human analyst validation, 200+ deep security checks, full compliance framework mapping, executive summary PDF, prioritized remediation playbook with effort estimates, dedicated follow-up exchange, and first-year Verified Badge eligibility ($99 value). No hidden fees, no recurring charges, no page limits.</p>
+
+<div class="card related"><h2>Related</h2><a href="index.html">Back to Docs Index</a> | <a href="security-report-generator.html">Security Report Generator ($9/mo)</a> | <a href="/compliance-report/">Compliance Report Generator ($49)</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Your Compliance Audit</h3><p>Full security assessment with remediation playbook, compliance mapping, and executive summary</p><a href="/compliance-audit/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Order Audit — $499 →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main></body></html>

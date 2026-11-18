@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Verified Security Badge Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Security Badge. Free embeddable trust seal and Verified Badge ($99/yr) with custom logo, verification URL, and white-label option."/>
+<meta property="og:url" content="https://edgeiqlabs.com/docs/security-badge.html"/>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/security-badge.html" />
+<meta property="og:title" content="Verified Security Badge Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs Security Badge. Free embeddable trust seal and Verified Badge ($99/yr) with custom logo, verification URL, and white-label option." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Verified Security Badge Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs Security Badge. Free embeddable trust seal and Verified Badge ($99/yr) with custom logo, verification URL, and white-label option." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+        <h1>Security Badge &amp; Verified Badge</h1>
+        <p>Embeddable trust seals for websites. Display your security grade to build visitor confidence. Two tiers available: a free auto-generated badge and a premium Verified Badge with branding customization.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$99 <span>/ year</span></div>
+                <p style="margin:0;">Verified Badge &mdash; Custom logo &amp; white-label</p>
+            </div>
+            <a href="/security-badge/" style="background:#b47aff;color:#0b0f14;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Verified →</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>The EdgeIQ Labs Security Badge system allows you to showcase your website's security posture directly on your site. After scanning your domain with any of our free tools, you receive an A-F grade that can be embedded as a dynamic widget. For businesses requiring professional branding, the Verified Badge adds custom logos, public verification URLs, and white-label options.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Free tier: Auto-updating grade display linked to full scan report</li>
+            <li>Verified tier: Custom company logo and purple trust glow effect</li>
+            <li>Public verification URL for customer transparency</li>
+            <li>White-label option removes EdgeIQ branding entirely</li>
+            <li>Simple one-line JavaScript embed for both tiers</li>
+        </ul>
+
+        <h2>Pricing Comparison</h2>
+        <table>
+            <tr><th>Feature</th><th>Free Badge</th><th>Verified Badge ($99/yr)</th></tr>
+            <tr><td>Security Grade Display</td><td>✅ Included</td><td>✅ Included</td></tr>
+            <tr><td>Auto-Update on Re-scan</td><td>✅ Included</td><td>✅ Included</td></tr>
+            <tr><td>Links to Full Report</td><td>✅ Included</td><td>✅ Included</td></tr>
+            <tr><td>Custom Company Logo</td><td><span class="badge badge-danger">No</span></td><td>✅ Included</td></tr>
+            <tr><td>Public Verification URL</td><td><span class="badge badge-danger">No</span></td><td>✅ Included</td></tr>
+            <tr><td>White-Label Option</td><td><span class="badge badge-danger">No</span></td><td>✅ Included</td></tr>
+            <tr><td>Purple Trust Glow</td><td><span class="badge badge-danger">No</span></td><td>✅ Included</td></tr>
+            <tr><td>EdgeIQ Branding</td><td>Required</td><td>Optional (removable)</td></tr>
+        </table>
+
+        <h2>Setup Guide</h2>
+        <h3>Free Badge Setup</h3>
+        <p>The free badge is automatically generated after completing a security scan. No account or payment required.</p>
+        <ol>
+            <li>Scan your domain using any tool at <a href="/free-domain-security-score/">edgeiqlabs.com/free-domain-security-score</a></li>
+            <li>Click "Get Your Free Badge" on the results page</li>
+            <li>Copy the generated embed snippet</li>
+            <li>Paste the script tag into your website footer</li>
+        </ol>
+        <pre><code>&lt;!-- Free Badge Embed --&gt;
+&lt;script src="https://edgeiqlabs.com/badge.js" 
+        data-badge-id="YOUR_BADGE_ID"&gt;&lt;/script&gt;</code></pre>
+
+        <h3>Verified Badge Setup</h3>
+        <p>The Verified Badge requires an active subscription. After purchase, configure your badge via the dashboard or API.</p>
+        <ol>
+            <li>Purchase via the <a href="/security-badge/">landing page</a> or checkout API</li>
+            <li>Upload your company logo in the dashboard</li>
+            <li>Enable white-label mode if desired (removes EdgeIQ branding)</li>
+            <li>Use the verified embed script instead of the free version</li>
+        </ol>
+        <pre><code>&lt;!-- Verified Badge Embed --&gt;
+&lt;script src="https://edgeiqlabs.com/verified-badge.js" 
+        data-badge-id="YOUR_VERIFIED_BADGE_ID"&gt;&lt;/script&gt;</code></pre>
+        <div class="note">The Verified Badge script includes all free tier functionality plus premium features. Do not include both scripts on the same page.</div>
+
+        <h2>API Reference</h2>
+        <p>All badge operations are available via REST API. The checkout endpoint redirects to Stripe; data endpoints return JSON.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/badge?id=BADGE_ID</code></td><td>Retrieve free badge data (grade, score, last scan)</td></tr>
+            <tr><td>GET</td><td><code>/api/verified-badge?id=BADGE_ID</code></td><td>Retrieve verified badge data (logo URL, verification URL, settings)</td></tr>
+            <tr><td>POST</td><td><code>/api/verified-badge</code></td><td>Create or update verified badge configuration (webhook use)</td></tr>
+            <tr><td>GET</td><td><code>/api/badge-checkout?domain=X&amp;email=Y</code></td><td>Redirect to Stripe checkout for $99/yr subscription</td></tr>
+        </table>
+
+        <h3>Example: Fetch Free Badge Data</h3>
+        <pre><code>curl "https://edgeiqlabs.com/api/badge?id=abc123"
+
+# Response:
+{
+  "badge_id": "abc123",
+  "domain": "example.com",
+  "grade": "A",
+  "score": 92,
+  "last_scan": "2026-11-18T14:30:00Z",
+  "report_url": "https://edgeiqlabs.com/report/abc123"
+}</code></pre>
+
+        <h3>Example: Fetch Verified Badge Data</h3>
+        <pre><code>curl "https://edgeiqlabs.com/api/verified-badge?id=vxyz789"
+
+# Response:
+{
+  "badge_id": "vxyz789",
+  "domain": "example.com",
+  "grade": "A",
+  "score": 92,
+  "logo_url": "https://cdn.edgeiqlabs.com/logos/vxyz789.png",
+  "verification_url": "https://edgeiqlabs.com/verify/vxyz789",
+  "white_label": true,
+  "glow_enabled": true
+}</code></pre>
+
+        <h3>Example: Create/Update Verified Badge (Webhook)</h3>
+        <pre><code>curl -X POST "https://edgeiqlabs.com/api/verified-badge" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "badge_id": "vxyz789",
+    "logo_url": "https://example.com/logo.png",
+    "white_label": true,
+    "glow_enabled": true
+  }'</code></pre>
+        <p>The POST endpoint is primarily used by internal webhooks after Stripe checkout completion or dashboard updates. External callers should use the dashboard for configuration changes.</p>
+
+        <h3>Checkout Integration</h3>
+        <p>To programmatically initiate a Verified Badge purchase, redirect users to the checkout endpoint:</p>
+        <pre><code>https://edgeiqlabs.com/api/badge-checkout?domain=example.com&amp;email=admin@example.com</code></pre>
+        <p>Parameters:</p>
+        <ul>
+            <li><code>domain</code> (required): The domain to associate with the badge</li>
+            <li><code>email</code> (required): Customer email for receipt and dashboard access</li>
+        </ul>
+        <p>This redirects to Stripe Checkout with price ID <code>price_1UcOIGRC1NZ20yDTpuXPodLz</code> ($99/yr). After successful payment, a webhook automatically provisions the verified badge.</p>
+
+        <h2>Embed Script Behavior</h2>
+        <h3>badge.js (Free Tier)</h3>
+        <ul>
+            <li>Fetches grade data from <code>/api/badge</code> on load</li>
+            <li>Renders inline SVG with grade letter and score</li>
+            <li>Links to full report URL</li>
+            <li>Includes "Verified by EdgeIQ Labs" text</li>
+            <li>Caches response for 1 hour to reduce API calls</li>
+        </ul>
+
+        <h3>verified-badge.js (Premium Tier)</h3>
+        <ul>
+            <li>Fetches data from <code>/api/verified-badge</code> on load</li>
+            <li>Renders custom logo if configured</li>
+            <li>Applies purple glow CSS effect when <code>glow_enabled</code> is true</li>
+            <li>Links to public verification URL instead of report</li>
+            <li>Hides EdgeIQ branding when <code>white_label</code> is true</li>
+            <li>Falls back to free badge styling if verified data unavailable</li>
+        </ul>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Badge not displaying:</strong> Verify the <code>data-badge-id</code> attribute matches your assigned ID. Check browser console for CORS errors or network failures. Ensure the script tag is placed in the document body, not head.</p>
+        <p><strong>Grade shows stale data:</strong> Badges cache API responses for 1 hour. Trigger a new scan at <a href="/free-domain-security-score/">/free-domain-security-score</a> to update. Wait 5 minutes after scanning for cache propagation.</p>
+        <p><strong>Verified badge showing free tier styling:</strong> Confirm your subscription is active and the badge ID is correct. Check that you're using <code>verified-badge.js</code>, not <code>badge.js</code>. Verify logo upload completed successfully in dashboard.</p>
+        <p><strong>Logo not appearing:</strong> Supported formats: PNG, JPG, SVG. Max file size: 2MB. Recommended dimensions: 200x60px. Transparent backgrounds preferred. Re-upload via dashboard if corrupted.</p>
+        <p><strong>White-label still shows EdgeIQ branding:</strong> Toggle white-label off and on in dashboard to force sync. Clear browser cache. Allow up to 10 minutes for CDN propagation after setting change.</p>
+        <p><strong>Checkout redirects to error page:</strong> Verify both <code>domain</code> and <code>email</code> parameters are present and valid. Ensure domain is not already associated with another active subscription. Contact support if issue persists.</p>
+        <p><strong>API returns 404:</strong> Badge IDs are case-sensitive. Free and verified badge IDs are distinct namespaces. Confirm you're calling the correct endpoint (<code>/api/badge</code> vs <code>/api/verified-badge</code>).</p>
+
+        <h2>Landing Page</h2>
+        <p>The marketing landing page for the Security Badge product is located at <a href="/security-badge/">/security-badge/</a>. It includes interactive demos, pricing comparison, and direct checkout integration. Link to this page from CTAs and marketing materials.</p>
+
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Your Security Badge</h3><p>Free tier available instantly. Verified Badge $99/yr with custom branding.</p><a href="/security-badge/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:#b47aff;color:#0b0f14;border-radius:8px;font-weight:600;text-decoration:none;">View Pricing &amp; Demo →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

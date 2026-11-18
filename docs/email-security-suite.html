@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Email Security Suite Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Email Security Suite. SPF/DMARC/DKIM monitoring, phishing detection, header analysis, and weekly security scores.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/email-security-suite.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/email-security-suite.html" />
+<meta property="og:title" content="Email Security Suite Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs Email Security Suite. SPF/DMARC/DKIM monitoring, phishing detection, header analysis, and weekly security scores." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Email Security Suite Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs Email Security Suite. SPF/DMARC/DKIM monitoring, phishing detection, header analysis, and weekly security scores." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Email Security Suite</h1>
+        <p>Complete email protection bundle: SPF/DMARC/DKIM monitoring, phishing detection, header analysis, and weekly security scores.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$39 <span>/ month</span></div>
+                <p style="margin:0;">All 4 tools bundled &mdash; cancel anytime</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Email Security Suite bundles four specialized email security tools into one integrated platform. Monitor your domain's authentication records, detect phishing attempts in real-time, inspect message headers for anomalies, and track your overall email security posture with weekly scores.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li><strong>SPF/DMARC/DKIM Monitor:</strong> Continuous DNS record validation and alerting</li>
+            <li><strong>Phishing Analyzer Pro:</strong> AI-powered URL, attachment, and sender reputation checks</li>
+            <li><strong>Header Inspector:</strong> Deep analysis of Received chains, auth results, and routing anomalies</li>
+            <li><strong>Weekly Security Score:</strong> Composite grade (A-F) across all email security dimensions</li>
+            <li>Real-time alerts via email, Slack, or webhook</li>
+            <li>REST API for SIEM integration and custom dashboards</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Domain Verification</h3>
+        <p>Add and verify domains to enable monitoring:</p>
+        <pre><code># Add domain to suite
+email-security add-domain example.com
+
+# Verify ownership via DNS TXT record
+email-security verify example.com --method dns-txt
+
+# List monitored domains
+email-security domains list</code></pre>
+        <div class="note">Domain verification requires adding a TXT record to your DNS. No email content is accessed during setup.</div>
+
+        <h3>Connecting Data Sources</h3>
+        <p>Connect mail servers and security tools for comprehensive analysis:</p>
+        <pre><code># Connect Gmail/Workspace for header analysis
+email-security connect gmail --account admin@example.com
+
+# Connect Microsoft 365
+email-security connect m365 --tenant-id xxxxx
+
+# Configure DMARC report ingestion
+email-security dmarc configure --rua-mailbox dmarc-reports@example.com
+
+# Enable Slack alerts
+email-security alerts slack --webhook https://hooks.slack.com/services/xxx</code></pre>
+
+        <h2>Features</h2>
+        <h3>SPF/DMARC/DKIM Monitoring</h3>
+        <table>
+            <tr><th>Check</th><th>Description</th><th>Alert Trigger</th></tr>
+            <tr><td>SPF Record</td><td>Validates syntax, IP includes, and lookup count</td><td>Missing, invalid, or >10 DNS lookups</td></tr>
+            <tr><td>DMARC Policy</td><td>Verifies policy enforcement and reporting URIs</td><td>No policy, missing RUA/RUF, pct<100</td></tr>
+            <tr><td>DKIM Selectors</td><td>Checks key rotation age and signature validity</td><td>Key older than 90 days, weak algorithm</td></tr>
+            <tr><td>BIMI</td><td>Brand indicator compliance check</td><td>Missing VMC cert or logo mismatch</td></tr>
+        </table>
+        <pre><code># Run full auth check
+email-security auth-check example.com
+
+# View historical DMARC aggregate data
+email-security dmarc reports example.com --last 30d
+
+# Export DKIM key inventory
+email-security dkim export example.com --format json</code></pre>
+
+        <h3>Phishing Detection</h3>
+        <p>Analyze suspicious emails by forwarding them to <code>scan@edgeiqlabs.com</code> or submitting via API:</p>
+        <pre><code># Submit URL for analysis
+email-security phish-analyze --url "https://suspicious-site.com/login"
+
+# Scan attachment hash
+email-security phish-analyze --sha256 abc123def456...
+
+# Check sender reputation
+email-security phish-analyze --sender attacker@spoofed.com</code></pre>
+        <div class="note">Phishing analysis runs in isolated sandboxes. Submitted samples are retained for 7 days for threat intelligence correlation.</div>
+
+        <h3>Header Inspector</h3>
+        <p>Paste raw headers or connect a mailbox to analyze routing paths and authentication failures:</p>
+        <pre><code># Analyze pasted headers
+email-security headers analyze --input headers.txt
+
+# Inspect specific message from connected inbox
+email-security headers inspect --message-id "&lt;abc123@mail.gmail.com&gt;"
+
+# Flag ARC chain breaks
+email-security headers arc-validate --message-id "&lt;xyz789@outlook.com&gt;"</code></pre>
+
+        <h3>Weekly Security Score</h3>
+        <p>Composite A-F grade calculated from auth records, phishing exposure, header hygiene, and dark web mentions:</p>
+        <pre><code># View current score
+email-security score example.com
+
+# View score trend
+email-security score example.com --history 12w
+
+# Download scorecard PDF
+email-security score example.com --export pdf</code></pre>
+
+        <h2>API Reference</h2>
+        <p>All functionality available via REST API at <code>https://api.edgeiqlabs.com/v1/</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/auth/{domain}</code></td><td>Get SPF/DMARC/DKIM status</td></tr>
+            <tr><td>POST</td><td><code>/phish/analyze</code></td><td>Submit URL/hash/sender for analysis</td></tr>
+            <tr><td>POST</td><td><code>/headers/inspect</code></td><td>Analyze raw email headers</td></tr>
+            <tr><td>GET</td><td><code>/score/{domain}</code></td><td>Retrieve current security score</td></tr>
+            <tr><td>GET</td><td><code>/dmarc/reports/{domain}</code></td><td>List DMARC aggregate reports</td></tr>
+            <tr><td>GET</td><td><code>/alerts/history</code></td><td>Retrieve alert history</td></tr>
+        </table>
+        <h3>Example: Check Auth Records</h3>
+        <pre><code>curl -X GET "https://api.edgeiqlabs.com/v1/auth/example.com" \
+  -H "Authorization: Bearer ***"</code></pre>
+        <h3>Example: Submit Phishing Sample</h3>
+        <pre><code>curl -X POST https://api.edgeiqlabs.com/v1/phish/analyze \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ***" \
+  -d '{
+    "url": "https://suspicious-site.com/login",
+    "include_screenshot": true
+  }'</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>DMARC reports not arriving:</strong> Verify RUA mailbox exists and accepts external mail. Check spam folder. Use <code>email-security dmarc test-rua example.com</code> to send a test report.</p>
+        <p><strong>False positive phishing detection:</strong> Submit feedback with <code>email-security phish-feedback --sample-id abc123 --verdict safe</code>. Model retraining occurs weekly.</p>
+        <p><strong>Header analysis incomplete:</strong> Some providers strip internal Received headers. Ensure you're pasting the full original headers, not forwarded content.</p>
+        <p><strong>Score dropped unexpectedly:</strong> Check <code>email-security score example.com --diff</code> to see which factor changed. Common causes: expired DKIM key, new DMARC failure spike, or dark web credential leak.</p>
+        <p><strong>API rate limit exceeded:</strong> Suite plan allows 1000 requests/hour. Upgrade to Enterprise for higher limits or implement request queuing.</p>
+        <p><strong>Slack alerts not firing:</strong> Test webhook with <code>email-security alerts test slack</code>. Verify channel permissions and webhook URL hasn't been rotated.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$39 <span>/ month</span></div>
+                <p style="margin:0;">All 4 tools, unlimited domains, API access.</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">Individual Tools</div>
+                <p style="margin:0;">From $12/mo each if purchased separately.</p>
+            </div>
+        </div>
+        <p>The $39/mo bundle saves ~35% vs buying individually. Includes SPF/DMARC/DKIM Monitor ($15/mo), Phishing Analyzer Pro ($19/mo), Header Inspector ($12/mo), and Weekly Security Score ($9/mo). All plans include unlimited domain monitoring, real-time alerts, API access, and priority support. Enterprise plans with SSO, custom retention, and dedicated CSM available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Secure Your Email Infrastructure</h3><p>SPF/DMARC monitoring, phishing detection, and security scoring</p><a href="/email-security-suite/" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

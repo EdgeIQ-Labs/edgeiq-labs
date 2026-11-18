@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rate Watch Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs Rate Watch. Monitor product prices, competitor pricing, and market fluctuations with instant alerts.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/rate-watch.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/rate-watch.html" />
+<meta property="og:title" content="Rate Watch Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs Rate Watch. Monitor product prices, competitor pricing, and market fluctuations with instant alerts." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Rate Watch Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs Rate Watch. Monitor product prices, competitor pricing, and market fluctuations with instant alerts." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>Rate Watch</h1>
+        <p>Price monitoring and alerts for products, competitors, and market fluctuations.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$12 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 50 monitored items</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>Rate Watch tracks product prices across e-commerce platforms, competitor sites, and marketplaces. Get instant alerts when prices drop below thresholds, competitors adjust pricing, or market trends emerge. Ideal for procurement teams, resellers, and competitive intelligence analysts.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Monitor unlimited product URLs across multiple retailers</li>
+            <li>Track price history with visual trend charts</li>
+            <li>Set custom alert thresholds (percentage or absolute)</li>
+            <li>Detect out-of-stock and restock events</li>
+            <li>Instant alerts via email, webhook, Slack, or Discord</li>
+            <li>REST API for integration into procurement and BI workflows</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Adding Products to Monitor</h3>
+        <pre><code># Add a single product URL
+rate-watch add https://example.com/product/123
+
+# Add multiple products from CSV
+rate-watch add --file products.csv
+
+# Set price threshold ($50 or 10% drop)
+rate-watch config https://example.com/product/123 --threshold 50 --threshold-pct 10
+
+# List monitored products
+rate-watch list</code></pre>
+
+        <h3>Configuring Alert Channels</h3>
+        <pre><code># Email alerts
+rate-watch config --alert-email procurement@example.com
+
+# Webhook (generic)
+rate-watch config --alert-webhook https://hooks.example.com/rate-watch
+
+# Slack integration
+rate-watch config --slack-webhook https://hooks.slack.com/services/xxx
+
+# Discord integration
+rate-watch config --discord-webhook https://discord.com/api/webhooks/xxx
+
+# Test alert delivery
+rate-watch test-alert</code></pre>
+        <div class="note">Multiple alert channels can be configured simultaneously. All channels receive identical payloads for redundancy.</div>
+
+        <h2>Monitoring Configuration</h2>
+        <table>
+            <tr><th>Setting</th><th>Flag</th><th>Default</th><th>Description</th></tr>
+            <tr><td>Check interval</td><td><code>--interval</code></td><td>3600</td><td>Seconds between checks (min 300)</td></tr>
+            <tr><td>Price threshold</td><td><code>--threshold</code></td><td>none</td><td>Absolute price floor (e.g., 49.99)</td></tr>
+            <tr><td>Threshold %</td><td><code>--threshold-pct</code></td><td>none</td><td>Percentage drop trigger (e.g., 10)</td></tr>
+            <tr><td>Stock check</td><td><code>--stock-check</code></td><td>true</td><td>Monitor availability status</td></tr>
+            <tr><td>Currency</td><td><code>--currency</code></td><td>USD</td><td>Currency code for normalization</td></tr>
+            <tr><td>User agent</td><td><code>--user-agent</code></td><td>auto</td><td>Custom browser user agent</td></tr>
+        </table>
+
+        <pre><code># Custom monitoring profile
+rate-watch monitor config https://example.com/product/123 \
+  --interval 1800 \
+  --threshold 45.00 \
+  --threshold-pct 15 \
+  --stock-check
+
+# Apply settings globally
+rate-watch config --global --interval 900 --currency EUR</code></pre>
+
+        <h2>Alert Types</h2>
+        <table>
+            <tr><th>Alert Type</th><th>Severity</th><th>Trigger</th></tr>
+            <tr><td>Price Drop</td><td><span class="badge badge-success">Success</span></td><td>Price fell below threshold or percentage</td></tr>
+            <tr><td>Price Increase</td><td><span class="badge badge-warning">Warning</span></td><td>Price rose above previous check by >5%</td></tr>
+            <tr><td>Out of Stock</td><td><span class="badge badge-danger">Critical</span></td><td>Product became unavailable</td></tr>
+            <tr><td>Restock</td><td><span class="badge badge-info">Info</span></td><td>Previously OOS item now available</td></tr>
+            <tr><td>Page Error</td><td><span class="badge badge-warning">Warning</span></td><td>Failed to fetch product page 3x consecutively</td></tr>
+            <tr><td>Competitor Match</td><td><span class="badge badge-info">Info</span></td><td>Competitor price detected below your target</td></tr>
+        </table>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API at <code>/api/rate-watch/</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/rate-watch/check</code></td><td>Trigger immediate price check for all items</td></tr>
+            <tr><td>GET</td><td><code>/api/rate-watch/status</code></td><td>Get current status of all monitored products</td></tr>
+            <tr><td>POST</td><td><code>/api/rate-watch/add</code></td><td>Add new product URL to monitor</td></tr>
+            <tr><td>DELETE</td><td><code>/api/rate-watch/remove/{id}</code></td><td>Remove product from monitoring</td></tr>
+            <tr><td>GET</td><td><code>/api/rate-watch/history/{id}</code></td><td>Retrieve price history for a product</td></tr>
+            <tr><td>GET</td><td><code>/api/rate-watch/alerts</code></td><td>List recent alerts (paginated)</td></tr>
+        </table>
+        <h3>Example: Check Prices via API</h3>
+        <pre><code>curl -X GET https://edgeiqlabs.com/api/rate-watch/check \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Response
+{
+  "checked": 47,
+  "alerts_triggered": 3,
+  "errors": 0,
+  "timestamp": "2026-11-18T14:30:00Z"
+}</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Product not tracking:</strong> Verify the URL is accessible and not blocked by bot protection. Use <code>rate-watch check https://example.com/product/123</code> to run a one-off diagnostic including page fetch, price extraction, and stock status.</p>
+        <p><strong>Price not detected:</strong> The site may use dynamic rendering. Enable <code>--js-render</code> to execute JavaScript before parsing. Check <code>~/.edgeiq/logs/rate-watch.log</code> for selector mismatches.</p>
+        <p><strong>Alerts not delivering:</strong> Test with <code>rate-watch test-alert</code>. Verify webhook endpoints return HTTP 2xx. Check SMTP credentials for email delivery failures.</p>
+        <p><strong>Too many false positives:</strong> Adjust <code>--threshold-pct</code> to ignore minor fluctuations. Enable <code>--debounce 3</code> to require 3 consecutive readings before alerting.</p>
+        <p><strong>Rate limited by retailer:</strong> Increase <code>--interval</code> to 7200+ seconds. Rotate user agents with <code>--rotate-ua</code> or configure proxy support via <code>--proxy socks5://localhost:9050</code>.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$12 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 50 products, email alerts</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited products, all channels + API</p>
+            </div>
+        </div>
+        <p>Both plans include continuous monitoring, price history, and stock tracking. Pro adds webhook integrations, API access, JS rendering, proxy support, and priority support. Team and enterprise licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get Rate Watch</h3><p>Price monitoring and alerts starting at $12/mo</p><a href="/products/#subscription-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StatusPage Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs StatusPage. Create public status pages with incident timelines, uptime metrics, and subscriber notifications.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/statuspage.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/statuspage.html" />
+<meta property="og:title" content="StatusPage Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs StatusPage. Create public status pages with incident timelines, uptime metrics, and subscriber notifications." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="StatusPage Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs StatusPage. Create public status pages with incident timelines, uptime metrics, and subscriber notifications." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>StatusPage</h1>
+        <p>Public status pages with incident timelines, uptime metrics, and subscriber notifications.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; 1 status page, 5 components</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>StatusPage provides customizable public status pages to communicate service health, incidents, and maintenance windows to your users. Includes real-time component status, historical uptime metrics, automated incident updates, and multi-channel subscriber notifications.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Custom-branded status pages with your domain</li>
+            <li>Real-time component status tracking</li>
+            <li>Incident timeline with automated updates</li>
+            <li>90-day uptime history and SLA metrics</li>
+            <li>Email, SMS, webhook, and RSS subscriber notifications</li>
+            <li>REST API for CI/CD integration and automated incident creation</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Creating a Status Page</h3>
+        <pre><code># Create a new status page
+statuspage create --name "My SaaS" --domain status.mysaas.com
+
+# Add components to monitor
+statuspage component add --name "API" --group "Core Services"
+statuspage component add --name "Dashboard" --group "Core Services"
+statuspage component add --name "Webhooks" --group "Integrations"
+
+# List components
+statuspage component list</code></pre>
+
+        <h3>Configuring Notifications</h3>
+        <pre><code># Enable email subscriptions
+statuspage config --email-notifications true
+
+# Configure SMTP
+statuspage config --smtp-host smtp.example.com --smtp-user alerts@example.com
+
+# Enable SMS (Twilio)
+statuspage config --sms-provider twilio --sms-from +1234567890
+
+# Webhook for incident events
+statuspage config --incident-webhook https://hooks.example.com/statuspage
+
+# Test notification delivery
+statuspage test-notification</code></pre>
+        <div class="note">Subscribers can choose their preferred notification channel. All channels receive identical incident updates for consistency.</div>
+
+        <h2>Component Configuration</h2>
+        <table>
+            <tr><th>Setting</th><th>Flag</th><th>Default</th><th>Description</th></tr>
+            <tr><td>Auto-detect</td><td><code>--auto-detect</code></td><td>true</td><td>Automatically update status from monitors</td></tr>
+            <tr><td>Uptime check</td><td><code>--uptime-check</code></td><td>true</td><td>Ping/HTTP check for component health</td></tr>
+            <tr><td>Check interval</td><td><code>--interval</code></td><td>60</td><td>Seconds between health checks</td></tr>
+            <tr><td>Degraded threshold</td><td><code>--degraded-pct</code></td><td>95</td><td>Uptime % below which status = degraded</td></tr>
+            <tr><td>Outage threshold</td><td><code>--outage-pct</code></td><td>80</td><td>Uptime % below which status = outage</td></tr>
+            <tr><td>Maintenance mode</td><td><code>--maintenance</code></td><td>false</td><td>Manually set component to maintenance</td></tr>
+        </table>
+
+        <pre><code># Custom component monitoring
+statuspage component config "API" \
+  --uptime-check \
+  --interval 30 \
+  --degraded-pct 99 \
+  --outage-pct 95
+
+# Schedule maintenance window
+statuspage maintenance schedule "Database Migration" \
+  --start "2026-11-20T02:00:00Z" \
+  --end "2026-11-20T04:00:00Z" \
+  --components "API,Dashboard"</code></pre>
+
+        <h2>Incident Types</h2>
+        <table>
+            <tr><th>Status</th><th>Severity</th><th>Description</th></tr>
+            <tr><td>Operational</td><td><span class="badge badge-success">Success</span></td><td>All systems functioning normally</td></tr>
+            <tr><td>Degraded Performance</td><td><span class="badge badge-warning">Warning</span></td><td>Service slow or partially impaired</td></tr>
+            <tr><td>Partial Outage</td><td><span class="badge badge-danger">Critical</span></td><td>Some functionality unavailable</td></tr>
+            <tr><td>Major Outage</td><td><span class="badge badge-danger">Critical</span></td><td>Core service completely down</td></tr>
+            <tr><td>Maintenance</td><td><span class="badge badge-info">Info</span></td><td>Scheduled or unscheduled maintenance</td></tr>
+        </table>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API at <code>/api/statuspage/</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/statuspage/</code></td><td>List all status pages</td></tr>
+            <tr><td>POST</td><td><code>/api/statuspage/</code></td><td>Create a new status page</td></tr>
+            <tr><td>GET</td><td><code>/api/statuspage/{id}/components</code></td><td>List components for a page</td></tr>
+            <tr><td>POST</td><td><code>/api/statuspage/{id}/incidents</code></td><td>Create a new incident</td></tr>
+            <tr><td>PATCH</td><td><code>/api/statuspage/{id}/incidents/{incident_id}</code></td><td>Update incident status</td></tr>
+            <tr><td>GET</td><td><code>/api/statuspage/{id}/metrics</code></td><td>Retrieve uptime metrics</td></tr>
+        </table>
+        <h3>Example: Create Incident via API</h3>
+        <pre><code>curl -X POST https://edgeiqlabs.com/api/statuspage/sp_abc123/incidents \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "API Latency Spike",
+    "status": "degraded_performance",
+    "components": ["comp_api"],
+    "message": "Investigating increased response times on /v2 endpoints."
+  }'
+
+# Response
+{
+  "id": "inc_xyz789",
+  "status": "degraded_performance",
+  "created_at": "2026-11-18T14:30:00Z",
+  "updates": []
+}</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Status not updating automatically:</strong> Verify the linked monitor is active and returning data. Use <code>statuspage component check "API"</code> to run a manual health check and view last probe result.</p>
+        <p><strong>Notifications not sending:</strong> Test with <code>statuspage test-notification</code>. Check SMTP logs for auth failures or rate limits. For SMS, verify Twilio balance and sender number registration.</p>
+        <p><strong>Custom domain not resolving:</strong> Ensure CNAME record points to <code>status.edgeiqlabs.com</code>. Allow up to 24h for DNS propagation. Verify SSL certificate issued via <code>statuspage ssl-status --domain status.mysaas.com</code>.</p>
+        <p><strong>Incident timeline out of order:</strong> All timestamps must be ISO 8601 UTC. Use <code>--timestamp</code> flag when posting updates manually to preserve chronological order.</p>
+        <p><strong>Metrics showing gaps:</strong> Health checks may have been paused during maintenance. Use <code>--backfill</code> to import historical data from external monitoring sources.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$9 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 1 page, 5 components, email</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$29 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited pages, SMS + API + custom domain</p>
+            </div>
+        </div>
+        <p>Both plans include real-time status updates, incident timelines, and 90-day uptime history. Pro adds SMS notifications, API access, custom domains, SLA reporting, and priority support. Team and enterprise licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get StatusPage</h3><p>Public status pages with incident timelines starting at $9/mo</p><a href="/products/#subscription-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>

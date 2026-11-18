@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DNS Firewall Documentation | EdgeIQ Labs</title>
+<meta name="description" content="Complete documentation for EdgeIQ Labs DNS Firewall. Block threats at the DNS layer with real-time filtering, policy enforcement, and logging.">
+<meta property="og:url" content="https://edgeiqlabs.com/docs/dnsfirewall.html">
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<script defer src="/js/theme.js"></script>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="EdgeIQ Labs" />
+<meta property="og:url" content="https://edgeiqlabs.com/docs/dnsfirewall.html" />
+<meta property="og:title" content="DNS Firewall Documentation | EdgeIQ Labs" />
+<meta property="og:description" content="Complete documentation for EdgeIQ Labs DNS Firewall. Block threats at the DNS layer with real-time filtering, policy enforcement, and logging." />
+<meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="DNS Firewall Documentation | EdgeIQ Labs" />
+<meta name="twitter:description" content="Complete documentation for EdgeIQ Labs DNS Firewall. Block threats at the DNS layer with real-time filtering, policy enforcement, and logging." />
+<meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
+</head><body>
+<nav><div class="container"><div class="nav-inner"><a href="/" class="nav-brand"><img src="/favicon.png" alt="" class="nav-logo-img"/> <div class="nav-wordmark"><span class="nav-brand-name">Edge<span>IQ</span> Labs</span></div></a><div class="nav-links"><a href="/free-tools/">Tools</a><a href="/blog/">Blog</a><a href="/docs/">Docs</a><a href="/products/">Products</a><a href="/pricing/">Pricing</a></div></div></div></nav>
+<main class="container container--narrow prose">
+<div class="container">
+        <h1>DNS Firewall</h1>
+        <p>DNS-level threat blocking with real-time filtering, policy enforcement, and comprehensive logging.</p>
+
+        <div class="pricing-card">
+            <div>
+                <div class="price">$15 <span>/ month</span></div>
+                <p style="margin:0;">Starter plan &mdash; up to 50 endpoints</p>
+            </div>
+            <a href="https://edgeiqlabs.com/pricing" style="background:var(--accent);color:#fff;padding:0.75rem 1.5rem;border-radius:8px;font-weight:600;">Get Started</a>
+        </div>
+
+        <h2>Overview</h2>
+        <p>DNS Firewall intercepts DNS queries at the resolver level to block malware, phishing, command-and-control traffic, and unwanted content before connections are established. Deploy across networks, endpoints, or cloud infrastructure with centralized policy management and real-time analytics.</p>
+        <ul style="margin-left:1.5rem;color:var(--text-secondary);margin-bottom:1rem;">
+            <li>Block known malicious domains via threat intelligence feeds</li>
+            <li>Custom allow/block lists per network or endpoint group</li>
+            <li>Category-based filtering (ads, trackers, adult, gambling)</li>
+            <li>DNS-over-HTTPS (DoH) and DNS-over-TLS (DoT) support</li>
+            <li>Real-time query logging and forensic search</li>
+            <li>REST API for policy automation and SIEM integration</li>
+        </ul>
+
+        <h2>Setup</h2>
+        <h3>Configuring DNS Resolver</h3>
+        <pre><code># Point clients to DNS Firewall resolver
+dns-firewall config --resolver-ip 203.0.113.10
+
+# Enable DoH for encrypted queries
+dns-firewall config --doh-endpoint https://dns.edgeiqlabs.com/dns-query
+
+# Add internal network
+dns-firewall network add --name "HQ Office" --cidr 10.0.0.0/8
+
+# List configured networks
+dns-firewall network list</code></pre>
+
+        <h3>Policy Configuration</h3>
+        <pre><code># Apply default threat blocklist
+dns-firewall policy apply --default-threats
+
+# Add custom blocklist
+dns-firewall policy block --domain badsite.example.com
+
+# Allow specific domain (override blocklist)
+dns-firewall policy allow --domain internal.example.com
+
+# Enable category filtering
+dns-firewall policy category --block ads,trackers,malware
+
+# Test policy against a query
+dns-firewall test-query malware.example.com</code></pre>
+        <div class="note">Policies are evaluated in order: explicit allows override blocks, which override category filters. Default threat lists update hourly from curated intelligence feeds.</div>
+
+        <h2>Filtering Configuration</h2>
+        <table>
+            <tr><th>Setting</th><th>Flag</th><th>Default</th><th>Description</th></tr>
+            <tr><td>Threat feeds</td><td><code>--threat-feeds</code></td><td>curated</td><td>Intelligence sources (curated, community, custom)</td></tr>
+            <tr><td>Update interval</td><td><code>--feed-interval</code></td><td>3600</td><td>Seconds between feed refreshes</td></tr>
+            <tr><td>Log level</td><td><code>--log-level</code></td><td>blocked</td><td>Queries to log (all, blocked, allowed, none)</td></tr>
+            <tr><td>Retention</td><td><code>--log-retention</code></td><td>30</td><td>Days to retain query logs</td></tr>
+            <tr><td>NXDOMAIN redirect</td><td><code>--nxdomain-ip</code></td><td>none</td><td>Redirect blocked queries to sinkhole IP</td></tr>
+            <tr><td>Bypass mode</td><td><code>--bypass</code></td><td>false</td><td>Disable filtering for troubleshooting</td></tr>
+        </table>
+
+        <pre><code># Custom filtering profile
+dns-firewall filter config \
+  --threat-feeds curated,custom \
+  --feed-interval 1800 \
+  --log-level all \
+  --log-retention 90 \
+  --nxdomain-ip 10.0.0.1
+
+# Apply to specific network
+dns-firewall filter apply --network "HQ Office" --profile strict</code></pre>
+
+        <h2>Block Categories</h2>
+        <table>
+            <tr><th>Category</th><th>Action</th><th>Description</th></tr>
+            <tr><td>Malware</td><td><span class="badge badge-danger">Block</span></td><td>Known malware distribution and C2 domains</td></tr>
+            <tr><td>Phishing</td><td><span class="badge badge-danger">Block</span></td><td>Credential harvesting and deceptive sites</td></tr>
+            <tr><td>Ads & Trackers</td><td><span class="badge badge-warning">Block</span></td><td>Advertising networks and behavioral tracking</td></tr>
+            <tr><td>Adult Content</td><td><span class="badge badge-warning">Block</span></td><td>Pornography and explicit material</td></tr>
+            <tr><td>Gambling</td><td><span class="badge badge-info">Optional</span></td><td>Online betting and casino sites</td></tr>
+            <tr><td>Social Media</td><td><span class="badge badge-info">Optional</span></td><td>Social networking platforms</td></tr>
+            <tr><td>Newly Registered</td><td><span class="badge badge-warning">Block</span></td><td>Domains registered within last 30 days</td></tr>
+        </table>
+
+        <h2>API Reference</h2>
+        <p>All CLI functionality is available via REST API at <code>/api/dnsfirewall/</code>.</p>
+        <h3>Endpoints</h3>
+        <table>
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+            <tr><td>GET</td><td><code>/api/dnsfirewall/policies</code></td><td>List all filtering policies</td></tr>
+            <tr><td>POST</td><td><code>/api/dnsfirewall/policies</code></td><td>Create new policy</td></tr>
+            <tr><td>PUT</td><td><code>/api/dnsfirewall/policies/{id}</code></td><td>Update existing policy</td></tr>
+            <tr><td>GET</td><td><code>/api/dnsfirewall/logs</code></td><td>Query DNS logs (paginated, filterable)</td></tr>
+            <tr><td>POST</td><td><code>/api/dnsfirewall/test</code></td><td>Test query against current policy</td></tr>
+            <tr><td>GET</td><td><code>/api/dnsfirewall/stats</code></td><td>Aggregate blocking statistics</td></tr>
+        </table>
+        <h3>Example: Query Logs via API</h3>
+        <pre><code>curl -X GET "https://edgeiqlabs.com/api/dnsfirewall/logs?network=hq&limit=100&action=blocked" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Response
+{
+  "total": 1542,
+  "results": [
+    {
+      "timestamp": "2026-11-18T14:30:00Z",
+      "client": "10.0.1.45",
+      "query": "malware.example.com",
+      "action": "blocked",
+      "reason": "threat_feed",
+      "category": "malware"
+    }
+  ]
+}</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <h3>Common Issues</h3>
+        <p><strong>Legitimate site blocked:</strong> Check policy with <code>dns-firewall test-query example.com</code>. If incorrectly categorized, add an explicit allow rule with <code>dns-firewall policy allow --domain example.com</code>. Submit false positives via dashboard for feed correction.</p>
+        <p><strong>Queries not being filtered:</strong> Verify client DNS settings point to firewall resolver. Use <code>dns-firewall diagnose --client 10.0.1.45</code> to check connectivity, policy assignment, and bypass status.</p>
+        <p><strong>Logs missing entries:</strong> Confirm <code>--log-level</code> includes desired query types. Check disk space and retention settings. For high-volume networks, enable sampling with <code>--log-sample-rate 10</code> to reduce storage.</p>
+        <p><strong>Slow DNS resolution:</strong> Review upstream resolver latency with <code>dns-firewall benchmark</code>. Enable local caching with <code>--cache-ttl 300</code>. Consider deploying regional resolvers for distributed networks.</p>
+        <p><strong>DoH/DoT connection failures:</strong> Verify TLS certificates are valid and trusted. Check firewall rules allow outbound port 443 (DoH) or 853 (DoT). Test with <code>dns-firewall test-doh</code> to isolate protocol issues.</p>
+
+        <h2>Pricing</h2>
+        <div class="pricing-card">
+            <div>
+                <div class="price">$15 <span>/ month</span></div>
+                <p style="margin:0;">Starter &mdash; 50 endpoints, basic filtering</p>
+            </div>
+            <div style="text-align:right;">
+                <div class="price">$39 <span>/ month</span></div>
+                <p style="margin:0;">Pro &mdash; unlimited endpoints, API + advanced analytics</p>
+            </div>
+        </div>
+        <p>Both plans include real-time threat blocking, category filtering, and 30-day log retention. Pro adds API access, custom threat feeds, SIEM export, SLA guarantees, and priority support. Team and enterprise licenses available at <a href="https://edgeiqlabs.com/pricing">edgeiqlabs.com/pricing</a>.</p>
+
+        <footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+    </div>
+<div class="cta-box" style="margin:3rem auto;padding:2rem;background:var(--card,#121923);border-radius:12px;text-align:center;max-width:600px;"><h3>Get DNS Firewall</h3><p>DNS-level threat blocking starting at $15/mo</p><a href="/products/#subscription-plans" class="cta-btn" style="display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;">Get Started →</a></div>
+<footer style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></footer>
+</main>
+</body></html>
