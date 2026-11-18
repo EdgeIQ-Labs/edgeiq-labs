@@ -1,0 +1,79 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>SOC2 Readiness Template Pack</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;max-width:700px;margin:40px auto;padding:0 20px;color:#1a1a2e;line-height:1.6}
+h1{color:#0f2440;border-bottom:3px solid #2980b9;padding-bottom:10px;font-size:1.8rem}
+h2{color:#0f2440;margin-top:30px;font-size:1.3rem;border-bottom:1px solid #eee;padding-bottom:6px}
+table{width:100%;border-collapse:collapse;margin:15px 0;font-size:0.9rem}
+th{background:#0f2440;color:white;padding:10px;text-align:left}
+td{padding:10px;border-bottom:1px solid #eee}
+tr:nth-child(even){background:#f8f9fa}
+.template{background:#eaf2f8;border:1px solid #aed6f1;border-radius:8px;padding:16px;margin:12px 0}
+.template h3{margin:0 0 8px;color:#1a5276;font-size:1rem}
+.template code{background:#d4e6f1;padding:2px 6px;border-radius:3px;font-size:0.85rem}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid #ddd;font-size:0.8rem;color:#666;text-align:center}
+</style></head><body>
+<h1>🔒 SOC2 Readiness Template Pack</h1>
+<p><strong>EdgeIQ Labs</strong> · Type I Preparation Guide · v2026.1</p>
+<p>This template pack provides the foundational documents needed to prepare for a SOC2 Type I audit. Covers all five Trust Services Criteria: Security, Availability, Processing Integrity, Confidentiality, and Privacy.</p>
+
+<h2>Control Matrix Overview</h2>
+<table>
+<tr><th>Category</th><th># Controls</th><th>Evidence Required</th><th>Priority</th></tr>
+<tr><td>CC1: Control Environment</td><td>8</td><td>Org chart, code of conduct, hiring docs</td><td>High</td></tr>
+<tr><td>CC2: Communication & Info</td><td>5</td><td>Communication policy, whistleblower process</td><td>Medium</td></tr>
+<tr><td>CC3: Risk Assessment</td><td>7</td><td>Risk register, threat modeling docs</td><td>Critical</td></tr>
+<tr><td>CC4: Monitoring Activities</td><td>6</td><td>Audit logs, monitoring dashboards</td><td>High</td></tr>
+<tr><td>CC5: Control Activities</td><td>12</td><td>Change mgmt, access reviews, approvals</td><td>Critical</td></tr>
+<tr><td>CC6: Logical & Physical Access</td><td>15</td><td>IAM policies, MFA config, visitor logs</td><td>Critical</td></tr>
+<tr><td>CC7: System Operations</td><td>10</td><td>Incident response, backup verification</td><td>High</td></tr>
+<tr><td>CC8: Change Management</td><td>6</td><td>PR reviews, staging env, rollback plans</td><td>High</td></tr>
+<tr><td>CC9: Risk Mitigation</td><td>4</td><td>Vendor assessments, BAA/SLA docs</td><td>Medium</td></tr>
+</table>
+
+<h2>Template: Access Control Policy</h2>
+<div class="template">
+<h3>📋 Information Access Policy v1.0</h3>
+<p><strong>Purpose:</strong> Define standards for granting, reviewing, and revoking access to company systems and data.</p>
+<p><strong>Scope:</strong> All employees, contractors, and third parties with system access.</p>
+<p><strong>Key Sections to Customize:</strong></p>
+<ul>
+<li>§2.1 — Role definitions and access levels (map to your org chart)</li>
+<li>§3.0 — Provisioning workflow (ticket → manager approval → IT grant)</li>
+<li>§4.0 — Quarterly access reviews (owner, reviewer, sign-off date)</li>
+<li>§5.0 — Termination procedures (revoke within 24 hours)</li>
+<li>§6.0 — MFA requirements (all remote access, privileged accounts)</li>
+</ul>
+<p><code>[YOUR COMPANY NAME]</code> <code>[EFFECTIVE DATE]</code> <code>[POLICY OWNER]</code></p>
+</div>
+
+<h2>Template: Incident Response Plan</h2>
+<div class="template">
+<h3>🚨 Incident Response Procedure v1.0</h3>
+<p><strong>Severity Levels:</strong></p>
+<ul>
+<li><strong>P1 — Critical:</strong> Active breach, data exfiltration, ransomware. Response: 15 min SLA.</li>
+<li><strong>P2 — High:</strong> Unauthorized access detected, service outage affecting customers. Response: 1 hour.</li>
+<li><strong>P3 — Medium:</strong> Suspicious activity, failed auth spikes, misconfiguration. Response: 4 hours.</li>
+<li><strong>P4 — Low:</strong> Policy violation, minor anomaly. Response: next business day.</li>
+</ul>
+<p><strong>Response Steps:</strong> Detect → Contain → Eradicate → Recover → Post-mortem (within 5 business days)</p>
+<p><strong>Notification Thresholds:</strong> [Define based on regulatory requirements — HIPAA: 60 days, GDPR: 72 hours]</p>
+</div>
+
+<h2>Evidence Collection Checklist</h2>
+<table>
+<tr><th>Evidence Type</th><th>Source</th><th>Retention</th><th>Format</th></tr>
+<tr><td>New hire background checks</td><td>HR system</td><td>Employment + 7 years</td><td>PDF/redacted</td></tr>
+<tr><td>Access review sign-offs</td><td>ITSM/ticketing</td><td>Current year + prior</td><td>Screenshot/PDF</td></tr>
+<tr><td>Change management tickets</td><td>Jira/GitHub PRs</td><td>Audit period</td><td>Export/CSV</td></tr>
+<tr><td>Backup verification logs</td><td>Backup platform</td><td>Last 12 months</td><td>Log export</td></tr>
+<tr><td>Security training completion</td><td>LMS/training platform</td><td>Current year</td><td>Roster PDF</td></tr>
+<tr><td>Vendor risk assessments</td><td>GRC platform/spreadsheet</td><td>Active vendors</td><td>Assessment doc</td></tr>
+</table>
+
+<footer>
+<p>© 2026 EdgeIQ Labs · Templates are starting points — customize to your organization's size, industry, and risk profile.<br>
+SOC2 audits require engagement with a licensed CPA firm. These templates do not guarantee audit passage.</p>
+<p>edgeiqlabs.com · support@edgeiqlabs.com</p>
+</footer>
+</body></html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>GEO Optimization Guide</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;max-width:700px;margin:40px auto;padding:0 20px;color:#1a1a2e;line-height:1.6}
+h1{color:#0f2440;border-bottom:3px solid #16a085;padding-bottom:10px;font-size:1.8rem}
+h2{color:#0f2440;margin-top:30px;font-size:1.3rem}
+.step{background:#f0faf8;border:1px solid #a3e4d7;border-radius:8px;padding:16px;margin:12px 0}
+.step-num{display:inline-block;background:#16a085;color:white;width:28px;height:28px;border-radius:50%;text-align:center;line-height:28px;font-weight:700;margin-right:8px}
+.code{background:#1a1a2e;color:#3dd9ff;padding:12px 16px;border-radius:6px;font-family:monospace;font-size:0.85rem;overflow-x:auto;margin:10px 0;white-space:pre-wrap}
+.tip{background:#fef9e7;border-left:4px solid #f39c12;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid #ddd;font-size:0.8rem;color:#666;text-align:center}
+</style></head><body>
+<h1>🌐 GEO Optimization Guide</h1>
+<p><strong>EdgeIQ Labs</strong> · Make Your Website Visible to AI Search Engines · v2026.1</p>
+<p>Generative Engine Optimization (GEO) ensures your content appears in AI-generated answers from ChatGPT, Perplexity, Google AI Overviews, and Claude. This guide walks you through every fix step by step.</p>
+
+<h2>Why GEO Matters</h2>
+<p>AI search engines don't rank pages like Google. They <strong>extract structured facts</strong> and synthesize answers. If your site lacks machine-readable signals, AI models skip you entirely — even if you rank #1 in traditional search.</p>
+<div class="tip">💡 <strong>Key insight:</strong> AI bots prioritize FAQ schema, entity markup, and clear semantic structure over keyword density. Optimize for extraction, not ranking.</div>
+
+<h2>Step-by-Step Fixes</h2>
+
+<div class="step"><span class="step-num">1</span><strong>Add FAQ Schema Markup</strong>
+<p>Wrap your Q&A sections in JSON-LD so AI models can extract and cite them directly.</p>
+<div class="code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "What is HIPAA compliance?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "HIPAA compliance requires..."
+    }
+  }]
+}
+&lt;/script&gt;</div>
+</div>
+
+<div class="step"><span class="step-num">2</span><strong>Implement Entity Markup</strong>
+<p>Tell AI models <em>what</em> your page is about, not just what words it contains. Use Organization, LocalBusiness, Service, or Product schema.</p>
+<div class="code">{
+  "@type": "Organization",
+  "name": "Your Company",
+  "description": "Managed security services for healthcare",
+  "areaServed": "United States",
+  "knowsAbout": ["HIPAA", "SOC2", "Penetration Testing"]
+}</div>
+</div>
+
+<div class="step"><span class="step-num">3</span><strong>Allow AI Bot Crawling</strong>
+<p>Many sites block GPTBot, ClaudeBot, and PerplexityBot in robots.txt. Remove these blocks to allow AI indexing.</p>
+<div class="code"># ALLOW these bots:
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /</div>
+</div>
+
+<div class="step"><span class="step-num">4</span><strong>Structure Content Semantically</strong>
+<p>Use proper heading hierarchy (H1 → H2 → H3), descriptive alt text, and <code>&lt;article&gt;</code>/<code>&lt;section&gt;</code> tags. AI models parse DOM structure to understand content relationships.</p>
+</div>
+
+<div class="step"><span class="step-num">5</span><strong>Add OG Tags & Canonical URLs</strong>
+<p>Open Graph tags help AI models understand page context when shared or cited. Canonical URLs prevent duplicate content confusion.</p>
+<div class="code">&lt;meta property="og:title" content="Your Page Title"&gt;
+&lt;meta property="og:description" content="Clear summary for AI extraction"&gt;
+&lt;meta property="og:type" content="article"&gt;
+&lt;link rel="canonical" href="https://yoursite.com/page"&gt;</div>
+</div>
+
+<div class="step"><span class="step-num">6</span><strong>Create an XML Sitemap</strong>
+<p>AI bots use sitemaps to discover content. Include <code>&lt;lastmod&gt;</code> dates so bots know what's fresh.</p>
+</div>
+
+<div class="step"><span class="step-num">7</span><strong>Write Citation-Friendly Content</strong>
+<p>Lead paragraphs should contain the core answer in 1-2 sentences. AI models extract opening sentences as answer candidates. Avoid burying the lede.</p>
+</div>
+
+<h2>Measuring Success</h2>
+<p>Run your site through the <strong>EdgeIQ AI Visibility Checker</strong> (free at edgeiqlabs.com/free-geo-checker/) before and after implementing fixes. Target score: 80+/A grade.</p>
+
+<footer>
+<p>© 2026 EdgeIQ Labs · GEO is an evolving discipline. Re-audit quarterly as AI platforms update their crawling behavior.</p>
+<p>edgeiqlabs.com · support@edgeiqlabs.com</p>
+</footer>
+</body></html>
