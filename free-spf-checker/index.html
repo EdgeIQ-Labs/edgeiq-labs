@@ -301,6 +301,8 @@ async function runCheck() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('checkBtn').disabled = false;
     renderResults(data, domain);
+    // Track scan count
+    fetch('/api/scan-stats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'spf'})}).catch(function(){});
   } catch(e) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('checkBtn').disabled = false;
@@ -431,11 +433,42 @@ function renderResults(data, domain) {
     tbody.appendChild(tr);
   });
 
-  renderIssues(data.issues || []);
+  // Inline email gate: show first 2 issues free, rest gated
+  var allIssues = data.issues || [];
+  var freeIssues = allIssues.slice(0, 2);
+  var gatedIssues = allIssues.slice(2);
+  renderIssues(freeIssues, 'issuesSection');
+  // Gate panel + contextual CTA
+  var failCount = allIssues.filter(function(i){return i.level==='fail';}).length;
+  var gateHtml = '<div id="inline-gate" style="margin:20px 0;padding:24px;background:linear-gradient(135deg,#0d1a26,#071018);border:1px solid rgba(61,217,255,0.3);border-radius:12px;text-align:center;">' +
+    '<h3 style="color:#fff;font-size:1rem;margin-bottom:6px;">🔒 '+gatedIssues.length+' more issues + fix commands locked</h3>' +
+    '<p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:14px;">Enter your email to unlock all findings, exact DNS fix commands, and weekly monitoring.</p>' +
+    '<form id="inline-capture-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;" onsubmit="event.preventDefault();var em=document.getElementById(\'inline-cap-email\').value;if(!em)return;fetch(\'/api/capture-email\',{method:\'POST\',headers:{\'Content-Type\':\'application/json\'},body:JSON.stringify({email:em,source:\'spf-checker-gate\'})}).then(function(){document.getElementById(\'inline-gate\').innerHTML=\'<div style=\\\'color:#70f0a8;font-weight:700;margin-bottom:12px;\\\'>✓ Unlocked! Showing all results below.</div>\';document.getElementById(\'gated-issues\').style.display=\'block\';document.getElementById(\'contextual-cta\').style.display=\'block\';});return false;">' +
+      '<input type="email" id="inline-cap-email" placeholder="you@company.com" required style="padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:0.9rem;width:220px;outline:none;">' +
+      '<button type="submit" style="padding:10px 18px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:0.9rem;">Unlock Free →</button>' +
+    '</form>' +
+  '</div>';
+  document.getElementById('issuesSection').insertAdjacentHTML('afterend', gateHtml);
+  // Gated issues container
+  if(gatedIssues.length > 0){
+    var gatedHtml = '<div id="gated-issues" style="display:none;">' +
+      '<div class="section-label" style="margin-bottom:10px;">Additional issues</div>' +
+      gatedIssues.map(function(i){
+        return '<div class="issue '+i.level+'"><div class="issue-title">'+i.message+'</div><div class="issue-detail">'+i.detail+'</div><div class="issue-fix"><strong>Fix:</strong> '+i.fix+'</div></div>';
+      }).join('') + '</div>';
+    document.getElementById('inline-gate').insertAdjacentHTML('afterend', gatedHtml);
+  }
+  // Contextual CTA
+  var ctaProduct = failCount >= 2 ? {name:'Compliance Pro',price:'$9/mo',link:'https://buy.stripe.com/3cI9AV3XJ0SN4nWaIM7wB1j',msg:'Monitors SPF, DMARC, DKIM daily — alerts you before email breaks'} : {name:'Inbox Shield',price:'Free',link:'/inbox-shield/',msg:'Free email auth monitoring for one domain'};
+  var ctaDiv = '<div id="contextual-cta" style="display:none;margin-top:16px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:18px;text-align:center;">' +
+    '<p style="color:#e8eef7;font-size:0.9rem;margin-bottom:10px;">💡 <strong>'+ctaProduct.msg+'</strong></p>' +
+    '<a href="'+ctaProduct.link+'" target="_blank" rel="noopener" style="display:inline-block;padding:10px 24px;background:#3dd9ff;color:#071018;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.9rem;">Start '+ctaProduct.name+' — '+ctaProduct.price+' →</a>' +
+  '</div>';
+  document.getElementById('inline-gate').insertAdjacentHTML('afterend', ctaDiv);
 }
 
-function renderIssues(issues) {
-  const section = document.getElementById('issuesSection');
+function renderIssues(issues, targetId) {
+  const section = document.getElementById(targetId || 'issuesSection');
   if (!issues.length) { section.innerHTML = ''; return; }
   section.innerHTML = '<div class="section-label" style="margin-bottom:10px;">Issues found</div>' +
     issues.map(i => `

@@ -238,10 +238,42 @@ function renderResults(d){
       checks.push({ok:hd&&hd.present,name:h.name,detail:hd&&hd.present?'Header is present.':'Header is missing.',value:hd&&hd.value?hd.value:null});
     });
   }
-  document.getElementById('checks-list').innerHTML=checks.map(function(c){
+  // Split checks: first 3 free, rest gated behind email
+  var freeChecks = checks.slice(0, 3);
+  var gatedChecks = checks.slice(3);
+  var freeHtml = freeChecks.map(function(c){
     var icon=c.ok?'✅':c.warn?'⚠️':'❌';
     return'<li class="check-row"><div class="check-icon">'+icon+'</div><div class="check-body"><div class="check-name">'+esc(c.name)+'</div><div class="check-detail">'+esc(c.detail)+'</div>'+(c.value?'<div class="check-value">'+esc(c.value)+'</div>':'')+'</div></li>';
   }).join('');
+  var gatedHtml = gatedChecks.map(function(c){
+    var icon=c.ok?'✅':c.warn?'⚠️':'❌';
+    return'<li class="check-row"><div class="check-icon">'+icon+'</div><div class="check-body"><div class="check-name">'+esc(c.name)+'</div><div class="check-detail">'+esc(c.detail)+'</div>'+(c.value?'<div class="check-value">'+esc(c.value)+'</div>':'')+'</div></li>';
+  }).join('');
+  document.getElementById('checks-list').innerHTML = freeHtml;
+  // Inline email gate + contextual CTA
+  var failCount = checks.filter(function(c){return !c.ok && !c.warn;}).length;
+  var gatePanel = '<li id="inline-gate" style="list-style:none;margin:16px 0;padding:24px;background:linear-gradient(135deg,#0d1a26,#071018);border:1px solid rgba(61,217,255,0.3);border-radius:12px;text-align:center;">' +
+    '<h3 style="color:#fff;font-size:1rem;margin-bottom:6px;">🔒 '+gatedChecks.length+' more checks + fix commands locked</h3>' +
+    '<p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:14px;">Enter your email to unlock all findings, exact fix commands, and weekly monitoring.</p>' +
+    '<form id="inline-capture-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;" onsubmit="event.preventDefault();var em=document.getElementById(\'inline-cap-email\').value;if(!em)return;fetch(\'/api/capture-email\',{method:\'POST\',headers:{\'Content-Type\':\'application/json\'},body:JSON.stringify({email:em,source:\'ssl-checker-gate\'})}).then(function(){document.getElementById(\'inline-gate\').innerHTML=\'<div style=\\\'color:#70f0a8;font-weight:700;margin-bottom:12px;\\\'>✓ Unlocked! Showing all results below.</div>\';document.getElementById(\'gated-checks\').style.display=\'block\';document.getElementById(\'contextual-cta\').style.display=\'block\';});return false;">' +
+      '<input type="email" id="inline-cap-email" placeholder="you@company.com" required style="padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:0.9rem;width:220px;outline:none;">' +
+      '<button type="submit" style="padding:10px 18px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:0.9rem;">Unlock Free →</button>' +
+    '</form>' +
+  '</li>';
+  document.getElementById('checks-list').innerHTML += gatePanel;
+  // Gated checks container (hidden until email submitted)
+  if(gatedChecks.length > 0){
+    document.getElementById('checks-list').insertAdjacentHTML('afterend', '<ul class="checks-list" id="gated-checks" style="display:none;">'+gatedHtml+'</ul>');
+  }
+  // Contextual CTA (shown after email capture)
+  var ctaProduct = failCount >= 2 ? {name:'Pulse Pro',price:'$19/mo',link:'https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s',msg:'Auto-fixes SSL, header, and DNS issues weekly'} : {name:'Inbox Shield',price:'Free',link:'/inbox-shield/',msg:'Monitors email auth + SSL for one domain free'};
+  var ctaDiv = '<div id="contextual-cta" style="display:none;margin-top:16px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:18px;text-align:center;">' +
+    '<p style="color:#e8eef7;font-size:0.9rem;margin-bottom:10px;">💡 <strong>'+ctaProduct.msg+'</strong></p>' +
+    '<a href="'+ctaProduct.link+'" target="_blank" rel="noopener" style="display:inline-block;padding:10px 24px;background:#3dd9ff;color:#071018;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.9rem;">Start '+ctaProduct.name+' — '+ctaProduct.price+' →</a>' +
+  '</div>';
+  var gc = document.getElementById('gated-checks');
+  if(gc) gc.insertAdjacentHTML('afterend', ctaDiv);
+  else document.getElementById('checks-list').insertAdjacentHTML('afterend', ctaDiv);
 
   if(d.leaks&&Object.keys(d.leaks).length){
     var leakItems=Object.entries(d.leaks).map(function(kv){return'<li class="check-row"><div class="check-icon">⚠️</div><div class="check-body"><div class="check-name">'+esc(kv[0])+' header exposed</div><div class="check-detail">Exposes version info to attackers. Remove or sanitize this header.</div><div class="check-value">'+esc(kv[1])+'</div></div></li>';}).join('');
@@ -266,6 +298,8 @@ function renderResults(d){
   document.getElementById('pulse-note').style.display='block';
   document.getElementById('results').style.display='block';
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  // Track scan count
+  fetch('/api/scan-stats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'ssl'})}).catch(function(){});
 }
 
 function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}

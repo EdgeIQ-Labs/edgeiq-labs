@@ -685,6 +685,10 @@ export async function onRequestPost(context) {
     return Response.json({ ok: true });
   }
 
+  // ── Gate sources (ssl-checker-gate, spf-checker-gate, repo-scanner-gate, etc.)
+  // These get welcome email + nurture + audience enrollment
+  const isGateSource = source.endsWith('-gate');
+
   // ── Generic newsletter path ───────────────────────────────────────────────
 
   // Send immediate welcome email
@@ -694,7 +698,18 @@ export async function onRequestPost(context) {
   }
 
   // Enroll in nurture sequence (follow-ups handled by nurture-queue cron)
-  await enrollNurture(env, email, 'generic');
+  await enrollNurture(env, email, isGateSource ? source : 'generic');
+
+  // Add ALL captured emails to Resend audience (not just newsletter source)
+  if (env.RESEND_API_KEY) {
+    try {
+      await fetch('https://api.resend.com/audiences/e0b2c71a-0a3d-4a06-baa7-deabc88b1158/contacts', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, unsubscribed: false }),
+      });
+    } catch(_) {}
+  }
 
   return Response.json({ ok: true });
 }
