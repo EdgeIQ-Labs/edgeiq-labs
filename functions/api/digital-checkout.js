@@ -9,22 +9,22 @@
 const DIGITAL_PRODUCTS = {
   'hipaa-checklist': {
     name: 'HIPAA Compliance Checklist 2026',
-    priceId: 'price_1Qx2KjRC1NZ20yDTaBcDeFgH', // Replace with real Stripe price ID
-    amount: 2900, // $29.00 in cents
+    priceId: 'price_1UdBM9RC1NZ20yDTPPa7OflU',
+    amount: 2900,
   },
   'soc2-template': {
     name: 'SOC2 Readiness Template Pack',
-    priceId: 'price_1Qx2KlRC1NZ20yDTbCdEfGhI',
+    priceId: 'price_1UdBM9RC1NZ20yDTRpq7FRH8',
     amount: 4900,
   },
   'security-policy-bundle': {
     name: 'Security Policy Bundle',
-    priceId: 'price_1Qx2KmRC1NZ20yDTcDeFgHiJ',
+    priceId: 'price_1UdBMARC1NZ20yDTj59XzYZP',
     amount: 9900,
   },
   'geo-audit-guide': {
     name: 'GEO Optimization Guide',
-    priceId: 'price_1Qx2KnRC1NZ20yDTdEfGhIjK',
+    priceId: 'price_1UdBMBRC1NZ20yDTqcD58nTm',
     amount: 1900,
   },
 };

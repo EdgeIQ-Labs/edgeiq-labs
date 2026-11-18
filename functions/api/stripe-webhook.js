@@ -73,6 +73,60 @@ export async function onRequest(context) {
           }
         }
         
+        // ── Digital product delivery (one-time purchases) ──────────────────
+        if (!serviceConfig && session.metadata?.product_type === 'digital') {
+          const productSlug = session.metadata.product_slug;
+          const productName = session.metadata.product_name || productSlug;
+          const sessionId = session.id;
+
+          if (!email || !productSlug) {
+            console.log('[Webhook] Digital purchase missing email or product_slug');
+            break;
+          }
+
+          // Generate signed download token (HMAC-SHA256, 24h expiry)
+          const tokenId = crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+          const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+          const tokenPayload = `${tokenId}:${productSlug}:${email}:${expiresAt}`;
+          const encoder = new TextEncoder();
+          const key = await crypto.subtle.importKey(
+            'raw', encoder.encode(env.STRIPE_SECRET_KEY), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+          );
+          const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(tokenPayload));
+          const tokenSig = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+          const downloadToken = `${tokenId}.${expiresAt}.${tokenSig}`;
+
+          const purchaseRecord = {
+            email, productSlug, productName, customerId, sessionId,
+            tokenId, downloadToken,
+            purchasedAt: new Date().toISOString(),
+            expiresAt: new Date(expiresAt).toISOString(),
+            downloadsRemaining: 3,
+          };
+
+          await env.PULSE_KV.put(`digital:purchase:${sessionId}`, JSON.stringify(purchaseRecord));
+          await env.PULSE_KV.put(`digital:token:${tokenId}`, JSON.stringify(purchaseRecord));
+          await env.PULSE_KV.put(`digital:email:${email}:${productSlug}`, JSON.stringify({
+            sessionId, tokenId, purchasedAt: purchaseRecord.purchasedAt
+          }));
+
+          console.log(`[Webhook] ✅ Digital purchase: ${email} → ${productSlug}, token: ${tokenId}`);
+
+          // Send download email
+          const downloadUrl = `https://edgeiqlabs.com/download/?token=${downloadToken}`;
+          const dlHtml = `<div style="font-family:Inter,system-ui,sans-serif;background:#0b0f14;color:#e8eef7;padding:40px 20px;"><div style="max-width:500px;margin:0 auto;background:#121923;border:1px solid #233142;border-radius:14px;padding:32px;"><h2 style="color:#3dd9ff;margin:0 0 12px;font-size:1.3rem;">📦 Your download is ready</h2><p style="color:#9fb0c7;margin:0 0 20px;font-size:0.95rem;">Thanks for purchasing <strong>${productName}</strong>.</p><a href="${downloadUrl}" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;padding:14px 28px;border-radius:9px;text-decoration:none;font-size:1rem;">Download Now →</a><p style="color:#64748b;font-size:0.8rem;margin:20px 0 0;">Link expires in 24 hours · 3 downloads remaining</p></div></div>`;
+
+          await sendEmail(env.RESEND_API_KEY, {
+            to: email,
+            subject: `Your ${productName} download — EdgeIQ Labs`,
+            html: dlHtml,
+            from: 'EdgeIQ Labs <noreply@edgeiqlabs.com>',
+          });
+
+          console.log(`[Webhook] ✅ Download email sent to ${email}`);
+          break;
+        }
+
         if (!serviceConfig) {
           console.log(`[Webhook] Could not detect service for session ${event.id}`);
           break;
