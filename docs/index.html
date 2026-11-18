@@ -4,18 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting Started — EdgeIQ Labs</title>
-  <meta name="description" content="Learn how to use EdgeIQ Labs security tools. Step-by-step guides for web scanners, terminal tools, OpenClaw skills, and desktop apps." />
+  <meta name="description" content="Learn how to use EdgeIQ Labs security tools. Step-by-step guides for web scanners, REST API integration, and desktop apps." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="EdgeIQ Labs" />
   <meta property="og:url" content="https://edgeiqlabs.com/docs/" />
   <meta property="og:title" content="Getting Started — EdgeIQ Labs" />
-  <meta property="og:description" content="Learn how to use EdgeIQ Labs security tools. Step-by-step guides for web scanners, terminal tools, OpenClaw skills, and desktop apps." />
+  <meta property="og:description" content="Learn how to use EdgeIQ Labs security tools. Step-by-step guides for web scanners, REST API integration, and desktop apps." />
   <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Getting Started — EdgeIQ Labs" />
-  <meta name="twitter:description" content="Learn how to use EdgeIQ Labs security tools. Step-by-step guides for web scanners, terminal tools, OpenClaw skills, and desktop apps." />
+  <meta name="twitter:description" content="Learn how to use EdgeIQ Labs security tools. Step-by-step guides for web scanners, REST API integration, and desktop apps." />
   <meta name="twitter:image" content="https://edgeiqlabs.com/og-preview.png" />
   <meta name="theme-color" content="#0b0f14" />
   <link rel="icon" type="image/png" href="/favicon.png" />
@@ -350,33 +350,6 @@ cious.exe</code> with the path to your file</li>
       </div>
     </div>
 
-    <div class="tool-card" id="lead-researcher">
-      <h3>📋 Lead Researcher Pro — Find business leads and contact info from a domain</h3>
-      <p>Enter a company domain and get back employee names, titles, LinkedIn profiles, and email addresses.</p>
-      <pre><code>curl -sL https://edgeiqlabs.com/dl/edgeiq-lead-researcher.py -o edgeiq-lead-researcher.py
-python3 edgeiq-lead-researcher.py --domain example.com</code></pre>
-      <h4>What You Need</h4>
-      <ul>
-        <li><strong>Python 3</strong> — <a href="https://python.org">Download from python.org</a> if you don't have it</li>
-        <li><strong>A company domain</strong> — for example, <code>acme.com</code></li>
-        <li><strong>Internet connection</strong></li>
-      </ul>
-      <h4>Step-by-Step Setup</h4>
-      <ol>
-        <li>Open your terminal</li>
-        <li>Paste the curl command and press Enter to download the tool</li>
-        <li>Paste the python3 command, substituting your target company's domain</li>
-        <li>The tool queries public data sources and returns a list of contacts</li>
-      </ol>
-      <h4>How to Run</h4>
-      <p>Find all leads from a company domain:</p>
-      <pre><code>python3 edgeiq-lead-researcher.py --domain "acme.com"</code></pre>
-      <p>Filter to only people with a specific job title:</p>
-      <pre><code>python3 edgeiq-lead-researcher.py --domain "acme.com" --title "marketing"</code></pre>
-      <p>Export leads to CSV:</p>
-      <pre><code>python3 edgeiq-lead-researcher.py --domain "acme.com" --output leads.csv</code></pre>
-      <div class="tier-box tier-free">
-        <div class="tier-label">✓ Free — What's Included</div>
         <ul class="checklist">
           <li>10 domain searches per month</li>
           <li>Basic name and title data</li>
@@ -396,33 +369,6 @@ python3 edgeiq-lead-researcher.py --domain example.com</code></pre>
       </div>
     </div>
 
-    <div class="tool-card" id="business-listing">
-      <h3>🏪 Business Listing Aggregator Pro — Build local business lead lists by location</h3>
-      <p>Search for all businesses in a city or zip code — great for local marketing, B2B outreach, and market research.</p>
-      <pre><code>curl -sL https://edgeiqlabs.com/dl/edgeiq-business-listing.py -o edgeiq-business-listing.py
-python3 edgeiq-business-listing.py --city "New York" --state NY</code></pre>
-      <h4>What You Need</h4>
-      <ul>
-        <li><strong>Python 3</strong> — <a href="https://python.org">Download from python.org</a> if you don't have it</li>
-        <li><strong>A city and state</strong> — for example, <code>"Austin"</code> and <code>TX</code></li>
-        <li><strong>Internet connection</strong></li>
-      </ul>
-      <h4>Step-by-Step Setup</h4>
-      <ol>
-        <li>Open your terminal</li>
-        <li>Paste the curl command and press Enter to download the tool</li>
-        <li>Paste the python3 command, substituting your city and state</li>
-        <li>The tool searches business directories and compiles a list</li>
-      </ol>
-      <h4>How to Run</h4>
-      <p>Find all businesses in a city:</p>
-      <pre><code>python3 edgeiq-business-listing.py --city "Austin" --state TX</code></pre>
-      <p>Filter by business category:</p>
-      <pre><code>python3 edgeiq-business-listing.py --city "Austin" --state TX --category "restaurants"</code></pre>
-      <p>Save results to a file:</p>
-      <pre><code>python3 edgeiq-business-listing.py --city "Austin" --state TX --output austin_businesses.csv</code></pre>
-      <div class="tier-box tier-free">
-        <div class="tier-label">✓ Free — What's Included</div>
         <ul class="checklist">
           <li>3 city searches per month</li>
           <li>Business name and address</li>
@@ -502,32 +448,6 @@ python3 edgeiq-business-listing.py --city "New York" --state NY</code></pre>
       </div>
     </div>
 
-    <div class="tool-card" id="report-generator">
-      <h3>📊 Security Report Generator Pro — Create professional pentest and security audit reports</h3>
-      <p>Combines results from multiple EdgeIQ tools into a polished PDF report with executive summary, technical findings, and remediation steps.</p>
-      <pre><code>curl -sL https://edgeiqlabs.com/dl/edgeiq-report-generator.py -o edgeiq-report-generator.py
-python3 edgeiq-report-generator.py --scan-results ./scan-output/ --output report.pdf</code></pre>
-      <h4>What You Need</h4>
-      <ul>
-        <li><strong>Python 3</strong> — <a href="https://python.org">Download from python.org</a> if you don't have it</li>
-        <li><strong>Scan results</strong> — JSON or text output from other EdgeIQ tools (run a scan first, then feed the results here)</li>
-        <li><strong>Internet connection</strong></li>
-      </ul>
-      <h4>Step-by-Step Setup</h4>
-      <ol>
-        <li>Open your terminal</li>
-        <li>Paste the curl command and press Enter to download the tool</li>
-        <li>Run one or more other EdgeIQ tools (like the XSS Scanner or Network Scanner) and save the output</li>
-        <li>Paste the python3 command, pointing to your saved scan results and choosing a filename for the report</li>
-        <li>The PDF report will be created and saved to the location you specified</li>
-      </ol>
-      <h4>How to Run</h4>
-      <p>Generate a report from scan results:</p>
-      <pre><code>python3 edgeiq-report-generator.py --scan-results ./my-scan-results/ --output security-report.pdf</code></pre>
-      <p>Include your company name and logo:</p>
-      <pre><code>python3 edgeiq-report-generator.py --scan-results ./my-scan-results/ --company "Acme Corp" --logo ./logo.png --output report.pdf</code></pre>
-      <div class="tier-box tier-free">
-        <div class="tier-label">✓ Free — What's Included</div>
         <ul class="checklist">
           <li>3 reports per month</li>
           <li>Basic PDF format</li>
@@ -550,7 +470,7 @@ python3 edgeiq-report-generator.py --scan-results ./scan-output/ --output report
       <h4>Step 2 — Make a request</h4>
       <p style="margin-bottom:0">Send a POST request to any scanner endpoint with your target and API key:</p>
       <pre><code>curl -X POST https://edgeiqlabs.com/api/repo-scanner \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer ***" \
   -H "Content-Type: application/json" \
   -d '{"repo": "https://github.com/example/repo"}'</code></pre>
     </div>
@@ -648,4 +568,3 @@ python3 edgeiq-report-generator.py --scan-results ./scan-output/ --output report
         <p>Upload backup configs and get compliance grades. Client-side only — no data leaves your browser.</p>
       </a>
     </div>
-
