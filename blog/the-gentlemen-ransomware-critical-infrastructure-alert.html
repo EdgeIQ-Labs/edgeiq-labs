@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>The Gentlemen Ransomware: Critical Infrastructure Alert — EdgeIQ Labs</title>
+  <meta name="description" content="CERT-In advisory CIAD-2026-0060 warns of The Gentlemen ransomware targeting critical sectors. Small businesses in healthcare and finance are collateral damage."/>
+  <meta property="og:title" content="The Gentlemen Ransomware: What Small Teams Must Know"/>
+  <meta property="og:description" content="New ransomware targets critical infrastructure. Healthcare, finance, and utilities are at risk. Here are five defense steps for teams without a SOC."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/the-gentlemen-ransomware-critical-infrastructure-alert.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/the-gentlemen-ransomware-critical-infrastructure-alert.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Gentlemen Ransomware: Critical Infrastructure Alert","datePublished":"2026-11-18","dateModified":"2026-11-18","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018 !important;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.orange{color:#f97316;background:#1f1710;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/free-tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag orange">Ransomware</span>
+      <span class="tag">Critical Infrastructure</span>
+      <span class="tag">Incident Response</span>
+    </div>
+    <h1>The Gentlemen Ransomware: Critical Infrastructure Alert</h1>
+    <div class="meta">
+      <span>November 18, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>CERT-In dropped advisory CIAD-2026-0060 on November 13. It covers a new ransomware family called The Gentlemen. This isn't generic malware hitting random consumers. The operators target critical-sector organizations across multiple platforms. Healthcare systems, financial institutions, and utility providers sit in the crosshairs.</p>
+
+    <p>Small businesses often think they're too insignificant to attract targeted attacks. That logic fails when you serve those sectors. A regional clinic, a credit union, or a water treatment contractor holds the same credentials and network access as larger partners. Attackers use smaller vendors as backdoors into hardened targets. You might not be the primary objective, but you're the path of least resistance.</p>
+
+    <p>The advisory doesn't mince words about scope. Multiple platforms means Windows and Linux environments get hit in sequence. Critical sector means organizations where downtime causes real harm beyond lost revenue. Patient care stops. Financial transactions freeze. Power grids lose monitoring capability. The Gentlemen operators chose their targets based on impact leverage, not opportunity alone.</p>
+
+    <h2>What Makes The Gentlemen Different</h2>
+
+    <p>This ransomware family shows sophistication beyond typical encrypt-and-extort schemes. CERT-In notes multi-platform capability. Windows servers get hit first for initial persistence, then lateral movement reaches Linux hosts running operational technology or legacy SCADA interfaces. Cross-platform support means defenders can't rely on OS-specific protections alone.</p>
+
+    <p>The encryption routine targets file types common in industrial control environments alongside standard office documents. Configuration files, PLC programming binaries, and historical process logs get locked. Recovery requires more than restoring user data. Operational systems need full rebuilds from verified clean backups, assuming those backups exist and weren't compromised during the dwell time before encryption triggered.</p>
+
+    <p>Most ransomware families focus on speed. Encrypt fast, demand payment, move on. The Gentlemen takes a different approach. Operators spend weeks inside networks before deploying encryption. They map dependencies between systems. They identify which assets cause maximum disruption when unavailable. They disable recovery mechanisms methodically rather than hoping victims overlook backup deletion. This patience suggests well-resourced groups with specific objectives rather than opportunistic criminals chasing quick payouts.</p>
+
+    <h2>Infection Mechanisms Per CERT-In</h2>
+
+    <p>The advisory identifies three primary entry vectors. Phishing campaigns deliver weaponized attachments disguised as compliance documentation or vendor invoices. These aren't sloppy mass blasts. They reference real regulatory frameworks and use language matching industry jargon. Recipients in regulated sectors expect these communications daily, lowering suspicion.</p>
+
+    <p>Compromised remote access tools provide another route. Valid credentials harvested from previous breaches or purchased on underground markets bypass MFA when session tokens remain active. RDP and VPN endpoints exposed to the internet without geographic restrictions become immediate targets. Default configurations on enterprise software also appear in the advisory. Unpatched management interfaces and forgotten admin accounts left over from vendor installations create persistent weaknesses.</p>
+
+    <p>Supply chain compromise rounds out the vector list. Third-party vendors with legitimate network access introduce malicious code through software updates or configuration changes. Small businesses serving critical infrastructure often lack vendor risk assessment programs. Trust gets granted based on contracts rather than verified security posture. When that trust breaks, attackers inherit every permission the vendor had.</p>
+
+    <h2>Lateral Movement Techniques</h2>
+
+    <p>Once inside, The Gentlemen operators move deliberately. They enumerate domain controllers and map trust relationships between systems. Living-off-the-land binaries handle most reconnaissance. PowerShell, WMI, and native admin tools generate less noise than dropping custom malware. Detection requires behavioral analysis rather than signature matching.</p>
+
+    <p>Privilege escalation exploits misconfigured service accounts and excessive permissions granted during troubleshooting that never got revoked. The operators establish persistence through scheduled tasks, registry modifications, and legitimate system management agents already present in the environment. By the time encryption begins, they've typically maintained access for weeks while mapping the entire network topology.</p>
+
+    <p>Network segmentation failures accelerate spread. Flat networks let attackers pivot from compromised workstations directly to domain controllers and backup servers. VLAN hopping exploits misconfigured switch ports. Shared credentials across zones mean one breach compromises everything. The Gentlemen operators specifically hunt for backup infrastructure early in their dwell period. Deleting or encrypting backups before triggering the main payload ensures victims have no recovery option except paying the ransom.</p>
+
+    <h2>Indicators of Compromise to Check Now</h2>
+
+    <p>CERT-In published specific IOCs tied to this campaign. Review your logs for unusual authentication patterns outside business hours, especially from accounts that rarely access sensitive systems. Look for unexpected PowerShell execution with encoded commands or base64 strings. Monitor for new scheduled tasks created by non-administrative accounts.</p>
+
+    <p>Check DNS query logs for connections to newly registered domains matching patterns described in the advisory. Inspect endpoint telemetry for processes spawning child processes inconsistent with normal application behavior. File integrity monitoring should flag unauthorized changes to system directories or configuration files. Network traffic analysis revealing encrypted C2 channels over non-standard ports warrants immediate investigation.</p>
+
+    <p>Don't wait for perfect confirmation before acting. Suspicious activity deserves investigation even if it doesn't match every known IOC. False positives cost analyst time. False negatives cost entire networks. Err toward investigation when dealing with ransomware precursors. The window between initial compromise and encryption deployment measures in days or weeks, not months.</p>
+
+    <div class="callout warn">
+      <strong>Detection gap:</strong> Most small teams lack 24/7 SOC coverage. Manual log review misses subtle patterns. Automated correlation catches what human analysts working limited hours cannot. EdgeIQ Wazuh SIEM ingests logs from endpoints, servers, and network devices, correlating events against known attack patterns including The Gentlemen TTPs.
+    </div>
+
+    <h2>Five Defense Steps for Teams Without Dedicated SOCs</h2>
+
+    <h3>1. Segment Networks Ruthlessly</h3>
+    <p>Keep operational systems isolated from corporate networks. Guest Wi-Fi shouldn't reach internal resources. Contractor laptops belong in restricted VLANs. Database servers don't need direct internet access. Every segment boundary reduces blast radius when one zone gets compromised. Flat networks let attackers pivot freely after initial foothold. Document your segmentation architecture and test it quarterly. Assumptions about firewall rules rot faster than anyone admits.</p>
+
+    <h3>2. Enforce Least Privilege Aggressively</h3>
+    <p>Audit service accounts quarterly. Remove local admin rights from workstations. Use just-in-time elevation for administrative tasks instead of permanent privileged access. Disable unused accounts immediately upon employee departure. Default passwords on any device represent an open invitation. Password managers cost less than incident response retainers. Review group memberships monthly. Permissions accumulate like sediment and cause similar problems when disturbed.</p>
+
+    <h3>3. Test Backups Under Real Conditions</h3>
+    <p>Immutable storage prevents ransomware from deleting or modifying backup archives. Air-gapped copies provide insurance against sophisticated attackers who hunt for backup infrastructure. Restore tests should happen monthly, not annually. Document recovery procedures including verification steps. Backups you've never restored are assumptions, not assets. Time your restores. Knowing recovery takes four hours versus forty hours changes incident response planning fundamentally.</p>
+
+    <h3>4. Deploy Continuous Monitoring</h3>
+    <p>Log aggregation alone doesn't stop attacks. Correlation rules tuned to your environment surface meaningful signals from noise. Alert fatigue kills response effectiveness faster than missing logs entirely. Start with high-fidelity detections covering credential theft, lateral movement, and mass file modification. Tune thresholds based on actual baseline activity rather than vendor defaults. Review alert performance weekly and adjust. Static rules degrade as attacker techniques evolve.</p>
+
+    <h3>5. Assume Breach and Plan Accordingly</h3>
+    <p>Incident response plans gather dust until needed. Tabletop exercises reveal gaps in communication chains, decision authority, and technical capabilities. Identify external forensics partners before crisis hits. Legal counsel familiar with breach notification requirements saves days during time-sensitive disclosure windows. Cyber insurance policies require documented security controls. Coverage denied because you skipped basic hygiene hurts twice. Practice makes imperfect but practiced imperfect beats unpracticed perfect every time.</p>
+
+    <div class="callout">
+      <strong>Practical detection:</strong> EdgeIQ Wazuh SIEM monitors for ransomware precursors including suspicious PowerShell execution, abnormal authentication patterns, and unauthorized file modifications. Pre-built rules cover The Gentlemen TTPs documented in CIAD-2026-0060. Alerts route to your team via email, Slack, or webhook without requiring dedicated analyst staffing.
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Infrastructure Hardened Against Ransomware</h3>
+    <p>EdgeIQ Labs VPS hosting from $4/mo provides isolated backup environments with NVMe storage, root SSH, DDoS mitigation, and Wazuh SIEM pre-installed. Keep critical backups off your primary network.</p>
+    <a href="/pricing/" class="btn btn-primary">See Plans →</a>
+  </div>
+
+  <!-- Email Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;">
+    <h3 style="margin:0 0 10px;font-size:1.1rem;">Weekly Infrastructure & Security Briefings</h3>
+    <p style="margin:0 0 16px;color:var(--muted);font-size:0.88rem;">Outages, CVEs, breaches, and practical fixes — delivered to your inbox every Tuesday.</p>
+    <form id="blogEmailSignup" style="display:flex;gap:8px;max-width:400px;margin:0 auto;" onsubmit="event.preventDefault();var e=this.querySelector('input[type=email]').value;if(!e)return;fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:'blog'})}).then(()=>{this.innerHTML='<p style=color:var(--green)>✓ You\'re in. Watch your inbox.</p>';});">
+      <input type="email" placeholder="you@company.com" required style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;"/>
+      <button type="submit" style="background:var(--accent);color:#071018;font-weight:700;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;">Subscribe</button>
+    </form>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p>© 2026 EdgeIQ Labs. Cybersecurity · Hosting for Small Business.</p>
+  </div>
+</footer>
+
+<script src="/js/theme.js"></script>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+</body>
+</html>
