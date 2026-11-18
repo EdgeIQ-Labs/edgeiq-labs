@@ -1,0 +1,1 @@
+# Digital Product Downloads\n\nPlace purchased product files here:\n- hipaa-compliance-checklist-2026.pdf\n- soc2-readiness-template.pdf\n- security-policy-bundle.zip\n- geo-optimization-guide.pdf\n\nThese are served as static assets by CF Pages.

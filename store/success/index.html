@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Download Ready — EdgeIQ Labs</title>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;--ok:#70f0a8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;max-width:520px;width:100%;text-align:center;}
+    .icon{font-size:3rem;margin-bottom:16px;}
+    h1{font-size:1.6rem;margin-bottom:12px;}
+    p{color:var(--muted);margin-bottom:24px;font-size:0.95rem;}
+    .download-btn{display:inline-block;background:var(--ok);color:#071018;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:1.05rem;margin-bottom:20px;}
+    .note{font-size:0.8rem;color:#64748b;line-height:1.6;}
+    .spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(61,217,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #status{margin-top:20px;font-size:0.9rem;}
+    .error{color:#ff6b6b;}
+    .success{color:var(--ok);}
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="icon">✅</div>
+  <h1>Payment confirmed!</h1>
+  <p id="message">Retrieving your secure download link…</p>
+  <div id="action"><div class="spinner"></div> Loading…</div>
+  <div id="status"></div>
+  <div class="note" style="margin-top:24px;">
+    A backup download link has been sent to your email.<br/>
+    Link expires in 24 hours · 3 downloads allowed.
+  </div>
+</div>
+
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var sessionId = params.get('session_id');
+  var product = params.get('product');
+  var actionEl = document.getElementById('action');
+  var msgEl = document.getElementById('message');
+  var statusEl = document.getElementById('status');
+
+  if (!sessionId) {
+    msgEl.textContent = 'No session found.';
+    actionEl.innerHTML = '<a href="/store/" style="color:var(--accent);">← Back to Store</a>';
+    return;
+  }
+
+  // Poll for purchase record (webhook may take a few seconds)
+  var attempts = 0;
+  var maxAttempts = 12;
+
+  function check() {
+    attempts++;
+    fetch('/api/download-status?session_id=' + encodeURIComponent(sessionId))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.ready && d.downloadUrl) {
+          msgEl.textContent = 'Your download is ready:';
+          actionEl.innerHTML = '<a href="' + d.downloadUrl + '" class="download-btn">Download Now →</a>';
+          statusEl.innerHTML = '<span class="success">✓ Purchase verified</span>';
+        } else if (attempts < maxAttempts) {
+          setTimeout(check, 2000);
+        } else {
+          msgEl.textContent = 'Your download link is being prepared.';
+          actionEl.innerHTML = '<a href="/store/" style="color:var(--accent);">Check your email for the download link →</a>';
+          statusEl.innerHTML = '<span class="success">✓ Payment confirmed — check inbox</span>';
+        }
+      })
+      .catch(function(){
+        if (attempts < maxAttempts) {
+          setTimeout(check, 2000);
+        } else {
+          actionEl.innerHTML = '<a href="/store/" style="color:var(--accent);">Check your email for the download link →</a>';
+          statusEl.innerHTML = '<span class="success">✓ Payment confirmed — check inbox</span>';
+        }
+      });
+  }
+
+  check();
+})();
+</script>
+</body>
+</html>
