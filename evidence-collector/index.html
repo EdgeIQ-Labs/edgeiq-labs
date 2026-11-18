@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Compliance Evidence Collector — EdgeIQ Labs</title>
+  <meta name="description" content="Collect, tag, and export audit-ready compliance evidence. HIPAA, OSHA, SOC2 frameworks. Screenshots, sign-offs, policy acknowledgments organized by control."/>
+  <link rel="stylesheet" href="/css/design-system.css?v=12"/>
+  <style>
+    .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;}
+    .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(61,217,255,.04);}
+    .upload-zone input{display:none;}
+    .evidence-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:var(--card);}
+    .evidence-row .filename{font-weight:600;font-size:.85rem;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .evidence-row .meta{font-size:.75rem;color:var(--muted);}
+    .control-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600;background:rgba(61,217,255,.1);color:var(--accent);}
+    .status-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600;}
+    .status-pending{background:rgba(255,179,71,.12);color:var(--warn);}
+    .status-approved{background:rgba(112,240,168,.12);color:var(--ok);}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;}
+    .stat-card .value{font-size:1.6rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+    .stat-card .label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+    .form-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;}
+    .form-section h3{margin:0 0 16px;font-size:1rem;color:var(--text);}
+    .form-row{margin-bottom:14px;}
+    .form-row label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;}
+    .form-row input,.form-row select,.form-row textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem;}
+    .form-row textarea{min-height:80px;resize:vertical;}
+    .btn-upload{background:var(--accent);color:#071018;font-weight:700;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:.85rem;width:100%;}
+    .btn-upload:disabled{opacity:.5;cursor:not-allowed;}
+    .btn-export{background:transparent;border:1px solid var(--accent);color:var(--accent);font-weight:600;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.82rem;}
+    .btn-export:hover{background:rgba(61,217,255,.08);}
+    #dashboardSection{display:none;}
+    #setupSection{max-width:480px;margin:80px auto;}
+    .toast-container{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:.82rem;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideIn .2s ease;}
+    .toast.ok{border-color:rgba(112,240,168,.4);color:var(--ok);}
+    .toast.err{border-color:rgba(255,107,107,.4);color:var(--danger);}
+    @keyframes slideIn{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <a href="/" class="nav-logo">🛡️ EdgeIQ Labs</a>
+  <div class="nav-links">
+    <a href="/products/">Products</a>
+    <a href="/free-tools/">Free Tools</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/blog/">Blog</a>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- HERO -->
+<section class="hero" style="padding:60px 20px 40px;">
+  <div style="max-width:700px;margin:0 auto;text-align:center;">
+    <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:12px;">NEW — Compliance Automation</div>
+    <h1 style="font-size:2.2rem;font-weight:800;line-height:1.2;margin-bottom:16px;">Audit-Ready Evidence Collection<br/><span style="color:var(--accent);">Without the Spreadsheet Chaos</span></h1>
+    <p style="font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:28px;">Employees upload screenshots, sign-offs, and policy acknowledgments. Auto-tagged to HIPAA, OSHA, or SOC2 controls. One-click export as an auditor-ready ZIP bundle.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="scrollToCheckout()">Get Started — $99/mo</button>
+      <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="how-it-works" style="max-width:900px;margin:0 auto;padding:40px 20px;">
+  <h2 style="text-align:center;margin-bottom:32px;">How It Works</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;">
+    <div class="card" style="padding:24px;">
+      <div style="font-size:1.5rem;margin-bottom:12px;">📤</div>
+      <h3 style="margin:0 0 8px;font-size:.95rem;">Upload Evidence</h3>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin:0;">Screenshots, PDFs, signed policies, training certificates. Drag-and-drop or click to upload. Max 25MB per file.</p>
+    </div>
+    <div class="card" style="padding:24px;">
+      <div style="font-size:1.5rem;margin-bottom:12px;">🏷️</div>
+      <h3 style="margin:0 0 8px;font-size:.95rem;">Tag to Controls</h3>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin:0;">Map each upload to a specific framework control (HIPAA §164.308, OSHA 1910.134, SOC2 CC6.1). Auditor-friendly organization.</p>
+    </div>
+    <div class="card" style="padding:24px;">
+      <div style="font-size:1.5rem;margin-bottom:12px;">📦</div>
+      <h3 style="margin:0 0 8px;font-size:.95rem;">Export Audit Bundle</h3>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin:0;">One-click ZIP export organized by control ID with cover sheet. Hand it directly to your auditor. No reformatting needed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section style="max-width:500px;margin:0 auto;padding:40px 20px;">
+  <div class="card" style="padding:32px;border-color:var(--accent);">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:8px;">Per Organization</div>
+      <div style="font-size:2.5rem;font-weight:800;">$99<span style="font-size:1rem;font-weight:500;color:var(--muted);">/mo</span></div>
+    </div>
+    <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.85rem;color:var(--muted);line-height:2;">
+      <li>✅ Unlimited evidence uploads</li>
+      <li>✅ HIPAA, OSHA, SOC2, PCI-DSS frameworks</li>
+      <li>✅ Audit-ready ZIP export with cover sheet</li>
+      <li>✅ Manager dashboard with completion tracking</li>
+      <li>✅ 1-year evidence retention</li>
+      <li>✅ Email support</li>
+    </ul>
+    <div id="checkoutForm">
+      <div class="form-row"><input id="ecEmail" type="email" placeholder="work email" required/></div>
+      <div class="form-row"><input id="ecOrgName" type="text" placeholder="Organization name" required/></div>
+      <button class="btn btn-primary" style="width:100%;" onclick="startCheckout()">Start Subscription →</button>
+    </div>
+  </div>
+</section>
+
+<!-- SETUP SCREEN (shown when not logged in) -->
+<section id="setupSection" style="display:none;">
+  <div class="card" style="padding:32px;">
+    <h2 style="margin:0 0 12px;">Access Your Dashboard</h2>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px;">Enter your Organization ID from your welcome email.</p>
+    <div class="form-row"><input id="orgIdInput" type="text" placeholder="ec_abc123…"/></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="saveOrgId()">Open Dashboard →</button>
+    <p style="margin-top:16px;font-size:.8rem;color:var(--muted);">Don't have an account? <a href="#" onclick="scrollToCheckout();return false;" style="color:var(--accent);">Subscribe above →</a></p>
+  </div>
+</section>
+
+<!-- DASHBOARD (shown after auth) -->
+<section id="dashboardSection" style="max-width:900px;margin:0 auto;padding:40px 20px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+    <h2 style="margin:0;">📋 Evidence Dashboard</h2>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span id="orgLabel" style="font-size:.8rem;color:var(--muted);font-family:monospace;"></span>
+      <button class="btn-outline" style="font-size:.75rem;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="stat-grid" id="statsGrid">
+    <div class="stat-card"><div class="value" id="statTotal">—</div><div class="label">Evidence Items</div></div>
+    <div class="stat-card"><div class="value" id="statControls">—</div><div class="label">Controls Covered</div></div>
+    <div class="stat-card"><div class="value" id="statPending">—</div><div class="label">Pending Review</div></div>
+    <div class="stat-card"><div class="value" id="statApproved">—</div><div class="label">Approved</div></div>
+  </div>
+
+  <!-- Upload Form -->
+  <div class="form-section">
+    <h3>📤 Submit New Evidence</h3>
+    <div class="form-row">
+      <label>Framework Control ID</label>
+      <select id="controlSelect">
+        <option value="">Select a control…</option>
+        <optgroup label="HIPAA">
+          <option value="HIPAA_164.308_a1">§164.308(a)(1) — Security Management Process</option>
+          <option value="HIPAA_164.308_a3">§164.308(a)(3) — Workforce Security</option>
+          <option value="HIPAA_164.308_a4">§164.308(a)(4) — Information Access Management</option>
+          <option value="HIPAA_164.308_a5">§164.308(a)(5) — Security Awareness Training</option>
+          <option value="HIPAA_164.310_b">§164.310(b) — Facility Access Controls</option>
+          <option value="HIPAA_164.310_c">§164.310(c) — Workstation Use</option>
+          <option value="HIPAA_164.312_a">§164.312(a) — Access Control</option>
+          <option value="HIPAA_164.312_e">§164.312(e) — Transmission Security</option>
+        </optgroup>
+        <optgroup label="SOC 2">
+          <option value="SOC2_CC6.1">CC6.1 — Logical Access Security</option>
+          <option value="SOC2_CC6.2">CC6.2 — System Account Management</option>
+          <option value="SOC2_CC6.3">CC6.3 — Role-Based Access</option>
+          <option value="SOC2_CC7.2">CC7.2 — System Monitoring</option>
+          <option value="SOC2_CC8.1">CC8.1 — Change Management</option>
+        </optgroup>
+        <optgroup label="OSHA">
+          <option value="OSHA_1910.134">1910.134 — Respiratory Protection</option>
+          <option value="OSHA_1910.1200">1910.1200 — Hazard Communication</option>
+          <option value="OSHA_1904">1904 — Recordkeeping</option>
+        </optgroup>
+        <option value="OTHER">Other / Custom</option>
+      </select>
+    </div>
+    <div class="form-row" id="customControlRow" style="display:none;">
+      <label>Custom Control ID</label>
+      <input id="customControlId" type="text" placeholder="e.g., INTERNAL_POLICY_001"/>
+    </div>
+    <div class="form-row">
+      <label>Description (what does this evidence demonstrate?)</label>
+      <textarea id="evidenceDesc" placeholder="e.g., Screenshot of MFA enforcement on all workstations"></textarea>
+    </div>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" onchange="handleFileSelect(this)"/>
+      <div style="font-size:1.5rem;margin-bottom:8px;">📎</div>
+      <div style="font-size:.85rem;color:var(--text);font-weight:600;" id="fileLabel">Click or drag file here</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:4px;">PNG, JPG, PDF, DOCX — max 25MB</div>
+    </div>
+    <button class="btn-upload" id="submitBtn" onclick="submitEvidence()" disabled style="margin-top:14px;">Submit Evidence</button>
+  </div>
+
+  <!-- Evidence List -->
+  <div class="form-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3 style="margin:0;">📂 Submitted Evidence</h3>
+      <button class="btn-export" onclick="exportBundle()">📦 Export ZIP Bundle</button>
+    </div>
+    <div id="evidenceList"><div style="text-align:center;padding:20px;color:var(--muted);font-size:.85rem;">Loading…</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" style="margin-top:60px;">
+  <p>© 2026 EdgeIQ Labs. All rights reserved.</p>
+</footer>
+
+<script>
+const API = '/api/evidence-collector';
+let orgId = null;
+let token = null;
+let selectedFile = null;
+
+// ── Init ───────────────────────────────────────────────────────────────
+;(function(){
+  const params = new URLSearchParams(location.search);
+  if (params.get('upgraded') === 'true' && params.get('session_id')) {
+    handlePostCheckout(params.get('session_id'));
+  }
+  orgId = localStorage.getItem('ec_org_id');
+  token = localStorage.getItem('ec_token');
+  if (orgId && token) {
+    showDashboard();
+  } else {
+    document.getElementById('setupSection').style.display = '';
+  }
+})();
+
+function scrollToCheckout() {
+  document.querySelector('[id="checkoutForm"]').scrollIntoView({behavior:'smooth'});
+}
+
+// ── Checkout ───────────────────────────────────────────────────────────
+async function startCheckout() {
+  const email = document.getElementById('ecEmail').value.trim();
+  const orgName = document.getElementById('ecOrgName').value.trim();
+  if (!email || !orgName) return toast('Email and org name required','err');
+  try {
+    const res = await fetch('/api/evidence-collector-checkout', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, org_name: orgName}),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else toast(data.error || 'Checkout failed','err');
+  } catch(e) { toast('Checkout error: '+e.message,'err'); }
+}
+
+async function handlePostCheckout(sessionId) {
+  // For MVP: generate a simple org token client-side
+  // In production, the verify endpoint would validate the Stripe session
+  const orgIdGuess = 'ec_' + Math.random().toString(36).slice(2,14);
+  localStorage.setItem('ec_org_id', orgIdGuess);
+  // Generate a simple JWT-like token (header.payload, no sig for MVP)
+  const payload = btoa(JSON.stringify({org:orgIdGuess, role:'manager', exp:Date.now()+86400000*365}));
+  const header = btoa(JSON.stringify({alg:'HS256',typ:'JWT'}));
+  localStorage.setItem('ec_token', header+'.'+payload);
+  history.replaceState(null,'',location.pathname);
+  toast('Welcome! Your Evidence Collector is ready.','ok');
+}
+
+// ── Auth ───────────────────────────────────────────────────────────────
+function saveOrgId() {
+  const v = document.getElementById('orgIdInput').value.trim();
+  if (!v) return;
+  orgId = v;
+  const payload = btoa(JSON.stringify({org:v, role:'manager', exp:Date.now()+86400000*365}));
+  const header = btoa(JSON.stringify({alg:'HS256',typ:'JWT'}));
+  token = header+'.'+payload;
+  localStorage.setItem('ec_org_id', v);
+  localStorage.setItem('ec_token', token);
+  showDashboard();
+}
+
+function signOut() {
+  localStorage.removeItem('ec_org_id');
+  localStorage.removeItem('ec_token');
+  location.reload();
+}
+
+function showDashboard() {
+  document.getElementById('setupSection').style.display = 'none';
+  document.getElementById('dashboardSection').style.display = '';
+  document.getElementById('orgLabel').textContent = orgId;
+  loadEvidence();
+}
+
+// ── File handling ──────────────────────────────────────────────────────
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+});
+
+function handleFileSelect(input) {
+  if (input.files.length) setFile(input.files[0]);
+}
+
+function setFile(file) {
+  if (file.size > 25*1024*1024) { toast('File too large. Max 25MB.','err'); return; }
+  selectedFile = file;
+  document.getElementById('fileLabel').textContent = file.name + ' (' + (file.size/1024).toFixed(0) + 'KB)';
+  updateSubmitBtn();
+}
+
+function updateSubmitBtn() {
+  const controlId = getSelectedControl();
+  document.getElementById('submitBtn').disabled = !(selectedFile && controlId);
+}
+
+function getSelectedControl() {
+  const sel = document.getElementById('controlSelect').value;
+  if (sel === 'OTHER') return document.getElementById('customControlId').value.trim();
+  return sel;
+}
+
+document.getElementById('controlSelect').addEventListener('change', function(){
+  document.getElementById('customControlRow').style.display = this.value==='OTHER'?'':'none';
+  updateSubmitBtn();
+});
+document.getElementById('customControlId')?.addEventListener('input', updateSubmitBtn);
+
+// ── Submit evidence ────────────────────────────────────────────────────
+async function submitEvidence() {
+  const controlId = getSelectedControl();
+  if (!selectedFile || !controlId) return;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  try {
+    const fd = new FormData();
+    fd.append('file', selectedFile);
+    fd.append('control_id', controlId);
+    fd.append('description', document.getElementById('evidenceDesc').value);
+    const res = await fetch(API+'/submit', {
+      method:'POST',
+      headers:{'X-Evidence-Token': token},
+      body: fd,
+    });
+    const data = await res.json();
+    if (data.ok) {
+      toast('Evidence submitted successfully','ok');
+      selectedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('fileLabel').textContent = 'Click or drag file here';
+      document.getElementById('evidenceDesc').value = '';
+      loadEvidence();
+    } else {
+      toast(data.error || 'Upload failed','err');
+    }
+  } catch(e) { toast('Upload error: '+e.message,'err'); }
+  btn.disabled = false; btn.textContent = 'Submit Evidence';
+  updateSubmitBtn();
+}
+
+// ── Load evidence list ─────────────────────────────────────────────────
+async function loadEvidence() {
+  try {
+    const res = await fetch(API+'/list?org='+encodeURIComponent(orgId), {
+      headers:{'X-Evidence-Token': token},
+    });
+    const data = await res.json();
+    if (data.summary) {
+      document.getElementById('statTotal').textContent = data.summary.total_evidence;
+      document.getElementById('statControls').textContent = data.summary.controls_covered;
+      document.getElementById('statPending').textContent = data.summary.pending_review;
+      document.getElementById('statApproved').textContent = data.summary.approved;
+    }
+    const list = document.getElementById('evidenceList');
+    if (!data.evidence || data.evidence.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.85rem;">No evidence submitted yet. Use the form above to upload your first item.</div>';
+      return;
+    }
+    list.innerHTML = data.evidence.map(e => `
+      <div class="evidence-row">
+        <div style="flex:1;min-width:0;">
+          <div class="filename">${esc(e.filename)}</div>
+          <div class="meta"><span class="control-tag">${esc(e.control_id)}</span> · ${fmtDate(e.submitted_at)}</div>
+        </div>
+        <span class="status-badge status-${e.status==='approved'?'approved':'pending'}">${e.status==='approved'?'✓ Approved':'⏳ Pending'}</span>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('evidenceList').innerHTML = '<div style="color:var(--danger);padding:12px;font-size:.85rem;">Error loading evidence: '+esc(e.message)+'</div>';
+  }
+}
+
+// ── Export ──────────────────────────────────────────────────────────────
+async function exportBundle() {
+  try {
+    const res = await fetch(API+'/export', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Evidence-Token': token},
+      body: JSON.stringify({org_id: orgId}),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      toast(err.error || 'Export failed','err');
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `compliance-evidence-${orgId}-${new Date().toISOString().slice(0,10)}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('ZIP bundle downloaded','ok');
+  } catch(e) { toast('Export error: '+e.message,'err'); }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});}catch{return iso;}}
+function toast(msg,type='info'){const el=document.createElement('div');el.className='toast '+type;el.textContent=msg;document.getElementById('toastContainer').appendChild(el);setTimeout(()=>el.remove(),4000);}
+</script>
+</body>
+</html>
