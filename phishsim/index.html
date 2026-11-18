@@ -148,6 +148,7 @@
     <button class="nav-btn" onclick="showPage('templates',this)">✉️ Templates</button>
     <button class="nav-btn" onclick="showPage('pages',this)">🪤 Landing Pages</button>
     <button class="nav-btn" onclick="showPage('groups',this)">👥 Groups</button>
+    <button class="nav-btn" onclick="showPage('roi',this)">📊 ROI</button>
     <button class="nav-btn" onclick="showPage('account',this)">⚙️ Account</button>
     <a href="/security-awareness-training/" class="nav-btn" style="text-decoration:none;color:#3dd9ff;">📚 Training</a>
   </nav>
@@ -245,6 +246,54 @@
     <div class="section-head"><h2 style="color:var(--danger);">Danger Zone</h2></div>
     <p style="font-size:.83rem;color:var(--muted);margin-bottom:14px;">Sign out of this dashboard on this device.</p>
     <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<!-- ── ROI Dashboard ── -->
+<div class="page" id="page-roi">
+  <div class="grid" id="roiStatsGrid">
+    <div class="stat"><div class="label">Risk Score</div><div class="value" id="roiRiskScore">—</div><div class="sub">lower is better</div></div>
+    <div class="stat"><div class="label">Click Rate Trend</div><div class="value" id="roiTrend">—</div><div class="sub">vs previous campaign</div></div>
+    <div class="stat"><div class="label">Training Completion</div><div class="value" id="roiTrainingRate">—</div><div class="sub">assigned modules</div></div>
+    <div class="stat"><div class="label">Total Campaigns</div><div class="value" id="roiTotalCampaigns">—</div><div class="sub">all time</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>📊 Campaign Performance Over Time</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadRoiData()">↺ Refresh</button>
+    </div>
+    <div id="roiChartArea" style="min-height:220px;display:flex;align-items:flex-end;gap:6px;padding:20px 0;"></div>
+    <div id="roiChartEmpty" class="empty" style="display:none;">No campaign data yet. Run your first simulation to see ROI metrics.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>🎯 Campaign Breakdown</h2></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Campaign</th>
+          <th>Date</th>
+          <th>Sent</th>
+          <th>Opened</th>
+          <th>Clicked</th>
+          <th>Submitted</th>
+          <th>Click Rate</th>
+        </tr>
+      </thead>
+      <tbody id="roiTableBody">
+        <tr><td colspan="7" class="empty">Loading ROI data…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" style="border-color:rgba(112,240,168,.25);">
+    <div class="section-head"><h2 style="color:var(--ok);">💡 What This Means</h2></div>
+    <div style="font-size:.85rem;color:var(--muted);line-height:1.7;">
+      <p style="margin-bottom:10px;"><strong style="color:var(--text);">Risk Score</strong> combines click rate, submission rate, and training completion into a single 0–100 metric. Lower scores mean your team is getting better at spotting phishing attempts.</p>
+      <p style="margin-bottom:10px;"><strong style="color:var(--text);">Improving trend</strong> means your most recent campaign had a lower click rate than the one before it — proof that security awareness training is working.</p>
+      <p><strong style="color:var(--text);">Training completion</strong> shows what percentage of assigned remediation modules have been completed by employees who clicked. Higher completion correlates with lower future click rates.</p>
+    </div>
   </div>
 </div>
 
@@ -400,6 +449,75 @@ let customerId = null;
 let instanceData = null;
 let _templates = [], _pages = [], _groups = [], _smtp = [];
 let _refreshTimer = null;
+let _roiLoaded = false;
+
+// ── ROI Dashboard ────────────────────────────────────────────────────────────
+
+async function loadRoiData() {
+  if (!customerId) return;
+  const tbody = document.getElementById('roiTableBody');
+  const chartArea = document.getElementById('roiChartArea');
+  const chartEmpty = document.getElementById('roiChartEmpty');
+  
+  try {
+    const res = await fetch(`${API}/roi?cid=${encodeURIComponent(customerId)}`);
+    if (!res.ok) throw new Error('Failed to load ROI data');
+    const data = await res.json();
+    
+    // Update stat cards
+    const riskEl = document.getElementById('roiRiskScore');
+    riskEl.textContent = data.summary.risk_score;
+    riskEl.style.color = data.summary.risk_score <= 30 ? 'var(--ok)' : data.summary.risk_score <= 60 ? 'var(--warn)' : 'var(--danger)';
+    
+    const trendEl = document.getElementById('roiTrend');
+    trendEl.textContent = data.summary.trend === 'improving' ? '↓ Improving' : data.summary.trend === 'declining' ? '↑ Declining' : '→ Stable';
+    trendEl.style.color = data.summary.trend === 'improving' ? 'var(--ok)' : data.summary.trend === 'declining' ? 'var(--danger)' : 'var(--muted)';
+    
+    document.getElementById('roiTrainingRate').textContent = data.training.completion_rate + '%';
+    document.getElementById('roiTotalCampaigns').textContent = data.summary.total_campaigns;
+    
+    // Render bar chart
+    const campaigns = (data.campaigns || []).slice().reverse(); // oldest first for chart
+    if (campaigns.length === 0) {
+      chartArea.style.display = 'none';
+      chartEmpty.style.display = 'block';
+    } else {
+      chartArea.style.display = 'flex';
+      chartEmpty.style.display = 'none';
+      const maxSent = Math.max(...campaigns.map(c => c.sent), 1);
+      chartArea.innerHTML = campaigns.map(c => {
+        const heightPct = Math.max(8, (c.sent / maxSent) * 100);
+        const clickColor = c.click_rate <= 10 ? 'var(--ok)' : c.click_rate <= 25 ? 'var(--warn)' : 'var(--danger)';
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:30px;" title="${c.name}: ${c.click_rate}% click rate">
+          <div style="font-size:.65rem;color:var(--muted);">${c.click_rate}%</div>
+          <div style="width:100%;max-width:36px;height:${heightPct}%;background:${clickColor};border-radius:4px 4px 0 0;opacity:0.85;min-height:6px;"></div>
+          <div style="font-size:.6rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50px;">${c.date.slice(5)}</div>
+        </div>`;
+      }).join('');
+    }
+    
+    // Render table
+    if ((data.campaigns || []).length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">No campaigns yet</td></tr>';
+    } else {
+      tbody.innerHTML = data.campaigns.map(c => `<tr>
+        <td style="font-weight:600;">${c.name}</td>
+        <td>${c.date}</td>
+        <td>${c.sent}</td>
+        <td>${c.opened}</td>
+        <td>${c.clicked}</td>
+        <td>${c.submitted}</td>
+        <td><span class="badge ${c.click_rate <= 10 ? 'ok' : c.click_rate <= 25 ? 'warn' : 'danger'}">${c.click_rate}%</span></td>
+      </tr>`).join('');
+    }
+    
+    _roiLoaded = true;
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty" style="color:var(--danger);">Error: ${e.message}</td></tr>`;
+    chartArea.style.display = 'none';
+    chartEmpty.style.display = 'block';
+  }
+}
 
 // ── Init ────────────────────────────────────────────────────────────────────
 
@@ -456,6 +574,7 @@ function showPage(name, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (name === 'roi') loadRoiData();
   if (btn) btn.classList.add('active');
   if (name === 'account') loadAccount();
 }
