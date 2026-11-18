@@ -17,10 +17,11 @@ export async function onRequestGet(context) {
     const spf = raw.spf || 0;
     const repo = raw.repo || 0;
     const dmarc = raw.dmarc || 0;
-    const total = ssl + spf + repo + dmarc;
-    return Response.json({ ssl, spf, repo, dmarc, total });
+    const geo = raw.geo || 0;
+    const total = ssl + spf + repo + dmarc + geo;
+    return Response.json({ ssl, spf, repo, dmarc, geo, total });
   } catch (_) {
-    return Response.json({ ssl: 0, spf: 0, repo: 0, dmarc: 0, total: 0 });
+    return Response.json({ ssl: 0, spf: 0, repo: 0, dmarc: 0, geo: 0, total: 0 });
   }
 }
 
@@ -32,7 +33,7 @@ export async function onRequestPost(context) {
   try { body = await request.json(); } catch (_) { return Response.json({ ok: false }); }
 
   const tool = (body.tool || '').toLowerCase().replace(/[^a-z-]/g, '');
-  const validTools = ['ssl', 'spf', 'repo', 'dmarc'];
+  const validTools = ['ssl', 'spf', 'repo', 'dmarc', 'geo'];
   if (!validTools.includes(tool)) return Response.json({ ok: false, error: 'invalid tool' });
 
   try {

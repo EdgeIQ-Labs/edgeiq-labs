@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Free AI Search Visibility Checker — GEO & AEO Audit | EdgeIQ Labs</title>
+  <meta name="description" content="Check if your website is visible to AI search engines like ChatGPT, Perplexity, and Google AI Overviews. Free GEO audit — structured data, FAQ schema, entity markup, citation readiness."/>
+  <meta property="og:title" content="Free AI Search Visibility Checker — GEO Audit"/>
+  <meta property="og:description" content="Is your business invisible to AI? Check your AI search visibility score free — structured data, FAQ schema, entity markup, and more."/>
+  <meta property="og:url" content="https://edgeiqlabs.com/free-geo-checker/"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/free-geo-checker/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <script src="/js/grade-ring.js"></script>
+  <script type="application/ld+json">[
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Free AI Search Visibility Checker","url":"https://edgeiqlabs.com/free-geo-checker/","applicationCategory":"SEOApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What is GEO (Generative Engine Optimization)?","acceptedAnswer":{"@type":"Answer","text":"GEO is the practice of optimizing your website so AI search engines like ChatGPT, Perplexity, and Google AI Overviews can find, understand, and cite your content. It focuses on structured data, entity markup, FAQ schema, and semantic HTML rather than traditional keyword stuffing."}},
+      {"@type":"Question","name":"Why does my website not show up in AI search results?","acceptedAnswer":{"@type":"Answer","text":"Common reasons include: missing JSON-LD structured data, no FAQ schema, blocking AI bots in robots.txt, thin content under 300 words, missing Open Graph tags, or lacking semantic HTML elements like <main> and <article>. Each prevents AI engines from parsing and citing your content."}},
+      {"@type":"Question","name":"How do I make AI engines cite my website?","acceptedAnswer":{"@type":"Answer","text":"Add FAQPage and Organization JSON-LD schema, ensure your robots.txt allows GPTBot and PerplexityBot, use semantic HTML (<main>, <article>, proper heading hierarchy), write 500+ words of substantive content per page, and include Open Graph meta tags for link previews."}}
+    ]}
+  ]</script>
+  <style>
+    :root{--bg:#0b0f14;--card:#121923;--card2:#0e1621;--text:#e8eef7;--muted:#9fb0c7;--accent:#3dd9ff;--border:#233142;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+    nav{border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(11,15,20,0.95);backdrop-filter:blur(8px);z-index:100;}
+    .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:900px;margin:0 auto;}
+    .nav-brand{font-weight:800;font-size:1rem;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--accent);}
+    .nav-links{display:flex;gap:6px;align-items:center;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:0.88rem;}
+    .nav-cta{background:var(--accent);color:#071018 !important;font-weight:700;padding:7px 14px !important;border-radius:8px !important;}
+    @media(max-width:600px){.nav-links{display:none;}}
+    .container{max-width:820px;margin:0 auto;padding:0 20px;}
+    .hero{padding:56px 0 40px;text-align:center;}
+    .hero-eyebrow{display:inline-block;background:rgba(61,217,255,0.1);border:1px solid rgba(61,217,255,0.25);color:var(--accent);font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:18px;}
+    .hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;line-height:1.15;margin-bottom:14px;color:#fff;}
+    .hero p{font-size:1.05rem;color:var(--muted);max-width:600px;margin:0 auto 32px;}
+    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:620px;margin:0 auto 16px;}
+    .tool-row{display:flex;gap:10px;flex-wrap:wrap;}
+    .tool-input{flex:1;min-width:200px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:13px 16px;font-size:1rem;font-family:inherit;outline:none;transition:border-color 0.2s;}
+    .tool-input:focus{border-color:var(--accent);}
+    .tool-btn{background:var(--accent);color:#071018;font-weight:700;font-size:1rem;padding:13px 24px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;transition:opacity 0.2s;font-family:inherit;}
+    .tool-btn:hover{opacity:0.87;}
+    .tool-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    #results{display:none;padding-bottom:60px;}
+    .grade-hero{text-align:center;padding:28px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;}
+    .grade-circle{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;font-size:2rem;font-weight:900;border:3px solid;}
+    .grade-A{background:rgba(112,240,168,0.1);border-color:#70f0a8;color:#70f0a8;}
+    .grade-B{background:rgba(61,217,255,0.1);border-color:var(--accent);color:var(--accent);}
+    .grade-C{background:rgba(255,179,71,0.1);border-color:#ffb347;color:#ffb347;}
+    .grade-D{background:rgba(255,140,66,0.1);border-color:#ff8c42;color:#ff8c42;}
+    .grade-F{background:rgba(255,107,107,0.1);border-color:#ff6b6b;color:#ff6b6b;}
+    .grade-label{font-size:0.85rem;color:var(--muted);margin-top:10px;}
+    .checks-list{list-style:none;padding:0;margin:0;}
+    .check-row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+    .check-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+    .check-body{flex:1;}
+    .check-name{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:3px;}
+    .check-detail{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+    .section{padding:48px 0 0;}
+    h2{font-size:1.35rem;font-weight:800;margin-bottom:14px;color:#d4e6ff;}
+    p{color:#b8cce0;margin-bottom:14px;font-size:0.96rem;}
+    code{background:#1a2535;color:#7dd3fc;padding:2px 7px;border-radius:4px;font-size:0.88em;font-family:'Fira Mono',monospace;}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0;}
+    .info-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+    .info-name{font-size:0.78rem;font-weight:700;font-family:monospace;margin-bottom:6px;color:var(--accent);}
+    .info-desc{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+    .faq{padding:48px 0;}
+    .faq-item{border-bottom:1px solid var(--border);padding:18px 0;}
+    .faq-q{font-size:0.97rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .faq-q::after{content:"＋";color:var(--accent);font-size:1.1rem;flex-shrink:0;}
+    .faq-q.open::after{content:"−";}
+    .faq-a{display:none;padding-top:10px;font-size:0.9rem;color:var(--muted);line-height:1.65;}
+    .cta-box{background:linear-gradient(135deg,#071018,#0d1a26);border:1px solid rgba(61,217,255,0.25);border-radius:14px;padding:36px 28px;margin:48px 0;text-align:center;}
+    .cta-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px;color:#fff;}
+    .cta-box p{color:#9fb8cc;font-size:0.93rem;margin-bottom:22px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:13px 28px;border-radius:9px;text-decoration:none;font-size:0.95rem;}
+    .cta-btn:hover{opacity:0.87;}
+    footer{border-top:1px solid var(--border);padding:28px 0;text-align:center;color:var(--muted);font-size:0.83rem;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;}
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(61,217,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+  </style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+<link rel="stylesheet" href="/css/design-system.css?v=1"/>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a>
+    <div class="nav-links">
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/pulse/">Pulse</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" class="nav-cta">Free Full Scan →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool · New</div>
+    <h1>Is Your Business Invisible to AI?</h1>
+    <p>Check if AI search engines like ChatGPT, Perplexity, and Google AI Overviews can find, understand, and cite your website. Free instant GEO audit — no sign-up required.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-row">
+      <input type="text" id="domain-input" class="tool-input" placeholder="yourdomain.com" autocomplete="off" autocapitalize="off" spellcheck="false"/>
+      <button class="tool-btn" id="check-btn" onclick="runCheck()">Check Visibility →</button>
+    </div>
+    <p style="font-size:0.78rem;color:#4a6080;margin-top:10px;margin-bottom:0;">Enter just the domain — e.g. <code style="font-size:0.78rem;">company.com</code>, not the full URL.</p>
+  </div>
+
+  <div id="results">
+    <div id="grade-section" class="grade-hero"></div>
+    <ul class="checks-list" id="checks-list"></ul>
+    <div id="upsell-banner" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section">
+    <h2>What makes a website visible to AI search engines?</h2>
+    <p>Traditional SEO focused on keywords and backlinks. AI search engines (ChatGPT, Perplexity, Google AI Overviews) work differently — they parse your page structure, extract entities, and look for citable passages. Here's what they check:</p>
+    <div class="info-grid">
+      <div class="info-card"><div class="info-name">JSON-LD Structured Data</div><div class="info-desc">Machine-readable blocks that tell AI engines exactly what your page is about — your business type, FAQs, articles, products. Without it, AI has to guess.</div></div>
+      <div class="info-card"><div class="info-name">FAQPage Schema</div><div class="info-desc">The single highest-value signal for AI citations. When you mark up Q&A pairs with FAQPage schema, AI engines directly quote your answers in generated responses.</div></div>
+      <div class="info-card"><div class="info-name">Entity Markup</div><div class="info-desc">Organization, LocalBusiness, or Person schema that anchors your brand in AI knowledge graphs. Without it, AI can't reliably attribute information to your company.</div></div>
+      <div class="info-card"><div class="info-name">AI Bot Access (robots.txt)</div><div class="info-desc">If your robots.txt blocks GPTBot, CCBot, or PerplexityBot, your content will never appear in AI-generated answers. Many sites accidentally block all AI crawlers.</div></div>
+      <div class="info-card"><div class="info-name">Semantic HTML</div><div class="info-desc">Using &lt;main&gt;, &lt;article&gt;, &lt;nav&gt;, and proper heading hierarchy helps AI parsers extract the right content instead of navigation menus and footers.</div></div>
+      <div class="info-card"><div class="info-name">Content Depth</div><div class="info-desc">AI engines need substantive text to find citable passages. Pages under 300 words rarely get referenced because there isn't enough signal to extract.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>GEO vs traditional SEO — what changed?</h2>
+    <p>Generative Engine Optimization (GEO) doesn't replace SEO — it adds a new layer. Traditional search engines rank links. AI search engines synthesize answers by extracting facts from multiple sources. To become one of those sources:</p>
+    <ul style="margin:0 0 16px 20px;color:#b8cce0;font-size:0.95rem;">
+      <li style="margin-bottom:8px;"><strong>Structured data beats keyword density.</strong> AI engines parse JSON-LD first. A page with perfect FAQ schema outranks a keyword-stuffed page every time in AI citations.</li>
+      <li style="margin-bottom:8px;"><strong>Entity clarity matters more than domain authority.</strong> AI needs to know WHO you are (Organization schema) before it trusts WHAT you say.</li>
+      <li style="margin-bottom:8px;"><strong>Blocking AI bots is self-sabotage.</strong> Many site owners blocked GPTBot thinking it protects their content. In reality, it just makes them invisible to 100M+ ChatGPT users.</li>
+      <li style="margin-bottom:8px;"><strong>Citable passages win.</strong> Write clear, factual paragraphs that answer specific questions. AI extracts these verbatim when generating responses.</li>
+    </ul>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is GEO (Generative Engine Optimization)?</div><div class="faq-a">GEO is the practice of optimizing your website so AI-powered search engines — like ChatGPT's web search, Perplexity, and Google's AI Overviews — can discover, understand, and cite your content. Unlike traditional SEO which focuses on ranking blue links, GEO focuses on structured data, entity clarity, semantic HTML, and content depth so AI systems can extract and reference your information directly in generated answers.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Why doesn't my website show up in ChatGPT or Perplexity answers?</div><div class="faq-a">The most common reasons: (1) No JSON-LD structured data — AI engines can't identify what your page is about. (2) Missing FAQPage schema — you have no citable Q&A pairs. (3) robots.txt blocks AI bots like GPTBot or PerplexityBot. (4) Thin content under 300 words with no substantive passages to extract. (5) No Organization schema so AI can't attribute facts to your brand. This checker tests all five.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Should I block AI bots in my robots.txt?</div><div class="faq-a">Only if you explicitly don't want your content used in AI training or responses. Blocking GPTBot, CCBot, PerplexityBot, etc. means your pages will NOT appear in AI-generated answers. For most businesses, this is counterproductive — being cited by AI is now a primary traffic and authority channel. Allow AI bot access unless you have a specific reason to block it.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How do I add FAQPage schema to my site?</div><div class="faq-a">Add a JSON-LD script block to your page's &lt;head&gt; with @type set to FAQPage, containing an array of Question objects each with acceptedAnswer. Most CMS platforms (WordPress, Webflow, Shopify) have plugins or built-in fields for this. After adding, re-run this checker to verify it's detected correctly.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How often should I check my AI visibility?</div><div class="faq-a">After any major content update, template change, or robots.txt modification. At minimum monthly. AI search engine behavior evolves rapidly — what works today may shift as models update their crawling preferences. Pulse Pro includes weekly GEO monitoring alongside SSL, DNS, and header checks.</div></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Get weekly AI visibility monitoring + fix recommendations</h3>
+    <p>Pulse Pro monitors your GEO score, structured data health, AI bot access, and citation readiness every week — and alerts you when anything drops.</p>
+    <a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" class="cta-btn" target="_blank" rel="noopener">Start Pulse Pro — $19/mo →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="/">Home</a>
+    <a href="/free-ssl-checker/">SSL Checker</a>
+    <a href="/free-spf-checker/">SPF Checker</a>
+    <a href="/free-repo-scanner/">Repo Scanner</a>
+    <a href="/free-domain-security-score/">Security Score</a>
+    <a href="/pulse/">Pulse</a>
+    <a href="/blog/">Blog</a>
+    <a href="/privacy/">Privacy</a>
+    <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+  </div>
+</footer>
+
+<script>
+function runCheck(){
+  var input=document.getElementById('domain-input');
+  var domain=input.value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(!domain||domain.indexOf('.')<0){input.style.borderColor='#ff6b6b';return;}
+  input.style.borderColor='';
+  var btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Scanning…';
+  document.getElementById('results').style.display='none';
+  history.replaceState(null,'','/free-geo-checker/?domain='+encodeURIComponent(domain));
+  fetch('/api/geo-check?domain='+encodeURIComponent(domain))
+    .then(function(r){return r.json();})
+    .then(function(d){renderResults(d);})
+    .catch(function(){btn.disabled=false;btn.textContent='Check Visibility →';alert('Check failed — please try again.');});
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderResults(d){
+  var btn=document.getElementById('check-btn');
+  btn.disabled=false;btn.textContent='Check Visibility →';
+  if(d.error){
+    document.getElementById('grade-section').innerHTML='<p style="color:#ff6b6b;font-weight:700;">'+esc(d.error)+'</p>';
+    document.getElementById('checks-list').innerHTML='';
+    document.getElementById('results').style.display='block';
+    return;
+  }
+  var grade=d.grade||'F';
+  var gradeContainer=document.getElementById('grade-section');
+  gradeContainer.innerHTML='';
+  renderGradeRing(gradeContainer, grade, d.score);
+  var label=document.createElement('div');
+  label.className='grade-label';
+  label.innerHTML='AI Visibility Score: '+d.score+'% &nbsp;·&nbsp; '+esc(d.domain)+' &nbsp;·&nbsp; '+d.summary.pass+'/'+d.summary.total+' checks passed';
+  gradeContainer.appendChild(label);
+
+  var checks=d.checks||[];
+  // First 3 free, rest gated
+  var freeChecks=checks.slice(0,3);
+  var gatedChecks=checks.slice(3);
+
+  function renderCheckRow(c){
+    var icon=c.level==='pass'?'✅':c.level==='warn'?'⚠️':'❌';
+    return '<li class="check-row"><div class="check-icon">'+icon+'</div><div class="check-body"><div class="check-name">'+esc(c.name)+'</div><div class="check-detail">'+esc(c.detail)+'</div></div></li>';
+  }
+
+  var freeHtml=freeChecks.map(renderCheckRow).join('');
+  var gatedHtml=gatedChecks.map(renderCheckRow).join('');
+
+  var listEl=document.getElementById('checks-list');
+  listEl.innerHTML=freeHtml;
+
+  // Inline email gate
+  var gatePanel='<li id="inline-gate" style="list-style:none;margin:16px 0;padding:24px;background:linear-gradient(135deg,#0d1a26,#071018);border:1px solid rgba(61,217,255,0.3);border-radius:12px;text-align:center;">'+
+    '<h3 style="color:#fff;font-size:1rem;margin-bottom:6px;">🔒 '+gatedChecks.length+' more checks + fix guide locked</h3>'+
+    '<p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:14px;">Enter your email to unlock all findings, exact fix instructions, and AI citation tips.</p>'+
+    '<form id="inline-capture-form" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;" onsubmit="event.preventDefault();var em=document.getElementById(\'inline-cap-email\').value;if(!em)return;fetch(\'/api/capture-email\',{method:\'POST\',headers:{\'Content-Type\':\'application/json\'},body:JSON.stringify({email:em,source:\'geo-checker-gate\'})}).then(function(){document.getElementById(\'inline-gate\').innerHTML=\'<div style=\\\'color:#70f0a8;font-weight:700;margin-bottom:12px;\\\'>✓ Unlocked! Showing all results below.</div>\';document.getElementById(\'gated-checks\').style.display=\'block\';document.getElementById(\'contextual-cta\').style.display=\'block\';});return false;">'+
+      '<input type="email" id="inline-cap-email" placeholder="you@company.com" required style="padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:0.9rem;width:220px;outline:none;">'+
+      '<button type="submit" style="padding:10px 18px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:0.9rem;">Unlock Free →</button>'+
+    '</form>'+
+  '</li>';
+  listEl.innerHTML+=gatePanel;
+
+  // Gated container
+  if(gatedChecks.length>0){
+    listEl.insertAdjacentHTML('afterend','<ul class="checks-list" id="gated-checks" style="display:none;">'+gatedHtml+'</ul>');
+  }
+
+  // Contextual CTA
+  var failCount=checks.filter(function(c){return c.level==='fail';}).length;
+  var ctaProduct=failCount>=3?{name:'ComplianceStarter',price:'$299/mo',link:'https://buy.stripe.com/00w6oJgKv6d7bQoeZ27wB2x',msg:'Full compliance + AI visibility monitoring'}:failCount>=1?{name:'Pulse Pro',price:'$19/mo',link:'https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s',msg:'Weekly GEO + SSL + DNS monitoring'}:{name:'Inbox Shield',price:'Free',link:'/inbox-shield/',msg:'Monitors email auth for one domain free'};
+  var ctaDiv='<div id="contextual-cta" style="display:none;margin-top:16px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.2);border-radius:10px;padding:18px;text-align:center;">'+
+    '<p style="color:#e8eef7;font-size:0.9rem;margin-bottom:10px;">💡 <strong>'+ctaProduct.msg+'</strong></p>'+
+    '<a href="'+ctaProduct.link+'" target="_blank" rel="noopener" style="display:inline-block;padding:10px 24px;background:#3dd9ff;color:#071018;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.9rem;">Start '+ctaProduct.name+' — '+ctaProduct.price+' →</a>'+
+  '</div>';
+  var gc=document.getElementById('gated-checks');
+  if(gc)gc.insertAdjacentHTML('afterend',ctaDiv);
+  else listEl.insertAdjacentHTML('afterend',ctaDiv);
+
+  // Dynamic upsell for bad grades
+  var upsellEl=document.getElementById('upsell-banner');
+  if(grade==='D'||grade==='F'){
+    upsellEl.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#0d1a26);border:1px solid rgba(255,107,107,0.3);border-radius:12px;padding:24px;margin-top:20px;text-align:center;">'+
+      '<h3 style="color:#ff6b6b;font-size:1.05rem;margin-bottom:8px;">⚠️ Your site is nearly invisible to AI search</h3>'+
+      '<p style="color:#9fb0c7;font-size:0.88rem;margin-bottom:16px;">'+failCount+' critical issue(s) found. AI engines like ChatGPT and Perplexity cannot cite your content. Fix this before your competitors do.</p>'+
+      '<a href="https://buy.stripe.com/4gM5kFeCndFz2fO8AE7wB2s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 28px;background:#ff6b6b;color:#fff;font-weight:700;border-radius:8px;text-decoration:none;font-size:0.95rem;">Fix This Automatically → $19/mo</a>'+
+    '</div>';
+    upsellEl.style.display='block';
+  } else {
+    upsellEl.style.display='none';
+  }
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  // Track scan count
+  fetch('/api/scan-stats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'geo'})}).catch(function(){});
+}
+
+function toggleFaq(el){var a=el.nextElementSibling;var open=el.classList.toggle('open');a.style.display=open?'block':'none';}
+
+(function(){var p=new URLSearchParams(location.search),d=p.get('domain');if(d){document.getElementById('domain-input').value=d;runCheck();}})();
+document.getElementById('domain-input').addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});
+</script>
+
+<!-- EdgeIQ email capture -->
+<div style="max-width:480px;margin:40px auto 0;padding:24px;background:#121923;border:1px solid #233142;border-radius:12px;text-align:center;">
+  <h3 style="color:#3dd9ff;font-size:1rem;margin-bottom:8px;">Get weekly AI visibility intel</h3>
+  <p style="color:#9fb0c7;font-size:0.85rem;margin-bottom:12px;">GEO tips, structured data guides, and SMB security news — every Tuesday.</p>
+  <form onsubmit="event.preventDefault();fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('eiq-cap-email').value,source:'free-tool'})}).then(()=>{this.innerHTML='<p style=\'color:#70f0a8\'>Check your inbox!</p>'});return false;">
+    <input type="email" id="eiq-cap-email" placeholder="you@company.com" required style="width:70%;padding:10px 14px;background:#0b0f14;border:1px solid #233142;border-radius:8px;color:#e8eef7;font-size:14px;outline:none;">
+    <button type="submit" style="width:25%;padding:10px;background:#3dd9ff;color:#071018;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:14px;">Subscribe</button>
+  </form>
+</div>
+
+</body>
+</html>
