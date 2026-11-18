@@ -49,10 +49,21 @@ ol li strong{color:var(--text)}
 
 <div class="analyzer-box">
 <textarea id="emailInput" placeholder="Paste raw email source, headers, or forwarded content here..."></textarea>
+<div id="pdfUploadRow" style="margin-top:12px;display:none;align-items:center;gap:12px;">
+  <label for="pdfAttachment" style="font-size:0.85rem;color:var(--accent);font-weight:600;cursor:pointer;">📎 Attach PDF (Pro)</label>
+  <input type="file" id="pdfAttachment" accept=".pdf" style="font-size:0.82rem;color:var(--muted);">
+  <span id="pdfFileName" style="font-size:0.78rem;color:var(--muted);"></span>
+</div>
+<div id="pdfGateMsg" style="margin-top:8px;font-size:0.82rem;color:var(--muted);display:none;">🔒 PDF attachment analysis is a Pro feature. <a href="/api/phish-analyzer-checkout?plan=pro" style="color:var(--accent);">Upgrade →</a></div>
 <button onclick="analyzeEmail()">Analyze Email →</button>
 <div id="resultPanel" class="result-panel">
 <div id="verdictText" class="verdict"></div>
 <div id="indicators"></div>
+<div id="pdfResults" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+  <h3 style="font-size:1rem;margin-bottom:8px;color:var(--accent);">📎 PDF Forensic Analysis</h3>
+  <div id="pdfFinancialData" style="font-size:0.85rem;color:var(--muted);line-height:1.7;"></div>
+  <div id="pdfFraudFlags" style="margin-top:12px;"></div>
+</div>
 </div>
 </div>
 
@@ -67,7 +78,7 @@ ol li strong{color:var(--text)}
 <div class="price-card pro">
 <h3>Pro</h3>
 <div class="price">$29<span style="font-size:0.9rem;font-weight:400">/mo</span></div>
-<ul><li>Full forensic report</li><li>Unlimited analyses</li><li>Historical lookups</li><li>Bulk API access</li><li>Team sharing</li><li>DNS Firewall integration</li></ul>
+<ul><li>Full forensic report</li><li>📎 PDF attachment forensics</li><li>Financial fraud cross-reference</li><li>Unlimited analyses</li><li>Historical lookups</li><li>Bulk API access</li><li>Team sharing</li></ul>
 <a href="/api/phish-analyzer-checkout?plan=pro">Get Pro →</a>
 </div>
 </div>
@@ -84,19 +95,50 @@ ol li strong{color:var(--text)}
 <footer class="ds-footer"><div class="ds-footer-inner"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></div></footer>
 
 <script>
+// Check Pro status on load
+const proKey=localStorage.getItem('phish_pro_key')||'';
+if(proKey){document.getElementById('pdfUploadRow').style.display='flex';}else{document.getElementById('pdfGateMsg').style.display='block';}
+document.getElementById('pdfAttachment').addEventListener('change',function(){document.getElementById('pdfFileName').textContent=this.files[0]?.name||'';});
+
 async function analyzeEmail(){
 const input=document.getElementById('emailInput').value.trim();
 if(!input){alert('Paste an email first');return}
 const btn=document.querySelector('.analyzer-box button');
 btn.textContent='Analyzing...';btn.disabled=true;
 try{
-const res=await fetch('/api/phish-analyzer/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:input})});
+const formData=new FormData();
+formData.append('email',input);
+if(proKey)formData.append('pro_key',proKey);
+const pdfFile=document.getElementById('pdfAttachment').files[0];
+if(pdfFile&&proKey)formData.append('pdf',pdfFile);
+const res=await fetch('/api/phish-analyzer/analyze',{method:'POST',body:formData});
 const data=await res.json();
 const panel=document.getElementById('resultPanel');
 panel.style.display='block';
 panel.className='result-panel '+data.verdict;
 document.getElementById('verdictText').textContent=data.verdict.toUpperCase()+(data.score!==undefined?' ('+data.score+'/100)':'');
 document.getElementById('indicators').innerHTML=(data.indicators||[]).map(i=>'<div class="indicator">• '+i+'</div>').join('')+'<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:0.85rem;color:var(--muted)">Share this result:</span><button onclick="shareResult(\''+data.verdict+'\','+(data.score||0)+')" style="padding:6px 16px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:0.82rem">📋 Copy Link</button><a href="https://twitter.com/intent/tweet?text=I+just+scanned+an+email+with+EdgeIQ+Phishing+Analyzer+—+got+'+data.verdict.toUpperCase()+'+('+((data.score||0))+'/100).+Free+tool:+https://edgeiqlabs.com/phish-analyzer/" target="_blank" style="padding:6px 16px;background:#1da1f2;color:#fff;border-radius:6px;font-weight:700;text-decoration:none;font-size:0.82rem">Tweet</a></div>';
+// Render PDF results if present
+const pdfSection=document.getElementById('pdfResults');
+if(data.pdf&&data.pdf.extracted){
+pdfSection.style.display='block';
+const fd=data.pdf.financial_data||{};
+let html='';
+if(fd.vendorName)html+='<div><strong>Vendor:</strong> '+fd.vendorName+'</div>';
+if(fd.totalAmount)html+='<div><strong>Total Amount:</strong> '+(fd.currency||'$')+fd.totalAmount.toLocaleString()+'</div>';
+if(fd.invoiceNumber)html+='<div><strong>Invoice #:</strong> '+fd.invoiceNumber+'</div>';
+if(fd.paymentDueDate)html+='<div><strong>Payment Due:</strong> '+fd.paymentDueDate+'</div>';
+if(fd.wireInstructions)html+='<div style="color:var(--orange);"><strong>⚠ Wire transfer instructions detected</strong></div>';
+if(fd.accountNumbers&&fd.accountNumbers.length)html+='<div><strong>Accounts found:</strong> '+fd.accountNumbers.length+'</div>';
+if(fd.amounts&&fd.amounts.length)html+='<div><strong>Line items:</strong> '+fd.amounts.length+'</div>';
+document.getElementById('pdfFinancialData').innerHTML=html||'<div>No structured financial data extracted</div>';
+const flags=(data.pdf.fraud_flags||[]);
+document.getElementById('pdfFraudFlags').innerHTML=flags.length?flags.map(f=>'<div class="indicator" style="color:var(--red);">🚩 '+f+'</div>').join(''):'<div style="color:var(--green);font-size:0.85rem;">✓ No fraud indicators found in PDF cross-reference</div>';
+}else if(data.pdf&&!data.pdf.extracted){
+pdfSection.style.display='block';
+document.getElementById('pdfFinancialData').innerHTML='<div style="color:var(--orange);">PDF extraction failed: '+(data.pdf.error||'unknown error')+'</div>';
+document.getElementById('pdfFraudFlags').innerHTML='';
+}else{pdfSection.style.display='none';}
 }catch(e){alert('Analysis failed: '+e.message)}
 finally{btn.textContent='Analyze Email →';btn.disabled=false}
 }
