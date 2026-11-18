@@ -99,8 +99,61 @@
 </div>
 
 <div class="cta-section">
-  <a href="/free-domain-security-score/" class="cta-btn">Get Started — It's Free</a>
+  <a href="/free-domain-security-score/" class="cta-btn">Get Your Free Badge →</a>
 </div>
+
+<!-- Premium Verified Badge -->
+<section style="max-width:700px;margin:0 auto;padding:60px 20px;border-top:1px solid var(--border);">
+  <div style="text-align:center;margin-bottom:32px;">
+    <h2 style="font-size:1.6rem;font-weight:900;color:var(--text);margin-bottom:8px;">🛡️ Upgrade to Verified Badge</h2>
+    <p style="color:var(--muted);font-size:0.95rem;line-height:1.5;">The free badge shows your grade. The Verified Badge shows your visitors you're serious. Custom logo, public verification certificate, and white-label option.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;">
+      <h3 style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:8px;">Free Badge</h3>
+      <div style="font-size:1.4rem;font-weight:800;color:#22c55e;margin-bottom:8px;">$0</div>
+      <ul style="text-align:left;font-size:0.8rem;color:var(--muted);list-style:none;padding:0;margin:0;">
+        <li style="padding:4px 0;">✅ Security grade display</li>
+        <li style="padding:4px 0;">✅ Auto-updates on re-scan</li>
+        <li style="padding:4px 0;">✅ Links to full report</li>
+        <li style="padding:4px 0;color:#555;">❌ EdgeIQ branding</li>
+        <li style="padding:4px 0;color:#555;">❌ No custom logo</li>
+      </ul>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(180,122,255,0.08),rgba(99,102,241,0.04));border:1px solid rgba(180,122,255,0.4);border-radius:10px;padding:20px;text-align:center;position:relative;">
+      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#b47aff;color:#0b0f14;font-size:0.6rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:2px 10px;border-radius:4px;">POPULAR</div>
+      <h3 style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:8px;">Verified Badge</h3>
+      <div style="font-size:1.4rem;font-weight:800;color:#b47aff;margin-bottom:8px;">$99<span style="font-size:0.75rem;font-weight:400;color:var(--muted);">/yr</span></div>
+      <ul style="text-align:left;font-size:0.8rem;color:var(--muted);list-style:none;padding:0;margin:0;">
+        <li style="padding:4px 0;">✅ Everything in Free</li>
+        <li style="padding:4px 0;">✅ Custom company logo</li>
+        <li style="padding:4px 0;">✅ Public verification URL</li>
+        <li style="padding:4px 0;">✅ White-label option</li>
+        <li style="padding:4px 0;">✅ Purple trust glow</li>
+      </ul>
+    </div>
+  </div>
+  <form id="verified-checkout-form" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:12px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <input type="text" id="vbadge-domain" placeholder="yourdomain.com" required style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9rem;outline:none;" />
+      <input type="email" id="vbadge-email" placeholder="you@company.com" required style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9rem;outline:none;" />
+    </div>
+    <button type="submit" class="cta-btn" style="width:100%;text-align:center;border:none;cursor:pointer;font-size:0.95rem;padding:12px;background:#b47aff;color:#0b0f14;">Get Verified Badge — $99/yr →</button>
+    <p id="vbadge-error" style="color:#ff6b7a;font-size:0.8rem;text-align:center;display:none;margin:0;"></p>
+  </form>
+</section>
+
+<script>
+document.getElementById('verified-checkout-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var domain = document.getElementById('vbadge-domain').value.trim();
+  var email = document.getElementById('vbadge-email').value.trim();
+  var errEl = document.getElementById('vbadge-error');
+  if (!domain || !email) { errEl.textContent = 'Please enter both domain and email.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  window.location.href = '/api/badge-checkout?domain=' + encodeURIComponent(domain) + '&email=' + encodeURIComponent(email);
+});
+</script>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--muted);font-size:0.8rem;border-top:1px solid var(--border);">
   © 2026 EdgeIQ Labs. All rights reserved.
