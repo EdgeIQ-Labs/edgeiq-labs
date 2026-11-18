@@ -95,6 +95,27 @@ ol li strong{color:var(--text)}
 <footer class="ds-footer"><div class="ds-footer-inner"><p>&copy; 2026 EdgeIQ Labs. All rights reserved.</p></div></footer>
 
 <script>
+// Handle post-checkout redirect: validate Pro status and unlock PDF upload
+(async function(){
+const params=new URLSearchParams(window.location.search);
+if(params.get('upgraded')==='true'){
+  const sessionId=params.get('session_id')||'';
+  if(sessionId){
+    try{
+      const res=await fetch('/api/phish-analyzer/verify-pro',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId})});
+      if(res.ok){
+        const data=await res.json();
+        if(data.is_pro&&data.pro_key){
+          localStorage.setItem('phish_pro_key',data.pro_key);
+        }
+      }
+    }catch(e){/* non-fatal */}
+  }
+  // Clean URL regardless of verification outcome
+  window.history.replaceState({},'',window.location.pathname);
+}
+})();
+
 // Check Pro status on load
 const proKey=localStorage.getItem('phish_pro_key')||'';
 if(proKey){document.getElementById('pdfUploadRow').style.display='flex';}else{document.getElementById('pdfGateMsg').style.display='block';}

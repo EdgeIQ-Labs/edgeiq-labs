@@ -8,7 +8,7 @@ export async function onRequestGet(context) {
   try {
     const formData = new URLSearchParams();
     formData.append("mode", "subscription");
-    formData.append("success_url", "https://edgeiqlabs.com/phish-analyzer/?upgraded=true");
+    formData.append("success_url", "https://edgeiqlabs.com/phish-analyzer/?upgraded=true&session_id={CHECKOUT_SESSION_ID}");
     formData.append("cancel_url", "https://edgeiqlabs.com/phish-analyzer/");
     formData.append("line_items[0][price]", PRICE_ID);
     formData.append("line_items[0][quantity]", "1");
