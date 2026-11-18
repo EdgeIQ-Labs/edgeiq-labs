@@ -501,8 +501,8 @@ async function loadRoiData() {
       tbody.innerHTML = '<tr><td colspan="7" class="empty">No campaigns yet</td></tr>';
     } else {
       tbody.innerHTML = data.campaigns.map(c => `<tr>
-        <td style="font-weight:600;">${c.name}</td>
-        <td>${c.date}</td>
+        <td style="font-weight:600;">${esc(c.name)}</td>
+        <td>${esc(c.date)}</td>
         <td>${c.sent}</td>
         <td>${c.opened}</td>
         <td>${c.clicked}</td>

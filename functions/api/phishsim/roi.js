@@ -1,10 +1,17 @@
 /**
  * PhishSim ROI Dashboard API
- * GET /api/phishsim/roi?cid=X
- * 
- * Aggregates GoPhish campaign stats + training completion data
- * Returns time-series metrics for ROI visualization
- * Auth: X-Customer-ID header or ?cid= query param
+ * GET /api/phishsim/roi?cid=X   (or X-Customer-ID header)
+ *
+ * Aggregates GoPhish campaign results + training completion into ROI metrics.
+ *
+ * Data path notes (verified against phishsim-manager/server.py):
+ * - Manager proxy route is /proxy/<cid>/<path> and it PREPENDS /api/ itself,
+ *   so paths here must NOT start with /api/ (use 'campaigns/', not '/api/campaigns/').
+ * - GoPhish GET /api/campaigns/ returns summaries WITHOUT per-recipient results;
+ *   results come from GET /api/campaigns/<id> (see catchall handleCampaigns).
+ * - Training assignments live in PULSE_KV as training:assignments:<email>
+ *   (written by /api/training/assign). No roster key is written for PhishSim
+ *   customers, so the user set is derived from campaign recipients.
  */
 
 const CORS = {
@@ -20,85 +27,88 @@ function json(body, status = 200) {
   });
 }
 
-async function gophishProxy(env, customerId, path) {
-  const url = `${env.PHISHSIM_MGR_URL}/proxy/${customerId}${path}`;
-  const resp = await fetch(url, {
-    headers: {
-      'X-Provision-Secret': env.PHISHSIM_SECRET,
-      'Content-Type': 'application/json',
-    },
-  });
-  if (!resp.ok) return null;
-  try { return await resp.json(); } catch { return null; }
+// Same URL shape as the catchall's gophishProxy helper.
+async function gophishGet(env, customerId, path) {
+  const url = `${env.PHISHSIM_MGR_URL}/proxy/${customerId}/${path}`;
+  try {
+    const resp = await fetch(url, {
+      headers: {
+        'X-Provision-Secret': env.PHISHSIM_SECRET,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function onRequest(context) {
-  if (context.request.method === 'OPTIONS') {
+  const { request, env } = context;
+
+  if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: CORS });
   }
+  if (request.method !== 'GET') {
+    return json({ error: 'Method not allowed' }, 405);
+  }
 
-  const { request, env } = context;
   const url = new URL(request.url);
   const customerId = url.searchParams.get('cid') || request.headers.get('X-Customer-ID');
-
   if (!customerId) {
     return json({ error: 'Missing customer ID' }, 400);
   }
 
-  // Verify customer exists in KV
-  const instanceKey = `phishsim:instance:${customerId}`;
-  const instance = await env.PHISHSIM_KV.get(instanceKey, 'json');
-  if (!instance) {
+  // Verify customer exists in KV — same key format as the catchall proxy
+  const instanceRaw = await env.PHISHSIM_KV.get(`instance:${customerId}`);
+  if (!instanceRaw) {
     return json({ error: 'Invalid customer ID' }, 404);
   }
 
   try {
-    // Fetch campaigns from GoPhish
-    const campaigns = await gophishProxy(env, customerId, '/api/campaigns/') || [];
-    
-    // Fetch training completion data
-    const trainingRoster = (await env.PULSE_KV.get(`training:roster:${customerId}`, 'json')) || [];
-    const trainingData = [];
-    let totalCompleted = 0;
-    let totalAssigned = 0;
-    
-    for (const userEmail of trainingRoster) {
-      const progress = (await env.PULSE_KV.get(`training:progress:${userEmail.toLowerCase()}`, 'json')) || {};
-      const assignments = (await env.PULSE_KV.get(`training:assignments:${userEmail.toLowerCase()}`, 'json')) || [];
-      const completedModules = Object.keys(progress).length;
-      totalCompleted += completedModules;
-      totalAssigned += assignments.length;
-      trainingData.push({
-        email: userEmail,
-        completed: completedModules,
-        assigned: assignments.length,
-      });
-    }
+    // 1) Campaign list (summaries only)
+    let campaigns = await gophishGet(env, customerId, 'campaigns/');
+    if (!Array.isArray(campaigns)) campaigns = [];
 
-    // Aggregate campaign metrics by date
+    // Newest first; cap detail fetches to keep subrequest count bounded
+    campaigns.sort((a, b) => (b.launch_date || '').localeCompare(a.launch_date || ''));
+    const recent = campaigns.slice(0, 12);
+
+    // 2) Per-campaign recipient results (parallel)
+    const details = await Promise.all(
+      recent.map(c => gophishGet(env, customerId, `campaigns/${c.id}`))
+    );
+
     const campaignStats = [];
+    const emails = new Set();
     let totalSent = 0, totalOpened = 0, totalClicked = 0, totalSubmitted = 0;
-    
-    for (const campaign of campaigns) {
-      const results = campaign.results || [];
-      const launchDate = campaign.launch_date ? campaign.launch_date.substring(0, 10) : 'unknown';
-      
+
+    for (let i = 0; i < recent.length; i++) {
+      const c = recent[i];
+      const d = details[i] || {};
+      const results = Array.isArray(d.results) ? d.results : [];
+      const launchDate = (d.launch_date || c.launch_date || '').substring(0, 10) || 'unknown';
+
       let sent = 0, opened = 0, clicked = 0, submitted = 0;
       for (const r of results) {
-        sent++;
-        if (r.status === 'Email Opened' || r.status === 'Clicked Link' || r.status === 'Submitted Data') opened++;
-        if (r.status === 'Clicked Link' || r.status === 'Submitted Data') clicked++;
-        if (r.status === 'Submitted Data') submitted++;
+        if (r.email) emails.add(String(r.email).toLowerCase());
+        const st = r.status || '';
+        // GoPhish terminal statuses: Email Sent < Email Opened < Clicked Link < Submitted Data
+        if (st && st !== 'Sending' && st !== 'Error') sent++;
+        if (st === 'Email Opened' || st === 'Clicked Link' || st === 'Submitted Data') opened++;
+        if (st === 'Clicked Link' || st === 'Submitted Data') clicked++;
+        if (st === 'Submitted Data') submitted++;
       }
-      
+
       totalSent += sent;
       totalOpened += opened;
       totalClicked += clicked;
       totalSubmitted += submitted;
-      
+
       campaignStats.push({
-        id: campaign.id,
-        name: campaign.name,
+        id: c.id,
+        name: d.name || c.name || `Campaign ${c.id}`,
         date: launchDate,
         sent,
         opened,
@@ -109,24 +119,42 @@ export async function onRequest(context) {
       });
     }
 
-    // Sort by date descending
-    campaignStats.sort((a, b) => b.date.localeCompare(a.date));
+    // 3) Training completion for known recipients (cap KV reads at 100 users)
+    const userList = [...emails].slice(0, 100);
+    const trainingRows = await Promise.all(userList.map(async (email) => {
+      const assignments = (await env.PULSE_KV.get(`training:assignments:${email}`, 'json')) || [];
+      const progress = (await env.PULSE_KV.get(`training:progress:${email}`, 'json')) || {};
+      const assigned = Array.isArray(assignments) ? assignments.length : 0;
+      const completed = Array.isArray(assignments)
+        ? assignments.filter(a => progress[a.scenario]).length
+        : 0;
+      return { email, assigned, completed };
+    }));
 
-    // Calculate ROI metrics
+    let totalAssigned = 0, totalCompleted = 0, usersWithTraining = 0;
+    for (const t of trainingRows) {
+      totalAssigned += t.assigned;
+      totalCompleted += t.completed;
+      if (t.assigned > 0) usersWithTraining++;
+    }
+
+    // 4) ROI metrics
     const overallClickRate = totalSent > 0 ? Math.round((totalClicked / totalSent) * 100) : 0;
     const overallSubmitRate = totalSent > 0 ? Math.round((totalSubmitted / totalSent) * 100) : 0;
     const trainingCompletionRate = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-    
-    // Risk score: lower is better (click rate + submit rate weighted)
-    const riskScore = Math.max(0, 100 - (overallClickRate * 2) - (overallSubmitRate * 5) + (trainingCompletionRate * 0.5));
 
-    // Trend: compare last 2 campaigns
+    // Risk score 0-100, lower is better: clicks and credential submits hurt,
+    // completed training helps.
+    const riskScore = Math.min(100, Math.max(0,
+      100 - (overallClickRate * 2) - (overallSubmitRate * 5) + (trainingCompletionRate * 0.5)
+    ));
+
+    // Trend: most recent vs previous campaign WITH sends (skip empty ones)
     let trend = 'neutral';
-    if (campaignStats.length >= 2) {
-      const recent = campaignStats[0].click_rate;
-      const previous = campaignStats[1].click_rate;
-      if (recent < previous) trend = 'improving';
-      else if (recent > previous) trend = 'declining';
+    const withSends = campaignStats.filter(c => c.sent > 0);
+    if (withSends.length >= 2) {
+      if (withSends[0].click_rate < withSends[1].click_rate) trend = 'improving';
+      else if (withSends[0].click_rate > withSends[1].click_rate) trend = 'declining';
     }
 
     return json({
@@ -141,9 +169,10 @@ export async function onRequest(context) {
         risk_score: Math.round(riskScore),
         trend,
       },
-      campaigns: campaignStats.slice(0, 12), // Last 12 campaigns max
+      campaigns: campaignStats, // newest first, max 12
       training: {
-        total_users: trainingRoster.length,
+        total_users: emails.size,
+        users_with_training: usersWithTraining,
         total_completed: totalCompleted,
         total_assigned: totalAssigned,
         completion_rate: trainingCompletionRate,
