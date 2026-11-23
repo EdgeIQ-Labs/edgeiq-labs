@@ -3,7 +3,7 @@ main = "vendor-watch-cron-worker.js"
 compatibility_date = "2026-04-23"
 
 [triggers]
-crons = ["*/15 * * * *"]
+crons = ["*/30 * * * *"]
 
 [[kv_namespaces]]
 binding = "PULSE_KV"

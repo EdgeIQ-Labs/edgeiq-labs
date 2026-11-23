@@ -290,8 +290,8 @@ async function checkSsl(domain) {
 
 // ─── Main handler ────────────────────────────────────────────────────────────
 
-function json(data, status = 200) {
-  return Response.json(data, { status, headers: { ...CORS, 'Cache-Control': 'public, max-age=180' } });
+function json(data, status = 200, extra = {}) {
+  return Response.json(data, { status, headers: { ...CORS, 'Cache-Control': 'public, max-age=180', ...extra } });
 }
 
 export async function onRequestGet(context) {
@@ -304,6 +304,18 @@ export async function onRequestGet(context) {
 
   if (!domain || !domain.includes('.') || domain.length < 4) {
     return json({ error: 'Please provide a valid domain (e.g. example.com)' }, 400);
+  }
+
+  // Edge cache: repeat scans of the same domain never execute the Worker.
+  // This is the single biggest CPU lever on the free tier — a cache hit costs
+  // ~0ms CPU instead of 15+ DNS/HEAD subrequests + regex scoring.
+  const cache = caches.default;
+  const cacheKey = new Request(`https://edgeiq-score-cache/domain/${domain}`, { method: 'GET' });
+  const cached = await cache.match(cacheKey).catch(() => null);
+  if (cached) {
+    return new Response(await cached.text(), {
+      headers: { ...CORS, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=180', 'X-Cache': 'HIT' },
+    });
   }
 
   const [dmarc, spf, dkim, ssl, mx] = await Promise.all([
@@ -338,7 +350,7 @@ export async function onRequestGet(context) {
   if (emailFailing) recs.push({ name: 'Inbox Shield', desc: 'Monitor DMARC, SPF, and DKIM continuously', href: '/inbox-shield/', color: '#b47aff' });
   if (sslFailing) recs.push({ name: 'Pulse', desc: 'SSL certificate + attack surface monitoring', href: '/pulse/', color: '#3dd9ff' });
 
-  return json({
+  const response = json({
     domain,
     score: totalScore,
     max: 100,
@@ -353,5 +365,9 @@ export async function onRequestGet(context) {
     ],
     issues,
     recommendations: recs,
-  });
+  }, 200, { 'X-Cache': 'MISS' });
+
+  // Store for the next identical request (sync put — same pattern as vendor-watch).
+  await cache.put(cacheKey, response.clone()).catch(() => {});
+  return response;
 }

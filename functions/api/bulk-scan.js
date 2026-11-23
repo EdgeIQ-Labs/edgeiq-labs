@@ -169,7 +169,7 @@ export async function onRequest(context) {
   const domains = body.domains
     .map(d => typeof d === 'string' ? d.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*/, '') : '')
     .filter(d => d.length > 0 && /^[a-z0-9]([a-z0-9-]*\.)+[a-z]{2,}$/.test(d))
-    .slice(0, 20);
+    .slice(0, 10); // CPU cap: 20 domains x 4 checks was the worst-case CPU spike
 
   if (domains.length === 0) {
     return jsonResp({ error: 'No valid domains provided' }, 400);

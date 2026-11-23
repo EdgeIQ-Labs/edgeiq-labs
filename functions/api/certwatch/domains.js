@@ -29,14 +29,32 @@ async function putDomains(env, email, domains) {
   await env.PULSE_KV.put('certwatch:domains:' + email, JSON.stringify(domains));
 }
 
-// Inline cert expiry check via crt.sh — no self-referential HTTP call needed
-async function checkCertExpiry(domain) {
+// Inline cert expiry check via crt.sh — no self-referential HTTP call needed.
+// CPU HARDENING: exclude expired certs, cap payload size, cache compact result 24h.
+const CERT_CACHE_TTL = 86400;           // 24 hours
+const MAX_CRT_BYTES  = 2 * 1024 * 1024; // 2 MB — refuse oversized cert dumps
+
+async function checkCertExpiry(domain, env) {
+  const cacheKey = 'certwatch:cache:' + domain;
   try {
-    var resp = await fetch('https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json', {
+    if (env && env.PULSE_KV) {
+      const cached = await env.PULSE_KV.get(cacheKey, 'json');
+      if (cached && cached._cached_at && (Date.now() - cached._cached_at < CERT_CACHE_TTL * 1000)) {
+        const { _cached_at, ...clean } = cached;
+        return clean;
+      }
+    }
+
+    var resp = await fetch('https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json&exclude=expired', {
       headers: { 'User-Agent': 'EdgeIQ-CertWatch/1.0', 'Accept': 'application/json' },
+      cf: { cacheTtl: 3600 },
+      signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) return { domain: domain, status: 'error', error: 'Certificate lookup failed' };
+    var declared = Number(resp.headers.get('content-length') || 0);
+    if (declared > MAX_CRT_BYTES) return { domain: domain, status: 'error', error: 'Certificate dataset too large' };
     var text = await resp.text();
+    if (text.length > MAX_CRT_BYTES) return { domain: domain, status: 'error', error: 'Certificate dataset too large' };
     var certs;
     try { certs = JSON.parse(text); } catch(e) { return { domain: domain, status: 'error', error: 'Failed to parse certificate data' }; }
     if (!Array.isArray(certs) || certs.length === 0) return { domain: domain, status: 'error', error: 'No certificates found' };
@@ -64,7 +82,11 @@ async function checkCertExpiry(domain) {
     var issuerRaw = latest.issuer_name || 'Unknown';
     var cnMatch = issuerRaw.match(/CN=([^,]+)/);
     var issuerCN = cnMatch ? cnMatch[1] : issuerRaw;
-    return { domain: domain, status: status, expiry_date: expiryDate.toISOString(), days_until_expiry: daysUntilExpiry, issuer: issuerCN, common_name: latest.common_name || domain, serial: latest.serial_number || null };
+    var result = { domain: domain, status: status, expiry_date: expiryDate.toISOString(), days_until_expiry: daysUntilExpiry, issuer: issuerCN, common_name: latest.common_name || domain, serial: latest.serial_number || null };
+    if (env && env.PULSE_KV) {
+      await env.PULSE_KV.put(cacheKey, JSON.stringify({ ...result, _cached_at: Date.now() }), { expirationTtl: CERT_CACHE_TTL });
+    }
+    return result;
   } catch (e) {
     return { domain: domain, status: 'error', error: e.message || 'Unknown error' };
   }
@@ -99,7 +121,7 @@ export async function onRequest(context) {
     if (domains.length >= subscriber.max_domains) return json({ error: 'Domain limit reached (' + subscriber.max_domains + '). Upgrade to add more.', upgrade_url: 'https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v' }, 403);
     if (domains.some(function(d) { return d.domain === domain; })) return json({ error: 'Domain already monitored' }, 409);
     
-    var checkResult = await checkCertExpiry(domain);
+    var checkResult = await checkCertExpiry(domain, env);
     var newDomain = { domain: domain, added_at: new Date().toISOString(), last_checked_at: checkResult.status !== 'error' ? new Date().toISOString() : null, last_expiry_date: checkResult.expiry_date || null, last_issuer: checkResult.issuer || null, last_status: checkResult.status || 'error', last_days_until_expiry: checkResult.days_until_expiry || null };
     domains.push(newDomain);
     await putDomains(env, authEmail, domains);
