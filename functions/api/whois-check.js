@@ -52,7 +52,7 @@ function daysUntil(dateStr) {
   }
 }
 
-export async function onRequest(context) {
+async function _onRequest(context) {
   const url = new URL(context.request.url);
   const domain = (url.searchParams.get('domain') || '').trim().toLowerCase().replace(/^https?:\/\//, '').split('/')[0];
 
@@ -186,3 +186,25 @@ async function queryRdap(baseUrl, domain, tld) {
     });
   }
 }
+
+// -- Edge cache wrapper (free-tier CPU cut) ----------------------------------
+export async function onRequest(context) {{
+  const req = context.request || context;
+  if (req.method && req.method !== 'GET' && req.method !== 'HEAD') return _onRequest(context);
+  const cache = caches.default;
+  let cacheKey;
+  try {{ cacheKey = new Request(req.url, {{ method: 'GET' }}); }} catch(e) {{ return _onRequest(context); }}
+  const hit = await cache.match(cacheKey).catch(function() {{ return null; }});
+  if (hit) {{
+    const hdrs = new Headers(hit.headers);
+    hdrs.set('X-Cache', 'HIT');
+    return new Response(hit.body, {{ status: hit.status, headers: hdrs }});
+  }}
+  const res = await _onRequest(context);
+  if (res.status === 200) {{
+    await cache.put(cacheKey, res.clone()).catch(function() {{}});
+  }}
+  const rHdrs = new Headers(res.headers);
+  rHdrs.set('X-Cache', 'MISS');
+  return new Response(res.body, {{ status: res.status, headers: rHdrs }});
+}}
