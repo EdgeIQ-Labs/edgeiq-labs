@@ -19,7 +19,7 @@ async function fetchWithTimeout(url, opts = {}, ms = 10000) {
   } catch { return null; }
 }
 
-async function _onRequestGet(context) {
+export async function onRequestGet(context) {
   const { request } = context;
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
 
@@ -214,25 +214,3 @@ async function _onRequestGet(context) {
     }
   }, { headers: { ...CORS, 'Cache-Control': 'public, max-age=120' } });
 }
-
-// -- Edge cache wrapper (free-tier CPU cut) ----------------------------------
-export async function onRequestGet(context) {{
-  const req = context.request || context;
-  if (req.method && req.method !== 'GET' && req.method !== 'HEAD') return _onRequestGet(context);
-  const cache = caches.default;
-  let cacheKey;
-  try {{ cacheKey = new Request(req.url, {{ method: 'GET' }}); }} catch(e) {{ return _onRequestGet(context); }}
-  const hit = await cache.match(cacheKey).catch(function() {{ return null; }});
-  if (hit) {{
-    const hdrs = new Headers(hit.headers);
-    hdrs.set('X-Cache', 'HIT');
-    return new Response(hit.body, {{ status: hit.status, headers: hdrs }});
-  }}
-  const res = await _onRequestGet(context);
-  if (res.status === 200) {{
-    await cache.put(cacheKey, res.clone()).catch(function() {{}});
-  }}
-  const rHdrs = new Headers(res.headers);
-  rHdrs.set('X-Cache', 'MISS');
-  return new Response(res.body, {{ status: res.status, headers: rHdrs }});
-}}
