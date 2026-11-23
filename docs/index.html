@@ -42,11 +42,11 @@
     .doc-header { padding: 64px 0 40px; }
     .doc-header h1 { font-size: 2.2rem; margin-bottom: 12px; }
     .doc-header p { color: var(--muted); font-size: 1.05rem; }
-    .method-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 32px 0; }
-    .method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s, transform 0.2s; }
+    .method-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin: 32px 0; align-items: stretch; }
+    .method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s; min-height: 120px; }
     .method-card:hover { border-color: var(--accent); transform: translateY(-2px); }
     .method-card h3 { font-size: 1rem; margin-bottom: 6px; color: var(--text); }
-    .method-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 0; }
+    .method-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 0; margin-top: auto; }
     .method-card .badge { display: inline-block; background: rgba(61,217,255,0.1); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); font-size: 0.68rem; border-radius: 5px; padding: 2px 7px; font-family: monospace; margin-bottom: 6px; }
     h2 { font-size: 1.45rem; margin: 40px 0 14px; padding-top: 40px; border-top: 1px solid var(--border); }
     h2:first-of-type { border-top: none; padding-top: 0; }
@@ -315,76 +315,9 @@
       </a>
       <a href="workspace-posture.html" class="method-card">
         <span class="badge">$49/mo</span>
-        <h3>Workspace Posture
-
-... [OUTPUT TRUNCATED - 27,292 chars omitted out of 77,219 total] ...
-
-cious.exe</code> with the path to your file</li>
-        <li>Results appear in your terminal showing whether any matches were found</li>
-      </ol>
-      <h4>How to Run</h4>
-      <p>Scan a specific file:</p>
-      <pre><code>python3 edgeiq-malware-scanner.py --file "/path/to/your/file.exe"</code></pre>
-      <p>Scan a URL (to check a file before downloading):</p>
-      <pre><code>python3 edgeiq-malware-scanner.py --url "https://example.com/downloads/software.exe"</code></pre>
-      <p>Scan an entire folder:</p>
-      <pre><code>python3 edgeiq-malware-scanner.py --folder "/path/to/downloads"</code></pre>
-      <div class="tier-box tier-free">
-        <div class="tier-label">✓ Free — What's Included</div>
-        <ul class="checklist">
-          <li>5 file/URL scans per month</li>
-          <li>MD5 and SHA256 hash matching</li>
-          <li>Basic threat category detection</li>
-        </ul>
-      </div>
-      <div class="tier-box tier-pro">
-        <div class="tier-label">★ Pro — Everything in Free, Plus</div>
-        <ul class="checklist pro">
-          <li>Unlimited scans</li>
-          <li>YARA rule scanning (advanced pattern matching)</li>
-          <li>PE (Windows executable) static analysis</li>
-          <li>IP and URL threat intelligence lookup</li>
-          <li>Sandbox behavior simulation summary</li>
-          <li>JSON and PDF report with full IOCs</li>
-        </ul>
-      </div>
-    </div>
-
-        <ul class="checklist">
-          <li>10 domain searches per month</li>
-          <li>Basic name and title data</li>
-          <li>Results in terminal</li>
-        </ul>
-      </div>
-      <div class="tier-box tier-pro">
-        <div class="tier-label">★ Pro — Everything in Free, Plus</div>
-        <ul class="checklist pro">
-          <li>Unlimited domain searches</li>
-          <li>Verified work email addresses</li>
-          <li>LinkedIn profile URLs</li>
-          <li>Department and seniority filtering</li>
-          <li>Deduplication and data enrichment</li>
-          <li>CSV and JSON export</li>
-        </ul>
-      </div>
-    </div>
-
-        <ul class="checklist">
-          <li>3 city searches per month</li>
-          <li>Business name and address</li>
-          <li>Results in terminal</li>
-        </ul>
-      </div>
-      <div class="tier-box tier-pro">
-        <div class="tier-label">★ Pro — Everything in Free, Plus</div>
-        <ul class="checklist pro">
-          <li>Unlimited city and zip code searches</li>
-          <li>Phone numbers and website URLs</li>
-          <li>Category and industry filtering</li>
-          <li>Radius search (within X miles of an address)</li>
-          <li>Deduplication and data enrichment</li>
-          <li>CSV and JSON export</li>
-        </ul>
+        <h3>Workspace Posture</h3>
+        <p>Google Workspace security audit — sharing policies, OAuth apps, admin controls.</p>
+      </a>
       <a href="evidence-collector.html" class="method-card">
         <span class="badge" style="background:#00ff66;color:#071018;">NEW</span>
         <h3>Evidence Collector</h3>
@@ -445,18 +378,7 @@ cious.exe</code> with the path to your file</li>
         <h3>Compliance Report Generator</h3>
         <p>Automated SOC2/HIPAA/PCI compliance reports with findings, grades, and remediation steps.</p>
       </a>
-      </div>
     </div>
-
-        <ul class="checklist">
-          <li>3 reports per month</li>
-          <li>Basic PDF format</li>
-          <li>Technical findings list</li>
-        </ul>
-      </div>
-      <div class="tier-box tier-pro">
-        <div class="tier-label">★ Pro — Everything in Free, Plus</div>
-        <ul class="checklist pro">
 
     <!-- ==================== API ==================== -->
     <h2 id="api">Option 2 — REST API</h2>
@@ -568,3 +490,20 @@ cious.exe</code> with the path to your file</li>
         <p>Upload backup configs and get compliance grades. Client-side only — no data leaves your browser.</p>
       </a>
     </div>
+  </div><!-- /.container -->
+<script>
+function toggleMobileMenu() {
+  var btn = document.getElementById('nav-hamburger');
+  var menu = document.getElementById('nav-mobile-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.getElementById('nav-mobile-menu').querySelectorAll('a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-mobile-menu').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
