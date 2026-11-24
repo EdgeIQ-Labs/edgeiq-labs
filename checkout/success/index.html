@@ -304,9 +304,17 @@
       document.getElementById('productBadge').textContent = product.replace(/-/g, ' ') + ' — Confirmed';
     }
 
-    // Track conversion
-    if (sessionId) {
-      console.log('[EdgeIQ] Checkout success:', product || 'unknown', sessionId.slice(0, 12) + '...');
+    // Track conversion in Umami (script loads deferred, so wait for it if needed)
+    function trackCheckoutSuccess() {
+      if (!window.umami || typeof window.umami.track !== 'function') return false;
+      window.umami.track('checkout_success', {
+        product: product || 'unknown',
+        session_id: sessionId.slice(0, 12),
+      });
+      return true;
+    }
+    if (!trackCheckoutSuccess()) {
+      window.addEventListener('load', trackCheckoutSuccess, { once: true });
     }
   </script>
 </body>
