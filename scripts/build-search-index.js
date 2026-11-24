@@ -34,7 +34,7 @@ const PAGES = [
   // Services & plans
   { url: '/services.html', title: 'Managed Security Services', category: 'Services', description: 'SMB cybersecurity monitoring, Wazuh SIEM, monthly action reports. Plans from $199/mo.' },
   { url: '/pricing/', title: 'Pricing', category: 'Page', description: 'All plans and pricing for EdgeIQ Labs products and services.' },
-  { url: '/free-tools/', title: 'Free Security Tools', category: 'Page', description: 'Browse all 12+ free cybersecurity scanners and checkers.' },
+  { url: '/tools/', title: 'Free Security Tools', category: 'Page', description: 'Browse all 12+ free cybersecurity scanners and checkers.' },
   { url: '/blog/', title: 'Security Blog & Intel', category: 'Page', description: 'Latest cybersecurity news, breach analysis, vulnerability reports, and SMB guides.' },
   { url: '/docs/', title: 'Documentation', category: 'Page', description: 'API docs, setup guides, and integration references.' },
 ];

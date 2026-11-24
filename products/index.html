@@ -675,6 +675,16 @@
     .smb-promo { background: linear-gradient(180deg, rgba(112,240,168,0.06), rgba(112,240,168,0.02)); border: 1px solid rgba(112,240,168,0.3); border-radius: 14px; padding: 18px 22px; margin: 24px auto 32px; max-width: 720px; text-align: center; }
     .smb-promo strong { color: #a4e070; }
     .smb-promo a { color: var(--accent); text-decoration: none; font-weight: 700; }
+    .decision-layer { max-width: 980px; margin: 8px auto 28px; }
+    .decision-layer-head { color: var(--muted); text-align: center; font-size: 0.9rem; margin: 0 0 14px; }
+    .decision-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .decision-card { display: flex; flex-direction: column; gap: 8px; background: rgba(18,25,35,0.85); border: 1px solid var(--border); border-radius: 14px; padding: 20px; color: var(--text); text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+    .decision-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .decision-eyebrow { color: var(--accent); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+    .decision-card strong { font-size: 1.05rem; }
+    .decision-copy { color: var(--muted); font-size: 0.86rem; line-height: 1.5; }
+    .decision-cta { margin-top: auto; color: var(--accent); font-size: 0.84rem; font-weight: 700; }
+    @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
 </head>
@@ -766,6 +776,31 @@
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <a href="/pulse/" style="display:inline-block;background:rgba(61,225,158,0.12);border:1px solid rgba(61,225,158,0.3);color:#3de19e;font-size:0.82rem;font-weight:700;padding:6px 14px;border-radius:8px;text-decoration:none;">🟢 Start with Pulse →</a>
           <a href="/inbox-shield/" style="display:inline-block;background:rgba(180,122,255,0.1);border:1px solid rgba(180,122,255,0.3);color:#b47aff;font-size:0.82rem;font-weight:700;padding:6px 14px;border-radius:8px;text-decoration:none;">✉ Start with Inbox Shield →</a>
+        </div>
+      </div>
+
+      <!-- Decision layer: pick an outcome first; the full catalog remains below. -->
+      <div class="decision-layer" id="choose-path">
+        <p class="decision-layer-head">Not sure where to start? Pick the outcome you need.</p>
+        <div class="decision-grid">
+          <a class="decision-card" href="/free-domain-security-score/" data-plan="free-scan" data-product="Domain Security Score">
+            <span class="decision-eyebrow">Free scan</span>
+            <strong>Find out what is broken</strong>
+            <span class="decision-copy">Get a clear snapshot of your domain's security issues before you spend anything.</span>
+            <span class="decision-cta">Scan my domain →</span>
+          </a>
+          <a class="decision-card" href="/pricing/#smb-bundles" data-plan="smb-starter" data-product="SMB security bundles">
+            <span class="decision-eyebrow">SMB starter</span>
+            <strong>Monitor my business</strong>
+            <span class="decision-copy">Start with bundled monitoring for the systems a small business relies on every day.</span>
+            <span class="decision-cta">See SMB bundles →</span>
+          </a>
+          <a class="decision-card" href="/compliance/" data-plan="compliance" data-product="Compliance">
+            <span class="decision-eyebrow">Compliance</span>
+            <strong>Get audit-ready</strong>
+            <span class="decision-copy">See the controls and evidence needed for SOC 2, HIPAA, and PCI-DSS readiness.</span>
+            <span class="decision-cta">Explore compliance →</span>
+          </a>
         </div>
       </div>
 
@@ -1681,6 +1716,116 @@ async function phishsimCheckout(btn) {
   } catch { alert('Network error. Please try again or contact support@edgeiqlabs.com'); }
   btn.disabled = false; btn.textContent = 'Subscribe — $49/mo';
 }
+</script>
+<script>
+// ── Products funnel analytics (delegated; safe when Umami is unavailable) ───
+;(function() {
+  function track(eventName, payload) {
+    try {
+      if (!window.umami || typeof window.umami.track !== 'function') return false;
+      window.umami.track(eventName, payload || {});
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function trackWhenReady(eventName, payload) {
+    if (track(eventName, payload)) return;
+    if (document.readyState === 'complete') return;
+    window.addEventListener('load', function retry() {
+      window.removeEventListener('load', retry);
+      track(eventName, payload);
+    });
+  }
+
+  function closestFromEvent(event, selector) {
+    var target = event && event.target;
+    return target && typeof target.closest === 'function' ? target.closest(selector) : null;
+  }
+
+  function textOf(el) {
+    return (el && el.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function destinationOf(el) {
+    var href = el && el.getAttribute('href');
+    if (!href) return '';
+    try {
+      var url = new URL(href, window.location.href);
+      return url.pathname + url.search + url.hash;
+    } catch (err) {
+      return href;
+    }
+  }
+
+  function contextOf(el) {
+    var contextEl = el.closest('.card, .decision-card');
+    var heading = contextEl && contextEl.querySelector('h3, strong');
+    var label = textOf(el);
+    var valueMatch = label.match(/\$\s?(\d+(?:\.\d{1,2})?)/);
+    return {
+      product: el.getAttribute('data-product') || (heading ? textOf(heading) : 'products'),
+      plan: el.getAttribute('data-plan') || label.slice(0, 80),
+      value: valueMatch ? Number(valueMatch[1]) : null
+    };
+  }
+
+  function withoutNulls(payload) {
+    Object.keys(payload).forEach(function(key) {
+      if (payload[key] === null || payload[key] === undefined || payload[key] === '') delete payload[key];
+    });
+    return payload;
+  }
+
+  document.addEventListener('click', function(event) {
+    var el = closestFromEvent(event, '.btn, .pricing button, .decision-card, [data-plan]');
+    if (!el) return;
+    var context = contextOf(el);
+    track('plan_clicked', withoutNulls({
+      page: 'products',
+      product: context.product,
+      plan: context.plan,
+      destination: destinationOf(el),
+      value: context.value
+    }));
+  });
+
+  document.addEventListener('click', function(event) {
+    var el = closestFromEvent(event, 'a[href*="buy.stripe.com"], a[href*="/api/"], button[data-checkout], [data-checkout]');
+    if (!el) {
+      var button = closestFromEvent(event, 'button[onclick]');
+      if (button && /checkout/i.test(button.getAttribute('onclick') || '')) el = button;
+    }
+    if (!el) return;
+    var context = contextOf(el);
+    var href = el.getAttribute('href') || '';
+    track('checkout_started', withoutNulls({
+      page: 'products',
+      product: context.product,
+      plan: context.plan,
+      source: /buy\.stripe\.com/.test(href) ? 'stripe' : 'api',
+      destination: destinationOf(el),
+      value: context.value
+    }));
+  });
+
+  var pricingSection = document.getElementById('pricing');
+  var pricingPayload = { page: 'products' };
+  if (pricingSection && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (!entries[i].isIntersecting) continue;
+        observer.disconnect();
+        trackWhenReady('pricing_viewed', pricingPayload);
+        return;
+      }
+    }, { threshold: 0.05 });
+    observer.observe(pricingSection);
+  } else {
+    trackWhenReady('pricing_viewed', pricingPayload);
+  }
+})();
 </script>
 <!-- Relay Affiliate Tracking -->
 <script defer src="https://relay.edgeiqlabs.com/relay-integration.js"></script>

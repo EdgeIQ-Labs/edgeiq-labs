@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
+<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
 <div class="container">
   <div class="hero"><div class="hero-badge">🆔 Utility</div><h1>UUID Generator</h1><p>Generate cryptographically secure v4 UUIDs using crypto.randomUUID(). Batch generation supported.</p></div>
   <div class="tool-card">
@@ -22,7 +22,7 @@
     <p class="trust-note">🔒 Uses browser-native crypto.randomUUID(). Zero network requests.</p>
   </div>
 </div>
-<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
+<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
 <script>
 function generateUUIDs(){var n=Math.min(100,Math.max(1,parseInt(document.getElementById('uuid-count').value)||1));var uuids=[];for(var i=0;i<n;i++)uuids.push(crypto.randomUUID());document.getElementById('uuid-output').innerHTML='<button class="copy-corner" onclick="copyAll()">Copy All</button>'+uuids.join('\n');}
 function copyAll(){var t=document.getElementById('uuid-output').textContent.replace('Copy All','').trim();navigator.clipboard.writeText(t);var b=document.querySelector('.copy-corner');b.textContent='Copied!';setTimeout(function(){b.textContent='Copy All'},1500);}

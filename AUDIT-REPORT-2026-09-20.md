@@ -119,7 +119,7 @@ All 6 tools use Cloudflare DoH (`cloudflare-dns.com/dns-query`) and/or direct HT
 | `/free-spf-checker/` | ✅ `/api/spf-check` | ✅ `/api/capture-email` | PASS |
 | `/free-ssl-checker/` | ✅ `/api/ssl-check` | ❌ (no capture ref found) | PASS |
 | `/free-subdomain-scanner/` | ✅ `/api/subdomain-scan` | ❌ (no capture ref found) | PASS |
-| `/free-tools/` | Hub page | N/A | PASS |
+| `/tools/` | Hub page | N/A | PASS |
 
 Note: DMARC checker, SSL checker, and subdomain scanner landing pages don't call `/api/capture-email`. Consider adding email capture drip to these for lead gen consistency.
 

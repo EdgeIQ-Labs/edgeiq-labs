@@ -16,7 +16,7 @@ function page(title, message) {
     <div style="font-size:18px;font-weight:800;margin-bottom:28px;">EdgeIQ<span style="color:#3dd9ff;"> Labs</span></div>
     <h1 style="font-size:24px;font-weight:800;margin:0 0 16px;">${title}</h1>
     <p style="font-size:15px;color:#9fb0c7;line-height:1.6;margin:0 0 24px;">${message}</p>
-    <a href="https://edgeiqlabs.com/free-tools/" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;font-size:14px;padding:12px 24px;border-radius:9px;text-decoration:none;">Browse free tools →</a>
+    <a href="https://edgeiqlabs.com/tools/" style="display:inline-block;background:#3dd9ff;color:#071018;font-weight:700;font-size:14px;padding:12px 24px;border-radius:9px;text-decoration:none;">Browse free tools →</a>
   </div>
 </body></html>`;
 }

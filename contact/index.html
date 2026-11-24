@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="canonical" href="https://edgeiqlabs.com/contact/" />
+  <title>Contact — EdgeIQ Labs</title>
+  <meta name="description" content="Contact EdgeIQ Labs about SMB monitoring, free tools, MSP plans, billing, or an existing account. Clear routes, real people, no sales theatre." />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <script src="/js/theme.js"></script>
+  <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact EdgeIQ Labs",
+    "url": "https://edgeiqlabs.com/contact/",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com",
+      "email": "support@edgeiqlabs.com"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="/favicon.png" alt="" width="28" height="28" style="border-radius:4px;" />
+        EdgeIQ Labs
+      </a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services.html" class="nav__link">SMB Monitoring</a></li>
+        <li><a href="/tools/" class="nav__link">Free Tools</a></li>
+        <li><a href="/msp/" class="nav__link">For MSPs</a></li>
+        <li><a href="/contact/" class="nav__link nav__link--active">Contact</a></li>
+      </ul>
+      <div class="nav__actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <a href="/pricing/" class="btn btn--primary">See plans →</a>
+        <button class="nav__hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="section" style="padding-bottom:0;">
+      <div class="container container--narrow">
+        <span class="eyebrow">Get in touch</span>
+        <h1>Tell us what you need.</h1>
+        <p class="muted" style="font-size:var(--text-lg);max-width:680px;line-height:1.6;">
+          Product questions, billing, onboarding, or MSP pricing. Pick a route and send a clear question. We will point you to the right answer.
+        </p>
+        <p style="margin-top:12px;"><a href="mailto:support@edgeiqlabs.com" class="link-arrow">support@edgeiqlabs.com</a></p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:var(--space-xl);">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3xl);align-items:start;">
+
+          <div class="card">
+            <h2 style="margin-bottom:var(--space-md);">Send a message</h2>
+            <form id="contact-form" style="display:flex;flex-direction:column;gap:var(--space-md);">
+              <div>
+                <label class="label" for="name">Name</label>
+                <input class="input" type="text" id="name" name="name" required maxlength="120" autocomplete="name" />
+              </div>
+              <div>
+                <label class="label" for="email">Business email</label>
+                <input class="input" type="email" id="email" name="email" required maxlength="254" autocomplete="email" />
+              </div>
+              <div>
+                <label class="label" for="company">Company <span class="muted">(optional)</span></label>
+                <input class="input" type="text" id="company" name="company" maxlength="120" autocomplete="organization" />
+              </div>
+              <fieldset style="border:0;padding:0;margin:0;">
+                <legend class="label">What is this about?</legend>
+                <div style="display:flex;flex-wrap:wrap;gap:var(--space-md);margin-top:var(--space-xs);">
+                  <label style="display:flex;align-items:center;gap:var(--space-xs);font-size:var(--text-sm);cursor:pointer;"><input type="radio" name="topic" value="smb" checked /> SMB monitoring</label>
+                  <label style="display:flex;align-items:center;gap:var(--space-xs);font-size:var(--text-sm);cursor:pointer;"><input type="radio" name="topic" value="tool" /> Free tool</label>
+                  <label style="display:flex;align-items:center;gap:var(--space-xs);font-size:var(--text-sm);cursor:pointer;"><input type="radio" name="topic" value="msp" /> MSP offering</label>
+                  <label style="display:flex;align-items:center;gap:var(--space-xs);font-size:var(--text-sm);cursor:pointer;"><input type="radio" name="topic" value="account" /> Existing account</label>
+                  <label style="display:flex;align-items:center;gap:var(--space-xs);font-size:var(--text-sm);cursor:pointer;"><input type="radio" name="topic" value="billing" /> Billing</label>
+                  <label style="display:flex;align-items:center;gap:var(--space-xs);font-size:var(--text-sm);cursor:pointer;"><input type="radio" name="topic" value="compliance" /> Compliance</label>
+                </div>
+              </fieldset>
+              <div>
+                <label class="label" for="domain">Domain <span class="muted">(if relevant)</span></label>
+                <input class="input" type="text" id="domain" name="domain" maxlength="253" placeholder="example.com" />
+              </div>
+              <div>
+                <label class="label" for="message">Your message</label>
+                <textarea class="textarea" id="message" name="message" rows="6" required minlength="10" maxlength="5000"></textarea>
+              </div>
+              <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                <label for="website">Website</label>
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+              </div>
+              <p class="muted" style="font-size:var(--text-xs);">Do not send passwords, API keys, or private customer data. An enquiry does not confirm an order or change a subscription.</p>
+              <button type="submit" class="btn btn--primary" style="align-self:flex-start;" id="contact-submit">Send my question →</button>
+              <p id="contact-status" role="status" aria-live="polite" style="font-size:var(--text-sm);min-height:1.4em;"></p>
+            </form>
+            <noscript>
+              <p class="muted">JavaScript is off. Email <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a> with your question.</p>
+            </noscript>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-xl);">
+            <div>
+              <span class="eyebrow">Choose the relevant route.</span>
+              <div style="display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md);">
+                <div style="padding:var(--space-md);border-bottom:1px solid var(--color-border-light);">
+                  <div style="font-weight:600;">Product and onboarding</div>
+                  <a href="mailto:support@edgeiqlabs.com" class="link-arrow" style="font-size:var(--text-sm);">support@edgeiqlabs.com</a>
+                </div>
+                <div style="padding:var(--space-md);border-bottom:1px solid var(--color-border-light);">
+                  <div style="font-weight:600;">Billing and invoices</div>
+                  <a href="mailto:billing@edgeiqlabs.com" class="link-arrow" style="font-size:var(--text-sm);">billing@edgeiqlabs.com</a>
+                </div>
+                <div style="padding:var(--space-md);border-bottom:1px solid var(--color-border-light);">
+                  <div style="font-weight:600;">MSP and partner questions</div>
+                  <a href="mailto:hello@edgeiqlabs.com" class="link-arrow" style="font-size:var(--text-sm);">hello@edgeiqlabs.com</a>
+                </div>
+                <div style="padding:var(--space-md);">
+                  <div style="font-weight:600;">Community support</div>
+                  <a href="https://discord.gg/PaP7nsFUJT" class="link-arrow" style="font-size:var(--text-sm);" target="_blank" rel="noopener">Join the EdgeIQ Discord</a>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <span class="eyebrow">Useful before you write.</span>
+              <div style="display:flex;flex-direction:column;gap:var(--space-md);margin-top:var(--space-md);">
+                <div style="padding-left:var(--space-md);border-left:2px solid var(--color-accent);">
+                  <div style="font-weight:600;">Tool question</div>
+                  <p class="muted" style="font-size:var(--text-sm);margin-top:var(--space-xs);">Name the tool and the finding you want explained.</p>
+                </div>
+                <div style="padding-left:var(--space-md);border-left:2px solid var(--color-accent);">
+                  <div style="font-weight:600;">Managed monitoring</div>
+                  <p class="muted" style="font-size:var(--text-sm);margin-top:var(--space-xs);">Tell us the domains and the outcome you need to monitor.</p>
+                </div>
+                <div style="padding-left:var(--space-md);border-left:2px solid var(--color-accent);">
+                  <div style="font-weight:600;">Existing account</div>
+                  <p class="muted" style="font-size:var(--text-sm);margin-top:var(--space-xs);">Use My Account for current service details, or write to support.</p>
+                </div>
+              </div>
+              <div class="mt-lg" style="display:flex;gap:12px;flex-wrap:wrap;">
+                <a href="/account/" class="btn btn--outline">My Account →</a>
+                <a href="/docs/" class="btn btn--outline">Docs →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--surface">
+      <div class="container container--narrow" style="text-align:center;">
+        <span class="eyebrow">Keep looking.</span>
+        <h2 style="margin-bottom:var(--space-md);">Browse tools or check the plans.</h2>
+        <p class="muted" style="margin-bottom:var(--space-xl);">No pressure. Both are public and self-serve.</p>
+        <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
+          <a href="/tools/" class="btn btn--primary">Browse free tools →</a>
+          <a href="/pricing/" class="btn btn--outline">View current plans →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a href="/" class="nav__logo" style="margin-bottom:var(--space-sm);">
+          <img src="/favicon.png" alt="" width="24" height="24" style="border-radius:4px;" />
+          EdgeIQ Labs
+        </a>
+        <p>Cybersecurity monitoring and tools</p>
+      </div>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap;">
+        <a href="/">Home</a>
+        <a href="/services.html">SMB Monitoring</a>
+        <a href="/tools/">Free Tools</a>
+        <a href="/msp/">For MSPs</a>
+        <a href="/contact/">Contact</a>
+      </div>
+      <div style="text-align:right;">
+        <a href="mailto:support@edgeiqlabs.com">support@edgeiqlabs.com</a>
+        <div class="mt-sm" style="display:flex;gap:var(--space-md);flex-wrap:wrap;justify-content:flex-end;">
+          <a href="/account/">My Account</a>
+          <a href="/docs/">Docs</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="container text-center mt-lg" style="opacity:0.6;">© 2026 EdgeIQ Labs.</div>
+  </footer>
+
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form');
+      if (!form) return;
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var status = document.getElementById('contact-status');
+        var button = document.getElementById('contact-submit');
+        var topic = form.querySelector('input[name="topic"]:checked');
+        var field = function (n) {
+          var el = form.elements.namedItem(n);
+          return el && el.value ? el.value : '';
+        };
+        var payload = {
+          name: field('name'),
+          email: field('email'),
+          company: field('company'),
+          topic: topic ? topic.value : 'other',
+          domain: field('domain'),
+          message: field('message'),
+          website: field('website')
+        };
+        status.textContent = 'Sending…';
+        button.disabled = true;
+        try {
+          var response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          var data = await response.json().catch(function () { return {}; });
+          if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed');
+          status.textContent = 'Message sent. We will reply to your email.';
+          if (window.umami && window.umami.track) {
+            window.umami.track('email_captured', { source: 'contact-page', topic: payload.topic });
+          }
+          form.reset();
+        } catch (error) {
+          status.textContent = 'Could not send. Email support@edgeiqlabs.com directly.';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

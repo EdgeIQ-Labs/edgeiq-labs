@@ -45,7 +45,7 @@ Structure:
 2. **Attack Technique Breakdown** — pick one real, recent CVE or attack technique from the past week. Explain what it is, who it affects, and how to mitigate it in 3-4 sentences. Use a specific CVE number if possible.
 3. **Tool Release Spotlight** — highlight one new or updated open-source security tool. What it does, why it matters, link to its GitHub.
 4. **Practical Guide** — one actionable security tip that small teams can implement in under 30 minutes (e.g., enabling MFA on a specific service, configuring a DNS record, hardening an SSH config).
-5. A brief sign-off mentioning EdgeIQ Labs free scanners at https://edgeiqlabs.com/free-tools/
+5. A brief sign-off mentioning EdgeIQ Labs free scanners at https://edgeiqlabs.com/tools/
 
 Style rules:
 - Dark theme compatible (use inline styles with colors: #3dd9ff for accent, #e8eef7 for text, #9fb0c7 for muted)

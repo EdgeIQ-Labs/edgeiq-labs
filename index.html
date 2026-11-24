@@ -2849,7 +2849,7 @@
           <div class="card-header">
             <div class="card-icon" style="color:#70f0a8;">🔒</div>
             <div class="card-title-group"><div class="card-title">SSL Checker</div></div>
-            <a class="cta-link" href="/free-tools/#ssl" style="color:#70f0a8;">Check →</a>
+            <a class="cta-link" href="/tools/#ssl" style="color:#70f0a8;">Check →</a>
           </div>
           <p class="card-desc">Verify certificate validity, expiry, chain trust, and TLS configuration on any domain.</p>
         </article>
@@ -2867,7 +2867,7 @@
           <div class="card-header">
             <div class="card-icon" style="color:#ffb347;">🌐</div>
             <div class="card-title-group"><div class="card-title">Subdomain Scanner</div></div>
-            <a class="cta-link" href="/free-tools/#subdomain" style="color:#ffb347;">Scan →</a>
+            <a class="cta-link" href="/tools/#subdomain" style="color:#ffb347;">Scan →</a>
           </div>
           <p class="card-desc">Discover hidden subdomains, exposed services, and forgotten assets on any domain.</p>
         </article>
@@ -2876,7 +2876,7 @@
           <div class="card-header">
             <div class="card-icon" style="color:#ff6b6b;">⚠</div>
             <div class="card-title-group"><div class="card-title">Blacklist Checker</div></div>
-            <a class="cta-link" href="/free-tools/#blacklist" style="color:#ff6b6b;">Check →</a>
+            <a class="cta-link" href="/tools/#blacklist" style="color:#ff6b6b;">Check →</a>
           </div>
           <p class="card-desc">Check if your IP or domain is listed on DNSBLs, spam blacklists, or threat feeds.</p>
         </article>
@@ -2885,14 +2885,14 @@
           <div class="card-header">
             <div class="card-icon" style="color:#6366f1;">🛡</div>
             <div class="card-title-group"><div class="card-title">Headers Analyzer</div></div>
-            <a class="cta-link" href="/free-tools/#headers" style="color:#6366f1;">Analyze →</a>
+            <a class="cta-link" href="/tools/#headers" style="color:#6366f1;">Analyze →</a>
           </div>
           <p class="card-desc">Audit HTTP security headers — CSP, HSTS, X-Frame-Options, Permissions-Policy, and more.</p>
         </article>
 
       </div>
       <div style="text-align:center;margin-top:20px;">
-        <a href="/free-tools/#advanced" style="font-size:0.85rem;color:#A0A0B0;text-decoration:none;font-weight:500;">View All 20+ Free Scanners →</a>
+        <a href="/tools/#advanced" style="font-size:0.85rem;color:#A0A0B0;text-decoration:none;font-weight:500;">View All 20+ Free Scanners →</a>
       </div>
 
       </div>
@@ -3072,7 +3072,7 @@
         <button type="submit">Get Free Checklist →</button>
       </form>
       <p id="nlok1" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Check your inbox — the HIPAA checklist is on its way!</p>
-      <script>(function(){var f=document.getElementById('nlf1');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'newsletter'})}).then(function(r){return r.json();}).then(function(data){if(data&&data.ok){f.style.display='none';var ok=document.getElementById('nlok1');ok.style.display='block';ok.innerHTML='\u2713 Check your inbox \u2014 the HIPAA checklist is on its way!';}else{b.disabled=false;b.textContent='Get Free Checklist \u2192';alert('Something went wrong. Please try again.');}}).catch(function(){b.disabled=false;b.textContent='Get Free Checklist \u2192';alert('Network error. Please try again.');});});})();</script>
+      <script>(function(){var f=document.getElementById('nlf1');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';fetch('/api/capture-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'newsletter'})}).then(function(r){return r.json();}).then(function(data){if(data&&data.ok){if(window.umami&&window.umami.track){window.umami.track('email_captured',{source:'newsletter'});}f.style.display='none';var ok=document.getElementById('nlok1');ok.style.display='block';ok.innerHTML='\u2713 Check your inbox \u2014 the HIPAA checklist is on its way!';}else{b.disabled=false;b.textContent='Get Free Checklist \u2192';alert('Something went wrong. Please try again.');}}).catch(function(){b.disabled=false;b.textContent='Get Free Checklist \u2192';alert('Network error. Please try again.');});});})();</script>
       <p class="newsletter-note">Free forever. No spam. Unsubscribe anytime.</p>
     </div>
   </div>
@@ -4770,6 +4770,9 @@
       var done = function() {
         markCaptured();
         revealAll();
+        if (window.umami && window.umami.track) {
+          window.umami.track('email_captured', { source: 'free-scanner-gate' });
+        }
       };
       try {
         fetch(SUBSTACK_URL, {
@@ -4984,6 +4987,9 @@ function toggleAdvancedTools() {
       document.getElementById('hero-scanning').style.display = 'none';
       if (!res.ok) throw new Error(data.error || 'Error');
       renderResults(data, domain);
+      if (window.umami && window.umami.track) {
+        window.umami.track('scanner_completed', { tool: 'domain-security-score', source: 'homepage-hero', grade: data.grade || '' });
+      }
       document.getElementById('hero-results').style.display = 'block';
     } catch(err) {
       clearInterval(stepTimer);

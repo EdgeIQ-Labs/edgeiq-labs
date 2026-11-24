@@ -38,7 +38,7 @@ function emailWrap(body) {
   <tr><td style="padding:20px 0 0;text-align:center;">
     <p style="font-size:11px;color:#4a6080;line-height:1.6;margin:0;">
       EdgeIQ Labs · Small business security made simple<br>
-      <a href="https://edgeiqlabs.com/free-tools/" style="color:${S.accent};text-decoration:none;">Free tools</a> ·
+      <a href="https://edgeiqlabs.com/tools/" style="color:${S.accent};text-decoration:none;">Free tools</a> ·
       <a href="https://edgeiqlabs.com/pricing/" style="color:${S.accent};text-decoration:none;">Pricing</a> ·
       <a href="https://edgeiqlabs.com/blog/" style="color:${S.accent};text-decoration:none;">Blog</a>
     </p>

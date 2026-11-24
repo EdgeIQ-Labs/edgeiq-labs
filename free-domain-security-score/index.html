@@ -442,6 +442,9 @@ function renderResults(data) {
   renderGradeRing(wrap, data.grade, data.score);
   document.getElementById('gradeDomain').textContent = data.domain;
   document.getElementById('gradeSummary').textContent = data.summary;
+  if (window.umami && window.umami.track) {
+    window.umami.track('scanner_completed', { tool: 'domain-security-score', grade: data.grade || '', score: data.score || 0 });
+  }
 
   // Category grid
   const gradeColors = { pass: 'var(--grade-a)', warn: 'var(--grade-c)', fail: 'var(--grade-f)', error: 'var(--muted)' };
@@ -541,6 +544,9 @@ async function unlockReport() {
         issues: currentData?.issues,
       }),
     });
+    if (window.umami && window.umami.track) {
+      window.umami.track('email_captured', { source: 'domain-security-score', grade: currentData?.grade || '' });
+    }
   } catch(e) {}
 
   // Reveal issues

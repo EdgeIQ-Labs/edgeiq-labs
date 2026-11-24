@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HIPAA Compliance Checklist for Small Practices — EdgeIQ Labs</title>
+<meta name="description" content="A practical HIPAA compliance checklist for small healthcare practices under 20 employees. Covers risk assessment, access controls, encryption, BAAs, and incident response."/>
+<link rel="canonical" href="https://edgeiqlabs.com/proof/hipaa-compliance-checklist-small-practices/"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"HIPAA Compliance Checklist for Small Practices","datePublished":"2026-11-24","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+<link rel="stylesheet" href="/css/design-system.css?v=10"/>
+<style>
+  .page-hero{padding:56px 0 28px;} .breadcrumb{font-size:0.82rem;color:var(--muted);margin-bottom:18px;} .breadcrumb a{color:var(--muted);text-decoration:none;}
+  h1{font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.2;margin-bottom:14px;} .lede{font-size:1.05rem;color:var(--muted);max-width:680px;}
+  .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;} .prose p{margin-bottom:16px;color:var(--muted);} .prose ul{margin:0 0 18px 22px;color:var(--muted);} .prose li{margin-bottom:8px;} .prose strong{color:var(--text);} .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;} .prose a:hover{border-bottom-color:var(--accent);}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:24px 0 32px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;} .card h3{margin:0 0 6px;color:var(--text);}
+  .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 20px;border-radius:8px;text-decoration:none;margin:4px 8px 4px 0;font-size:0.92rem;}
+  .btn-sec{display:inline-block;background:transparent;color:var(--accent);font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;border:1px solid var(--accent);margin:4px 8px 4px 0;font-size:0.92rem;}
+  .note{background:var(--card);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 8px 8px 0;margin:22px 0;font-size:0.92rem;color:var(--muted);}
+  table.compare{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.92rem;} table.compare th,table.compare td{border:1px solid var(--border);padding:12px 14px;text-align:left;} table.compare th{background:var(--card);color:var(--text);font-weight:700;} table.compare td{color:var(--muted);} table.compare tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;} .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;text-align:center;} .stat-num{font-size:2rem;font-weight:800;color:var(--accent);} .stat-label{font-size:0.88rem;color:var(--muted);margin-top:6px;}
+  .cta-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;margin:40px 0;text-align:center;} .cta-block h2{margin-bottom:8px;} .cta-block p{color:var(--muted);margin-bottom:16px;}
+</style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head><body data-theme="dark">
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark"><div class="nav-brand-name">Edge<span>IQ</span> Labs</div><div class="nav-brand-tag">Cybersecurity · Hosting</div></div>
+    </a>
+    <div class="nav-links">
+      <a href="/tools/">Free Tools</a><a href="/compliance/">Compliance</a><a href="/pricing/">Pricing</a><a href="/blog/">Blog</a><a href="/contact/">Contact</a>
+      <a href="/pricing/" class="nav-cta">See plans</a>
+    </div>
+  </div>
+</nav>
+<div class="container container--narrow">
+  <div class="page-hero">
+    <div class="breadcrumb"><a href="/">Home</a> › <a href="/blog/">Proof</a> › HIPAA Checklist</div>
+    <h1>HIPAA compliance without the enterprise price tag.</h1>
+    <p class="lede">Small healthcare practices face the same regulatory requirements as hospital systems, with a fraction of the staff and budget. This checklist covers the controls that matter most when you have fewer than 20 employees.</p>
+  </div>
+  <div class="prose">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">73%</div><div class="stat-label">of small practices fail their first HIPAA audit (industry estimate)</div></div>
+      <div class="stat-card"><div class="stat-num">$50K+</div><div class="stat-label">average HIPAA fine for unresolved violations</div></div>
+    </div>
+    <h2>The checklist</h2>
+    <ul>
+      <li><strong>Risk assessment:</strong> Document where PHI lives, who touches it, and what could go wrong. Update annually or after any system change.</li>
+      <li><strong>Access controls:</strong> Unique user IDs for every staff member. Role-based access so front desk cannot see clinical notes. MFA on any system holding PHI.</li>
+      <li><strong>Audit logging:</strong> Enable logging on EHR, email, and file storage. Review logs monthly or automate alerts for unusual access patterns.</li>
+      <li><strong>Encryption:</strong> Encrypt PHI at rest and in transit. Full-disk encryption on laptops. TLS 1.2+ for web portals and email.</li>
+      <li><strong>BAA management:</strong> Signed Business Associate Agreements with every vendor that touches PHI. Track renewal dates. Use <a href="/evidence-collector/">Evidence Collector</a> to automate evidence gathering.</li>
+      <li><strong>Incident response plan:</strong> Written procedure for breach detection, containment, notification, and documentation. Test annually with a tabletop exercise.</li>
+      <li><strong>Employee training:</strong> Annual HIPAA awareness training with documented completion. Include phishing recognition and password hygiene.</li>
+    </ul>
+    <div class="note">This checklist is a starting point, not legal advice. Consult a HIPAA attorney or compliance consultant for your specific situation.</div>
+    <h2>Where automated monitoring fits</h2>
+    <p>A checklist tells you what to have. Monitoring tells you whether it is still working. <a href="/compliance/">Compliance Shield</a> runs weekly control-by-control scans and emails you a grade with diffs every Monday. <a href="/evidence-collector/">Evidence Collector</a> gathers dated screenshots and configuration exports so auditors see proof, not promises.</p>
+    <div class="cta-block">
+      <h2>Start with a free compliance scan</h2>
+      <p>See your current posture across SOC 2, HIPAA, and PCI-DSS controls in under two minutes. Upgrade to Compliance Pro ($9/mo) for automated weekly scans.</p>
+      <a class="btn" href="/compliance/">Run free scanner →</a>
+      <a class="btn-sec" href="/pricing/">See Compliance Pro →</a>
+    </div>
+  </div>
+</div>
+<footer style="border-top:1px solid var(--border);padding:28px 0;margin-top:56px;text-align:center;">
+  <a href="/" style="color:var(--muted);text-decoration:none;margin:0 10px;">Home</a>
+  <a href="/tools/" style="color:var(--muted);text-decoration:none;margin:0 10px;">Tools</a>
+  <a href="/pricing/" style="color:var(--muted);text-decoration:none;margin:0 10px;">Pricing</a>
+  <a href="/contact/" style="color:var(--muted);text-decoration:none;margin:0 10px;">Contact</a>
+  <a href="mailto:support@edgeiqlabs.com" style="color:var(--muted);text-decoration:none;margin:0 10px;">support@edgeiqlabs.com</a>
+  <div style="margin-top:12px;font-size:0.82rem;color:var(--muted);">© 2026 EdgeIQ Labs.</div>
+</footer>
+</body></html>

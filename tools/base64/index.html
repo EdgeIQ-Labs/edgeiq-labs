@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
+<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
 <div class="container">
   <div class="hero"><div class="hero-badge">🔄 Encoding Tool</div><h1>Base64 Encoder / Decoder</h1><p>Encode and decode Base64 strings instantly. Handles text and binary-safe conversions with zero server round-trips.</p></div>
   <div class="tool-card">
@@ -30,7 +30,7 @@
   <div id="output"><div class="section-label" style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Result</div><div class="result-box" id="result-text"><button class="copy-corner" onclick="copyResult()">Copy</button></div></div>
   <div class="cta-box"><h3>Encoding secrets in your codebase?</h3><p>Base64 is not encryption. Scan your repo for hardcoded secrets that are merely encoded, not protected.</p><a href="/tools/secret-scanner/" class="cta-btn">Scan for Secrets →</a></div>
 </div>
-<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
+<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
 <script>
 function doEncode(){var t=document.getElementById('b64-input').value;if(!t)return;try{var r=btoa(unescape(encodeURIComponent(t)));show(r);}catch(e){alert('Encoding error: '+e.message);}}
 function doDecode(){var t=document.getElementById('b64-input').value.trim();if(!t)return;try{var r=decodeURIComponent(escape(atob(t)));show(r);}catch(e){alert('Invalid Base64 input. Check the string and try again.');}}

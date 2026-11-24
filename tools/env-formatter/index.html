@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
+<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
 <div class="container">
   <div class="hero"><div class="hero-badge">📋 Config Tool</div><h1>.env File Formatter</h1><p>Format, sort, and align .env files locally. Keep your secrets safe — nothing is uploaded or stored.</p></div>
   <div class="tool-card">
@@ -28,7 +28,7 @@
   <div id="output"><div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Result</div><div class="result-box" id="result-text"><button class="copy-corner" onclick="copyResult()">Copy</button></div></div>
   <div class="cta-box"><h3>Worried about secrets in your .env files?</h3><p>Scan your entire repository for accidentally committed .env files and hardcoded secrets.</p><a href="/tools/secret-scanner/" class="cta-btn">Scan for Secrets →</a></div>
 </div>
-<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
+<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
 <script>
 function formatEnv(sort){var raw=document.getElementById('env-input').value;var lines=raw.split('\n');var comments=[];var vars=[];lines.forEach(function(line){var trimmed=line.trim();if(!trimmed||trimmed.startsWith('#')){comments.push(trimmed);}else{var eqIdx=trimmed.indexOf('=');if(eqIdx>0){vars.push({key:trimmed.substring(0,eqIdx).trim(),val:trimmed.substring(eqIdx+1).trim()});}else{comments.push('# '+trimmed);}}});if(sort)vars.sort(function(a,b){return a.key.localeCompare(b.key);});var maxKeyLen=0;vars.forEach(function(v){if(v.key.length>maxKeyLen)maxKeyLen=v.key.length;});var out=[];comments.forEach(function(c){if(c)out.push(c);});if(out.length&&vars.length)out.push('');vars.forEach(function(v){out.push(v.key.padEnd(maxKeyLen)+' = '+v.val);});show(out.join('\n'));}
 function redactValues(){var raw=document.getElementById('env-input').value;var lines=raw.split('\n');var out=lines.map(function(line){var trimmed=line.trim();if(!trimmed||trimmed.startsWith('#'))return line;var eqIdx=trimmed.indexOf('=');if(eqIdx>0){return trimmed.substring(0,eqIdx+1)+' [REDACTED]';}return line;});show(out.join('\n'));}

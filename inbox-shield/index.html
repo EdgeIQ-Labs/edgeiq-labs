@@ -674,6 +674,9 @@ function renderResults(r) {
   gradeEl.style.borderColor = GRADE_COLOR[grade] || '#9fb0c7';
 
   document.getElementById('resultSummary').textContent = r.summary || '';
+  if (window.umami && window.umami.track) {
+    window.umami.track('scanner_completed', { tool: 'inbox-shield', grade: grade });
+  }
 
   // Check cards
   const grid = document.getElementById('checksGrid');

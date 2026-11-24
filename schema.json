@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://edgeiqlabs.com/#organization",
+      "name": "EdgeIQ Labs",
+      "alternateName": "EdgeIQ",
+      "url": "https://edgeiqlabs.com",
+      "logo": "https://edgeiqlabs.com/favicon.png",
+      "image": "https://edgeiqlabs.com/og-preview.png",
+      "description": "Cybersecurity monitoring, compliance automation, managed hosting, and cloud infrastructure tools for small businesses, MSPs, and developers.",
+      "email": "support@edgeiqlabs.com",
+      "sameAs": [
+        "https://edgeiqlabs.substack.com",
+        "https://discord.gg/PaP7nsFUJT",
+        "https://x.com/edgeiqlabs",
+        "https://www.facebook.com/groups/1128190316524183"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://edgeiqlabs.com/#website",
+      "name": "EdgeIQ Labs",
+      "url": "https://edgeiqlabs.com",
+      "description": "Security, hosting, and cloud tools. Practical infrastructure for businesses, gamers, and developers.",
+      "publisher": { "@id": "https://edgeiqlabs.com/#organization" }
+    }
+  ]
+}

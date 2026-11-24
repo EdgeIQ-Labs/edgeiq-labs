@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/css/design-system.css?v=1"/>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
+<nav><div class="nav-inner"><a href="/" class="nav-brand">EdgeIQ<span> Labs</span></a><div class="nav-links"><a href="/tools/">Dev Tools</a><a href="/tools/">Scanners</a><a href="/dashboard/">Dashboard</a><a href="/pulse/">Pulse</a><a href="/pricing/" class="nav-cta">Free Full Scan →</a></div></div></nav>
 <div class="container">
   <div class="hero"><div class="hero-badge">🧹 Privacy Tool</div><h1>Log Anonymizer</h1><p>Strip IPs, emails, API keys, and PII from server logs before sharing. Regex-based scrubbing runs entirely in your browser.</p></div>
   <div class="tool-card">
@@ -32,7 +32,7 @@
   </div>
   <div id="output"><div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Anonymized Output</div><div class="result-box" id="result-text"><button class="copy-corner" onclick="copyResult()">Copy</button></div><div class="stats" id="stats"></div></div>
 </div>
-<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/free-tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
+<footer><div class="container"><a href="/tools/">All Dev Tools</a><a href="/tools/">Scanners</a><a href="/pulse/">Pulse</a><a href="/privacy/">Privacy</a><p style="margin-top:14px;">© 2026 EdgeIQ Labs. All tools run 100% in your browser.</p></div></footer>
 <script>
 var PATTERNS={ip:{regex:/\b(?:\d{1,3}\.){3}\d{1,3}\b/g,label:'[IP_REDACTED]'},email:{regex:/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g,label:'[EMAIL_REDACTED]'},apikey:{regex:/(?:sk_live_|sk_test_|ghp_|AKIA|xox[baprs]-|AIza)[a-zA-Z0-9_\-]{8,}/g,label:'[KEY_REDACTED]'},ssn:{regex:/\b\d{3}-\d{2}-\d{4}\b/g,label:'[SSN_REDACTED]'},creditcard:{regex:/\b(?:\d{4}[\s-]?){3}\d{4}\b/g,label:'[CC_REDACTED]'},phone:{regex:/\b(?:\+?1[-.]?)?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}\b/g,label:'[PHONE_REDACTED]'},jwt:{regex:/eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,label:'[JWT_REDACTED]'}};
 function anonymize(){var text=document.getElementById('log-input').value;if(!text.trim())return;var totalReplacements=0;var checkboxes=document.querySelectorAll('.options input:checked');checkboxes.forEach(function(cb){var p=PATTERNS[cb.dataset.pattern];if(p){var count=(text.match(p.regex)||[]).length;totalReplacements+=count;text=text.replace(p.regex,p.label);}});document.getElementById('result-text').innerHTML='<button class="copy-corner" onclick="copyResult()">Copy</button>'+esc(text);document.getElementById('stats').textContent=totalReplacements+' item(s) redacted across '+checkboxes.length+' pattern type(s).';document.getElementById('output').style.display='block';document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'});}

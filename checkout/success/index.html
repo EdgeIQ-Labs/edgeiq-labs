@@ -54,7 +54,7 @@
         <span>EdgeIQ Labs</span>
       </a>
       <div class="nav-links">
-        <a href="/free-tools/">Free Tools</a>
+        <a href="/tools/">Free Tools</a>
         <a href="/products/">Products</a>
         <a href="/blog/">Blog</a>
         <a href="/docs/">Docs</a>
@@ -105,7 +105,7 @@
         <p>Cybersecurity & Hosting for Small Business</p>
       </div>
       <div class="footer-links">
-        <a href="/free-tools/">Free Tools</a>
+        <a href="/tools/">Free Tools</a>
         <a href="/products/">Products</a>
         <a href="/blog/">Blog</a>
         <a href="/docs/">Docs</a>
@@ -307,10 +307,22 @@
     // Track conversion in Umami (script loads deferred, so wait for it if needed)
     function trackCheckoutSuccess() {
       if (!window.umami || typeof window.umami.track !== 'function') return false;
-      window.umami.track('checkout_success', {
+      var payload = {
         product: product || 'unknown',
         session_id: sessionId.slice(0, 12),
-      });
+      };
+      var bundle = (params.get('bundle') || '').trim();
+      var utmSource = (params.get('utm_source') || '').trim();
+      var utmMedium = (params.get('utm_medium') || '').trim();
+      var rawValue = params.get('value');
+      if (bundle) payload.bundle = bundle;
+      if (utmSource) payload.utm_source = utmSource;
+      if (utmMedium) payload.utm_medium = utmMedium;
+      if (rawValue !== null && rawValue.trim() !== '') {
+        var parsedValue = Number(rawValue);
+        if (Number.isFinite(parsedValue)) payload.value = parsedValue;
+      }
+      window.umami.track('checkout_success', payload);
       return true;
     }
     if (!trackCheckoutSuccess()) {

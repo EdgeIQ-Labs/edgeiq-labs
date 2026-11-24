@@ -33,14 +33,14 @@
     .product-strip-inner a:hover { background: rgba(255,255,255,0.06); }
     @media (max-width: 720px) { .nav-links { display: none; } .product-strip-inner a { font-size: 0.75rem; padding: 4px 8px; } }
 
-    .hero { text-align: center; padding: 72px 24px 56px; }
-    .hero h1 { font-size: 2.8rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; }
-    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 520px; margin: 0 auto; }
+    .hero { text-align: center; padding: 32px 24px 40px; }
+    .hero h1 { font-size: 2.1rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 12px; }
+    .hero p { color: var(--muted); font-size: 0.98rem; max-width: 720px; margin: 0 auto; }
 
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
 
     .price-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; }
-    .price-card.featured { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(61,217,255,0.15), 0 8px 32px rgba(61,217,255,0.08); }
+    .price-card.recommended { border-color: var(--green); box-shadow: 0 0 0 1px rgba(61,225,158,0.25), 0 8px 32px rgba(61,225,158,0.12); }
     .price-card-icon { font-size: 1.8rem; margin-bottom: 12px; }
     .price-card-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
     .price-card-tagline { font-size: 0.83rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
@@ -52,6 +52,7 @@
     .badge-free { background: rgba(159,176,199,0.1); color: var(--muted); }
     .badge-early { background: rgba(61,217,255,0.1); border: 1px solid rgba(61,217,255,0.25); color: var(--accent); }
     .badge-hot { background: rgba(61,225,158,0.1); border: 1px solid rgba(61,225,158,0.25); color: var(--green); }
+    .badge-recommended { background: rgba(61,225,158,0.16); border: 1px solid rgba(61,225,158,0.45); color: var(--green); }
     .price-features { list-style: none; margin-bottom: 24px; flex: 1; }
     .price-features li { font-size: 0.88rem; color: var(--muted); padding: 6px 0; border-bottom: 1px solid rgba(35,49,66,0.5); display: flex; align-items: flex-start; gap: 8px; }
     .price-features li:last-child { border-bottom: none; }
@@ -68,7 +69,7 @@
     .price-btn.purple { background: #a78bfa; color: #071018; }
     .price-btn.orange { background: #ff9f43; color: #071018; }
 
-    .section-label { text-align: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); padding: 48px 24px 20px; }
+    .section-label { text-align: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); padding: 24px 24px 16px; }
 
     .faq-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 80px; }
     .faq-wrap h2 { font-size: 1.6rem; font-weight: 800; text-align: center; margin-bottom: 32px; }
@@ -84,6 +85,167 @@
     footer a:hover { color: var(--muted); }
   </style>
 <script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+
+  <!-- Structured data: Product/Offer pricing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "name": "SMB Essentials",
+        "description": "Core protection for small teams: SSL monitoring, uptime checks, email header analysis, and monthly security reports. Includes a 14-day free trial.",
+        "brand": {
+          "@type": "Brand",
+          "name": "EdgeIQ Labs"
+        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "SMB Essentials Monthly",
+            "price": "29.00",
+            "priceCurrency": "USD",
+            "url": "https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v",
+            "availability": "https://schema.org/InStock",
+            "description": "14-day free trial. Cancel anytime.",
+            "priceSpecification": {
+              "@type": "RecurringCharge",
+              "price": "29.00",
+              "priceCurrency": "USD",
+              "billingIncrement": 1,
+              "billingDuration": 1,
+              "billingPeriod": "month",
+              "description": "Billed monthly at $29.00/month."
+            }
+          },
+          {
+            "@type": "Offer",
+            "name": "SMB Essentials Annual",
+            "price": "278.00",
+            "priceCurrency": "USD",
+            "url": "https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f",
+            "availability": "https://schema.org/InStock",
+            "description": "14-day free trial. Cancel anytime.",
+            "priceSpecification": {
+              "@type": "RecurringCharge",
+              "price": "278.00",
+              "priceCurrency": "USD",
+              "billingIncrement": 12,
+              "billingDuration": 1,
+              "billingPeriod": "year",
+              "description": "Billed annually at $278.00/year (save 20%)."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Product",
+        "name": "SMB Plus",
+        "description": "Everything in SMB Essentials plus priority remediation support and expanded monthly action plans. Includes a 14-day free trial.",
+        "brand": {
+          "@type": "Brand",
+          "name": "EdgeIQ Labs"
+        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "SMB Plus Monthly",
+            "price": "49.00",
+            "priceCurrency": "USD",
+            "url": "https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w",
+            "availability": "https://schema.org/InStock",
+            "description": "14-day free trial. Cancel anytime.",
+            "priceSpecification": {
+              "@type": "RecurringCharge",
+              "price": "49.00",
+              "priceCurrency": "USD",
+              "billingIncrement": 1,
+              "billingDuration": 1,
+              "billingPeriod": "month",
+              "description": "Billed monthly at $49.00/month."
+            }
+          },
+          {
+            "@type": "Offer",
+            "name": "SMB Plus Annual",
+            "price": "470.00",
+            "priceCurrency": "USD",
+            "url": "https://buy.stripe.com/3cI00l1PB7hb7A84ko7wA3g",
+            "availability": "https://schema.org/InStock",
+            "description": "14-day free trial. Cancel anytime.",
+            "priceSpecification": {
+              "@type": "RecurringCharge",
+              "price": "470.00",
+              "priceCurrency": "USD",
+              "billingIncrement": 12,
+              "billingDuration": 1,
+              "billingPeriod": "year",
+              "description": "Billed annually at $470.00/year (save 20%)."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Product",
+        "name": "CertWatch Pro",
+        "description": "Daily SSL certificate expiry monitoring with email alerts at 30/14/7/1 day thresholds.",
+        "brand": {
+          "@type": "Brand",
+          "name": "EdgeIQ Labs"
+        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "CertWatch Pro Monthly",
+            "price": "1.00",
+            "priceCurrency": "USD",
+            "url": "https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v",
+            "availability": "https://schema.org/InStock",
+            "description": "Cancel anytime.",
+            "priceSpecification": {
+              "@type": "RecurringCharge",
+              "price": "1.00",
+              "priceCurrency": "USD",
+              "billingIncrement": 1,
+              "billingDuration": 1,
+              "billingPeriod": "month",
+              "description": "Billed monthly at $1.00/month."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Product",
+        "name": "UptimePing Pro",
+        "description": "Website uptime monitoring with 5-minute checks, response time tracking, and instant email alerts.",
+        "brand": {
+          "@type": "Brand",
+          "name": "EdgeIQ Labs"
+        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "UptimePing Pro Monthly",
+            "price": "1.00",
+            "priceCurrency": "USD",
+            "url": "https://buy.stripe.com/14A4gB65RcBvaMk18c7wB2w",
+            "availability": "https://schema.org/InStock",
+            "description": "Cancel anytime.",
+            "priceSpecification": {
+              "@type": "RecurringCharge",
+              "price": "1.00",
+              "priceCurrency": "USD",
+              "billingIncrement": 1,
+              "billingDuration": 1,
+              "billingPeriod": "month",
+              "description": "Billed monthly at $1.00/month."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -94,7 +256,7 @@
     <a href="/products/">Products</a>
     <a href="/blog/">Blog</a>
     <a href="/pricing/" style="color:var(--accent);">Pricing</a>
-    <a href="#smb-bundles" class="nav-cta">Get Started</a>
+    <a href="#smb-bundles" class="nav-cta">See plans</a>
   </div>
 </nav>
 
@@ -114,14 +276,58 @@
 
 <div class="hero">
   <h1>Simple, flat pricing</h1>
-  <p>No per-seat fees. No enterprise contracts. One price covers your entire domain or tenant.</p>
-  <p style="margin-top:12px;font-size:0.85rem;color:var(--text-muted);">Trusted by MSPs, IT teams, and security-conscious businesses across North America.</p><div style="max-width:680px;margin:24px auto 0;padding:16px 20px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.18);border-radius:12px;text-align:center;">
-  <p style="font-size:0.92rem;color:var(--text);margin:0;"><strong style="color:var(--accent);">142,000+</strong> free security scans completed &middot; <strong style="color:var(--accent);">12</strong> free tools &middot; <strong style="color:var(--accent);">Zero</strong> credit cards required</p>
+  <p>No per-seat fees. No enterprise contracts. One price covers your domain or tenant.</p>
+  <div style="max-width:720px;margin:16px auto 0;padding:10px 16px;background:rgba(61,217,255,0.06);border:1px solid rgba(61,217,255,0.18);border-radius:10px;text-align:center;">
+    <p style="font-size:0.82rem;color:var(--muted);margin:0;"><strong style="color:var(--accent);">142,000+</strong> free scans &middot; <strong style="color:var(--accent);">30</strong> free tools &middot; <strong style="color:var(--accent);">No</strong> credit card required &middot; Trusted by MSPs and IT teams</p>
+  </div>
 </div>
+
+<!-- SMB Bundles -->
+<div class="section-label" id="smb-bundles">SMB security bundles</div>
+<div class="pricing-grid">
+
+  <!-- SMB Essentials -->
+  <div class="price-card">
+    <div class="price-card-icon">🛡️</div>
+    <div class="price-card-name" style="color:var(--accent);">SMB Essentials</div>
+    <div class="price-card-tagline">Core protection for small teams — SSL monitoring, uptime checks, email header analysis, and monthly security reports.</div>
+    <div class="price-row"><span class="price-amount" style="color:var(--accent);">$29</span><span class="price-period">/ month</span></div>
+    <div class="price-was" style="font-size:0.78rem;">or $278/year (save 20%)</div>
+    <span class="price-badge badge-hot">14-day free trial</span>
+    <ul class="price-features">
+      <li>SSL certificate + domain expiry monitoring</li>
+      <li>Uptime and outage checks</li>
+      <li>Email header phishing analysis</li>
+      <li>Monthly security summary report</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" class="price-btn primary" target="_blank" rel="noopener">Start SMB Essentials trial →</a>
+    <a href="https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f" class="price-btn secondary" style="margin-top:8px;font-size:0.82rem;" target="_blank" rel="noopener">Start SMB Essentials annual →</a>
+  </div>
+
+  <!-- SMB Plus -->
+  <div class="price-card recommended">
+    <div class="price-card-icon">🚀</div>
+    <div class="price-card-name" style="color:var(--green);">SMB Plus</div>
+    <div class="price-card-tagline">Everything in Essentials, plus priority remediation support and expanded monthly action plans.</div>
+    <div class="price-row"><span class="price-amount" style="color:var(--green);">$49</span><span class="price-period">/ month</span></div>
+    <div class="price-was" style="font-size:0.78rem;">or $470/year (save 20%)</div>
+    <span class="price-badge badge-recommended">Recommended · 14-day free trial</span>
+    <ul class="price-features">
+      <li>Everything in SMB Essentials</li>
+      <li>Priority remediation support</li>
+      <li>Expanded monthly report + action plan</li>
+      <li>Higher-touch help for urgent findings</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w" class="price-btn green" target="_blank" rel="noopener">Start SMB Plus trial →</a>
+    <a href="https://buy.stripe.com/3cI00l1PB7hb7A84ko7wA3g" class="price-btn secondary" style="margin-top:8px;font-size:0.82rem;" target="_blank" rel="noopener">Start SMB Plus annual →</a>
+  </div>
+
 </div>
 
 <!-- Core products -->
-<div class="section-label">Security monitoring</div>
+<div class="section-label" id="plans">Security monitoring</div>
 <div class="pricing-grid">
 
   <!-- Pulse -->
@@ -138,16 +344,16 @@
       <li class="no">Weekly automated scans</li>
       <li class="no">Email digest on changes</li>
     </ul>
-    <a href="/pulse/" class="price-btn secondary">Start Free →</a>
+    <a href="/pulse/" class="price-btn secondary">Open free scanner →</a>
   </div>
 
   <!-- Pulse Pro -->
-  <div class="price-card featured">
+  <div class="price-card">
     <div class="price-card-icon">🟢</div>
-    <div class="price-card-name" style="color:var(--accent);">Pulse Pro</div>
+    <div class="price-card-name">Pulse Pro</div>
     <div class="price-card-tagline">Everything in Free plus automated weekly monitoring and email alerts.</div>
-    <div class="price-row"><span class="price-amount" style="color:var(--accent);">$19</span><span class="price-period">/ month</span></div>
-    <span class="price-badge badge-early">Most popular</span>
+    <div class="price-row"><span class="price-amount">$19</span><span class="price-period">/ month</span></div>
+    <span class="price-badge badge-early">Automated weekly scans</span>
     <ul class="price-features">
       <li>Everything in Free</li>
       <li>Automated scan every Monday</li>
@@ -172,7 +378,7 @@
       <li class="no">Weekly automated monitoring</li>
       <li class="no">Alert on policy degradation</li>
     </ul>
-    <a href="/inbox-shield/" class="price-btn secondary">Start Free →</a>
+    <a href="/inbox-shield/" class="price-btn secondary">Open free scanner →</a>
   </div>
 
 </div>
@@ -196,7 +402,7 @@
       <li>Issuer + serial tracking</li>
       <li>Cancel anytime</li>
     </ul>
-    <a href="https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v" class="price-btn green">Start CertWatch →</a>
+    <a href="https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v" class="price-btn green">Start CertWatch Pro →</a>
   </div>
 
 </div>
@@ -220,7 +426,7 @@
       <li>Recovery notifications</li>
       <li>Cancel anytime</li>
     </ul>
-    <a href="https://buy.stripe.com/14A4gB65RcBvaMk18c7wB2w" class="price-btn" style="background:#39d0ff;color:#071018;">Start UptimePing →</a>
+    <a href="https://buy.stripe.com/14A4gB65RcBvaMk18c7wB2w" class="price-btn" style="background:#39d0ff;color:#071018;">Start UptimePing Pro →</a>
   </div>
 
 </div>
@@ -243,7 +449,7 @@
       <li class="no">Weekly automated scans</li>
       <li class="no">Email digest with grade diff</li>
     </ul>
-    <a href="/compliance/" class="price-btn secondary">Start Free →</a>
+    <a href="/compliance/" class="price-btn secondary">Open free scanner →</a>
   </div>
 
   <!-- Compliance Pro -->
@@ -252,7 +458,7 @@
     <div class="price-card-name" style="color:var(--green);">Compliance Pro</div>
     <div class="price-card-tagline">Automated weekly scans with email grade + diff every Monday.</div>
     <div class="price-row"><span class="price-amount" style="color:var(--green);">$9</span><span class="price-period">/ month</span></div>
-    <span class="price-badge badge-hot">Best value</span>
+    <span class="price-badge badge-hot">Automated weekly scans</span>
     <ul class="price-features">
       <li>Everything in Free</li>
       <li>Automated scan every Monday</li>
@@ -321,7 +527,7 @@
       <li class="no">Email alert on degradation</li>
       <li class="no">Webhook notifications</li>
     </ul>
-    <a href="/vendor-watch/" class="price-btn secondary">Start Free →</a>
+    <a href="/vendor-watch/" class="price-btn secondary">Open free scanner →</a>
   </div>
 
   <!-- PhishSim -->
@@ -339,50 +545,6 @@
       <li>Cancel anytime</li>
     </ul>
     <a href="https://phishsim.edgeiqlabs.com/" class="price-btn" style="background:#ff6b7a;color:#071018;">Start PhishSim →</a>
-  </div>
-
-</div>
-
-<!-- SMB Bundles -->
-<div class="section-label" id="smb-bundles">SMB security bundles</div>
-<div class="pricing-grid">
-
-  <!-- SMB Essentials -->
-  <div class="price-card">
-    <div class="price-card-icon">🛡️</div>
-    <div class="price-card-name" style="color:var(--accent);">SMB Essentials</div>
-    <div class="price-card-tagline">Core protection for small teams — SSL monitoring, uptime checks, email header analysis, and monthly security reports.</div>
-    <div class="price-row"><span class="price-amount" style="color:var(--accent);">$29</span><span class="price-period">/ month</span></div>
-    <div class="price-was" style="font-size:0.78rem;">or $278/year (save 20%)</div>
-    <span class="price-badge badge-hot">14-day free trial</span>
-    <ul class="price-features">
-      <li>SSL certificate + domain expiry monitoring</li>
-      <li>Uptime and outage checks</li>
-      <li>Email header phishing analysis</li>
-      <li>Monthly security summary report</li>
-      <li>Cancel anytime</li>
-    </ul>
-    <a href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" class="price-btn primary" target="_blank" rel="noopener">Start Free Trial →</a>
-    <a href="https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f" class="price-btn secondary" style="margin-top:8px;font-size:0.82rem;" target="_blank" rel="noopener">Or $278/year →</a>
-  </div>
-
-  <!-- SMB Plus -->
-  <div class="price-card featured">
-    <div class="price-card-icon">🚀</div>
-    <div class="price-card-name" style="color:var(--green);">SMB Plus</div>
-    <div class="price-card-tagline">Everything in Essentials, plus priority remediation support and expanded monthly action plans.</div>
-    <div class="price-row"><span class="price-amount" style="color:var(--green);">$49</span><span class="price-period">/ month</span></div>
-    <div class="price-was" style="font-size:0.78rem;">or $470/year (save 20%)</div>
-    <span class="price-badge badge-hot">Most popular · 14-day free trial</span>
-    <ul class="price-features">
-      <li>Everything in SMB Essentials</li>
-      <li>Priority remediation support</li>
-      <li>Expanded monthly report + action plan</li>
-      <li>Higher-touch help for urgent findings</li>
-      <li>Cancel anytime</li>
-    </ul>
-    <a href="https://buy.stripe.com/5kQeVf9i37hbbQo9EI7wA1w" class="price-btn green" target="_blank" rel="noopener">Start Free Trial →</a>
-    <a href="https://buy.stripe.com/3cI00l1PB7hb7A84ko7wA3g" class="price-btn secondary" style="margin-top:8px;font-size:0.82rem;" target="_blank" rel="noopener">Or $470/year →</a>
   </div>
 
 </div>
@@ -446,6 +608,28 @@
 <script>
 document.querySelectorAll('.faq-q').forEach(function(q) {
   q.addEventListener('click', function() { q.closest('.faq-item').classList.toggle('open'); });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.umami && typeof window.umami.track === 'function') {
+    window.umami.track('pricing_viewed', { page: '/pricing/' });
+  }
+
+  document.addEventListener('click', function(event) {
+    var target = event.target;
+    var link = target && target.closest ? target.closest('.price-btn, a[href*="buy.stripe.com"]') : null;
+    if (!link) return;
+    var card = link.closest('.price-card');
+    var nameEl = card ? card.querySelector('.price-card-name') : null;
+    var props = {
+      plan: nameEl ? nameEl.textContent.trim() : 'Unknown',
+      cta: (link.textContent || '').trim(),
+      url: link.getAttribute('href') || ''
+    };
+    if (window.umami && typeof window.umami.track === 'function') {
+      window.umami.track('plan_clicked', props);
+    }
+  });
 });
 </script>
 </body>

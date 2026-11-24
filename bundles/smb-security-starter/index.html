@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>SMB Security Starter — SSL, Email &amp; Uptime Monitoring | EdgeIQ Labs</title>
+  <meta name="description" content="SMB Essentials at $29/mo (or $278/yr) plus CertWatch Pro at $1/mo. SSL expiry alerts, uptime checks, email header analysis, and monthly security reports. 14-day trial on Essentials."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="EdgeIQ Labs"/>
+  <meta property="og:url" content="https://edgeiqlabs.com/bundles/smb-security-starter/"/>
+  <meta property="og:title" content="SMB Security Starter — SSL, Email &amp; Uptime Monitoring"/>
+  <meta property="og:description" content="Two small subscriptions that cover the checks most small teams forget: certificate expiry and email flow."/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/bundles/smb-security-starter/"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is included in the SMB Security Starter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SMB Essentials and CertWatch Pro, bought as two separate subscriptions. Essentials covers SSL monitoring, uptime checks, email header analysis, and a monthly security report. CertWatch Pro checks certificate expiry daily and emails you at 30, 14, 7, and 1 day before expiry."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there one price for the bundle?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. There is no single checkout for both. SMB Essentials is $29 per month or $278 per year, with a 14-day trial. CertWatch Pro is $1 per month. Each has its own checkout link and can be cancelled independently."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need both?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you already automate Let's Encrypt renewals and watch them, Essentials alone may be enough. If certificates are renewed by hand or sit on a wildcard, CertWatch Pro gives you a warning before browsers do."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this include DMARC report analysis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. For DMARC, SPF, and DKIM record monitoring, see Inbox Shield. For a walkthrough of what monitoring costs at each tier, see our DMARC monitoring pricing comparison."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .page-hero{padding:56px 0 28px;}
+    .breadcrumb{font-size:0.82rem;color:var(--muted);margin-bottom:18px;}
+    .breadcrumb a{color:var(--muted);text-decoration:none;}
+    .breadcrumb a:hover{color:var(--accent);}
+    h1{font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.2;margin-bottom:14px;}
+    .lede{font-size:1.05rem;color:var(--muted);max-width:680px;}
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;}
+    .prose h3{font-size:1.05rem;font-weight:700;margin:24px 0 8px;}
+    .prose p{margin-bottom:16px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 22px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0 32px;}
+    @media(max-width:640px){.card-grid{grid-template-columns:1fr;}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
+    .card h3{margin:0 0 6px;color:var(--text);}
+    .price{color:var(--accent);font-weight:800;font-size:1.05rem;margin-bottom:12px;}
+    .card ul{margin:0 0 16px 18px;color:var(--muted);font-size:0.9rem;}
+    .card li{margin-bottom:6px;}
+    .btn{display:inline-block;background:var(--accent);color:#071018;font-weight:700;padding:11px 20px;border-radius:8px;text-decoration:none;margin:4px 8px 4px 0;font-size:0.92rem;}
+    .btn-sec{display:inline-block;background:transparent;color:var(--accent);font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;border:1px solid var(--accent);margin:4px 8px 4px 0;font-size:0.92rem;}
+    .note{background:var(--card2);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 8px 8px 0;margin:22px 0;font-size:0.92rem;color:var(--muted);}
+    .faq-item{border-bottom:1px solid var(--border);padding:16px 0;}
+    .faq-q{font-weight:700;color:var(--text);margin-bottom:6px;}
+    .faq-a{color:var(--muted);font-size:0.92rem;}
+    .cta-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-block h2{margin-bottom:8px;}
+    .cta-block p{color:var(--muted);margin-bottom:16px;}
+    footer{border-top:1px solid var(--border);padding:28px 0;margin-top:56px;text-align:center;}
+    footer a{color:var(--muted);text-decoration:none;margin:0 10px;font-size:0.88rem;}
+  </style>
+  <style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+<script defer src="https://analytics.edgeiqlabs.com/script.js" data-website-id="52daa2a0-f996-4bbe-b468-943502ad8876"></script>
+</head>
+<body data-theme="dark">
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="page-hero">
+    <div class="breadcrumb"><a href="/">Home</a> › <a href="/bundles/smb-security-starter/">Bundles</a> › SMB Security Starter</div>
+    <h1>SMB Security Starter</h1>
+    <p class="lede">Two small subscriptions that cover the checks most small teams forget: whether a certificate is about to expire, and whether your email setup looks like a phishing risk. Billed separately, so neither one locks you in.</p>
+  </div>
+
+  <div class="prose">
+    <p>A small business usually finds out about an expired certificate from a customer, and about a broken SPF record from a bounce. Both are boring to fix and expensive to miss. This pairing puts a weekly view and a daily expiry check in place for less than the cost of a single lunch.</p>
+
+    <h2 id="what-you-get">What you get</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>SMB Essentials</h3>
+        <div class="price">$29/mo or $278/yr · 14-day trial</div>
+        <ul>
+          <li>SSL monitoring</li>
+          <li>Uptime checks</li>
+          <li>Email header analysis</li>
+          <li>Monthly security reports</li>
+        </ul>
+        <a class="btn" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener">Start monthly — $29/mo</a>
+        <a class="btn-sec" href="https://buy.stripe.com/dRm4gB79V6d77A818c7wA3f" target="_blank" rel="noopener">Annual — $278/yr</a>
+        <p style="font-size:0.82rem;margin-top:8px;">Full details on the <a href="/pricing/">pricing page</a>.</p>
+      </div>
+      <div class="card">
+        <h3>CertWatch Pro</h3>
+        <div class="price">$1/mo</div>
+        <ul>
+          <li>Daily SSL certificate expiry monitoring</li>
+          <li>Email alerts at 30, 14, 7, and 1 day before expiry</li>
+          <li>No setup beyond adding a domain</li>
+        </ul>
+        <a class="btn" href="https://buy.stripe.com/cNi9AV8dZ7hb3jS2cg7wB2v" target="_blank" rel="noopener">Add CertWatch — $1/mo</a>
+        <p style="font-size:0.82rem;margin-top:8px;">See <a href="/certwatch/">CertWatch</a> for how the alerts work.</p>
+      </div>
+    </div>
+
+    <div class="note"><strong>Billing is separate.</strong> There is no single checkout for the pair. Essentials and CertWatch each have their own subscription, and cancelling one does not touch the other.</div>
+
+    <h2 id="why-these-two">Why these two together</h2>
+    <p>Essentials gives you the broad monthly picture: SSL, uptime, email headers, and a report you can actually read. CertWatch does one narrow job every day — it watches the expiry date and emails you while you still have weeks to act. A monthly report is useful for trends; it is too slow for a certificate that expires on a Friday.</p>
+    <p>Neither tool changes your DNS or needs an agent installed. You register a domain and read the results.</p>
+
+    <h2 id="who-its-for">Who this is for</h2>
+    <ul>
+      <li>A team of one to ten with no dedicated security staff</li>
+      <li>A site on a wildcard certificate, where one expiry takes down every subdomain</li>
+      <li>Someone who has been renewing certificates by hand and wants a warning first</li>
+      <li>A business that wants the basics watched without a daily dashboard habit</li>
+    </ul>
+
+    <h2 id="what-it-doesnt-cover">What it does not cover</h2>
+    <p>This starter is monitoring, not a full security program. It does not parse DMARC aggregate reports, run a compliance audit, or respond to incidents. For DMARC, SPF, and DKIM record alerts, look at <a href="/inbox-shield/">Inbox Shield</a>. For a plain-language walkthrough of what those tiers cost, read the <a href="/compare/dmarc-monitoring-pricing/">DMARC monitoring pricing comparison</a>. If an auditor is asking for dated evidence, the <a href="/bundles/compliance-evidence-kit/">Compliance Evidence Kit</a> is the better fit.</p>
+
+    <h2 id="faq">FAQ</h2>
+    <div class="faq-item"><div class="faq-q">What is included in the SMB Security Starter?</div><div class="faq-a">SMB Essentials and CertWatch Pro, bought as two separate subscriptions. Essentials covers SSL monitoring, uptime checks, email header analysis, and a monthly security report. CertWatch Pro checks certificate expiry daily and emails you at 30, 14, 7, and 1 day before expiry.</div></div>
+    <div class="faq-item"><div class="faq-q">Is there one price for the bundle?</div><div class="faq-a">No. There is no single checkout for both. SMB Essentials is $29 per month or $278 per year, with a 14-day trial. CertWatch Pro is $1 per month. Each has its own checkout link and can be cancelled independently.</div></div>
+    <div class="faq-item"><div class="faq-q">Do I need both?</div><div class="faq-a">If you already automate Let's Encrypt renewals and watch them, Essentials alone may be enough. If certificates are renewed by hand or sit on a wildcard, CertWatch Pro gives you a warning before browsers do.</div></div>
+    <div class="faq-item"><div class="faq-q">Does this include DMARC report analysis?</div><div class="faq-a">No. For DMARC, SPF, and DKIM record monitoring, see <a href="/inbox-shield/">Inbox Shield</a>. For a walkthrough of what monitoring costs at each tier, see our <a href="/compare/dmarc-monitoring-pricing/">DMARC monitoring pricing comparison</a>.</div></div>
+
+    <div class="cta-block">
+      <h2>Start with the 14-day trial</h2>
+      <p>SMB Essentials is $29/mo or $278/yr. CertWatch Pro is $1/mo. Both are self-serve.</p>
+      <a class="btn" href="https://buy.stripe.com/7sY28tdyjbxr5s04ko7wA1v" target="_blank" rel="noopener">Try SMB Essentials →</a>
+      <a class="btn-sec" href="/free-ssl-checker/">Check a certificate free →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/">Home</a>
+    <a href="/tools/">Free Tools</a>
+    <a href="/blog/">Blog</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/inbox-shield/">Inbox Shield</a>
+    <a href="/privacy.html">Privacy</a>
+    <p style="margin-top:14px;">© 2026 EdgeIQ Labs</p>
+  </div>
+</footer>
+</body>
+</html>
