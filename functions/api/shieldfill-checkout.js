@@ -10,7 +10,10 @@ export async function onRequest(context) {
 
   const url = new URL(request.url);
   const plan = url.searchParams.get('plan') || 'starter';
-  const STRIPE_KEY = env.STRIPE_SECRET_KEY || 'sk_liv...1X9D';
+  const STRIPE_KEY = env.STRIPE_SECRET_KEY;
+  if (!STRIPE_KEY) {
+    return new Response(JSON.stringify({ error: 'Stripe secret key not configured' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
+  }
 
   const PRICE_IDS = {'starter': 'price_1UWgF5RC1NZ20yDTyUaJZ5Uk', 'pro': 'price_1UWgF6RC1NZ20yDTfpN09XAU'};
   const priceId = PRICE_IDS[plan];
@@ -32,6 +35,7 @@ export async function onRequest(context) {
         'success_url': `${url.origin}/checkout/success/?product=shieldfill&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/shieldfill/`,
         'allow_promotion_codes': 'true',
+        'payment_method_options[card][request_three_d_secure]': 'any',
       })
     });
 

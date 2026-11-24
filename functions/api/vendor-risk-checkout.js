@@ -10,7 +10,10 @@ export async function onRequest(context) {
 
   const url = new URL(request.url);
   const plan = url.searchParams.get('plan') || 'starter';
-  const STRIPE_KEY = env.STRIPE_SECRET_KEY || 'sk_liv...1X9D';
+  const STRIPE_KEY = env.STRIPE_SECRET_KEY;
+  if (!STRIPE_KEY) {
+    return new Response(JSON.stringify({ error: 'Stripe secret key not configured' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
+  }
 
   const PRICE_IDS = {'starter': 'price_1UWye4RC1NZ20yDTb61AV8dy', 'pro': 'price_1UWye5RC1NZ20yDTw9l6DaCe'};
   const priceId = PRICE_IDS[plan];
@@ -32,6 +35,7 @@ export async function onRequest(context) {
         'success_url': `${url.origin}/checkout/success/?product=vendor-risk&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/vendor-risk/`,
         'allow_promotion_codes': 'true',
+        'payment_method_options[card][request_three_d_secure]': 'any',
       })
     });
 
