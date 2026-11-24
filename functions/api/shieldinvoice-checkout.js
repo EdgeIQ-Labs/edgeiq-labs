@@ -30,6 +30,7 @@ export async function onRequest(context) {
         'success_url': `${url.origin}/checkout/success/?product=shieldinvoice&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/shieldinvoice/`,
         'allow_promotion_codes': 'true',
+        'metadata[product]': 'shieldinvoice',
       })
     });
 

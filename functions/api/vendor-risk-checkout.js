@@ -35,6 +35,7 @@ export async function onRequest(context) {
         'success_url': `${url.origin}/checkout/success/?product=vendor-risk&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${url.origin}/vendor-risk/`,
         'allow_promotion_codes': 'true',
+        'metadata[product]': 'vendor-risk',
         'payment_method_options[card][request_three_d_secure]': 'any',
       })
     });

@@ -351,48 +351,59 @@ export async function onRequestPost({ request, env }) {
       console.error(`ttyd install failed (non-fatal): ${ttydErr.message}`);
     }
 
-    // 8. Add customer email to Cloudflare Access "Allow VPS Customers" policy
+    // 8. Grant browser-terminal access via an app-specific CF Access policy.
+    // The shared "Allow VPS Customers" policy is REUSABLE — Cloudflare rejects
+    // updates to reusable policies through the app policy endpoint (error 12130),
+    // so each customer gets their own app-specific allow policy instead.
     try {
       if (env.CF_ACCESS_TOKEN) {
         const accountId = '632b16163d95a11698f8542b418ba236';
-        const policyId = 'cff0d7d4-64ed-400e-ac13-9a1dd1fdef09';
-        // Fetch current policy
-        const polResp = await fetch(
-          `https://api.cloudflare.com/client/v4/accounts/${accountId}/access/policies/${policyId}`,
+        const appId = '1737f3ae-ca38-40fd-8c5f-5391515d41f4'; // VPS SSH Terminal
+        const policiesResp = await fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${accountId}/access/apps/${appId}/policies?per_page=100`,
           { headers: { Authorization: `Bearer ${env.CF_ACCESS_TOKEN}` }, signal: AbortSignal.timeout(10000) }
         );
-        if (polResp.ok) {
-          const polData = await polResp.json();
-          const policy = polData.result;
-          const include = policy.include || [];
-          const existingEmails = include.filter(r => r.email).map(r => r.email.email);
-          if (!existingEmails.includes(customerEmail)) {
-            include.push({ email: { email: customerEmail } });
-            const updatePayload = { name: policy.name, decision: policy.decision, include, precedence: policy.precedence || 1 };
-            const updResp = await fetch(
-              `https://api.cloudflare.com/client/v4/accounts/${accountId}/access/policies/${policyId}`,
+        if (policiesResp.ok) {
+          const polData = await policiesResp.json();
+          const policies = polData.result || [];
+          const granted = policies.some(p =>
+            (p.include || []).some(r => r.email?.email?.toLowerCase() === customerEmail.toLowerCase())
+          );
+          if (granted) {
+            console.log(`${customerEmail} already has CF Access to the VPS terminal`);
+          } else {
+            // Precedences must be unique within the app — pick the next free one.
+            const used = new Set(policies.map(p => Number(p.precedence)).filter(Number.isFinite));
+            let precedence = 1;
+            while (used.has(precedence)) precedence++;
+            const createResp = await fetch(
+              `https://api.cloudflare.com/client/v4/accounts/${accountId}/access/apps/${appId}/policies`,
               {
-                method: 'PUT',
+                method: 'POST',
                 headers: { Authorization: `Bearer ${env.CF_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatePayload),
+                body: JSON.stringify({
+                  name: `Allow VPS Customer — ${customerEmail}`,
+                  decision: 'allow',
+                  precedence,
+                  include: [{ email: { email: customerEmail } }],
+                }),
                 signal: AbortSignal.timeout(10000),
               }
             );
-            if (updResp.ok) {
-              console.log(`Added ${customerEmail} to CF Access Allow VPS Customers policy`);
+            if (createResp.ok) {
+              console.log(`Granted ${customerEmail} CF Access to the VPS terminal (precedence ${precedence})`);
             } else {
-              const errBody = await updResp.text();
-              console.error(`CF Access policy update failed: ${errBody}`);
+              console.error(`CF Access policy create failed: ${await createResp.text()}`);
             }
-          } else {
-            console.log(`${customerEmail} already in CF Access policy`);
           }
+        } else {
+          console.error(`CF Access policy list failed: ${await policiesResp.text()}`);
         }
       } else {
         console.warn('No CF_ACCESS_TOKEN env var — skipping Access policy update');
       }
     } catch (accessErr) {
-      console.error(`CF Access policy update failed (non-fatal): ${accessErr.message}`);
+      console.error(`CF Access policy setup failed (non-fatal): ${accessErr.message}`);
     }
 
     // 9. Send credentials email with PUBLIC IP
