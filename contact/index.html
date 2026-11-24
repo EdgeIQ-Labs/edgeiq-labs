@@ -207,6 +207,18 @@
 
   <script>
     (function () {
+      var hamburger = document.querySelector('.nav__hamburger');
+      var navLinks = document.querySelector('.nav__links');
+      if (hamburger && navLinks) {
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.addEventListener('click', function () {
+          var open = navLinks.classList.toggle('open');
+          hamburger.setAttribute('aria-expanded', String(open));
+        });
+      }
+    })();
+
+    (function () {
       var form = document.getElementById('contact-form');
       if (!form) return;
       form.addEventListener('submit', async function (event) {
