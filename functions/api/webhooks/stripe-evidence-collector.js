@@ -91,6 +91,16 @@ export async function onRequest(context) {
     return json({ received: true, ignored: true });
   }
 
+  // CROSS-PRODUCT GUARD: ignore checkouts belonging to another product
+    const _m = (event.data?.object || event.data).metadata || {};
+    const _plan = (_m.plan || '').toLowerCase();
+    const _product = (_m.product || '').toLowerCase();
+    const _service = (_m.service || '').toLowerCase();
+    const _vpsPlan = ['nano','micro','basic','standard','custom'].includes(_plan) || !!_m.os;
+    if (_vpsPlan) return json({ received: true, ignored: 'cross-product guard' });
+    if (_service && _service !== 'evidence-collector') return json({ received: true, ignored: 'cross-product guard' });
+    if (_product && !['evidence-collector'].includes(_product)) return json({ received: true, ignored: 'cross-product guard' });
+
   const session = event.data.object;
   const isEvidenceCollector =
     session.metadata?.service === 'evidence-collector' ||

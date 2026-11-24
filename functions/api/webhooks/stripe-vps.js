@@ -226,6 +226,15 @@ export async function onRequestPost({ request, env }) {
     return json({ received: true });
   }
 
+  // CROSS-PRODUCT GUARD: ignore checkouts belonging to another product
+    const _m = (event.data?.object || event.data).metadata || {};
+    const _plan = (_m.plan || '').toLowerCase();
+    const _product = (_m.product || '').toLowerCase();
+    const _service = (_m.service || '').toLowerCase();
+    if (!['nano','micro','basic','standard','custom'].includes(_plan) && !_m.os) return json({ received: true, ignored: 'cross-product guard' })('not vps');
+    if (['evidence-collector','verified-badge'].includes(_service)) return json({ received: true, ignored: 'cross-product guard' })('other service');
+    if (_product && !['vps'].includes(_product)) return json({ received: true, ignored: 'cross-product guard' })('product mismatch');
+
   const session = event.data?.object;
   if (!session) return json({ error: 'No session data' }, 400);
 

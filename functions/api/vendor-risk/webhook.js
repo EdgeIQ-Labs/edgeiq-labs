@@ -32,6 +32,16 @@ export async function onRequest(context) {
       return json({ received: true, skipped: event.type });
     }
 
+  // CROSS-PRODUCT GUARD: ignore checkouts belonging to another product
+    const _m = (event.data?.object || event.data).metadata || {};
+    const _plan = (_m.plan || '').toLowerCase();
+    const _product = (_m.product || '').toLowerCase();
+    const _service = (_m.service || '').toLowerCase();
+    const _vpsPlan = ['nano','micro','basic','standard','custom'].includes(_plan) || !!_m.os;
+    if (_vpsPlan) return json({ received: true, ignored: 'cross-product guard' });
+    if (['evidence-collector','verified-badge'].includes(_service)) return json({ received: true, ignored: 'cross-product guard' });
+    if (_product && !['vendor-risk'].includes(_product)) return json({ received: true, ignored: 'cross-product guard' });
+
     const session = event.data.object;
     const customerEmail = session.customer_details?.email;
     const amountTotal = session.amount_total; // in cents

@@ -73,6 +73,16 @@ export async function onRequest(context) {
     });
   }
 
+  // CROSS-PRODUCT GUARD: ignore checkouts belonging to another product
+    const _m = (event.data?.object || event.data).metadata || {};
+    const _plan = (_m.plan || '').toLowerCase();
+    const _product = (_m.product || '').toLowerCase();
+    const _service = (_m.service || '').toLowerCase();
+    const _vpsPlan = ['nano','micro','basic','standard','custom'].includes(_plan) || !!_m.os;
+    if (_vpsPlan) return new Response(JSON.stringify({ received: true, ignored: 'cross-product guard' }), { status: 200, headers: { 'Content-Type': 'application/json' } })('vps checkout');
+    if (['evidence-collector','verified-badge'].includes(_service)) return new Response(JSON.stringify({ received: true, ignored: 'cross-product guard' }), { status: 200, headers: { 'Content-Type': 'application/json' } })('other service');
+    if (_product && !['compliance-audit'].includes(_product)) return new Response(JSON.stringify({ received: true, ignored: 'cross-product guard' }), { status: 200, headers: { 'Content-Type': 'application/json' } })('product mismatch');
+
   const session = event.data.object || event.data;
   const email = session.customer_email || session.customer_details?.email || session.metadata?.email;
   const domain = session.metadata?.domain || '';

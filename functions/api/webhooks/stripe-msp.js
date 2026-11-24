@@ -127,6 +127,16 @@ export async function onRequestPost({ request, env }) {
     return new Response('OK', { status: 200 });
   }
 
+  // CROSS-PRODUCT GUARD: ignore checkouts belonging to another product
+    const _m = (event.data?.object || event.data).metadata || {};
+    const _plan = (_m.plan || '').toLowerCase();
+    const _product = (_m.product || '').toLowerCase();
+    const _service = (_m.service || '').toLowerCase();
+    const _vpsPlan = ['nano','micro','basic','standard','custom'].includes(_plan) || !!_m.os;
+    if (_vpsPlan) return json({ received: true, ignored: 'cross-product guard' })('vps checkout');
+    if (['evidence-collector','verified-badge'].includes(_service)) return json({ received: true, ignored: 'cross-product guard' })('other service');
+    if (_product && !['msp_essentials','msp'].includes(_product)) return json({ received: true, ignored: 'cross-product guard' })('product mismatch');
+
   const session = event.data?.object;
   if (!session) return new Response('OK', { status: 200 });
 
