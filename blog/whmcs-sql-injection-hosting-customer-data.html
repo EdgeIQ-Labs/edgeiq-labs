@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>WHMCS SQL Injection Lets Anyone Grab Customer Records. Patch Now. — EdgeIQ Labs</title>
+  <meta name="description" content="A flaw in WHMCS shopping cart lets unauthenticated attackers pull customer records and admin password hashes. No login needed. Versions 9.0.10 and 8.13.8 fix it."/>
+  <meta property="og:title" content="WHMCS SQL Injection Lets Anyone Grab Customer Records. Patch Now."/>
+  <meta property="og:description" content="CVE-2026-82981 (CVSS 8.7) allows anyone who can load a vulnerable WHMCS shopping cart to retrieve client data and admin hashes without authentication. Update immediately."/>
+  <meta property="og:type" content="article"/><meta property="og:url" content="https://edgeiqlabs.com/blog/whmcs-sql-injection-hosting-customer-data.html"/>
+  <meta property="og:image" content="https://edgeiqlabs.com/og-preview.png"/>
+  <link rel="canonical" href="https://edgeiqlabs.com/blog/whmcs-sql-injection-hosting-customer-data.html"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"WHMCS SQL Injection Lets Anyone Grab Customer Records. Patch Now.","datePublished":"2026-11-25","dateModified":"2026-11-25","author":{"@type":"Organization","name":"EdgeIQ Labs"},"publisher":{"@type":"Organization","name":"EdgeIQ Labs"}}</script>
+  <link rel="stylesheet" href="/css/design-system.css?v=10"/>
+  <style>
+    .prose h2{font-size:1.35rem;font-weight:700;margin:40px 0 14px;color:var(--text);}
+    .prose h3{font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text);}
+    .prose p{margin-bottom:18px;color:var(--muted);}
+    .prose ul,.prose ol{margin:0 0 18px 24px;color:var(--muted);}
+    .prose li{margin-bottom:8px;}
+    .prose strong{color:var(--text);}
+    .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
+    .prose a:hover{border-bottom-color:var(--accent);}
+    .callout{background:var(--card2);border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:0.92rem;}
+    .callout.warn{border-left-color:#f97316;}
+    .cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin:40px 0;text-align:center;}
+    .cta-box h3{margin:0 0 10px;font-size:1.2rem;}
+    .cta-box p{margin:0 0 18px;color:var(--muted);font-size:0.92rem;}
+    .btn{display:inline-block;background:var(--accent);color:#071018 !important;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;transition:transform .15s,filter .15s;}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .tag{background:#1a2535;color:var(--accent);font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+    .tag.red{color:#ff6b6b;background:#1f1010;}
+    .hero{padding:56px 0 36px;}
+    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:16px;}
+    .meta{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+  </style>
+<style>.nav-hamburger{display:none!important}@media(max-width:768px){.nav-hamburger{display:flex!important}}</style>
+</head>
+<body data-theme="dark">
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="/">
+      <img class="nav-logo-img" src="/logo-edgeiq-selected.png" alt="EdgeIQ Labs logo" />
+      <div class="nav-wordmark">
+        <div class="nav-brand-name">Edge<span>IQ</span> Labs</div>
+        <div class="nav-brand-tag">Cybersecurity · Hosting</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/tools/">Free Tools</a>
+      <a href="/tools/">Dev Tools</a>
+      <a href="/compliance/">Compliance</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/blog/">Blog</a>
+      <a href="/pricing/" class="nav-cta">Get Protected</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div class="container container--narrow">
+  <div class="hero">
+    <div class="tag-row">
+      <span class="tag red">Critical Vulnerability</span>
+      <span class="tag">Hosting Security</span>
+      <span class="tag">SQL Injection</span>
+    </div>
+    <h1>WHMCS SQL Injection Lets Anyone Grab Customer Records. Patch Now.</h1>
+    <div class="meta">
+      <span>November 25, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>WHMCS disclosed a SQL injection vulnerability yesterday that lets anyone on the internet retrieve customer records and administrator password hashes from a vulnerable installation. No login required. No special access. Just load the shopping cart page and ask nicely.</p>
+
+    <p>The flaw, tracked as CVE-2026-82981 with a CVSS score of 8.7, sits in the WHMCS shopping cart component. Because the shopping cart is public-facing by design (it has to be, otherwise customers can't buy anything), every WHMCS installation that hasn't patched is reachable by anyone with an internet connection and basic SQL knowledge.</p>
+
+    <p>WHMCS shipped fixes in versions 9.0.10 and 8.13.8. They haven't reported active exploitation yet. That window won't stay open.</p>
+
+    <h2>What Attackers Can Take</h2>
+
+    <p>The advisory says an attacker can pull client records including personal information, support ticket history, and billing details. They can also grab admin account password hashes.</p>
+
+    <p>A hash isn't a working password. You can't paste a bcrypt hash into a login form and get in. But you can take it offline and try to crack it. Admin accounts tend to use passwords that are stronger than average user passwords but weaker than they should be, especially if the hosting company has been around for years and hasn't enforced rotation or modern complexity requirements. Offline cracking against a stolen hash has no rate limiting, no lockouts, no detection.</p>
+
+    <p>The customer records are the bigger immediate problem. Names, emails, physical addresses, payment method metadata, support conversations. If you run a hosting business on WHMCS, that's your entire client database exposed through a public endpoint.</p>
+
+    <div class="callout warn">
+      <strong>If you run WHMCS:</strong> Update to 9.0.10 or 8.13.8 immediately. After patching, rotate all admin passwords. Review access logs for unusual shopping cart requests. Notify customers if your installation was vulnerable for any length of time, because their personal data was accessible to anyone who knew where to look.
+    </div>
+
+    <h2>Why Shopping Cart Flaws Are Worse Than Admin Panel Flaws</h2>
+
+    <p>Admin panel vulnerabilities require the attacker to have credentials or find another way in. Shopping cart flaws don't. The cart is supposed to be public. It processes untrusted input from anonymous users by design. When that input handling breaks, the attack surface is the entire internet.</p>
+
+    <p>This is the second high-profile hosting platform vulnerability in recent weeks. Zeabur shut down entirely after two breaches exposed 3.2 million environment variables. Railway paused deployments after attackers may have accessed decrypted secrets. Now WHMCS, the billing platform that powers thousands of hosting companies, has a pre-auth SQL injection in its most public-facing component.</p>
+
+    <p>The pattern is familiar: platforms that aggregate customer data or secrets become high-value targets, and the security practices at some of them lag behind the value they protect. WHMCS is widely used because it works and integrates with everything. That ubiquity means a single flaw affects thousands of businesses and their customers simultaneously.</p>
+
+    <h2>Two Other Flaws Disclosed at the Same Time</h2>
+
+    <p>WHMCS also disclosed two additional vulnerabilities that require a logged-in client account. These are lower severity because they need authentication, but they still matter if you have self-registration enabled or if an attacker has already compromised a customer account through the shopping cart flaw.</p>
+
+    <p>The company released fixed versions for all three issues together. There's no reason to patch selectively. Update to the latest version and close all three holes at once.</p>
+
+    <h2>What This Means If You Buy Hosting From a WHMCS Shop</h2>
+
+    <p>You probably don't know whether your hosting provider uses WHMCS. Most don't advertise it. But if you've ever received an invoice from a system that looks like WHMCS, or if your support portal URL includes /clientarea.php, you're on a WHMCS installation.</p>
+
+    <p>Your options are limited. You can ask your provider whether they've patched CVE-2026-82981. You can assume they have if they're competent and monitor their announcements. Or you can move to a provider that runs infrastructure you can audit yourself.</p>
+
+    <p>If you're a hosting provider reading this: your customers trust you with their data. Patching is the bare minimum. Consider whether your billing platform needs to be publicly accessible at all, whether admin accounts have MFA enforced, and whether you'd know if someone pulled your customer database through a shopping cart endpoint. The answer to that last question is usually no, which is the real problem.</p>
+
+    <div class="cta-box">
+      <h3>Hosting Where You Control the Stack</h3>
+      <p>Tired of trusting platforms with your customers' data? Self-hosting on a dedicated VPS puts you back in control. EdgeIQ VPS plans start at $4/mo (Nano: 1 vCPU, 512MB RAM, 10GB SSD). Run your own billing system, your own automation, your own security monitoring with Wazuh SIEM. Bot hosting starts at $5/mo for Discord bots that need a stable home without shared-tenant risk.</p>
+      <a href="/vps/" class="btn btn-primary">See VPS Plans →</a>
+    </div>
+
+    <h2>The Timeline</h2>
+
+    <ul>
+      <li><strong>November 24, 2026:</strong> WHMCS discloses CVE-2026-82981 and ships versions 9.0.10 and 8.13.8.</li>
+      <li><strong>Now:</strong> Every unpatched installation is vulnerable. No active exploitation reported yet, but public disclosure means exploit development is underway.</li>
+      <li><strong>Next 48-72 hours:</strong> Expect scanning activity and proof-of-concept exploits to appear. Automated scanners will start probing shopping cart endpoints.</li>
+    </ul>
+
+    <p>Patch today. Don't wait for the first breach report to confirm what the advisory already told you.</p>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;margin:48px auto;max-width:580px;">
+    <h3 style="font-size:1.1rem;margin-bottom:8px;">📬 Security Intelligence, In Your Inbox</h3>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:16px;">CVE alerts, attack breakdowns, and practical guides. No fluff, unsubscribe anytime.</p>
+    <form id="nlf4" style="display:flex;gap:10px;max-width:480px;margin:0 auto 12px;">
+      <input type="email" placeholder="your@email.com" required style="flex:1;background:#0d1420;border:1px solid #233142;border-radius:10px;color:#e2e8f0;padding:11px 14px;font-size:0.95rem;outline:none;">
+      <button type="submit" style="white-space:nowrap;background:#3dd9ff;color:#071018;border:none;border-radius:10px;padding:11px 18px;font-size:0.95rem;font-weight:700;cursor:pointer;">Subscribe →</button>
+    </form>
+    <p id="nlok4" style="display:none;color:#3de19e;font-weight:600;margin:8px 0 0;">✓ Subscribed — check your inbox to confirm.</p>
+    <script>(function(){var f=document.getElementById('nlf4');f.addEventListener('submit',function(e){e.preventDefault();var em=f.querySelector('input').value.trim();if(!em||em.indexOf('@')<0)return;var b=f.querySelector('button');b.disabled=true;b.textContent='Sending…';var done=function(){f.style.display='none';document.getElementById('nlok4').style.display='block';};fetch('https://edgeiqlabs.substack.com/api/v1/free',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,first_url:location.href,current_url:location.href})}).then(done,done);});})();</script>
+    <p style="color:var(--muted);font-size:0.78rem;margin-top:8px;margin-bottom:0;">Free forever. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <!-- Giscus Comments -->
+  <div class="giscus-section" style="max-width:980px;width:100%;margin:48px auto 0;padding:0 20px;box-sizing:border-box;">
+    <style>.giscus-section iframe{width:100%!important;min-width:100%!important;max-width:100%!important;display:block;}</style>
+    <h3 style="font-size:1.2rem;margin-bottom:16px;">💬 Discussion</h3>
+    <script src="https://giscus.app/client.js"
+      data-repo="EdgeIQ-Labs/community"
+      data-repo-id="R_kgDOVgPP9A"
+      data-category="General"
+      data-category-id="DIC_kwDOVgPP9M4DKORE"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+
+  <div style="text-align:center;padding:24px 0 48px;color:var(--muted);font-size:0.82rem;">
+    <a href="/blog/" style="color:var(--accent);text-decoration:none;">← Back to Blog</a>
+  </div>
+</div>
+
+<script>
+document.querySelector('.nav__hamburger').addEventListener('click', function() {
+  document.querySelector('.nav__links').classList.toggle('open');
+});
+</script>
+</body>
+</html>
