@@ -34,7 +34,7 @@ async function sendWelcomeEmail(env, email, domain, platform) {
           <div style="font-size:12px;color:${muted};">${b}</div>
         </td></tr>`).join('')}
       </table>
-      <p style="font-size:13px;color:${muted};line-height:1.6;margin:0 0 20px;">Early access rate of $19/mo is locked in for your account for as long as you stay subscribed — standard pricing will be $39/mo.</p>
+      <p style="font-size:13px;color:${muted};line-height:1.6;margin:0 0 20px;">Your early access rate of $19/mo is locked in for as long as you stay subscribed.</p>
       <a href="https://edgeiqlabs.com/account/" style="display:inline-block;background:${blue};color:#071018;font-weight:700;font-size:14px;padding:12px 24px;border-radius:8px;text-decoration:none;">View your account →</a>
     </td></tr>
     <tr><td style="padding:20px 0 0;text-align:center;font-size:11px;color:#4a6080;">
